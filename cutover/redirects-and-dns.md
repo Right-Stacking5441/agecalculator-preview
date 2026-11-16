@@ -154,3 +154,19 @@ concat("https://agecalculator.com", wildcard_replace(http.request.uri.path, "/*/
 | `https://agecalculator.com/difference/` | 301 → `https://agecalculator.com/difference` |
 | `https://agecalculator.com/` | 200 (no redirect) |
 | `https://agecalculator.com/past?year=1990` | 200 (no redirect) |
+
+## 6. Email Routing for hello@agecalculator.com (at cutover)
+
+`hello@agecalculator.com` must forward to `hurrellcapital@gmail.com`. Set this up with [Cloudflare Email Routing](https://developers.cloudflare.com/email-routing/get-started/enable-email-routing/) at cutover. Do not change live DNS until William approves.
+
+Enabling Email Routing adds the MX and TXT records the service needs (MX to Cloudflare's mail exchangers, plus a TXT SPF record; the dashboard also shows any DKIM TXT records it will add). Official docs: https://developers.cloudflare.com/email-routing/get-started/enable-email-routing/ (Cloudflare may redirect that page to the Email Service route-emails guide).
+
+Observed on Monday 16 November 2026 (Europe/London): the zone already has Cloudflare Email Routing MX records (`route1.mx.cloudflare.net`, `route2.mx.cloudflare.net`, `route3.mx.cloudflare.net`) and the SPF TXT record `v=spf1 include:_spf.mx.cloudflare.net ~all`. Keep those in place. MX hostnames can vary (`route1` / `route2` / `route3`, or names such as `amir` / `linda` / `isaac` in Cloudflare's examples); any `*.mx.cloudflare.net` exchangers are fine.
+
+The remaining work at cutover is to add or confirm the forwarding rule itself:
+
+1. In the Cloudflare dashboard, open Email Routing for the agecalculator.com zone (under Email or Compute > Email Service, depending on the dashboard). If Email Routing is not already enabled, enable it and accept the MX and TXT records Cloudflare adds. If other providers' MX records are present, Email Routing will not enable until those are removed.
+2. Add `hurrellcapital@gmail.com` as a destination address and verify it if it is not already verified (Cloudflare sends a verification email).
+3. Create a custom address / routing rule: `hello@agecalculator.com` forwards to `hurrellcapital@gmail.com`.
+4. Send a test message to `hello@agecalculator.com` from a different account and confirm it arrives at `hurrellcapital@gmail.com`. The forward cannot be proved from DNS alone.
+5. `cutover/verify.sh` checks that MX points at `*.mx.cloudflare.net` and that a TXT record includes `v=spf1 include:_spf.mx.cloudflare.net`.

@@ -40,9 +40,31 @@ At launch, in a reviewed commit:
 - **`/widget` and `/embed` stay noindex**, with `noindex` only (not `nofollow`), so the credit link on those pages still counts. They are an iframe target and an instructions page, not landing pages.
 - Take the preview banner off every page, including `/widget` (it already has no banner, so it would not appear inside a third-party embed).
 
+## Launch-time privacy hosting sentence (do not apply yet)
+
+The preview is still on GitHub Pages, so `privacy.md` and `docs/privacy.html` keep the GitHub hosting paragraph below. Do not swap it until the live root is on Cloudflare Pages. The publish-date placeholder stays until launch day, when it is filled in the same reviewed commit as this swap.
+
+### Before (leave this on the preview)
+
+```
+These pages are hosted on GitHub Pages. According to [GitHub's own documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), when a GitHub Pages site is visited, the visitor's IP address is logged and stored for security purposes, whether or not the visitor is signed in to GitHub.
+```
+
+### After (use this on the live root, once it is on Cloudflare Pages)
+
+Drawn from Cloudflare's own wording. The Privacy Policy (effective 4 November 2025) says that when End Users access a customer's websites that use Cloudflare's services, "The information processed may include but is not limited to IP addresses, traffic routing data, system configuration information, and other information about traffic to and from Customers’ websites, devices, applications, and/or networks." Cloudflare's GDPR documentation says: "Cloudflare maintains log data about events on our network. Some of this log data will include information about visitors to and/or authorized users of a customer's domains, networks, websites, application programming interfaces ("APIs"), or applications… This metadata contains extremely limited personal data, most often in the form of IP addresses. We process this type of information on behalf of our customers in our data centers in the U.S. and Europe for a limited period of time." Sources: https://www.cloudflare.com/privacypolicy/ and https://www.cloudflare.com/trust-hub/gdpr/. Do not invent retention periods or purposes beyond that.
+
+Replacement paragraph for `privacy.md` (typograph apostrophes the same way as the rest of the page when building the HTML):
+
+```
+These pages are hosted on Cloudflare Pages. According to [Cloudflare's Privacy Policy](https://www.cloudflare.com/privacypolicy/), when people visit a customer's website that uses Cloudflare's services, Cloudflare processes information about that visit that may include the visitor's IP address, traffic routing data, system configuration information, and other information about traffic to and from the site. Cloudflare's [GDPR documentation](https://www.cloudflare.com/trust-hub/gdpr/) says it maintains log data about events on its network, that some of this log data includes information about visitors to a customer's websites, most often in the form of IP addresses, and that it processes this information on behalf of its customers in data centers in the U.S. and Europe for a limited period of time.
+```
+
+At launch, in the same reviewed commit that attaches the apex and opens indexing: replace the GitHub paragraph in `privacy.md` and `docs/privacy.html` with the after paragraph, and fill `[PLACEHOLDER: date this policy is published]`. Leave the HTML comment `<!-- Hosting will switch to Cloudflare Pages at launch. -->` out of the live page once the swap is done.
+
 ## After approval (not now)
 
 1. Keep this repo noindex until the go-ahead to index.
 2. Create a Cloudflare Pages project from this repository, output directory `docs`, no production custom domain yet if you want a `*.pages.dev` dry run first.
-3. When William says go: attach `agecalculator.com` as the production domain, apply the DNS and Redirect Rules in `redirects-and-dns.md`, then remove noindex / open `robots.txt` in a reviewed commit.
+3. When William says go: attach `agecalculator.com` as the production domain, apply the DNS, Redirect Rules, and Email Routing steps in `redirects-and-dns.md`, swap the privacy hosting paragraph to the Cloudflare Pages sentence in this file, fill the privacy publish date, then remove noindex / open `robots.txt` in a reviewed commit.
 4. Leave the GitHub Pages preview up as a fallback until you are sure, or delete its Pages custom-domain settings (it has none today).

@@ -57,9 +57,9 @@ p { margin: 0 0 var(--s4); text-wrap: pretty; }
 /* ---------- Masthead ---------- */
 .mast { border-bottom: 1px solid var(--rule); }
 .mast .wrap { display: flex; align-items: center; gap: var(--s6); min-height: 58px; }
-.brand { display: inline-flex; align-items: center; gap: var(--s3); color: var(--ink); text-decoration: none; font-weight: 800; font-size: 19px; letter-spacing: -.005em; }
-.brand span { font-weight: 400; color: var(--ink-3); }
-.brand svg { flex: none; }
+.brand { display: inline-flex; align-items: baseline; gap: 0; color: var(--ink); text-decoration: none; font-weight: 800; font-size: 19px; letter-spacing: -.005em; white-space: nowrap; }
+.brand span { font-weight: 800; color: inherit; letter-spacing: inherit; }
+.brand svg { flex: none; margin-inline-end: var(--s3); align-self: center; }
 .mast nav { margin-left: auto; }
 .mast nav ul { list-style: none; display: flex; gap: var(--s5); margin: 0; padding: 0; font-size: 15px; }
 .mast nav a { color: var(--ink-2); text-decoration: none; padding: var(--s3) 0; }
@@ -167,17 +167,6 @@ p { margin: 0 0 var(--s4); text-wrap: pretty; }
 .ledger small { font-weight: 400; color: var(--ink-3); font-size: 14px; }
 [data-clock] { white-space: nowrap; }
 
-/* ---------- Ads ---------- */
-.ad { margin: 0 auto; text-align: center; }
-.ad .ad-label { display: block; font-size: 12px; letter-spacing: .03em; color: var(--ink-3); margin-bottom: var(--s1); text-align: left; }
-.ad .ad-box { display: flex; align-items: center; justify-content: center; color: #8d8c84; font-size: 13px;
-  background: repeating-linear-gradient(135deg, #f6f6f2 0 7px, #efefe9 7px 8px); border: 1px solid var(--rule-soft); }
-.ad-below { width: 728px; max-width: 100%; margin: var(--s6) 0 0; }
-.ad-below .ad-box { height: 90px; }
-.ad-mid { width: 336px; margin: var(--s7) 0; }
-.ad-mid .ad-box { height: 280px; }
-.ad-side .ad-box { width: 300px; height: 600px; }
-.ad-side { position: sticky; top: var(--s5); margin-top: var(--s7); }
 
 /* ---------- Content ---------- */
 .page { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: var(--s8); padding-top: var(--s8); padding-bottom: var(--s9); }
@@ -269,10 +258,6 @@ p { margin: 0 0 var(--s4); text-wrap: pretty; }
   .bday-text { margin-top: 0; max-width: none; }
   .bday-note { max-width: none; grid-column: 1 / -1; }
   .ledger { grid-template-columns: 1fr; margin-top: var(--s4); }
-  .ad-below { width: 320px; }
-  .ad-below .ad-box { height: 100px; }
-  .ad-mid { width: 300px; margin: var(--s6) auto; }
-  .ad-mid .ad-box { height: 250px; }
   .page { padding-top: var(--s7); padding-bottom: var(--s8); }
   .content > section { margin-bottom: var(--s7); }
   .content h2 { font-size: 22px; }
@@ -427,7 +412,7 @@ body.widget { background: var(--paper); padding: var(--s4); font-size: 16px; }
 @page { size: A4; margin: 16mm 15mm; }
 @media print {
   body { font-size: 11pt; background: #fff; }
-  .mast, .foot, .ad, .side, .intro p, .crumbs, .skip, .entry, .faq, .slip-actions, .sheet-actions { display: none !important; }
+  .mast, .foot, .side, .intro p, .crumbs, .skip, .entry, .faq, .slip-actions, .sheet-actions { display: none !important; }
   body[data-page] .content > *:not(.sheet-section) { display: none !important; }
   .band { background: none; border: 0; }
   .band .wrap, .wrap { padding: 0; max-width: none; }
@@ -547,10 +532,6 @@ body[data-page="how-old-will-i-be"], body[data-page="what-year-was-i-born"] { --
 .df-label, .entry legend, .name { letter-spacing: -.003em; }
 .on { border-top: 0; padding-top: 0; }
 .on p { padding: var(--s2) 0; border-top: 1px dotted var(--ink-3); border-bottom: 1px dotted var(--ink-3); }
-
-/* Ads: present, reserved, quiet. */
-.ad .ad-label { font-size: 11px; letter-spacing: .06em; color: #67675e; }
-.ad .ad-box { background: none !important; border: 1px dotted #c3c1b8 !important; color: #a3a29a; font-size: 12px; }
 
 /* Body copy: headings hung in the margin, like an almanac. */
 .page { padding-top: 72px; }
@@ -821,8 +802,6 @@ body[data-page="chronological-age"] .content > section:not(.faq) { grid-template
   .yt-year { font-size: 50px; }
   .yt-cap { font-size: 14px; }
 }
-.content > .ad-mid { margin-left: 178px; }
-@media (max-width: 1080px) { .content > .ad-mid { margin-left: auto; } }
 .widget .big .num { font-size: 60px; } .widget .big .num.long { font-size: 48px; }
 @media print { .band, .mast { background: none !important; } .slip::before { display: none; } }
 
@@ -850,12 +829,12 @@ body[data-page="chronological-age"] .content > section:not(.faq) { grid-template
   max-width: 36em;
 }
 @media print {
-  .preview-banner, .rule-line, .ad { display: none !important; }
+  .preview-banner, .rule-line { display: none !important; }
 }
 
 
 /* Reserve the empty result card's height so JS drawing the calendar or
-   paper object doesn't push the advert and the page down (mobile CLS).
+   paper object doesn't push the page down (mobile CLS).
    Heights are the measured empty-state card at that width, rounded up. */
 body[data-page="dog-age"] .leaf[data-state="empty"],
 body[data-page="cat-age"] .leaf[data-state="empty"] { min-height: 425px; }
@@ -926,4 +905,25 @@ body.widget { --leaf-h: 470px; }
 .widget #leaf { min-height: 470px; }
 @media (max-width: 360px) {
   .widget #leaf { min-height: 0; }
+}
+
+/* Print layout must come after the later screen grid rules, otherwise those
+   rules undo the print stacking and squeeze the difference result into a
+   narrow column on A4 (RETEST M3). */
+@media print {
+  .obj-pair {
+    display: block;
+    grid-template-columns: none;
+  }
+  .obj-pair .pair-say {
+    margin-top: 4mm;
+    display: flex;
+    align-items: baseline;
+    gap: 8pt;
+    flex-wrap: wrap;
+    max-width: none;
+    width: auto;
+  }
+  .obj-pair .pair-say .unit { display: inline; width: auto; }
+  .pair-say, .lead { min-width: 0; overflow: visible; }
 }

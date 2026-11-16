@@ -282,12 +282,12 @@ def main() -> int:
                 issues.append(f"STALE: {stale!r}")
 
         if html_name == "privacy.html":
-            for ph in [
-                "[PLACEHOLDER: date this policy is published]",
-                "[PLACEHOLDER: contact email address]",
-            ]:
-                if ph not in html:
-                    issues.append(f"PRIVACY placeholder missing: {ph}")
+            if "[PLACEHOLDER: date this policy is published]" not in html:
+                issues.append("PRIVACY placeholder missing: [PLACEHOLDER: date this policy is published]")
+            if "[PLACEHOLDER: contact email address]" in html:
+                issues.append("PRIVACY contact email placeholder should be filled with hello@agecalculator.com")
+            if "hello@agecalculator.com" not in html:
+                issues.append("PRIVACY contact email hello@agecalculator.com missing")
             if "Hurrell Capital Limited, a company registered in England and Wales (company number 15158828)" not in html:
                 issues.append("PRIVACY operator details missing")
             if "GitHub Pages" not in html or "docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages" not in html:

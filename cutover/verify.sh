@@ -93,6 +93,57 @@ check_200() {
   passed=$((passed + 1))
 }
 
+
+# Email Routing DNS only. hello@agecalculator.com must forward to
+# hurrellcapital@gmail.com; that forward cannot be proved from DNS, so after
+# cutover send a test message and confirm it arrives. These checks only assert
+# that MX points at Cloudflare Email Routing and that the SPF TXT record is present.
+# The zone already had matching MX and SPF records on 16 November 2026 (Europe/London).
+dns_query() {
+  python3 - "$1" "$2" <<'PY'
+import json, sys, urllib.request
+name, typ = sys.argv[1], sys.argv[2]
+url = f"https://cloudflare-dns.com/dns-query?name={name}&type={typ}"
+req = urllib.request.Request(url, headers={"Accept": "application/dns-json"})
+try:
+    with urllib.request.urlopen(req, timeout=15) as r:
+        data = json.load(r)
+except Exception as e:
+    print(f"ERROR {e}", file=sys.stderr)
+    sys.exit(2)
+for a in data.get("Answer") or []:
+    print(a.get("data", ""))
+PY
+}
+
+check_email_routing_dns() {
+  local domain="agecalculator.com"
+  local mx spf ok_mx=0 ok_spf=0
+  echo "----  Email Routing DNS (hello@${domain} -> hurrellcapital@gmail.com; DNS only)"
+  mx="$(dns_query "$domain" MX 2>&1)" || true
+  spf="$(dns_query "$domain" TXT 2>&1)" || true
+  if printf '%s\n' "$mx" | grep -qiE '(^|[[:space:]])([0-9]+[[:space:]]+)?[a-z0-9.-]*mx\.cloudflare\.net\.?$'; then
+    ok_mx=1
+  fi
+  # DoH TXT answers are often quoted: "v=spf1 include:_spf.mx.cloudflare.net ~all"
+  if printf '%s\n' "$spf" | grep -q 'v=spf1 include:_spf.mx.cloudflare.net'; then
+    ok_spf=1
+  fi
+  if [ "$ok_mx" -eq 1 ] && [ "$ok_spf" -eq 1 ]; then
+    echo "ok    MX + SPF TXT for ${domain} (Cloudflare Email Routing)"
+    printf '%s\n' "$mx" | sed 's/^/      MX  /'
+    passed=$((passed + 1))
+    echo "      note:     confirm hello@${domain} forwards to hurrellcapital@gmail.com with a test email."
+    return 0
+  fi
+  echo "FAIL  Email Routing DNS for ${domain}"
+  echo "      expected: MX to *.mx.cloudflare.net and TXT v=spf1 include:_spf.mx.cloudflare.net"
+  echo "      MX got:   ${mx:-<none>}"
+  echo "      TXT got:  ${spf:-<none>}"
+  failed=$((failed + 1))
+  return 1
+}
+
 echo "agecalculator.com cutover verify (single 301 hop, curl -sSI)"
 echo "-----------------------------------------------------------"
 
@@ -134,6 +185,9 @@ check_301 "https://agecalculator.com/past/" "$ROOT/past" "https://agecalculator.
 check_200 "https://agecalculator.com/" "https://agecalculator.com/ (final)"
 check_200 "https://agecalculator.com/difference" "https://agecalculator.com/difference (final)"
 check_200 "https://agecalculator.com/past?year=1990" "https://agecalculator.com/past?year=1990 (final)"
+
+# Email Routing MX and SPF (forwarding itself is a manual test email)
+check_email_routing_dns
 
 echo "-----------------------------------------------------------"
 echo "$passed passed, $failed failed"

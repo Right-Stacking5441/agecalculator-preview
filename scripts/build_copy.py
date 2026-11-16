@@ -8,7 +8,6 @@ from pathlib import Path
 
 COPY = Path("/workspace/marketing/seo/agecalculator-copy")
 DOCS = Path("/workspace/agecalculator/docs")
-AD = '<aside class="ad ad-mid" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box" data-size="336 × 280 on desktop, 300 × 250 on phones"></div></aside>'
 DIAGRAM = Path("/tmp/home-diagram.html").read_text()
 SHEET_INNER = Path("/tmp/class-sheet-inner.html").read_text()
 YEARS = Path("/tmp/birth-years.html").read_text()
@@ -238,19 +237,12 @@ def render_body(md: str, page: str) -> str:
 
     html_parts = []
     section_open = False
-    section_count = 0
-    mid_ad_at = 3 if page in ("index.html", "privacy.html") else 2
-    if page in ("embed.html", "privacy.html"):
-        mid_ad_at = 99  # no mid-ad on these
 
     def close_section():
-        nonlocal section_open, section_count
+        nonlocal section_open
         if section_open:
             html_parts.append("</section>")
             section_open = False
-            section_count += 1
-            if section_count == mid_ad_at:
-                html_parts.append(AD)
 
     def open_section(extra=""):
         nonlocal section_open
@@ -593,9 +585,9 @@ def ensure_chrono_rule_line(html: str) -> str:
     if 'class="rule-line"' in html:
         return html
     pat = re.compile(
-        r'(<p class="sr-only" id="live" aria-live="polite"></p>)(\s*)(<aside class="ad ad-below")'
+        r'(<p class="sr-only" id="live" aria-live="polite"></p>)'
     )
-    html2, n = pat.subn(r"\1\n" + CHRONO_RULE_LINE + r"\n\3", html, count=1)
+    html2, n = pat.subn(r"\1\n" + CHRONO_RULE_LINE, html, count=1)
     if n != 1:
         raise SystemExit("could not insert chronological-age rule-line")
     return html2
