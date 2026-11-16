@@ -468,6 +468,14 @@ body.widget { background: var(--paper); padding: var(--s4); font-size: 16px; }
 /* ---- polish pass, 16 Nov ---- */
 .after-leaf { margin: var(--s4) 0 0; }
 .widget .parts, .widget .zone-pick { display: none; }
+.widget .on .zone { display: none; min-height: 0; }
+.widget .readback { min-height: 1.45em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.widget .readback:empty { min-height: 0; margin: 0; }
+.widget .ledger dd small { display: inline; white-space: nowrap; }
+@media (max-width: 360px) {
+  .widget .bday { grid-template-columns: 118px minmax(0, 1fr); gap: var(--s3); }
+  .widget .month { width: 118px; }
+}
 .widget .ledger div:nth-child(n+4) { display: none; }
 .widget .entry { gap: var(--s3); margin-bottom: var(--s4); }
 .widget .on { padding-top: var(--s3); font-size: 14px; }
