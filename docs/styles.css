@@ -5,6 +5,14 @@
   font-weight: 100 900;
   font-display: swap;
 }
+@font-face {
+  font-family: "LF Fallback";
+  src: local("Arial"), local("Liberation Sans");
+  size-adjust: 104.6%;
+  ascent-override: 92.4%;
+  descent-override: 23.5%;
+  line-gap-override: 0%;
+}
 :root {
   /* Ink and paper, taken from a printed wall calendar */
   --ink: #1c1c1a;          /* calendar black */
@@ -28,7 +36,7 @@
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
-  font-family: "Libre Franklin", "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-family: "Libre Franklin", "LF Fallback", Arial, sans-serif;
   font-size: var(--body);
   line-height: 1.45;
   color: var(--ink);
@@ -282,7 +290,7 @@ p { margin: 0 0 var(--s4); text-wrap: pretty; }
 .df-label, .entry legend, .name { display: block; font-weight: 700; font-size: 17px; margin-bottom: var(--s2); padding: 0; }
 .quick {
   display: block; width: 100%; height: 56px; margin: 0; padding: 0 var(--s4);
-  font: 600 22px/1 "Libre Franklin", Arial, sans-serif; color: var(--ink); background: var(--paper);
+  font: 600 22px/1 "Libre Franklin", "LF Fallback", Arial, sans-serif; color: var(--ink); background: var(--paper);
   border: 2px solid var(--ink); border-radius: 2px;
 }
 .quick::placeholder { color: #8f8e86; font-weight: 400; }
@@ -293,7 +301,7 @@ p { margin: 0 0 var(--s4); text-wrap: pretty; }
 .parts label span { display: block; margin-bottom: 2px; }
 .parts input, .name input {
   display: block; width: 100%; height: 40px; margin: 0; padding: 0 var(--s3);
-  font: 500 18px/1 "Libre Franklin", Arial, sans-serif; font-variant-numeric: tabular-nums; color: var(--ink);
+  font: 500 18px/1 "Libre Franklin", "LF Fallback", Arial, sans-serif; font-variant-numeric: tabular-nums; color: var(--ink);
   background: var(--paper); border: 1.5px solid #8f8e86; border-radius: 2px;
 }
 .parts.two input { height: 56px; font-size: 24px; font-weight: 600; border: 2px solid var(--ink); }
@@ -308,7 +316,7 @@ p { margin: 0 0 var(--s4); text-wrap: pretty; }
 .readback .textbtn { font-size: 15px; }
 .year-note { font-size: 15px; background: var(--paper); border-left: 3px solid var(--sunday); padding: var(--s2) var(--s3); margin: 0; }
 .entry .on { margin-top: 0; }
-.on .zone { color: var(--ink-3); font-size: 14px; }
+.on .zone { display: block; min-height: 1.45em; color: var(--ink-3); font-size: 14px; }
 #on-box { margin-top: var(--s4); }
 .df-small .quick { height: 46px; font-size: 19px; border-width: 1.5px; }
 .df-small .df-label { font-size: 15px; }
@@ -336,7 +344,7 @@ p { margin: 0 0 var(--s4); text-wrap: pretty; }
 .opts.row legend { width: 100%; }
 .opts.row .opt { border: 0; padding: var(--s1) 0; }
 
-.btn { font: 600 16px/1 "Libre Franklin", Arial, sans-serif; color: #fff; background: var(--ink); border: 2px solid var(--ink); border-radius: 2px; padding: 0 var(--s4); height: 44px; cursor: pointer; }
+.btn { font: 600 16px/1 "Libre Franklin", "LF Fallback", Arial, sans-serif; color: #fff; background: var(--ink); border: 2px solid var(--ink); border-radius: 2px; padding: 0 var(--s4); height: 44px; cursor: pointer; }
 .btn:hover { background: #000; }
 .btn-quiet { color: var(--ink); background: var(--paper); }
 .btn-quiet:hover { background: var(--desk); }
@@ -350,7 +358,7 @@ p { margin: 0 0 var(--s4); text-wrap: pretty; }
 .sheet { border: 1.5px solid var(--ink); background: var(--paper); padding: var(--s5); margin-top: var(--s4); }
 .sheet-top { display: flex; flex-wrap: wrap; gap: var(--s4) var(--s6); margin-bottom: var(--s4); }
 .sheet-top label { font-size: 14px; font-weight: 600; }
-.sheet-top input, .sheet-table input { display: block; font: 400 16px/1 "Libre Franklin", Arial, sans-serif; height: 38px; padding: 0 var(--s2); border: 1.5px solid #8f8e86; border-radius: 2px; margin-top: 3px; width: 100%; min-width: 0; color: var(--ink); }
+.sheet-top input, .sheet-table input { display: block; font: 400 16px/1 "Libre Franklin", "LF Fallback", Arial, sans-serif; height: 38px; padding: 0 var(--s2); border: 1.5px solid #8f8e86; border-radius: 2px; margin-top: 3px; width: 100%; min-width: 0; color: var(--ink); }
 .sheet-table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
 .sheet-table th { text-align: left; font-size: 14px; border-bottom: 1.5px solid var(--ink); padding: var(--s2) var(--s2) var(--s2) 0; }
 .sheet-table td { padding: var(--s1) var(--s2) var(--s1) 0; border-bottom: 1px solid var(--rule-soft); }
@@ -384,6 +392,7 @@ body.widget { background: var(--paper); padding: var(--s4); font-size: 16px; }
 .widget .entry { gap: var(--s4); margin-bottom: var(--s5); }
 .widget .w-title { font-weight: 800; font-size: 19px; margin: 0; }
 .widget .leaf { padding: 0 var(--s4) var(--s4); margin-right: 8px; min-height: 0; }
+.widget #leaf { min-height: 470px; }
 .widget .leaf::before { margin: 0 calc(var(--s4) * -1) var(--s3); height: 16px; background-size: 20px 16px, auto; }
 .widget .leaf-body { grid-template-columns: minmax(0, 1fr); gap: var(--s3); }
 .widget .big .num { font-size: 64px; }
@@ -459,7 +468,6 @@ body.widget { background: var(--paper); padding: var(--s4); font-size: 16px; }
 /* ---- polish pass, 16 Nov ---- */
 .after-leaf { margin: var(--s4) 0 0; }
 .widget .parts, .widget .zone-pick { display: none; }
-.widget .readback { min-height: 0; }
 .widget .ledger div:nth-child(n+4) { display: none; }
 .widget .entry { gap: var(--s3); margin-bottom: var(--s4); }
 .widget .on { padding-top: var(--s3); font-size: 14px; }
@@ -522,8 +530,8 @@ body[data-page="how-old-will-i-be"], body[data-page="what-year-was-i-born"] { --
 /* Body copy: headings hung in the margin, like an almanac. */
 .page { padding-top: 72px; }
 .content { max-width: 800px; }
-.content > section:not(.faq) { display: grid; grid-template-columns: 150px minmax(0, 1fr); column-gap: var(--s6); grid-auto-flow: dense; }
-.content > section:not(.faq) > h2 { grid-column: 1; grid-row: 1 / span 30; font-size: 19px; line-height: 1.25; padding-top: 3px; border-top: 3px solid var(--ink); align-self: start; }
+.content > section:not(.faq) { display: grid; grid-template-columns: 180px minmax(0, 1fr); column-gap: var(--s6); grid-auto-flow: dense; }
+.content > section:not(.faq) > h2 { grid-column: 1; grid-row: 1 / span 30; font-size: 18px; line-height: 1.25; padding-top: 3px; border-top: 3px solid var(--ink); align-self: start; }
 .content > section:not(.faq) > *:not(h2) { grid-column: 2; }
 .content > section:not(.faq) > .years { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .content > .placeholder-note { margin-left: 176px; }
@@ -646,11 +654,14 @@ body[data-page="how-old-will-i-be"], body[data-page="what-year-was-i-born"] { --
 .record { position: relative; margin-top: 30px; background: var(--manila); border: 1.5px solid var(--ink); padding: var(--s4) var(--s5) var(--s5); }
 .rec-tab { position: absolute; left: -1.5px; top: -30px; height: 30px; padding: 5px var(--s5) 0; background: var(--manila); border: 1.5px solid var(--ink); border-bottom: 0; font-weight: 800; font-size: 15px; letter-spacing: .04em; }
 .rec-title { font-size: 13px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; color: #5b5039; margin: 0 0 var(--s3); }
-.rec-lines { margin: 0; display: grid; grid-template-columns: .8fr 1.6fr 1fr; gap: var(--s3) var(--s5); }
+.rec-lines { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3) var(--s5); }
+.rec-lines > div:nth-child(2) { grid-column: 1 / -1; order: 3; }
 .rec-lines dt { font-size: 13px; color: #5b5039; }
 .rec-lines dd { margin: 0; font-weight: 600; border-bottom: 1px solid var(--ink); padding-bottom: 2px; }
 .rec-lines dd small { display: block; font-weight: 400; font-size: 13px; color: #5b5039; }
 .rec-result { margin-top: var(--s5); }
+.record .ledger, .slip .ledger { grid-template-columns: minmax(0, 1fr); }
+.record .ledger dd small { display: block; white-space: normal; }
 .record .ledger { border-top-color: var(--ink); }
 .record .ledger div { border-bottom-color: #d5c79f; }
 .record .ledger dt::after { border-bottom-color: #9e9068; }
@@ -735,8 +746,6 @@ body[data-page="how-old-will-i-be"], body[data-page="what-year-was-i-born"] { --
   .slip-foot { margin-top: var(--s3); }
   .slip-foot .big .num.code { font-size: 48px; }
   .record { padding: var(--s3) var(--s4) var(--s4); }
-  .rec-lines { grid-template-columns: 1fr 1fr; }
-  .rec-lines > div:nth-child(2) { grid-column: 1 / -1; order: 3; }
   .pl-year { font-size: 34px; }
   .planner { padding: var(--s2) var(--s3) var(--s4); }
   .pl-months li { height: 54px; padding: 2px 0 0 1px; }
@@ -824,7 +833,6 @@ body[data-page="how-old-will-i-be"], body[data-page="what-year-was-i-born"] { --
   body[data-page="what-year-was-i-born"] .leaf[data-state="empty"] { min-height: 156px; }
   body[data-page="dog-age"] .leaf[data-state="empty"] { min-height: 408px; }
   body[data-page="cat-age"] .leaf[data-state="empty"] { min-height: 385px; }
-  body.widget .leaf[data-state="empty"] { min-height: 428px; }
 }
 @media (max-width: 390px) {
   body[data-page="what-year-was-i-born"] .leaf[data-state="empty"] { min-height: 180px; }
@@ -839,3 +847,31 @@ body[data-page="how-old-will-i-be"], body[data-page="what-year-was-i-born"] { --
   body[data-page="chronological-age"] .leaf[data-state="empty"] { min-height: 400px; }
   body[data-page="dog-age"] .leaf[data-state="empty"] { min-height: 432px; }
 }
+
+
+/* Prefill result height: when the URL has a query, reserve the filled-card
+   height so JS drawing the result doesn't shift the page. --leaf-h is set per
+   page below. Empty-state min-heights still apply without a query. */
+body[data-page="home"] { --leaf-h: 612px; }
+body[data-page="difference"] { --leaf-h: 463px; }
+body[data-page="past"] { --leaf-h: 604px; }
+body[data-page="days-between-dates"] { --leaf-h: 336px; }
+body[data-page="chronological-age"] { --leaf-h: 497px; }
+body[data-page="dog-age"] { --leaf-h: 404px; }
+body[data-page="cat-age"] { --leaf-h: 398px; }
+body[data-page="korean-age"] { --leaf-h: 282px; }
+body[data-page="birthday-countdown"] { --leaf-h: 596px; }
+body[data-page="how-old-will-i-be"] { --leaf-h: 494px; }
+body[data-page="what-year-was-i-born"] { --leaf-h: 184px; }
+body.widget { --leaf-h: 470px; }
+
+@media (max-width: 760px) {
+  .prefill #leaf { min-height: var(--leaf-h); }
+  .ledger dd small { display: block; }
+  .preview-banner { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 6px 14px; }
+  .slip-sum td { height: 30px; font-size: 20px; }
+  .slip-head { margin-bottom: 6px; }
+  .slip-name { margin-bottom: 6px; padding-bottom: 3px; }
+}
+
+.widget #leaf { min-height: 470px; }

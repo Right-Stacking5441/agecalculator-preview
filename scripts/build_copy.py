@@ -283,6 +283,13 @@ def render_body(md: str, page: str) -> str:
             html_parts.append(f"<p>{data}</p>")
             if page == "index.html" and "Plenty of people born on a leap day celebrate on 28 February" in data:
                 html_parts.append(DIAGRAM)
+            if (
+                page == "chronological-age.html"
+                and any('id="class-sheet"' in x for x in html_parts)
+                and not any("data-sheet" in x for x in html_parts)
+                and 'id="class-sheet" class="sheet-section"' in "".join(html_parts[-8:])
+            ):
+                html_parts.append(SHEET_INNER)
             continue
         if kind == "ul":
             if not section_open:
@@ -306,9 +313,6 @@ def render_body(md: str, page: str) -> str:
             tbody = "<tbody>" + "".join("<tr>" + "".join(cell(c, "td") for c in r) + "</tr>" for r in rows[1:]) + "</tbody>"
             html_parts.append(f'<table class="{cls}">{thead}{tbody}</table>')
             continue
-
-    if page == "chronological-age.html" and section_open and any('id="class-sheet"' in x for x in html_parts):
-        html_parts.append(SHEET_INNER)
 
     if page == "what-year-was-i-born.html":
         # inject the years table into the open or just-closed table section

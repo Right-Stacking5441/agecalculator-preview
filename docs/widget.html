@@ -16,6 +16,7 @@
 <base target="_blank">
 <link rel="preload" href="fonts/libre-franklin-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="styles.css">
+<script>if(location.search)document.documentElement.classList.add('prefill')</script>
 </head>
 <body class="widget">
 <div class="calc" data-calc data-tool="age">
@@ -32,7 +33,7 @@
 <p class="readback" id="dob-read"></p>
 </div>
 <div class="on">
-<p>As of <span id="on-label">today, <b>16 November 2026</b></span> <button type="button" class="textbtn" id="on-toggle" aria-expanded="false" aria-controls="on-box">Change</button></p>
+<p>As of <span id="on-label">today, <b>16 November 2026</b> <span class="zone">&nbsp;</span></span> <button type="button" class="textbtn" id="on-toggle" aria-expanded="false" aria-controls="on-box">Change</button></p>
 <div id="on-box" hidden>
 <div class="datefield df-small" data-datefield="on">
 <label class="df-label" for="on-q">Age on this date</label>

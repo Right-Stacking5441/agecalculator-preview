@@ -375,7 +375,7 @@
     var src = '<a href="' + CHART_SRC + '">AAHA-published chart</a>';
     var rows = kind === 'dog'
       ? [['Source', src], r.interpolated ? ['Between chart ages', r.from + ' and ' + r.to + ' years'] : null, ['DNA-clock estimate', age >= 1 ? fmt(A.dogAgeEpigenetic(age)) + small('16 × ln(age) + 31, Wang et al. 2020') : '<span class="muted">not for under-ones</span>'], ['The old “× 7” rule', fmt(age * 7)]]
-      : [['Source', src], ['Life stage', A.catStage(age) + small('AAHA/AAFP 2021')], ['The old “× 7” rule', fmt(age * 7)]];
+      : [['Source', src], ['The old “× 7” rule', fmt(age * 7)]];
     var html = '<div class="record">' + tab + headRow + '<dl class="rec-lines">' + lines.filter(Boolean).map(function (l) { return '<div><dt>' + l[0] + '</dt><dd>' + l[1] + '</dd></div>'; }).join('') + '</dl>' +
       '<div class="rec-result"><p class="big"><span class="num">' + fmt(r.human) + '</span><span class="unit">in human years</span></p>' + (r.interpolated ? '<p class="rest">interpolated between ' + r.from + ' and ' + r.to + '</p>' : '') + '</div>' + ledger(rows) + '</div>';
     return { state: 'result', cls: 'obj obj-record', say: 'About ' + fmt(r.human) + ' in human years.', html: html };

@@ -93,6 +93,7 @@
  ]
 }
 </script>
+<script>if(location.search)document.documentElement.classList.add('prefill')</script>
 </head>
 <body data-page="past">
 <div class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</div>
@@ -118,7 +119,7 @@
 </div>
 <p class="readback" id="dob-read"></p>
 </div><p class="year-note" id="year-note" hidden></p><div class="on">
-<p>On <span id="on-label">today, <b>16 November 2026</b></span> <button type="button" class="textbtn" id="on-toggle" aria-expanded="false" aria-controls="on-box">Change</button></p>
+<p>On <span id="on-label">today, <b>16 November 2026</b> <span class="zone">&nbsp;</span></span> <button type="button" class="textbtn" id="on-toggle" aria-expanded="false" aria-controls="on-box">Change</button></p>
 <div id="on-box" hidden>
 <div class="datefield df-small" data-datefield="on">
 <label class="df-label" for="on-q">On this date</label>
