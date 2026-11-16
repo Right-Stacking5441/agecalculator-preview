@@ -181,7 +181,9 @@
   var TOOLS = {
     age: function () {
       var b = fields.dob;
-      if (needs(b)) return errOf(b, 'date') || emptyToday('Type your date of birth. Your age, next birthday and the same figure in months, weeks and days appear here as you type.');
+      if (needs(b)) return errOf(b, 'date') || emptyToday(document.body.classList.contains('widget')
+        ? 'Type a date of birth to see your age in years, months and days.'
+        : 'Type your date of birth. Your age, next birthday and the same figure in months, weeks and days appear here as you type.');
       return ageCore(b.value, onDate(), { korean: document.getElementById('show-korean') && document.getElementById('show-korean').checked });
     },
     past: function () {

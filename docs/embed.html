@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Put the age calculator on your website</title>
-<meta name="description" content="Free embed code for the agecalculator.com age calculator.">
+<title>Put the Age Calculator on Your Website</title>
+<meta name="description" content="Free embed code for the agecalculator.com age calculator. Paste an iframe or a self-sizing script; no adverts inside, no cookies.">
 <link rel="canonical" href="https://agecalculator.com/embed">
 <meta name="robots" content="noindex,nofollow">
-<meta property="og:title" content="Put the age calculator on your website">
-<meta property="og:description" content="Free embed code for the agecalculator.com age calculator.">
+<meta property="og:title" content="Put the Age Calculator on Your Website">
+<meta property="og:description" content="Free embed code for the agecalculator.com age calculator. Paste an iframe or a self-sizing script; no adverts inside, no cookies.">
 <meta property="og:url" content="https://agecalculator.com/embed">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#f1f1ec">
@@ -28,27 +28,52 @@
 <div class="embed-copy">
 <p class="crumbs"><a href="./">Age calculator</a> <span aria-hidden="true">/</span> Embed</p>
 <h1>Put this age calculator on your site</h1>
-<p>Schools, clinics, HR teams and family-history sites use an age calculator more than you’d think. Paste one of these into your page and your visitors get the same calculator as this site, with no adverts inside it. It’s free. All we ask is that you keep the credit link underneath.</p>
+<section>
+<p>You can put the same age calculator that runs on our homepage on your own site for free. It works out a visitor’s age in years, months and days from their date of birth, with the option to pick another “age on” date and time zone. There are no adverts inside it. All we ask is that you keep the credit link underneath.</p>
+</section>
+<section>
 <h2>Simplest: an iframe</h2>
-<p>Works anywhere you can paste HTML, including WordPress, Squarespace and Google Sites.</p>
+<p>Paste this anywhere you can add HTML, including WordPress, Squarespace and Google Sites:</p>
 <pre class="snippet"><code>&lt;iframe src=&quot;https://agecalculator.com/widget&quot; title=&quot;Age calculator&quot; width=&quot;100%&quot; height=&quot;560&quot; style=&quot;border:0;max-width:440px&quot; loading=&quot;lazy&quot;&gt;&lt;/iframe&gt;
 &lt;p&gt;&lt;a href=&quot;https://agecalculator.com/&quot;&gt;Age calculator by agecalculator.com&lt;/a&gt;&lt;/p&gt;</code></pre>
 <button type="button" class="btn" data-copy-snippet="0">Copy the iframe code</button>
+<p>The frame is 560 pixels tall. If the result runs longer on a narrow screen, the frame scrolls inside itself, so use the script below if you’d rather avoid that.</p>
+</section>
+<section>
 <h2>Or a script that sizes itself</h2>
-<p>The script adds the same iframe and adjusts its height as the result grows, so there’s no inner scroll bar.</p>
 <pre class="snippet"><code>&lt;div data-agecalculator&gt;&lt;/div&gt;
 &lt;script src=&quot;https://agecalculator.com/embed.js&quot; async&gt;&lt;/script&gt;
 &lt;p&gt;&lt;a href=&quot;https://agecalculator.com/&quot;&gt;Age calculator by agecalculator.com&lt;/a&gt;&lt;/p&gt;</code></pre>
 <button type="button" class="btn btn-quiet" data-copy-snippet="1">Copy the script code</button>
-<h2>The small print</h2>
-<ul><li>The widget sets no cookies and doesn’t send the dates anywhere.</li><li>It follows your visitor’s time zone for “today”.</li><li>If you need a different width, change <code>max-width</code>; it works from 300px up.</li></ul>
+<p>The script puts the same calculator inside the <code>div</code> and adjusts its height as the result grows, so there’s no inner scroll bar. You can use more than one <code>div</code> on a page.</p>
+</section>
+<section>
+<h2>Width and size</h2>
+<p>Both versions fill the width they are given, up to 440 pixels. To make the calculator narrower, lower the <code>max-width</code> in the iframe’s style; it works from 300 pixels up. The script version uses the same 440-pixel maximum.</p>
+</section>
+<section>
+<h2>Starting with a date filled in</h2>
+<p>The iframe version can open with a date already in place. Add it to the address:</p>
+<pre class="snippet"><code>&lt;iframe src=&quot;https://agecalculator.com/widget?dob=15%20March%201995&amp;tz=Europe/London&quot; title=&quot;Age calculator&quot; width=&quot;100%&quot; height=&quot;560&quot; style=&quot;border:0;max-width:440px&quot; loading=&quot;lazy&quot;&gt;&lt;/iframe&gt;</code></pre>
+<button type="button" class="btn btn-quiet" data-copy-snippet="2">Copy the code</button>
+<p><code>dob</code> fills in the date of birth (written in words or numbers, with spaces as <code>%20</code>), <code>on</code> sets the “age on” date, and <code>tz</code> sets the time zone used for “today”. Without <code>tz</code>, the calculator uses each visitor’s own time zone. The script version doesn’t take these options.</p>
+</section>
+<section>
+<h2>What your visitors get</h2>
+<p>The calculator reads dates the way people type them, such as 15 March 1995 or 15/03/1995. It shows age in years, months and days, the next birthday, and the same span in months, weeks, days and hours. A 29 February birthday counts on 1 March in common years.</p>
+<p>Dates are worked out in the visitor’s browser and aren’t sent to us. The calculator sets no cookies. Links inside it open in a new tab, so visitors don’t leave your page.</p>
+</section>
+<section>
+<h2>The credit link</h2>
+<p>Please keep the line “Age calculator by agecalculator.com” with its link, as in the snippets. The same credit also appears inside the calculator.</p>
+</section>
 </div>
 <div class="embed-preview"><p class="preview-label">How it looks on your page</p>
 <iframe src="widget.html?dob=15%20March%201995" title="Age calculator preview" width="100%" height="560" style="border:0;max-width:440px"></iframe>
 <p><a href="./">Age calculator by agecalculator.com</a></p></div>
 </div></main>
 <footer class="foot"><div class="wrap">
-<div><h2>agecalculator.com</h2><p>Dates you type are worked out in your browser and aren’t sent anywhere. The site is paid for by the adverts on it.</p><p><a href="embed">Put this calculator on your own site</a> · <a href="privacy">Privacy</a></p></div>
+<div><h2>agecalculator.com</h2><p>Dates you type are worked out in your browser and aren’t sent anywhere. Free to use.</p><p><a href="embed">Put this calculator on your own site</a> · <a href="privacy">Privacy</a></p></div>
 <div id="all-tools"><h2>All calculators</h2><ul class="foot-tools"><li><a href="./">Age calculator</a> <span>your age today or on any date</span></li><li><a href="difference">Age difference</a> <span>the gap between two people</span></li><li><a href="past">How old was I?</a> <span>age on a date in the past</span></li><li><a href="how-old-will-i-be">How old will I be?</a> <span>age in a future year</span></li><li><a href="days-between-dates">Days between dates</a> <span>any two dates, with weekdays</span></li><li><a href="chronological-age">Chronological age</a> <span>y;m;d on a test date, printable</span></li><li><a href="birthday-countdown">Birthday countdown</a> <span>days until the next one</span></li><li><a href="korean-age">Korean age</a> <span>all three counting systems</span></li><li><a href="what-year-was-i-born">What year was I born?</a> <span>birth year from an age</span></li><li><a href="dog-age">Dog age</a> <span>dog years by size</span></li><li><a href="cat-age">Cat age</a> <span>cat years and life stage</span></li></ul></div>
 </div></footer>
 <script>
