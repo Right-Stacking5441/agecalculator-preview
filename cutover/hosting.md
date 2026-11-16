@@ -28,6 +28,18 @@ A `wrangler.toml` sits at the repo root with `pages_build_output_dir = "docs"`. 
 
 If a request for `/difference/` reaches Pages, Pages may 307 (temporary) to `/difference`. The map wants a **301**. The zone Redirect Rule in `redirects-and-dns.md` (trailing slash, except `/`) should run first so that hop is a 301 and never depends on Pages’ 307.
 
+
+
+## Launch-time robots (do not apply yet)
+
+The preview keeps `<meta name="robots" content="noindex,nofollow">` on every page, and `docs/robots.txt` still disallows all crawlers. Do not change that until William says the root may be indexed.
+
+At launch, in a reviewed commit:
+
+- **Tool pages are indexable.** Remove the noindex/nofollow meta from the calculators (home, `/past`, `/difference`, `/days-between-dates`, `/chronological-age`, `/birthday-countdown`, `/how-old-will-i-be`, `/korean-age`, `/what-year-was-i-born`, `/dog-age`, `/cat-age`) and from `/privacy` if SEO Manager agrees it should be indexed. Open `robots.txt` to allow those URLs (the live root robots.txt is a later, approved change).
+- **`/widget` and `/embed` stay noindex**, with `noindex` only (not `nofollow`), so the credit link on those pages still counts. They are an iframe target and an instructions page, not landing pages.
+- Take the preview banner off every page, including `/widget` (it already has no banner, so it would not appear inside a third-party embed).
+
 ## After approval (not now)
 
 1. Keep this repo noindex until the go-ahead to index.

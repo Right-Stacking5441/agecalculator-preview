@@ -96,18 +96,19 @@
 </head>
 <body data-page="days-between-dates">
 <div class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</div>
+
 <a class="skip" href="#tool">Skip to the calculator</a>
 <header class="mast"><div class="wrap">
 <a class="brand" href="./"><svg width="26" height="28" viewBox="0 0 26 28" aria-hidden="true"><rect x="1" y="3" width="24" height="24" fill="#fff" stroke="#1c1c1a" stroke-width="1.5"/><rect x="1" y="3" width="24" height="7" fill="#b4231b" stroke="#1c1c1a" stroke-width="1.5"/><circle cx="7.5" cy="6.5" r="1.4" fill="#fff"/><circle cx="18.5" cy="6.5" r="1.4" fill="#fff"/><path d="M7 1v4M19 1v4" stroke="#1c1c1a" stroke-width="1.5"/><path d="M8.2 22.5l4.3-8.8 4.3 8.8M9.8 19.4h5.4" fill="none" stroke="#1c1c1a" stroke-width="1.9"/></svg>agecalculator<span>.com</span></a>
-<nav aria-label="Calculators"><ul><li><a href="./">Age calculator</a></li><li><a href="difference">Age difference</a></li><li><a href="past">How old was I</a></li><li><a href="days-between-dates" aria-current="page">Days between dates</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="birthday-countdown">Birthday countdown</a></li></ul></nav>
+<p class="dateline" id="dateline"><b><span class="dl-wd">Monday </span>16 November 2026</b> <span>day 320 of the year</span></p>
 <a class="tools-link" href="#all-tools">All calculators</a>
 </div></header>
 <main id="main">
 <div class="band"><div class="wrap">
-<p class="crumbs"><a href="./">Age calculator</a> <span aria-hidden="true">/</span> Days between dates</p><div class="intro"><h1>Days between dates</h1><p>Count the days from one date to another, with weeks and weekdays.</p></div>
-<div class="calc" data-calc data-tool="between" id="tool">
+<p class="crumbs"><a href="./">Age calculator</a> <span aria-hidden="true">/</span> Days between dates</p><div class="intro"><h1>Days between dates</h1><p class="lede">Count the days from one date to another, with weeks and weekdays.</p></div>
+<div class="calc wide" data-calc data-tool="between" id="tool">
 <form class="entry multi" novalidate autocomplete="on">
-<div class="datefield " data-datefield="start">
+<div class="col"><div class="datefield " data-datefield="start">
 <label class="df-label" for="start-q">Start date</label>
 <input id="start-q" class="quick" type="text" spellcheck="false" autocomplete="off" placeholder="e.g. 16 November 2026" aria-describedby="start-read">
 <div class="parts" role="group" aria-label="Start date: day, month and year">
@@ -116,7 +117,7 @@
 <label><span>Year</span><input class="p-y" type="text" inputmode="numeric" maxlength="4" placeholder="YYYY"></label>
 </div>
 <p class="readback" id="start-read"></p>
-</div><div class="datefield " data-datefield="end">
+</div></div><div class="col"><div class="datefield " data-datefield="end">
 <label class="df-label" for="end-q">End date</label>
 <input id="end-q" class="quick" type="text" spellcheck="false" autocomplete="off" placeholder="e.g. 25 December 2026" aria-describedby="end-read">
 <div class="parts" role="group" aria-label="End date: day, month and year">
@@ -125,14 +126,13 @@
 <label><span>Year</span><input class="p-y" type="text" inputmode="numeric" maxlength="4" placeholder="YYYY"></label>
 </div>
 <p class="readback" id="end-read"></p>
-</div><label class="check"><input type="checkbox" id="inc-end"><span>Count the end day too</span></label>
+</div><label class="check"><input type="checkbox" id="inc-end"><span>Count the end day too</span></label></div>
 </form>
 <div class="result"><div class="leaf" id="leaf" data-state="empty"><div class="leaf-head"><span>Today</span></div>
 <div class="leaf-body"><div class="lead"><p class="big"><span class="num">16</span><span class="unit">November</span></p>
 <p class="rest">Type a date and the result appears here as you go.</p></div></div>
 <noscript><p class="hint">This calculator needs JavaScript to work the result out. The method is written out below the tool if you’d rather do it on paper.</p></noscript></div><p class="sr-only" id="live" aria-live="polite"></p>
-<p class="rule-line">A completed month lands on the same date next month. If that date doesn’t exist — 31 January to 1 March, or a 29 February birthday in a common year — it rolls to the 1st of the next month. Some software, including common date libraries, uses the last day of the month instead, so results can differ by a day around month ends.</p>
-<aside class="ad ad-below" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box">728 × 90 on desktop, 320 × 100 on phones</div></aside></div>
+<aside class="ad ad-below" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box" data-size="728 × 90 on desktop, 320 × 100 on phones"></div></aside></div>
 </div>
 </div></div>
 <div class="wrap page"><div class="content">
@@ -146,7 +146,7 @@
 <ul><li>The rest of November, 16th to 30th, is 15 days (the 16th itself counts, the 25th of December doesn’t).</li><li>December 1st to 24th is 24 days.</li><li>15 + 24 = 39 days, which is 5 weeks and 4 days.</li></ul>
 <p>Of those 39 days, 29 are weekdays and 10 fall on a Saturday or Sunday. As years, months and days it is 1 month and 9 days: 16 November to 16 December, then nine more days. Tick “Count the end day too” and the total becomes 40, with 30 weekdays, because Christmas Day 2026 is a Friday.</p>
 </section>
-<aside class="ad ad-mid" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box">336 × 280 on desktop, 300 × 250 on phones</div></aside>
+<aside class="ad ad-mid" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box" data-size="336 × 280 on desktop, 300 × 250 on phones"></div></aside>
 <section>
 <h2>Weekdays are not working days</h2>
 <p>The weekday figure counts every Monday to Friday in the span. It doesn’t take out bank holidays, because those differ between England and Wales, Scotland, Northern Ireland and every other country, and some years move them. A span that runs through Christmas 2026 will count Friday 25 December and Monday 28 December (the substitute Boxing Day bank holiday) as weekdays. Take bank holidays off by hand if you need an exact number of working days.</p>
@@ -164,12 +164,12 @@
 <h2>Days between dates or age difference?</h2>
 <p>This page measures a period of time: a notice period, a contract, a pregnancy so far, the gap between two holidays. It doesn’t care whether either date is a birthday. To compare two people’s ages, the <a href="difference">age difference calculator</a> says who is older and how the gap in their ages changes through the year. For one person’s age on a date, use the <a href="./">age calculator</a>. For the days left until a birthday, the <a href="birthday-countdown">birthday countdown</a> does it with one date.</p>
 </section>
-<section class="faq" aria-labelledby="faq-h"><h2 id="faq-h">Questions people ask</h2><details><summary>Does the count include the end date?</summary><div><p>Not unless you tick “Count the end day too”. Without it, the start day counts and the end day doesn’t, so the 1st to the 2nd of a month is 1 day.</p></div></details><details><summary>How many days is it from today to Christmas?</summary><div><p>As of 16 November 2026, there are 39 days to go until 25 December 2026. Type today’s date and 25 December to check from any day.</p></div></details><details><summary>Does the calculator account for leap years?</summary><div><p>Yes. Dates are counted on the real calendar, so a span that includes 29 February 2028 is a day longer than the same span in 2026 or 2027.</p></div></details><details><summary>Can it count working days?</summary><div><p>It counts weekdays, Monday to Friday. It doesn’t remove bank holidays, so subtract those yourself.</p></div></details></section>
-</div><aside class="side" aria-label="More calculators"><h2>More calculators</h2><ul><li><a href="./">Age calculator</a></li><li><a href="difference">Age difference</a></li><li><a href="past">How old was I?</a></li><li><a href="how-old-will-i-be">How old will I be?</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="birthday-countdown">Birthday countdown</a></li><li><a href="korean-age">Korean age</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a href="dog-age">Dog age</a></li><li><a href="cat-age">Cat age</a></li></ul><aside class="ad ad-side" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box">300 × 600</div></aside></aside></div>
+<section class="faq" aria-labelledby="faq-h"><h2 id="faq-h">Questions people ask</h2><dl class="qa-list"><div class="qa"><dt>Does the count include the end date?</dt><dd><p>Not unless you tick “Count the end day too”. Without it, the start day counts and the end day doesn’t, so the 1st to the 2nd of a month is 1 day.</p></dd></div><div class="qa"><dt>How many days is it from today to Christmas?</dt><dd><p>As of 16 November 2026, there are 39 days to go until 25 December 2026. Type today’s date and 25 December to check from any day.</p></dd></div><div class="qa"><dt>Does the calculator account for leap years?</dt><dd><p>Yes. Dates are counted on the real calendar, so a span that includes 29 February 2028 is a day longer than the same span in 2026 or 2027.</p></dd></div><div class="qa"><dt>Can it count working days?</dt><dd><p>It counts weekdays, Monday to Friday. It doesn’t remove bank holidays, so subtract those yourself.</p></dd></div></dl></section>
+</div><aside class="side" aria-label="More calculators"><h2>More calculators</h2><ul><li><a href="./">Age calculator</a></li><li><a href="difference">Age difference</a></li><li><a href="past">How old was I?</a></li><li><a href="how-old-will-i-be">How old will I be?</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="birthday-countdown">Birthday countdown</a></li><li><a href="korean-age">Korean age</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a href="dog-age">Dog age</a></li><li><a href="cat-age">Cat age</a></li></ul><aside class="ad ad-side" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box" data-size="300 × 600"></div></aside></aside></div>
 </main>
 <footer class="foot"><div class="wrap">
-<div><h2>agecalculator.com</h2><p>Dates you type are worked out in your browser and aren’t sent anywhere. Free to use.</p><p><a href="embed">Put this calculator on your own site</a> · <a href="privacy">Privacy</a></p></div>
-<div id="all-tools"><h2>All calculators</h2><ul class="foot-tools"><li><a href="./">Age calculator</a> <span>your age today or on any date</span></li><li><a href="difference">Age difference</a> <span>the gap between two people</span></li><li><a href="past">How old was I?</a> <span>age on a date in the past</span></li><li><a href="how-old-will-i-be">How old will I be?</a> <span>age in a future year</span></li><li><a href="chronological-age">Chronological age</a> <span>y;m;d on a test date, printable</span></li><li><a href="birthday-countdown">Birthday countdown</a> <span>days until the next one</span></li><li><a href="korean-age">Korean age</a> <span>all three counting systems</span></li><li><a href="what-year-was-i-born">What year was I born?</a> <span>birth year from an age</span></li><li><a href="dog-age">Dog age</a> <span>dog years by size</span></li><li><a href="cat-age">Cat age</a> <span>cat years and life stage</span></li></ul></div>
+<div id="all-tools" class="foot-index"><h2>Every calculator on the site</h2><ul class="foot-tools"><li><a href="./">Age calculator</a> <span>your age today or on any date</span></li><li><a href="difference">Age difference</a> <span>the gap between two people</span></li><li><a href="past">How old was I?</a> <span>age on a date in the past</span></li><li><a href="how-old-will-i-be">How old will I be?</a> <span>age in a future year</span></li><li><a href="chronological-age">Chronological age</a> <span>y;m;d on a test date, printable</span></li><li><a href="birthday-countdown">Birthday countdown</a> <span>days until the next one</span></li><li><a href="korean-age">Korean age</a> <span>all three counting systems</span></li><li><a href="what-year-was-i-born">What year was I born?</a> <span>birth year from an age</span></li><li><a href="dog-age">Dog age</a> <span>dog years by size</span></li><li><a href="cat-age">Cat age</a> <span>cat years and life stage</span></li></ul></div>
+<div class="foot-small"><p><b>agecalculator.com</b>. Dates you type are worked out in your browser and aren’t sent anywhere. Free to use.</p><p><a href="embed">Put this calculator on your own site</a> · <a href="privacy">Privacy</a></p></div>
 </div></footer>
 <script src="dates.js" defer></script>
 <script src="app.js" defer></script>

@@ -8,7 +8,7 @@ from pathlib import Path
 
 COPY = Path("/workspace/marketing/seo/agecalculator-copy")
 DOCS = Path("/workspace/agecalculator/docs")
-AD = '<aside class="ad ad-mid" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box">336 × 280 on desktop, 300 × 250 on phones</div></aside>'
+AD = '<aside class="ad ad-mid" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box" data-size="336 × 280 on desktop, 300 × 250 on phones"></div></aside>'
 DIAGRAM = Path("/tmp/home-diagram.html").read_text()
 SHEET_INNER = Path("/tmp/class-sheet-inner.html").read_text()
 YEARS = Path("/tmp/birth-years.html").read_text()
@@ -330,10 +330,10 @@ def render_body(md: str, page: str) -> str:
 def faq_html(faqs):
     if not faqs:
         return ""
-    parts = ['<section class="faq" aria-labelledby="faq-h"><h2 id="faq-h">Questions people ask</h2>']
+    parts = ['<section class="faq" aria-labelledby="faq-h"><h2 id="faq-h">Questions people ask</h2><dl class="qa-list">']
     for q, a in faqs:
-        parts.append(f"<details><summary>{q}</summary><div><p>{inline(a)}</p></div></details>")
-    parts.append("</section>")
+        parts.append(f'<div class="qa"><dt>{q}</dt><dd><p>{inline(a)}</p></dd></div>')
+    parts.append("</dl></section>")
     return "".join(parts)
 
 def faq_jsonld(faqs) -> str:
@@ -360,8 +360,8 @@ def update_head(html: str, meta: dict, faqs) -> str:
     if meta.get("h1") and meta.get("lede") is not None:
         if re.search(r'<div class="intro"><h1>', html):
             html = re.sub(
-                r'(<div class="intro"><h1>)(.*?)(</h1><p>)(.*?)(</p></div>)',
-                lambda m: m.group(1) + meta["h1"] + m.group(3) + (meta["lede"] or m.group(4)) + m.group(5),
+                r'(<div class="intro"><h1>)(.*?)(</h1><p(?: class="lede")?>)(.*?)(</p></div>)',
+                lambda m: m.group(1) + meta["h1"] + '</h1><p class="lede">' + (meta["lede"] or m.group(4)) + m.group(5),
                 html, count=1, flags=re.S,
             )
     if title:

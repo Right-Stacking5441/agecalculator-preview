@@ -169,8 +169,15 @@ def visible_faqs(html: str):
         q = fold(re.sub(r"<[^>]+>", "", m.group(1)))
         a = fold(re.sub(r"<[^>]+>", "", m.group(2)))
         out.append((q, a))
+    for m in re.finditer(
+        r'<div class="qa">\s*<dt>(.*?)</dt>\s*<dd>\s*<p>(.*?)</p>\s*</dd>\s*</div>',
+        html,
+        re.S,
+    ):
+        q = fold(re.sub(r"<[^>]+>", "", m.group(1)))
+        a = fold(re.sub(r"<[^>]+>", "", m.group(2)))
+        out.append((q, a))
     return out
-
 
 def jsonld_faqs(html: str):
     out = []
@@ -199,7 +206,7 @@ def main() -> int:
         desc = re.search(r'<meta name="description" content="([^"]*)">', html)
         h1m = re.search(r"<h1>([^<]*)</h1>", html) or re.search(r'<p class="w-title">([^<]*)</p>', html)
         lede = ""
-        m = re.search(r'<div class="intro"><h1>[^<]*</h1><p>(.*?)</p></div>', html, re.S)
+        m = re.search(r'<div class="intro"><h1>[^<]*</h1><p(?: class="lede")?>(.*?)</p></div>', html, re.S)
         if m:
             lede = fold(re.sub(r"<[^>]+>", "", m.group(1)))
         elif html_name == "privacy.html":

@@ -96,18 +96,19 @@
 </head>
 <body data-page="difference">
 <div class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</div>
+
 <a class="skip" href="#tool">Skip to the calculator</a>
 <header class="mast"><div class="wrap">
 <a class="brand" href="./"><svg width="26" height="28" viewBox="0 0 26 28" aria-hidden="true"><rect x="1" y="3" width="24" height="24" fill="#fff" stroke="#1c1c1a" stroke-width="1.5"/><rect x="1" y="3" width="24" height="7" fill="#b4231b" stroke="#1c1c1a" stroke-width="1.5"/><circle cx="7.5" cy="6.5" r="1.4" fill="#fff"/><circle cx="18.5" cy="6.5" r="1.4" fill="#fff"/><path d="M7 1v4M19 1v4" stroke="#1c1c1a" stroke-width="1.5"/><path d="M8.2 22.5l4.3-8.8 4.3 8.8M9.8 19.4h5.4" fill="none" stroke="#1c1c1a" stroke-width="1.9"/></svg>agecalculator<span>.com</span></a>
-<nav aria-label="Calculators"><ul><li><a href="./">Age calculator</a></li><li><a href="difference" aria-current="page">Age difference</a></li><li><a href="past">How old was I</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="birthday-countdown">Birthday countdown</a></li></ul></nav>
+<p class="dateline" id="dateline"><b><span class="dl-wd">Monday </span>16 November 2026</b> <span>day 320 of the year</span></p>
 <a class="tools-link" href="#all-tools">All calculators</a>
 </div></header>
 <main id="main">
 <div class="band"><div class="wrap">
-<p class="crumbs"><a href="./">Age calculator</a> <span aria-hidden="true">/</span> Age Difference Calculator</p><div class="intro"><h1>Age Difference Calculator</h1><p>How much older is one person than the other, to the day?</p></div>
-<div class="calc" data-calc data-tool="difference" id="tool">
+<p class="crumbs"><a href="./">Age calculator</a> <span aria-hidden="true">/</span> Age Difference Calculator</p><div class="intro"><h1>Age Difference Calculator</h1><p class="lede">How much older is one person than the other, to the day?</p></div>
+<div class="calc wide" data-calc data-tool="difference" id="tool">
 <form class="entry multi" novalidate autocomplete="on">
-<div class="datefield " data-datefield="a">
+<div class="col"><div class="datefield " data-datefield="a">
 <label class="df-label" for="a-q">First date of birth</label>
 <input id="a-q" class="quick" type="text" spellcheck="false" autocomplete="off" placeholder="e.g. 15 March 1995" aria-describedby="a-read">
 <div class="parts" role="group" aria-label="First date of birth: day, month and year">
@@ -116,7 +117,7 @@
 <label><span>Year</span><input class="p-y" type="text" inputmode="numeric" maxlength="4" placeholder="YYYY"></label>
 </div>
 <p class="readback" id="a-read"></p>
-</div><label class="name inline">Name, optional <input id="name-a" type="text" autocomplete="off" placeholder="Person A"></label><div class="datefield " data-datefield="b">
+</div><label class="name inline">Name, optional <input id="name-a" type="text" autocomplete="off" placeholder="Person A"></label></div><div class="col"><div class="datefield " data-datefield="b">
 <label class="df-label" for="b-q">Second date of birth</label>
 <input id="b-q" class="quick" type="text" spellcheck="false" autocomplete="off" placeholder="e.g. 20 September 1993" aria-describedby="b-read">
 <div class="parts" role="group" aria-label="Second date of birth: day, month and year">
@@ -125,14 +126,13 @@
 <label><span>Year</span><input class="p-y" type="text" inputmode="numeric" maxlength="4" placeholder="YYYY"></label>
 </div>
 <p class="readback" id="b-read"></p>
-</div><label class="name inline">Name, optional <input id="name-b" type="text" autocomplete="off" placeholder="Person B"></label>
+</div><label class="name inline">Name, optional <input id="name-b" type="text" autocomplete="off" placeholder="Person B"></label></div>
 </form>
 <div class="result"><div class="leaf" id="leaf" data-state="empty"><div class="leaf-head"><span>Today</span></div>
 <div class="leaf-body"><div class="lead"><p class="big"><span class="num">16</span><span class="unit">November</span></p>
 <p class="rest">Type a date and the result appears here as you go.</p></div></div>
 <noscript><p class="hint">This calculator needs JavaScript to work the result out. The method is written out below the tool if you’d rather do it on paper.</p></noscript></div><p class="sr-only" id="live" aria-live="polite"></p>
-<p class="rule-line">A completed month lands on the same date next month. If that date doesn’t exist — 31 January to 1 March, or a 29 February birthday in a common year — it rolls to the 1st of the next month. Some software, including common date libraries, uses the last day of the month instead, so results can differ by a day around month ends.</p>
-<aside class="ad ad-below" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box">728 × 90 on desktop, 320 × 100 on phones</div></aside></div>
+<aside class="ad ad-below" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box" data-size="728 × 90 on desktop, 320 × 100 on phones"></div></aside></div>
 </div>
 </div></div>
 <div class="wrap page"><div class="content">
@@ -147,7 +147,7 @@
 <ul><li>2 June 1990 to 2 June 1993 is 3 years.</li><li>2 June 1993 to 2 September 1993 is 3 months.</li><li>2 September to 20 September is 18 days.</li></ul>
 <p>So the older one is 3 years, 3 months and 18 days older. Counted in days, that is 1,206, or 172 weeks and 2 days.</p>
 </section>
-<aside class="ad ad-mid" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box">336 × 280 on desktop, 300 × 250 on phones</div></aside>
+<aside class="ad ad-mid" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box" data-size="336 × 280 on desktop, 300 × 250 on phones"></div></aside>
 <section>
 <h2>Why their ages don’t always differ by the same number</h2>
 <p>The 1,206 days never change. The difference you’d say out loud does. Between 2 June and 19 September each year, the older person has had their birthday and the younger one hasn’t, so their ages are 4 apart. As of 16 November 2026, for example, they are 36 and 33, which is 3 apart. On 1 August 2027 they will be 37 and 33.</p>
@@ -166,12 +166,12 @@
 <h2>Other things people use it for</h2>
 <p>Couples comparing ages, siblings settling an argument, and anyone filling in a form that asks for the age gap between a parent and a child. For the span between any two dates that aren’t birthdays, such as the start and end of a tenancy, <a href="days-between-dates">days between dates</a> is the better tool, because it can count the end day and gives a weekday total. For one person’s age on a given day, use the main <a href="./">age calculator</a>.</p>
 </section>
-<section class="faq" aria-labelledby="faq-h"><h2 id="faq-h">Questions people ask</h2><details><summary>Is the age difference the same every year?</summary><div><p>In days, yes. In whole years it changes by one for part of each year, in the weeks between the older person’s birthday and the younger person’s.</p></div></details><details><summary>How do I work out an age difference by hand?</summary><div><p>Subtract the earlier date of birth from the later one: count whole years, then whole months, then the remaining days. 2 June 1990 to 20 September 1993 is 3 years, 3 months and 18 days.</p></div></details><details><summary>Can I compare more than two people?</summary><div><p>Not on one screen. Work out each pair, or compare everyone with the eldest.</p></div></details><details><summary>Are the names I type saved?</summary><div><p>No. The calculation runs in your browser, and the names are only used to label the result on your screen.</p></div></details></section>
-</div><aside class="side" aria-label="More calculators"><h2>More calculators</h2><ul><li><a href="./">Age calculator</a></li><li><a href="past">How old was I?</a></li><li><a href="how-old-will-i-be">How old will I be?</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="birthday-countdown">Birthday countdown</a></li><li><a href="korean-age">Korean age</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a href="dog-age">Dog age</a></li><li><a href="cat-age">Cat age</a></li></ul><aside class="ad ad-side" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box">300 × 600</div></aside></aside></div>
+<section class="faq" aria-labelledby="faq-h"><h2 id="faq-h">Questions people ask</h2><dl class="qa-list"><div class="qa"><dt>Is the age difference the same every year?</dt><dd><p>In days, yes. In whole years it changes by one for part of each year, in the weeks between the older person’s birthday and the younger person’s.</p></dd></div><div class="qa"><dt>How do I work out an age difference by hand?</dt><dd><p>Subtract the earlier date of birth from the later one: count whole years, then whole months, then the remaining days. 2 June 1990 to 20 September 1993 is 3 years, 3 months and 18 days.</p></dd></div><div class="qa"><dt>Can I compare more than two people?</dt><dd><p>Not on one screen. Work out each pair, or compare everyone with the eldest.</p></dd></div><div class="qa"><dt>Are the names I type saved?</dt><dd><p>No. The calculation runs in your browser, and the names are only used to label the result on your screen.</p></dd></div></dl></section>
+</div><aside class="side" aria-label="More calculators"><h2>More calculators</h2><ul><li><a href="./">Age calculator</a></li><li><a href="past">How old was I?</a></li><li><a href="how-old-will-i-be">How old will I be?</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="birthday-countdown">Birthday countdown</a></li><li><a href="korean-age">Korean age</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a href="dog-age">Dog age</a></li><li><a href="cat-age">Cat age</a></li></ul><aside class="ad ad-side" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box" data-size="300 × 600"></div></aside></aside></div>
 </main>
 <footer class="foot"><div class="wrap">
-<div><h2>agecalculator.com</h2><p>Dates you type are worked out in your browser and aren’t sent anywhere. Free to use.</p><p><a href="embed">Put this calculator on your own site</a> · <a href="privacy">Privacy</a></p></div>
-<div id="all-tools"><h2>All calculators</h2><ul class="foot-tools"><li><a href="./">Age calculator</a> <span>your age today or on any date</span></li><li><a href="past">How old was I?</a> <span>age on a date in the past</span></li><li><a href="how-old-will-i-be">How old will I be?</a> <span>age in a future year</span></li><li><a href="days-between-dates">Days between dates</a> <span>any two dates, with weekdays</span></li><li><a href="chronological-age">Chronological age</a> <span>y;m;d on a test date, printable</span></li><li><a href="birthday-countdown">Birthday countdown</a> <span>days until the next one</span></li><li><a href="korean-age">Korean age</a> <span>all three counting systems</span></li><li><a href="what-year-was-i-born">What year was I born?</a> <span>birth year from an age</span></li><li><a href="dog-age">Dog age</a> <span>dog years by size</span></li><li><a href="cat-age">Cat age</a> <span>cat years and life stage</span></li></ul></div>
+<div id="all-tools" class="foot-index"><h2>Every calculator on the site</h2><ul class="foot-tools"><li><a href="./">Age calculator</a> <span>your age today or on any date</span></li><li><a href="past">How old was I?</a> <span>age on a date in the past</span></li><li><a href="how-old-will-i-be">How old will I be?</a> <span>age in a future year</span></li><li><a href="days-between-dates">Days between dates</a> <span>any two dates, with weekdays</span></li><li><a href="chronological-age">Chronological age</a> <span>y;m;d on a test date, printable</span></li><li><a href="birthday-countdown">Birthday countdown</a> <span>days until the next one</span></li><li><a href="korean-age">Korean age</a> <span>all three counting systems</span></li><li><a href="what-year-was-i-born">What year was I born?</a> <span>birth year from an age</span></li><li><a href="dog-age">Dog age</a> <span>dog years by size</span></li><li><a href="cat-age">Cat age</a> <span>cat years and life stage</span></li></ul></div>
+<div class="foot-small"><p><b>agecalculator.com</b>. Dates you type are worked out in your browser and aren’t sent anywhere. Free to use.</p><p><a href="embed">Put this calculator on your own site</a> · <a href="privacy">Privacy</a></p></div>
 </div></footer>
 <script src="dates.js" defer></script>
 <script src="app.js" defer></script>

@@ -140,7 +140,7 @@
   });
   if (zoneSel) {
     zoneSel.options[0].textContent = zone; zoneSel.value = zone;
-    zoneSel.addEventListener('change', function () { var wasToday = !on.value || same(on.value, today); zone = zoneSel.value; today = todayIn(zone); if (wasToday) on.set(today); refreshOnLabel(); fillBirthYearTable(); go(); });
+    zoneSel.addEventListener('change', function () { var wasToday = !on.value || same(on.value, today); zone = zoneSel.value; today = todayIn(zone); if (wasToday) on.set(today); refreshOnLabel(); fillBirthYearTable(); setDateline(); go(); });
   }
   if (on && q.get('on')) { onBox.hidden = false; onBtn.setAttribute('aria-expanded', 'true'); onBtn.textContent = 'Use today'; }
 
@@ -178,6 +178,13 @@
   function needs(f) { return !f || !f.value; }
   function errOf(f, label) { return f && f.el.querySelector('.readback.err') ? notice('Check the ' + label, f.el.querySelector('.readback.err').textContent.replace(/I meant.*/, '')) : null; }
 
+  /* ---------- per-tool objects (see SPEC.md "Polish v3") ---------- */
+  function miniLeaf(d, label, cls) {
+    return '<div class="mini-leaf' + (cls ? ' ' + cls : '') + '"><p class="ml-name">' + esc(label) + '</p><p class="ml-day">' + d.d + '</p><p class="ml-my">' + M[d.m - 1] + ' ' + d.y + '</p><p class="ml-wd">' + W[A.weekday(d.y, d.m, d.d)] + '</p></div>';
+  }
+  var MON3 = M.map(function (x) { return x.slice(0, 3); });
+  function stamp(d) { return '<span class="stamp">' + d.d + ' ' + MON3[d.m - 1].toUpperCase() + ' ' + d.y + '</span>'; }
+
   var TOOLS = {
     age: function () {
       var b = fields.dob;
@@ -186,91 +193,138 @@
         : 'Type your date of birth. Your age, next birthday and the same figure in months, weeks and days appear here as you type.');
       return ageCore(b.value, onDate(), { korean: document.getElementById('show-korean') && document.getElementById('show-korean').checked });
     },
+    /* An old leaf: aged paper, brown binding, the date rubber-stamped, that day ringed in its month. */
     past: function () {
-      var b = fields.dob;
-      if (needs(b)) return errOf(b, 'date') || emptyToday('Type a date of birth, then the date you want to look back to.');
-      return ageCore(b.value, onDate());
+      var b = fields.dob, at = onDate();
+      if (needs(b)) return errOf(b, 'date') || withCls(emptyToday('Type a date of birth, then the date you want to look back to.'), 'leaf-old');
+      var r = A.age(b.value, at);
+      if (!r.ok) return withCls(notice('Not born yet', long(b.value) + ' is after ' + long(at) + '.'), 'leaf-old');
+      var lead = big(r.years, r.years === 1 ? 'year old' : 'years old') + '<p class="rest">' + plural(r.months, 'month') + ' and ' + plural(r.days, 'day') + '</p>';
+      var prev = A.addMonths(b.value, 12 * r.years), nx = r.next;
+      var side = monthGrid(at.y, at.m, at.d, 'The date you chose') + '<p class="bday-text"><span class="k">That day was a</span><strong>' + W[A.weekday(at.y, at.m, at.d)] + '</strong></p>';
+      var rows = [['Last birthday before it', plain(prev)], ['Next birthday after it', plain(nx) + small('turning ' + nx.turning)], ['Days lived by then', fmt(r.totalDays)], ['How long ago', A.cmp(today, at) >= 0 ? plural(A.age(at, today).years, 'year') + small(fmt(A.cmp(today, at)) + ' days') : 'that’s in the future']];
+      return { state: 'result', cls: 'leaf-old', say: 'On ' + long(at) + ' you were ' + ymdWords(r) + ' old.', html: '<div class="leaf-head"><span>On</span> ' + stamp(at) + '</div>' + body(lead, side) + ledger(rows) };
     },
-    future: function () {
-      var b = fields.dob, yr = +$v('in-year');
-      if (needs(b)) return errOf(b, 'date') || emptyToday('Type a date of birth, then a year or an exact date in the future.');
-      if (on && on.value) return ageCore(b.value, on.value);
-      if (!yr || String(yr).length !== 4 || yr < A.MIN_YEAR || yr > A.MAX_YEAR) return notice('Which year?', 'Type a year between ' + A.MIN_YEAR + ' and ' + A.MAX_YEAR + ', like 2050, or pick an exact date.');
-      var bd = A.addMonths(b.value, 12 * (yr - b.value.y));
-      if (yr < b.value.y) return notice('Before you were born', yr + ' is before ' + b.value.y + '.');
-      var after = yr - b.value.y, before = Math.max(0, after - 1), at = { y: yr, m: 12, d: 31 };
-      var html = head('In <b>' + yr + '</b>') + body(big(after, 'years old') + '<p class="rest">from ' + long(bd) + '. Before that, ' + before + '.</p>', monthGrid(bd.y, bd.m, bd.d, 'Birthday in ' + yr)) +
-        ledger([['On 1 January ' + yr, plural(A.age(b.value, { y: yr, m: 1, d: 1 }).years, 'year')], ['On 31 December ' + yr, plural(A.age(b.value, at).years, 'year')], ['Days from today to that birthday', A.cmp(bd, today) > 0 ? fmt(A.cmp(bd, today)) : 'already passed'], ['Birthday falls on a', W[A.weekday(bd.y, bd.m, bd.d)]]]);
-      return { state: 'result', html: html, say: 'In ' + yr + ' you turn ' + after + ' on ' + long(bd) + '.' };
-    },
+    /* A countdown is a tear-off pad: one sheet per day still to go (drawn up to a point). */
     countdown: function () {
       var b = fields.dob;
-      if (needs(b)) return errOf(b, 'date') || emptyToday('Type a date of birth (yours, or someone you’re buying a card for).');
+      if (needs(b)) return errOf(b, 'date') || withCls(emptyToday('Type a date of birth (yours, or someone you’re buying a card for).'), 'leaf-stack');
       var r = A.age(b.value, today);
       if (!r.ok) return notice('Not born yet', 'That date is after today.');
       var nx = r.next, n = nx.daysUntil;
       var lead = nx.isToday ? big('Today', '') + '<p class="rest">Happy ' + ordinal(nx.turning) + ' birthday.</p>'
-        : big(fmt(n), n === 1 ? 'day to go' : 'days to go') + '<p class="rest">until ' + long(nx) + ', when ' + (fields.dob.el.querySelector('.who') ? '' : 'you turn ') + nx.turning + '.</p>';
+        : big(fmt(n), n === 1 ? 'sheet left' : 'sheets left') + '<p class="rest">Tear one off each morning. The last one is ' + long(nx) + ', when you turn ' + nx.turning + '.</p>';
       var rows = [['Weeks', fmt(Math.floor(n / 7)) + (n % 7 ? small('and ' + plural(n % 7, 'day')) : '')], ['Until midnight tonight', '<span data-clock>–</span>'], ['Weekend birthday?', (nx.weekday >= 5 ? 'Yes, a ' : 'No, a ') + W[nx.weekday]], ['Birthdays so far', fmt(r.years)]];
       var note = nx.shifted ? '<p class="bday-note">No 29 February in ' + nx.y + ', so we count down to 1 March.</p>' : '';
-      return { state: 'result', say: n + ' days until ' + long(nx) + '.', html: head('Counting from <b>' + short(today) + '</b>') + body(lead, monthGrid(nx.y, nx.m, nx.d, 'Birthday') + note) + ledger(rows) };
+      var depth = Math.max(1, Math.min(16, Math.ceil(n / 10)));
+      return { state: 'result', cls: 'leaf-stack', depth: depth, say: n + ' days until ' + long(nx) + '.', html: head('Counting from <b>' + short(today) + '</b>') + body(lead, monthGrid(nx.y, nx.m, nx.d, 'Birthday') + note) + ledger(rows) };
     },
+    future: function () {
+      var b = fields.dob, yr = +$v('in-year');
+      if (needs(b)) return errOf(b, 'date') || { state: 'empty', cls: 'obj obj-planner', html: planner(yr || today.y + 24, null, null) + '<p class="hint">Type a date of birth to see the age either side of the birthday in ' + (yr || 'that year') + '.</p>' };
+      if (on && on.value) return ageCore(b.value, on.value);
+      if (!yr || String(yr).length !== 4 || yr < A.MIN_YEAR || yr > A.MAX_YEAR) return notice('Which year?', 'Type a year between ' + A.MIN_YEAR + ' and ' + A.MAX_YEAR + ', like 2050, or pick an exact date.');
+      if (yr < b.value.y) return notice('Before you were born', yr + ' is before ' + b.value.y + '.');
+      var bd = A.addMonths(b.value, 12 * (yr - b.value.y)), after = yr - b.value.y, before = Math.max(0, after - 1);
+      var html = planner(yr, bd, [before, after]) +
+        '<div class="planner-say">' + big(after, 'years old') + '<p class="rest">from ' + long(bd) + '. Until then, ' + before + '.</p></div>' +
+        ledger([['On 1 January ' + yr, plural(A.age(b.value, { y: yr, m: 1, d: 1 }).years, 'year')], ['On 31 December ' + yr, plural(A.age(b.value, { y: yr, m: 12, d: 31 }).years, 'year')], ['Days from today to that birthday', A.cmp(bd, today) > 0 ? fmt(A.cmp(bd, today)) : 'already passed'], ['That birthday is a', W[A.weekday(bd.y, bd.m, bd.d)]]]);
+      return { state: 'result', cls: 'obj obj-planner', html: html, say: 'In ' + yr + ' you turn ' + after + ' on ' + long(bd) + '.' };
+    },
+    /* Two leaves side by side, the gap between them measured like a drawing dimension. */
     difference: function () {
       var a = fields.a, b = fields.b, na = $v('name-a') || 'Person A', nb = $v('name-b') || 'Person B';
-      if (needs(a) || needs(b)) return errOf(a, 'first date') || errOf(b, 'second date') || { state: 'empty', html: head('Age gap') + body('<p class="msg">Two birthdays in, one gap out.</p><p class="hint">Type both dates of birth. Names are optional and stay on this page.</p>') };
+      if (needs(a) || needs(b)) return errOf(a, 'first date') || errOf(b, 'second date') || { state: 'empty', cls: 'obj obj-pair', html: '<div class="pair-leaves"><div class="mini-leaf blank"><p class="ml-name">' + esc(na) + '</p><p class="ml-day">?</p></div><div class="gap-measure"><span class="gm-label">the gap</span><span class="gm-line" aria-hidden="true"></span></div><div class="mini-leaf blank"><p class="ml-name">' + esc(nb) + '</p><p class="ml-day">?</p></div></div><p class="hint">Type both dates of birth. Names are optional and stay on this page.</p>' };
       var r = A.between(a.value, b.value);
       if (r.totalDays === 0) return notice('Same day', esc(na) + ' and ' + esc(nb) + ' were born on the same day.');
-      var older = r.sign > 0 ? na : nb, younger = r.sign > 0 ? nb : na;
-      var lead = big(r.years, r.years === 1 ? 'year' : 'years') + '<p class="rest">' + plural(r.months, 'month') + ' and ' + plural(r.days, 'day') + '</p>';
-      var side = '<p class="bday-text"><span class="k">Older</span><strong>' + esc(older) + '</strong><br>by ' + plural(r.totalDays, 'day') + '.</p>';
-      var rows = [['Days', fmt(r.totalDays)], ['Weeks', fmt(r.weeks) + (r.weekRemainder ? small('and ' + plural(r.weekRemainder, 'day')) : '')], ['Months', fmt(r.totalMonths) + (r.days ? small('and ' + plural(r.days, 'day')) : '')],
-        ['Ages differ by', (r.months || r.days) ? r.years + ' or ' + (r.years + 1) + small('depending on the time of year') : r.years + small('all year')]];
-      return { state: 'result', say: older + ' is older by ' + ymdWords(r) + '.', html: head('Age gap') + body(lead, side) + ledger(rows) };
+      var first = r.sign > 0 ? [a.value, na] : [b.value, nb], second = r.sign > 0 ? [b.value, nb] : [a.value, na];
+      var html = '<div class="pair-leaves">' + miniLeaf(first[0], first[1], 'elder') +
+        '<div class="gap-measure"><span class="gm-label"><b>' + r.years + ' y ' + r.months + ' m ' + r.days + ' d</b>' + fmt(r.totalDays) + ' days</span><span class="gm-line" aria-hidden="true"></span></div>' +
+        miniLeaf(second[0], second[1]) + '</div>' +
+        '<div class="pair-say">' + big(r.years, r.years === 1 ? 'year' : 'years') + '<p class="rest">' + plural(r.months, 'month') + ' and ' + plural(r.days, 'day') + '. ' + esc(first[1]) + ' is the elder.</p></div>' +
+        ledger([['Days', fmt(r.totalDays)], ['Weeks', fmt(r.weeks) + (r.weekRemainder ? small('and ' + plural(r.weekRemainder, 'day')) : '')], ['Months', fmt(r.totalMonths) + (r.days ? small('and ' + plural(r.days, 'day')) : '')], ['Ages differ by', (r.months || r.days) ? r.years + ' or ' + (r.years + 1) + small('depending on the time of year') : r.years + small('all year')]]);
+      return { state: 'result', cls: 'obj obj-pair', say: first[1] + ' is older by ' + ymdWords(r) + '.', html: html };
     },
+    /* Two leaves joined by a ruler, the span bracketed and labelled. */
     between: function () {
       var a = fields.start, b = fields.end, inc = document.getElementById('inc-end').checked;
-      if (needs(a) || needs(b)) return errOf(a, 'start date') || errOf(b, 'end date') || emptyToday('Type a start date and an end date. Words or numbers both work.');
+      if (needs(a) || needs(b)) return errOf(a, 'start date') || errOf(b, 'end date') || { state: 'empty', cls: 'obj obj-span', html: '<div class="span-row"><div class="mini-leaf blank"><p class="ml-name">Start</p><p class="ml-day">?</p></div><div class="ruler"><span class="span-label">days between</span><span class="rule-ticks" aria-hidden="true"></span></div><div class="mini-leaf blank"><p class="ml-name">End</p><p class="ml-day">?</p></div></div><p class="hint">Type a start date and an end date. Words or numbers both work.</p>' };
       var r = A.between(a.value, b.value), days = r.totalDays + (inc ? 1 : 0);
       var lo = r.sign > 0 ? a.value : b.value, hi = r.sign > 0 ? b.value : a.value;
-      var lead = big(fmt(days), days === 1 ? 'day' : 'days') + '<p class="rest">' + (r.years ? plural(r.years, 'year') + ', ' : '') + plural(r.months, 'month') + ' and ' + plural(r.days, 'day') + (inc ? ', plus the end day' : '') + '</p>';
-      var rows = [['Weeks', fmt(Math.floor(days / 7)) + (days % 7 ? small('and ' + plural(days % 7, 'day')) : '')], ['Weekdays, Mon–Fri', fmt(r.weekdays + (inc && A.weekday(hi.y, hi.m, hi.d) < 5 ? 1 : 0)) + small('no bank holidays removed')],
-        ['Weekend days', fmt(r.weekendDays + (inc && A.weekday(hi.y, hi.m, hi.d) >= 5 ? 1 : 0))], ['Months', fmt(r.totalMonths) + (r.days ? small('and ' + plural(r.days, 'day')) : '')], r.sign < 0 ? ['Order', 'End is before start; counted backwards'] : null];
-      return { state: 'result', say: days + ' days between ' + plain(lo) + ' and ' + plain(hi) + '.', html: head('<b>' + short(lo) + '</b> to <b>' + short(hi) + '</b>') + body(lead, monthGrid(hi.y, hi.m, hi.d, 'End date')) + ledger(rows) };
+      var weeksMarked = Math.min(Math.floor(days / 7), 52);
+      var html = '<div class="span-row">' + miniLeaf(lo, r.sign > 0 ? 'Start' : 'End') +
+        '<div class="ruler"><span class="span-label"><b>' + fmt(days) + '</b> ' + (days === 1 ? 'day' : 'days') + '</span><span class="rule-ticks" aria-hidden="true" style="--weeks:' + Math.max(weeksMarked, 1) + '"></span><span class="span-sub">' + fmt(Math.floor(days / 7)) + ' weeks' + (days % 7 ? ' and ' + plural(days % 7, 'day') : '') + (inc ? ', end day counted' : '') + '</span></div>' +
+        miniLeaf(hi, r.sign > 0 ? 'End' : 'Start') + '</div>' +
+        ledger([['Years, months, days', r.years + ' y ' + r.months + ' m ' + r.days + ' d'], ['Weekdays, Mon–Fri', fmt(r.weekdays + (inc && A.weekday(hi.y, hi.m, hi.d) < 5 ? 1 : 0)) + small('no bank holidays removed')],
+          ['Weekend days', fmt(r.weekendDays + (inc && A.weekday(hi.y, hi.m, hi.d) >= 5 ? 1 : 0))], ['Months', fmt(r.totalMonths) + (r.days ? small('and ' + plural(r.days, 'day')) : '')], r.sign < 0 ? ['Order', 'End is before start; counted backwards'] : null]);
+      return { state: 'result', cls: 'obj obj-span', say: days + ' days between ' + plain(lo) + ' and ' + plain(hi) + '.', html: html };
     },
+    /* A school record slip: the subtraction written the way it is on score forms. */
     chrono: function () {
       var b = fields.dob, t = fields.test, nm = $v('pupil');
-      if (needs(b) || needs(t)) return errOf(b, 'date of birth') || errOf(t, 'test date') || { state: 'empty', html: head('Chronological age') + body('<p class="msg">Years; months; days on the test date.</p><p class="hint">Type the date of birth and the test date. The result is written the way most score forms ask for it, like 8;4;12.</p>') };
+      var slipHead = '<div class="slip-head"><b>Chronological age</b><span>Record slip</span></div>';
+      function grid(tv, bv, r) {
+        var c = function (v, n) { return v == null ? '<td class="blank"></td>' : '<td>' + String(v).padStart(n, '0') + '</td>'; };
+        return '<table class="slip-sum"><thead><tr><th></th><th scope="col">Year</th><th scope="col">Month</th><th scope="col">Day</th></tr></thead><tbody>' +
+          '<tr><th scope="row">Test date</th>' + c(tv && tv.y, 4) + c(tv && tv.m, 2) + c(tv && tv.d, 2) + '</tr>' +
+          '<tr><th scope="row">Date of birth</th>' + c(bv && bv.y, 4) + c(bv && bv.m, 2) + c(bv && bv.d, 2) + '</tr>' +
+          '<tr class="ans"><th scope="row">Age</th>' + (r ? '<td>' + r.years + '</td><td>' + r.months + '</td><td>' + r.days + '</td>' : '<td class="blank"></td><td class="blank"></td><td class="blank"></td>') + '</tr></tbody></table>';
+      }
+      var who = '<p class="slip-name"><span>Name</span> ' + (nm ? esc(nm) : '<i class="muted">not given</i>') + '</p>';
+      if (needs(b) || needs(t)) return errOf(b, 'date of birth') || errOf(t, 'test date') || { state: 'empty', cls: 'obj obj-slip', html: '<div class="slip">' + slipHead + who + grid(t && t.value, b && b.value, null) + '<p class="hint">Fill in the date of birth and the test date. The answer goes on the bottom line, the way score forms set it out.</p></div>' };
       var r = A.age(b.value, t.value);
       if (!r.ok) return notice('Check the dates', 'The test date is before the date of birth.');
-      var code = r.years + ';' + r.months + ';' + r.days;
-      var rounded = r.totalMonths + (r.days >= 15 ? 1 : 0);
-      var lead = big(code, '', 'code') + '<p class="rest">' + ymdWords(r) + '</p>';
-      var side = '<div class="slip-actions"><button type="button" class="btn" data-copy="' + code + '">Copy ' + code + '</button><button type="button" class="btn btn-quiet" data-print="slip">Print slip</button></div>';
-      var rows = [['Pupil', nm ? esc(nm) : '<span class="muted">not given</span>'], ['Date of birth', plain(b.value)], ['Test date', plain(t.value)], ['Age in months', fmt(r.totalMonths) + small('and ' + plural(r.days, 'day'))], ['Months, rounding 15+ days up', fmt(rounded) + small('check your manual')]];
-      return { state: 'result', say: 'Chronological age ' + ymdWords(r) + '.', html: head('Chronological age on <b>' + short(t.value) + '</b>') + body(lead, side) + ledger(rows) };
+      var code = r.years + ';' + r.months + ';' + r.days, rounded = r.totalMonths + (r.days >= 15 ? 1 : 0);
+      var html = '<div class="slip">' + slipHead + who + grid(t.value, b.value, r) +
+        '<div class="slip-foot"><p class="big"><span class="num code">' + code + '</span></p><p class="rest">' + ymdWords(r) + '</p>' +
+        '<div class="slip-actions"><button type="button" class="btn" data-copy="' + code + '">Copy ' + code + '</button><button type="button" class="btn btn-quiet" data-print="slip">Print slip</button></div></div>' +
+        ledger([['Age in months', fmt(r.totalMonths) + small('and ' + plural(r.days, 'day'))], ['Rounded to the month', fmt(rounded) + small('15+ days round up')]]) + '</div>';
+      return { state: 'result', cls: 'obj obj-slip', say: 'Chronological age ' + ymdWords(r) + '.', html: html };
     },
+    /* Korean wall calendars: three counts in columns, the 1 January rollover marked. */
     korean: function () {
       var b = fields.dob, at = onDate();
-      if (needs(b)) return errOf(b, 'date') || emptyToday('Type a date of birth to see all three Korean ways of counting age side by side.');
+      if (needs(b)) return errOf(b, 'date') || withCls(emptyToday('Type a date of birth to see all three Korean ways of counting age side by side.'), 'leaf-lunar');
       var k = A.koreanAges(b.value, at);
-      if (!k.ok) return notice('Not born yet', 'That date is after ' + long(at) + '.');
-      var lead = big(k.international, 'years') + '<p class="rest">international age, the default in Korean law since 28 June 2023</p>';
-      var side = '<p class="bday-text"><span class="k">Korean age (세는 나이)</span><strong class="mid">' + k.counting + '</strong></p><p class="bday-text"><span class="k">Year age (연 나이)</span><strong class="mid">' + k.yearAge + '</strong></p>';
-      var rows = [['International', k.international + small('goes up on your birthday')], ['Korean counting age', k.counting + small('1 at birth, +1 every 1 January')], ['Year age', k.yearAge + small(at.y + ' − ' + b.value.y)], ['Next birthday', long(k.r.next)]];
-      return { state: 'result', say: 'International age ' + k.international + ', Korean age ' + k.counting + ', year age ' + k.yearAge + '.', html: head('On <b>' + short(at) + '</b>') + body(lead, side) + ledger(rows) };
+      if (!k.ok) return withCls(notice('Not born yet', 'That date is after ' + long(at) + '.'), 'leaf-lunar');
+      var ny = { y: at.y + 1, m: 1, d: 1 }, toNy = A.cmp(ny, at);
+      var col = function (n, en, ko, how, cls) { return '<div class="kcol' + (cls ? ' ' + cls : '') + '"><p class="k-ko" lang="ko">' + ko + '</p><p class="k-n">' + n + '</p><p class="k-en">' + en + '</p><p class="k-how">' + how + '</p></div>'; };
+      var html = head('On <b>' + short(at) + '</b>') + '<div class="kcols">' +
+        col(k.international, 'International age', '만 나이', 'Up on your birthday. The default in Korean law since 28 June 2023.', 'main') +
+        col(k.counting, 'Korean age', '세는 나이', '1 at birth, plus one every 1 January.') +
+        col(k.yearAge, 'Year age', '연 나이', at.y + ' minus ' + b.value.y + '.') + '</div>' +
+        '<p class="k-ny">Korean age and year age go up together on <b>1 January ' + ny.y + '</b>, in ' + plural(toNy, 'day') + '. International age goes up on ' + long(k.r.next) + '.</p>';
+      return { state: 'result', cls: 'leaf-lunar', say: 'International age ' + k.international + ', Korean age ' + k.counting + ', year age ' + k.yearAge + '.', html: html };
     },
     dog: function () { return pet('dog'); },
     cat: function () { return pet('cat'); },
+    /* Birth year: file-divider tabs, one per possible year. */
     birthyear: function () {
       var a = $v('age-now'), had = checked('had'), at = onDate();
-      if (!a) return { state: 'empty', html: head('Birth year') + body('<p class="msg">Your age in, your birth year out.</p><p class="hint">Type an age. If you’re not sure whether the birthday has happened yet, you get both possible years.</p>') };
+      if (!a) return { state: 'empty', cls: 'obj obj-tabs', html: '<div class="ytabs"><div class="ytab blank"><span class="yt-tab">Born in</span><p class="yt-year">19··</p></div></div><p class="hint">Type an age. If you’re not sure whether the birthday has happened yet, you get both possible years.</p>' };
       if (!/^\d{1,3}$/.test(a) || +a > 130) return notice('Check the age', 'Type an age in whole years, from 0 to 130.');
       var r = A.birthYear(+a, at, had === 'yes' ? true : had === 'no' ? false : null);
-      var lead = big(r.years.join(' or '), '') + '<p class="rest">' + (r.years.length > 1 ? 'The first if your birthday is still to come in ' + at.y + ', the second if it has passed.' : 'If you are ' + a + ' on ' + plain(at) + '.') + '</p>';
-      return { state: 'result', say: 'Born in ' + r.years.join(' or ') + '.', html: head('Age ' + esc(a) + ' on <b>' + short(at) + '</b>') + body(lead) };
+      var caps = r.years.length > 1 ? ['if your birthday is still to come in ' + at.y, 'if you’ve had it already'] : [had === 'yes' ? 'you’ve had your birthday this year' : 'your birthday is still to come'];
+      var html = '<div class="ytabs">' + r.years.map(function (y, i) { return '<div class="ytab' + (i ? ' second' : '') + '"><span class="yt-tab">Born in</span><p class="yt-year">' + y + '</p><p class="yt-cap">' + caps[i] + '</p></div>'; }).join(r.years.length > 1 ? '<p class="yt-or">or</p>' : '') + '</div>' +
+        '<p class="rest">Age ' + esc(a) + ' on ' + long(at) + '.</p>';
+      return { state: 'result', cls: 'obj obj-tabs', say: 'Born in ' + r.years.join(' or ') + '.', html: html };
     }
   };
+  function withCls(o, c) { if (o) o.cls = c; return o; }
 
+  /* Year planner strip: twelve months, the birthday month ringed, the age either side. */
+  function planner(yr, bd, ages) {
+    var h = '<div class="planner"><p class="pl-year">' + yr + '</p><ol class="pl-months">';
+    for (var m = 1; m <= 12; m++) {
+      var after = bd && (m > bd.m), isB = bd && m === bd.m;
+      h += '<li class="' + (isB ? 'pl-b' : after ? 'pl-after' : 'pl-before') + '"><span class="pl-m">' + MON3[m - 1] + '</span>' + (isB ? '<span class="pl-d">' + bd.d + RING + '</span>' : '') + '</li>';
+    }
+    h += '</ol>';
+    if (ages) h += '<p class="pl-ages"><span style="--w:' + (((bd.m - 1) + (bd.d - 1) / 31) / 12 * 100).toFixed(1) + '%">' + ages[0] + '</span><span>' + ages[1] + '</span></p>';
+    return h + '</div>';
+  }
+
+  /* Vet record card for dog and cat years. */
   var CHART_SRC = 'https://www.aaha.org/wp-content/uploads/globalassets/02-guidelines/canine-life-stage-2019/canine_and_feline_age_chart_poster.pdf';
   function petChartNote(kind, r, size) {
     if (r.ok) return null;
@@ -280,24 +334,32 @@
     if (kind === 'dog') return 'The AAHA-published chart for this size goes up to ' + r.max + ' years, and this page doesn’t invent figures past that.';
     return 'The AAHA-published chart for cats goes up to 21 years, and this page doesn’t invent figures past that.';
   }
+  function sizeLabel(z) {
+    var s = A.DOG_SIZES[z] || A.DOG_SIZES.medium;
+    return s.label.charAt(0).toUpperCase() + s.label.slice(1) + ', ' + s.lbs + ' (' + s.kg + ')';
+  }
   function pet(kind) {
     var y = +$v('pet-y') || 0, mo = +$v('pet-m') || 0, size = checked('size') || 'medium';
+    var tab = '<span class="rec-tab">' + (kind === 'dog' ? 'Dog' : 'Cat') + '</span>';
+    var headRow = '<p class="rec-title">Age record</p>';
     if (!$v('pet-y') && !$v('pet-m')) {
-      var ages = [1, 2, 3, 5, 7, 10, 12, 15], tbl;
-      if (kind === 'dog') tbl = '<tr><th scope="col">Dog</th><th scope="col">Small</th><th scope="col">Medium</th><th scope="col">Large</th><th scope="col">Giant</th></tr>' + ages.map(function (x) { return '<tr><td>' + x + '</td>' + ['small', 'medium', 'large', 'giant'].map(function (z) { var r = A.dogAge(x, z); return '<td>' + (r.ok ? fmt(r.human) : '–') + '</td>'; }).join('') + '</tr>'; }).join('');
-      else tbl = '<tr><th scope="col">Cat</th><th scope="col">Human</th><th scope="col">Stage</th></tr>' + ages.map(function (x) { var r = A.catAge(x); return '<tr><td>' + x + '</td><td>' + (r.ok ? fmt(r.human) : '–') + '</td><td>' + A.catStage(x) + '</td></tr>'; }).join('');
-      return { state: 'empty', html: head(kind === 'dog' ? 'Dog years at a glance' : 'Cat years at a glance') + '<table class="chart"><caption class="sr-only">Human years by age, from the AAHA-published chart</caption>' + tbl + '</table><p class="hint">Type your ' + kind + '’s age for an exact figure' + (kind === 'dog' ? ', and pick their adult size.' : '.') + ' Figures are from the <a href="' + CHART_SRC + '">AAHA-published pet age chart</a>.</p>' };
+      var ages = [1, 2, 3, 5, 7, 10, 12, 15], t;
+      if (kind === 'dog') t = '<tr><th scope="col">Age</th><th scope="col">Small</th><th scope="col">Medium</th><th scope="col">Large</th><th scope="col">Giant</th></tr>' + ages.map(function (x) { return '<tr><td>' + x + '</td>' + ['small', 'medium', 'large', 'giant'].map(function (z) { var r = A.dogAge(x, z); return '<td>' + (r.ok ? fmt(r.human) : '–') + '</td>'; }).join('') + '</tr>'; }).join('');
+      else t = '<tr><th scope="col">Age</th><th scope="col">Human</th><th scope="col">Stage</th></tr>' + ages.map(function (x) { var r = A.catAge(x); return '<tr><td>' + x + '</td><td>' + (r.ok ? fmt(r.human) : '–') + '</td><td>' + A.catStage(x) + '</td></tr>'; }).join('');
+      return { state: 'empty', cls: 'obj obj-record', html: '<div class="record">' + tab + headRow + '<table class="chart"><caption class="sr-only">Human years by age, from the AAHA-published chart</caption>' + t + '</table><p class="hint">Type your ' + kind + '’s age for an exact figure' + (kind === 'dog' ? ', and pick their adult size.' : '.') + ' Figures are from the <a href="' + CHART_SRC + '">AAHA-published pet age chart</a>.</p></div>' };
     }
     if (mo > 11) return notice('Check the age', 'Months go from 0 to 11. Over a year? Put the years in the first box.');
     var age = y + mo / 12, r = kind === 'dog' ? A.dogAge(age, size) : A.catAge(age);
     if (!r.ok) return notice('Not on the chart', petChartNote(kind, r, size));
     var aged = (y ? plural(y, 'year') : '') + (y && mo ? ' and ' : '') + (mo ? plural(mo, 'month') : '');
-    var lead = big(fmt(r.human), 'in human years') + '<p class="rest">for a ' + (kind === 'dog' ? size + ' dog' : 'cat') + ' aged ' + aged + (r.interpolated ? small('interpolated between ' + r.from + ' and ' + r.to) : '') + '</p>';
+    var lines = [['Species', kind === 'dog' ? 'Dog' : 'Cat'], kind === 'dog' ? ['Adult size', sizeLabel(size)] : ['Life stage', A.catStage(age) + small('AAHA/AAFP 2021')], ['Age', aged || '0 months']];
     var src = '<a href="' + CHART_SRC + '">AAHA-published chart</a>';
     var rows = kind === 'dog'
       ? [['Source', src], r.interpolated ? ['Between chart ages', r.from + ' and ' + r.to + ' years'] : null, ['DNA-clock estimate', age >= 1 ? fmt(A.dogAgeEpigenetic(age)) + small('16 × ln(age) + 31, Wang et al. 2020') : '<span class="muted">not for under-ones</span>'], ['The old “× 7” rule', fmt(age * 7)]]
       : [['Source', src], ['Life stage', A.catStage(age) + small('AAHA/AAFP 2021')], ['The old “× 7” rule', fmt(age * 7)]];
-    return { state: 'result', say: 'About ' + fmt(r.human) + ' in human years.', html: head(kind === 'dog' ? 'Dog years' : 'Cat years') + body(lead) + ledger(rows) };
+    var html = '<div class="record">' + tab + headRow + '<dl class="rec-lines">' + lines.filter(Boolean).map(function (l) { return '<div><dt>' + l[0] + '</dt><dd>' + l[1] + '</dd></div>'; }).join('') + '</dl>' +
+      '<div class="rec-result"><p class="big"><span class="num">' + fmt(r.human) + '</span><span class="unit">in human years</span></p>' + (r.interpolated ? '<p class="rest">interpolated between ' + r.from + ' and ' + r.to + '</p>' : '') + '</div>' + ledger(rows) + '</div>';
+    return { state: 'result', cls: 'obj obj-record', say: 'About ' + fmt(r.human) + ' in human years.', html: html };
   }
 
   /* ---------- render loop ---------- */
@@ -311,6 +373,11 @@
     var drew = out.state === 'result' && leaf.getAttribute('data-state') !== 'result';
     lastHtml = out.html;
     leaf.innerHTML = out.html;
+    leaf.className = 'leaf' + (out.cls ? ' ' + out.cls : '');
+    var sh = '';
+    for (var i = 1; i <= (out.depth || 0); i++) sh += (sh ? ', ' : '') + '0 ' + (i * 3) + 'px 0 -1px #fff, 0 ' + (i * 3) + 'px 0 0 ' + (i % 4 ? '#8f8e86' : '#1c1c1a');
+    leaf.style.boxShadow = sh;
+    leaf.style.marginBottom = out.depth ? (out.depth * 3 + 6) + 'px' : '';
     leaf.setAttribute('data-state', out.state);
     if (drew) { var ring = leaf.querySelector('.ring'); if (ring) ring.classList.add('draw'); }
     clearTimeout(liveTimer);
@@ -329,6 +396,7 @@
     if (same(next, today)) return false;
     today = next;
     fillBirthYearTable();
+    setDateline();
     lastHtml = '';
     if (ready) go();
     return true;
@@ -340,7 +408,7 @@
   var clockTimer;
   function tick() {
     var rolled = refreshToday();
-    if (rolled) return; /* go() already called tick() */
+    if (rolled) return;
     var c = leaf && leaf.querySelector('[data-clock]');
     clearTimeout(clockTimer);
     var s;
@@ -377,7 +445,10 @@
     if (yy > 1000 && yy < 3000) { onBox.hidden = false; onBtn.setAttribute('aria-expanded', 'true'); onBtn.textContent = 'Use today'; on.set({ y: yy, m: 1, d: 1 }); var yn = document.getElementById('year-note'); if (yn) { yn.hidden = false; yn.textContent = 'You came here from a ' + yy + ' link, so the date is set to 1 January ' + yy + '. Change it to any day you like.'; } }
   }
 
-
+  function setDateline() {
+    var dl = document.getElementById('dateline');
+    if (dl) dl.innerHTML = '<b><span class="dl-wd">' + W[A.weekday(today.y, today.m, today.d)] + ' </span>' + today.d + ' ' + M[today.m - 1] + ' ' + today.y + '</b> <span>day ' + A.dayOfYear(today.y, today.m, today.d) + ' of the year</span>';
+  }
   function fillBirthYearTable() {
     var box = document.querySelector('.years[data-years]');
     if (!box) return;
@@ -385,15 +456,16 @@
     box.setAttribute('data-years', String(y));
     var heading = document.getElementById('birth-year-heading');
     if (heading) heading.textContent = 'Age and birth year in ' + y;
-var blocks = [[1, 25], [26, 50], [51, 75], [76, 100]];
+    var blocks = [[1, 25], [26, 50], [51, 75], [76, 100]];
     box.innerHTML = blocks.map(function (r) {
       var rows = [];
       for (var a = r[0]; a <= r[1]; a++) rows.push('<tr' + (a === 31 ? ' class="this"' : '') + '><td>' + a + '</td><td>' + (y - a - 1) + ' or ' + (y - a) + '</td></tr>');
       return '<table><caption>Ages ' + r[0] + '–' + r[1] + '</caption><tbody>' + rows.join('') + '</tbody></table>';
     }).join('');
   }
+  window.AgeCalcPage = { go: go, fields: fields, setToday: function (d) { today = d; fillBirthYearTable(); setDateline(); go(); } };
+  setDateline();
   fillBirthYearTable();
-  window.AgeCalcPage = { go: go, fields: fields, setToday: function (d) { today = d; fillBirthYearTable(); go(); } };
   ready = true;
   go();
 })();
