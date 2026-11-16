@@ -10,7 +10,8 @@ A static, no-build preview of a new site for the root domain agecalculator.com, 
 - `docs/robots.txt` disallows all crawlers (the live root robots.txt is a later, approved change)
 - Unique pre-rendered title, meta description, self-canonical (`https://agecalculator.com/…`) and JSON-LD in the first HTML
 - `/past/{year}` is not a set of pages; `past.html` reads `?year=` and pre-fills 1 January
-- Date maths live in `docs/js/age.js` (29 February civil anniversary = 1 March in a common year; 31 January plus one month = last day of February)
-- Unit tests (Node, no dependencies): `node tests/age.test.js`
+- Design: torn desk-calendar leaf, self-hosted Libre Franklin, reserved ad placeholders (no ad code). Shared date module is `docs/dates.js` (designer SPEC §8): a month ends on the same date next month; if that date does not exist (31 January, or 29 February in a common year) it rolls to the 1st of the next month. The rule is shown in a short line by the result and in the FAQ.
+- `/past?year=` reads the year in JS to pre-fill the form. The static canonical and og:url stay `https://agecalculator.com/past` with no query string; no script rewrites them.
+- Unit tests (Node, no dependencies): `node --test tests/age.test.js`
 
 Do not change live DNS, redirects or app.agecalculator.com from this repository. The ready-to-apply cutover pack is in `cutover/` and must not be applied until William says so.

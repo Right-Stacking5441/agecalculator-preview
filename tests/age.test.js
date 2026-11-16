@@ -1,392 +1,237 @@
-"use strict";
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const A = require('../docs/dates.js');
+const D = (y, m, d) => ({ y, m, d });
+const ymd = r => [r.years, r.months, r.days];
 
-var assert = require("assert");
-var path = require("path");
-var age = require(path.join(__dirname, "../docs/js/age.js"));
+// Independent oracle using JS Date in UTC, for totals.
+const utcDays = (a, b) => (Date.UTC(b.y, b.m - 1, b.d) - Date.UTC(a.y, a.m - 1, a.d)) / 864e5;
 
-var passed = 0;
-var failed = 0;
-var failures = [];
+test('leap years', () => {
+  assert.equal(A.isLeap(2000), true);
+  assert.equal(A.isLeap(1900), false);
+  assert.equal(A.isLeap(2024), true);
+  assert.equal(A.isLeap(2026), false);
+  assert.equal(A.daysInMonth(2024, 2), 29);
+  assert.equal(A.daysInMonth(2100, 2), 28);
+});
 
-function test(name, fn) {
-  try {
-    fn();
-    passed += 1;
-    console.log("ok  " + name);
-  } catch (err) {
-    failed += 1;
-    failures.push({ name: name, message: err && err.message, stack: err && err.stack });
-    console.error("FAIL  " + name);
-    console.error("      " + (err && err.message));
+test('weekday and day numbers match JS Date', () => {
+  assert.equal(A.dayNumber(1970, 1, 1), 0);
+  assert.equal(A.WEEKDAYS[A.weekday(2026, 11, 16)], 'Monday');
+  assert.equal(A.WEEKDAYS[A.weekday(1988, 3, 14)], 'Monday');
+  assert.equal(A.WEEKDAYS[A.weekday(2027, 3, 14)], 'Sunday');
+  assert.equal(A.WEEKDAYS[A.weekday(1900, 1, 1)], 'Monday');
+  for (let y = 1890; y <= 2110; y += 7) for (let m = 1; m <= 12; m++) {
+    const d = Math.min(28, m * 2);
+    const js = new Date(Date.UTC(y, m - 1, d));
+    assert.equal(A.dayNumber(y, m, d), js.getTime() / 864e5);
+    assert.equal(A.weekday(y, m, d), (js.getUTCDay() + 6) % 7);
   }
-}
-
-function d(y, m, day) {
-  return age.date(y, m, day);
-}
-
-function ymd(from, to) {
-  return age.diffYMD(from, to);
-}
-
-function expectYMD(from, to, years, months, days) {
-  var got = ymd(from, to);
-  assert.ok(!got.error, "unexpected error: " + got.error);
-  assert.deepStrictEqual(
-    { years: got.years, months: got.months, days: got.days },
-    { years: years, months: months, days: days }
-  );
-}
-
-// --- leap years ---
-test("400-divisible years are leap years (2000, 1600)", function () {
-  assert.strictEqual(age.isLeap(2000), true);
-  assert.strictEqual(age.isLeap(1600), true);
 });
 
-test("100-divisible years that are not 400-divisible are common (1900, 2100)", function () {
-  assert.strictEqual(age.isLeap(1900), false);
-  assert.strictEqual(age.isLeap(2100), false);
+test('reference case: born 14 Mar 1988, on 16 Nov 2026', () => {
+  const r = A.age(D(1988, 3, 14), D(2026, 11, 16));
+  assert.deepEqual(ymd(r), [38, 8, 2]);
+  assert.equal(r.totalDays, utcDays(D(1988, 3, 14), D(2026, 11, 16)));
+  assert.equal(r.totalDays, 14126);
+  assert.equal(r.weeks, 2018);
+  assert.equal(r.weekRemainder, 0);
+  assert.equal(r.hours, 14126 * 24);
+  assert.deepEqual([r.next.y, r.next.m, r.next.d], [2027, 3, 14]);
+  assert.equal(A.WEEKDAYS[r.next.weekday], 'Sunday');
+  assert.equal(r.next.daysUntil, 118);
+  assert.equal(r.next.turning, 39);
+  assert.equal(r.next.isToday, false);
 });
 
-test("ordinary 4-divisible years are leap years (2024, 1996, 1896)", function () {
-  assert.strictEqual(age.isLeap(2024), true);
-  assert.strictEqual(age.isLeap(1996), true);
-  assert.strictEqual(age.isLeap(1896), true);
+test('birthday today', () => {
+  const r = A.age(D(1990, 11, 16), D(2026, 11, 16));
+  assert.deepEqual(ymd(r), [36, 0, 0]);
+  assert.equal(r.next.isToday, true);
+  assert.equal(r.next.daysUntil, 0);
+  assert.equal(r.next.turning, 36);
 });
 
-test("other years are common (2023, 2025, 1999)", function () {
-  assert.strictEqual(age.isLeap(2023), false);
-  assert.strictEqual(age.isLeap(2025), false);
-  assert.strictEqual(age.isLeap(1999), false);
+test('day before and after birthday', () => {
+  assert.deepEqual(ymd(A.age(D(1990, 11, 17), D(2026, 11, 16))), [35, 11, 30]);
+  const after = A.age(D(1990, 11, 15), D(2026, 11, 16));
+  assert.deepEqual(ymd(after), [36, 0, 1]);
+  assert.equal(after.next.daysUntil, 364);
 });
 
-test("February has 29 days in a leap year and 28 otherwise", function () {
-  assert.strictEqual(age.daysInMonth(2024, 2), 29);
-  assert.strictEqual(age.daysInMonth(2023, 2), 28);
-  assert.strictEqual(age.daysInMonth(2000, 2), 29);
-  assert.strictEqual(age.daysInMonth(1900, 2), 28);
-  assert.strictEqual(age.daysInMonth(2024, 1), 31);
-  assert.strictEqual(age.daysInMonth(2024, 4), 30);
+test('born today', () => {
+  const r = A.age(D(2026, 11, 16), D(2026, 11, 16));
+  assert.deepEqual(ymd(r), [0, 0, 0]);
+  assert.equal(r.totalDays, 0);
+  assert.equal(r.next.isToday, true);
+  assert.equal(r.next.turning, 0);
 });
 
-test("29 February is valid only in a leap year", function () {
-  assert.strictEqual(age.isValidDate(d(2024, 2, 29)), true);
-  assert.strictEqual(age.isValidDate(d(2023, 2, 29)), false);
-  assert.strictEqual(age.isValidDate(d(1900, 2, 29)), false);
-  assert.strictEqual(age.isValidDate(d(2000, 2, 29)), true);
-  assert.strictEqual(age.isValidDate(d(2024, 4, 31)), false);
-  assert.strictEqual(age.isValidDate(d(2024, 0, 1)), false);
-  assert.strictEqual(age.isValidDate(d(2024, 13, 1)), false);
+test('29 February birthdays: 1 March in common years', () => {
+  const b = D(2000, 2, 29);
+  const r1 = A.age(b, D(2001, 3, 1));
+  assert.deepEqual(ymd(r1), [1, 0, 0]);
+  assert.equal(r1.next.isToday, true);
+  assert.equal(r1.next.shifted, true);
+  assert.deepEqual(ymd(A.age(b, D(2001, 2, 28))), [0, 11, 30]);
+  assert.equal(A.age(b, D(2001, 2, 28)).next.daysUntil, 1);
+  assert.deepEqual(ymd(A.age(b, D(2001, 3, 2))), [1, 0, 1]);
+  const r4 = A.age(b, D(2004, 2, 29));
+  assert.deepEqual(ymd(r4), [4, 0, 0]);
+  assert.equal(r4.next.shifted, false);
+  assert.deepEqual(ymd(A.age(b, D(2004, 2, 28))), [3, 11, 30]);
+  // Spec worked example: on 16 Nov 2026.
+  const r = A.age(b, D(2026, 11, 16));
+  assert.deepEqual(ymd(r), [26, 8, 18]);
+  assert.deepEqual([r.next.y, r.next.m, r.next.d, r.next.turning, r.next.daysUntil], [2027, 3, 1, 27, 105]);
+  assert.equal(A.WEEKDAYS[r.next.weekday], 'Monday');
+  const n2 = A.age(b, D(2027, 3, 2)).next;
+  assert.deepEqual([n2.y, n2.m, n2.d, n2.shifted], [2028, 2, 29, false]);
+  assert.deepEqual(A.addMonths(b, 1200), D(2100, 3, 1)); // 2100 is not a leap year
 });
 
-// --- month-end addition ---
-test("31 January plus one month is 28 February in a common year", function () {
-  assert.deepStrictEqual(age.addMonths(d(2023, 1, 31), 1), d(2023, 2, 28));
+test('spec homepage example: 15 Mar 1995 on 16 Nov 2026', () => {
+  const r = A.age(D(1995, 3, 15), D(2026, 11, 16));
+  assert.deepEqual(ymd(r), [31, 8, 1]);
+  assert.equal(r.totalDays, utcDays(D(1995, 3, 15), D(2026, 11, 16)));
 });
 
-test("31 January plus one month is 29 February in a leap year", function () {
-  assert.deepStrictEqual(age.addMonths(d(2024, 1, 31), 1), d(2024, 2, 29));
+test('month-end edge cases (roll to the 1st when the day is missing)', () => {
+  assert.deepEqual(ymd(A.age(D(2000, 1, 31), D(2000, 2, 29))), [0, 0, 29]);
+  assert.deepEqual(ymd(A.age(D(2000, 1, 31), D(2000, 3, 1))), [0, 1, 0]);
+  assert.deepEqual(ymd(A.age(D(2001, 1, 31), D(2001, 2, 28))), [0, 0, 28]);
+  assert.deepEqual(ymd(A.age(D(2001, 1, 31), D(2001, 3, 1))), [0, 1, 0]);
+  assert.deepEqual(ymd(A.age(D(2001, 1, 31), D(2001, 3, 31))), [0, 2, 0]);
+  assert.deepEqual(ymd(A.age(D(2020, 3, 31), D(2020, 4, 30))), [0, 0, 30]);
+  assert.deepEqual(ymd(A.age(D(2020, 3, 31), D(2020, 5, 1))), [0, 1, 0]);
+  assert.deepEqual(ymd(A.age(D(2020, 3, 30), D(2020, 4, 30))), [0, 1, 0]);
+  assert.deepEqual(ymd(A.age(D(2019, 12, 31), D(2020, 12, 30))), [0, 11, 29]);
+  assert.deepEqual(ymd(A.age(D(2019, 12, 31), D(2020, 12, 31))), [1, 0, 0]);
+  assert.deepEqual(A.addMonths(D(2019, 12, 31), 2), D(2020, 3, 1));
+  assert.deepEqual(A.addMonths(D(2020, 11, 31 - 1), 1), D(2020, 12, 30));
 });
 
-test("31 January plus two months is 31 March, not a date in early March", function () {
-  assert.deepStrictEqual(age.addMonths(d(2023, 1, 31), 2), d(2023, 3, 31));
-  assert.deepStrictEqual(age.addMonths(d(2024, 1, 31), 2), d(2024, 3, 31));
+test('total days agree with a Date oracle over many pairs', () => {
+  let seed = 7;
+  const rnd = n => (seed = (seed * 1103515245 + 12345) % 2147483648) % n;
+  for (let i = 0; i < 3000; i++) {
+    const b = D(1900 + rnd(150), 1 + rnd(12), 1);
+    b.d = 1 + rnd(A.daysInMonth(b.y, b.m));
+    const at = D(b.y + rnd(90), 1 + rnd(12), 1);
+    at.d = 1 + rnd(A.daysInMonth(at.y, at.m));
+    const r = A.age(b, at);
+    if (A.cmp(at, b) < 0) { assert.equal(r.ok, false); continue; }
+    assert.equal(r.totalDays, utcDays(b, at));
+    // Re-adding the parts lands exactly on `at`.
+    const back = A.addMonths(b, r.years * 12 + r.months);
+    assert.equal(A.dayNumber(back.y, back.m, back.d) + r.days, A.dayNumber(at.y, at.m, at.d));
+    assert.ok(r.months >= 0 && r.months < 12 && r.days >= 0 && r.days <= 31);
+    assert.ok(r.next.daysUntil >= 0 && r.next.daysUntil <= 366);
+  }
 });
 
-test("31 May plus one month is 30 June", function () {
-  assert.deepStrictEqual(age.addMonths(d(2024, 5, 31), 1), d(2024, 6, 30));
+test('future date of birth', () => {
+  const r = A.age(D(2027, 1, 1), D(2026, 11, 16));
+  assert.equal(r.ok, false);
+  assert.equal(r.code, 'future');
+  assert.equal(r.daysUntil, 46);
 });
 
-test("31 May plus two months is 31 July", function () {
-  assert.deepStrictEqual(age.addMonths(d(2024, 5, 31), 2), d(2024, 7, 31));
+test('validation', () => {
+  assert.equal(A.validate('', '', '').code, 'empty');
+  assert.equal(A.validate('14', '', '').code, 'incomplete');
+  assert.equal(A.validate('14', '3', '19').code, 'incomplete');
+  assert.deepEqual(A.validate('14', '03', '1988').date, D(1988, 3, 14));
+  assert.equal(A.validate('31', '4', '1990').message, 'April has 30 days.');
+  assert.equal(A.validate('29', '2', '2001').message, '2001 wasn’t a leap year, so February had 28 days.');
+  assert.equal(A.validate('30', '2', '2000').message, 'February 2000 has 29 days.');
+  assert.equal(A.validate('29', '2', '2000').ok, true);
+  assert.equal(A.validate('0', '5', '1990').field, 'day');
+  assert.equal(A.validate('5', '13', '1990').field, 'month');
+  assert.equal(A.validate('5', '0', '1990').field, 'month');
+  assert.equal(A.validate('5', '5', '0999').code, 'year');
+  assert.equal(A.validate('a', '5', '1990').field, 'day');
+  assert.equal(A.validate(' 7 ', ' 7 ', ' 1977 ').ok, true);
 });
 
-test("adding months does not use JavaScript Date overflow (no 3 March)", function () {
-  // new Date(2023, 0, 31); setMonth(+1) => 3 March 2023. We must not do that.
-  var js = new Date(2023, 0, 31);
-  js.setMonth(js.getMonth() + 1);
-  assert.strictEqual(js.getDate(), 3);
-  assert.deepStrictEqual(age.addMonths(d(2023, 1, 31), 1), d(2023, 2, 28));
+test('days between dates and weekday counts', () => {
+  const r = A.between(D(2026, 11, 16), D(2026, 11, 23));
+  assert.equal(r.totalDays, 7); assert.equal(r.weekdays, 5); assert.equal(r.weekendDays, 2);
+  const r2 = A.between(D(2026, 11, 20), D(2026, 11, 23)); // Fri -> Mon
+  assert.equal(r2.totalDays, 3); assert.equal(r2.weekdays, 1);
+  const back = A.between(D(2026, 12, 25), D(2026, 11, 16));
+  assert.equal(back.sign, -1); assert.equal(back.totalDays, 39);
+  assert.equal(A.between(D(2024, 1, 1), D(2025, 1, 1)).totalDays, 366);
+  // brute-force weekday check
+  for (let k = 0; k < 60; k++) {
+    const a = D(2026, 1, 1 + (k % 28)), b = D(2026, 3 + (k % 9), 1 + ((k * 7) % 28));
+    const r3 = A.between(a, b);
+    let wd = 0; for (let i = 0; i < r3.totalDays; i++) if ((A.weekday(a.y, a.m, a.d) + i) % 7 < 5) wd++;
+    assert.equal(r3.weekdays, wd);
+  }
 });
 
-test("29 February plus one year in a common year clamps to 28 February", function () {
-  assert.deepStrictEqual(age.addYears(d(2000, 2, 29), 1), d(2001, 2, 28));
-  assert.deepStrictEqual(age.addYears(d(2000, 2, 29), 3), d(2003, 2, 28));
+test('Korean ages', () => {
+  const k = A.koreanAges(D(1995, 3, 15), D(2026, 11, 16));
+  assert.deepEqual([k.international, k.counting, k.yearAge], [31, 32, 31]);
+  const k2 = A.koreanAges(D(2026, 12, 31), D(2027, 1, 1)); // one day old
+  assert.deepEqual([k2.international, k2.counting, k2.yearAge], [0, 2, 1]);
 });
 
-test("29 February plus four years lands on 29 February", function () {
-  assert.deepStrictEqual(age.addYears(d(2000, 2, 29), 4), d(2004, 2, 29));
+test('pet ages', () => {
+  assert.equal(A.dogAge(1, 'medium'), 15);
+  assert.equal(A.dogAge(2, 'small'), 24);
+  assert.equal(A.dogAge(7, 'small'), 44);
+  assert.equal(A.dogAge(7, 'giant'), 59);
+  assert.equal(A.dogAge(0.5, 'large'), 7.5);
+  assert.equal(Math.round(A.dogAgeEpigenetic(7)), 62);
+  assert.equal(A.dogAgeEpigenetic(0.5), null);
+  assert.equal(A.catAge(3), 28);
+  assert.equal(A.catStage(12), 'Senior');
+  assert.equal(A.catStage(0.4), 'Kitten');
 });
 
-// --- same-day and short spans ---
-test("the same date is 0 years, 0 months and 0 days", function () {
-  expectYMD(d(2000, 1, 15), d(2000, 1, 15), 0, 0, 0);
+test('birth year from age', () => {
+  assert.deepEqual(A.birthYear(31, D(2026, 11, 16), true).years, [1995]);
+  assert.deepEqual(A.birthYear(31, D(2026, 11, 16), false).years, [1994]);
+  assert.deepEqual(A.birthYear(31, D(2026, 11, 16), null).years, [1994, 1995]);
 });
 
-test("one day later is 0 years, 0 months and 1 day", function () {
-  expectYMD(d(2000, 1, 15), d(2000, 1, 16), 0, 0, 1);
-});
-
-test("exactly one year later is 1 year, 0 months and 0 days", function () {
-  expectYMD(d(2000, 1, 15), d(2001, 1, 15), 1, 0, 0);
-});
-
-test("the day before a birthday is 11 months and the leftover days", function () {
-  // 15 Jan 2000 to 14 Jan 2001: last monthiversary is 15 Dec 2000, then 30 days
-  expectYMD(d(2000, 1, 15), d(2001, 1, 14), 0, 11, 30);
-});
-
-test("month rollover across the year boundary", function () {
-  expectYMD(d(1999, 12, 31), d(2000, 1, 1), 0, 0, 1);
-  expectYMD(d(1999, 12, 31), d(2000, 12, 31), 1, 0, 0);
-});
-
-// --- 31 January age spans ---
-test("31 January to 28 February in a common year is exactly one month", function () {
-  expectYMD(d(2023, 1, 31), d(2023, 2, 28), 0, 1, 0);
-});
-
-test("31 January to 29 February in a leap year is exactly one month", function () {
-  expectYMD(d(2024, 1, 31), d(2024, 2, 29), 0, 1, 0);
-});
-
-test("31 January to 1 March is one month and one day (anniversary was last day of February)", function () {
-  expectYMD(d(2023, 1, 31), d(2023, 3, 1), 0, 1, 1);
-  expectYMD(d(2024, 1, 31), d(2024, 3, 1), 0, 1, 1);
-});
-
-test("31 January to 31 March is exactly two months", function () {
-  expectYMD(d(2023, 1, 31), d(2023, 3, 31), 0, 2, 0);
-  expectYMD(d(2024, 1, 31), d(2024, 3, 31), 0, 2, 0);
-});
-
-test("31 May to 30 June is exactly one month; to 1 July is one month and one day", function () {
-  expectYMD(d(2024, 5, 31), d(2024, 6, 30), 0, 1, 0);
-  expectYMD(d(2024, 5, 31), d(2024, 7, 1), 0, 1, 1);
-  expectYMD(d(2024, 5, 31), d(2024, 7, 31), 0, 2, 0);
-});
-
-// --- 29 February birthdays (civil anniversary is 1 March in a common year) ---
-test("born 29 February 2000, on 28 February 2001 is not yet one year (anniversary is 1 March)", function () {
-  expectYMD(d(2000, 2, 29), d(2001, 2, 28), 0, 11, 30);
-});
-
-test("born 29 February 2000, on 1 March 2001 is exactly one year", function () {
-  expectYMD(d(2000, 2, 29), d(2001, 3, 1), 1, 0, 0);
-});
-
-test("born 29 February 2000, on 27 February 2001 is 11 months and 29 days", function () {
-  expectYMD(d(2000, 2, 29), d(2001, 2, 27), 0, 11, 29);
-});
-
-test("born 29 February 2000, on 29 February 2004 is exactly four years", function () {
-  expectYMD(d(2000, 2, 29), d(2004, 2, 29), 4, 0, 0);
-});
-
-test("born 29 February 2000, on 28 February 2004 is three years, 11 months and 27 days", function () {
-  // Last anniversary is 1 March 2003; 1 March 2003 + 11 months = 1 February 2004;
-  // 1 February 2004 to 28 February 2004 is 27 days. Turns 4 on 29 February 2004.
-  expectYMD(d(2000, 2, 29), d(2004, 2, 28), 3, 11, 27);
-});
-
-test("born 29 February 2000, on 28 February 2005 is not yet five years (turns 5 on 1 March 2005)", function () {
-  expectYMD(d(2000, 2, 29), d(2005, 2, 28), 4, 11, 30);
-  expectYMD(d(2000, 2, 29), d(2005, 3, 1), 5, 0, 0);
-});
-
-// --- century leap edge ---
-test("28 February 1900 to 1 March 1900 is one day (1900 is not a leap year)", function () {
-  assert.strictEqual(age.isValidDate(d(1900, 2, 29)), false);
-  expectYMD(d(1900, 2, 28), d(1900, 3, 1), 0, 0, 1);
-  assert.strictEqual(age.totalDays(d(1900, 2, 28), d(1900, 3, 1)), 1);
-});
-
-test("28 February 2000 to 1 March 2000 is two days (2000 is a leap year)", function () {
-  assert.strictEqual(age.totalDays(d(2000, 2, 28), d(2000, 3, 1)), 2);
-  expectYMD(d(2000, 2, 28), d(2000, 3, 1), 0, 0, 2);
-});
-
-// --- totals ---
-test("total days, weeks, months and hours for a known span", function () {
-  var t = age.totals(d(2020, 1, 1), d(2021, 1, 1));
-  assert.strictEqual(t.years, 1);
-  assert.strictEqual(t.months, 0);
-  assert.strictEqual(t.days, 0);
-  assert.strictEqual(t.totalMonths, 12);
-  assert.strictEqual(t.totalDays, 366); // 2020 is a leap year
-  assert.strictEqual(t.totalWeeks, 52);
-  assert.strictEqual(t.weekRemainder, 2); // 366 = 52*7 + 2
-  assert.strictEqual(t.totalHours, 366 * 24);
-  assert.strictEqual(t.totalMinutes, 366 * 24 * 60);
-  assert.strictEqual(t.totalSeconds, 366 * 24 * 60 * 60);
-});
-
-test("total days from 1 January 2000 to 16 November 2026 is a Julian-day difference", function () {
-  var days = age.totalDays(d(2000, 1, 1), d(2026, 11, 16));
-  // Independent check via Date UTC
-  var a = Date.UTC(2000, 0, 1);
-  var b = Date.UTC(2026, 10, 16);
-  assert.strictEqual(days, Math.round((b - a) / 86400000));
-  var t = age.totals(d(2000, 1, 1), d(2026, 11, 16));
-  assert.strictEqual(t.totalDays, days);
-  assert.strictEqual(t.totalWeeks, Math.floor(days / 7));
-  assert.strictEqual(t.totalHours, days * 24);
-});
-
-test("a common year is 365 days; a leap year is 366", function () {
-  assert.strictEqual(age.totalDays(d(2023, 1, 1), d(2024, 1, 1)), 365);
-  assert.strictEqual(age.totalDays(d(2024, 1, 1), d(2025, 1, 1)), 366);
-});
-
-// --- next birthday ---
-test("next birthday is later this year if it has not occurred yet", function () {
-  var n = age.nextBirthday(d(1990, 3, 15), d(2026, 11, 16));
-  // 15 March 2026 has passed, so next is 15 March 2027
-  assert.deepStrictEqual(n.date, d(2027, 3, 15));
-  assert.strictEqual(n.isToday, false);
-  assert.strictEqual(n.days, age.totalDays(d(2026, 11, 16), d(2027, 3, 15)));
-});
-
-test("next birthday is later this year if it is still ahead", function () {
-  var n = age.nextBirthday(d(1990, 12, 25), d(2026, 11, 16));
-  assert.deepStrictEqual(n.date, d(2026, 12, 25));
-  assert.strictEqual(n.days, age.totalDays(d(2026, 11, 16), d(2026, 12, 25)));
-});
-
-test("on the birthday, the next birthday countdown is 0 days (today)", function () {
-  var n = age.nextBirthday(d(1990, 11, 16), d(2026, 11, 16));
-  assert.deepStrictEqual(n.date, d(2026, 11, 16));
-  assert.strictEqual(n.days, 0);
-  assert.strictEqual(n.isToday, true);
-});
-
-test("29 February birthday: next anniversary in a common year is 1 March", function () {
-  var n = age.nextBirthday(d(2000, 2, 29), d(2001, 1, 1));
-  assert.deepStrictEqual(n.date, d(2001, 3, 1));
-  assert.strictEqual(n.days, age.totalDays(d(2001, 1, 1), d(2001, 3, 1)));
-});
-
-test("29 February birthday: on 1 March in a common year the countdown is 0; after that, next is 1 March or 29 February in a leap year", function () {
-  var onDay = age.nextBirthday(d(2000, 2, 29), d(2001, 3, 1));
-  assert.deepStrictEqual(onDay.date, d(2001, 3, 1));
-  assert.strictEqual(onDay.isToday, true);
-  var after = age.nextBirthday(d(2000, 2, 29), d(2001, 3, 2));
-  assert.deepStrictEqual(after.date, d(2002, 3, 1));
-  var inLeap = age.nextBirthday(d(2000, 2, 29), d(2003, 3, 2));
-  assert.deepStrictEqual(inLeap.date, d(2004, 2, 29));
-});
-
-test("29 February birthday on 28 February of a common year is one day before the anniversary", function () {
-  var n = age.nextBirthday(d(2000, 2, 29), d(2001, 2, 28));
-  assert.deepStrictEqual(n.date, d(2001, 3, 1));
-  assert.strictEqual(n.days, 1);
-  assert.strictEqual(n.isToday, false);
-});
-
-// --- errors ---
-test("as-of date before the start date returns an error", function () {
-  var got = age.diffYMD(d(2000, 1, 1), d(1999, 12, 31));
-  assert.ok(got.error);
-  var t = age.totals(d(2000, 1, 1), d(1999, 12, 31));
-  assert.ok(t.error);
-  var n = age.nextBirthday(d(2000, 1, 1), d(1999, 12, 31));
-  assert.ok(n.error);
-});
-
-test("invalid dates return an error", function () {
-  var got = age.diffYMD(d(2023, 2, 29), d(2023, 3, 1));
-  assert.ok(got.error);
-});
-
-// --- parser ---
-test("flexible parser accepts ISO, day month year, month day year, day/month/year, and 3/15/95", function () {
-  assert.deepStrictEqual(age.parseFlexibleDate("1995-03-15"), d(1995, 3, 15));
-  assert.deepStrictEqual(age.parseFlexibleDate("15 March 1995"), d(1995, 3, 15));
-  assert.deepStrictEqual(age.parseFlexibleDate("March 15, 1995"), d(1995, 3, 15));
-  assert.deepStrictEqual(age.parseFlexibleDate("15/03/1995"), d(1995, 3, 15));
-  assert.deepStrictEqual(age.parseFlexibleDate("15 Mar 1995"), d(1995, 3, 15));
-  assert.deepStrictEqual(age.parseFlexibleDate("3/15/95"), d(1995, 3, 15));
-  assert.deepStrictEqual(age.parseFlexibleDate("3/15/1995"), d(1995, 3, 15));
-  assert.strictEqual(age.parseFlexibleDate("31 February 1995"), null);
-  assert.strictEqual(age.parseFlexibleDate("not a date"), null);
-  assert.strictEqual(age.parseFlexibleDate("29 February 2023"), null);
-  assert.deepStrictEqual(age.parseFlexibleDate("29 February 2024"), d(2024, 2, 29));
-});
-
-test("format helpers", function () {
-  assert.strictEqual(age.toISO(d(1995, 3, 15)), "1995-03-15");
-  assert.strictEqual(age.formatDate(d(1995, 3, 15)), "15 March 1995");
-  assert.strictEqual(age.formatYMD({ years: 1, months: 0, days: 1 }), "1 year, 0 months and 1 day");
-  assert.strictEqual(age.formatYMD({ years: 0, months: 1, days: 0 }), "0 years, 1 month and 0 days");
-});
-
-// --- a worked long example ---
-test("15 March 1995 to 16 November 2026 is 31 years, 8 months and 1 day", function () {
-  // 15 March 1995 + 31 years = 15 March 2026
-  // 15 March 2026 + 8 months = 15 November 2026
-  // 15 November 2026 to 16 November 2026 = 1 day
-  expectYMD(d(1995, 3, 15), d(2026, 11, 16), 31, 8, 1);
+test('natural-language date parsing', () => {
+  const P = (s, o) => { const r = A.parseDate(s, o); return r.ok ? [r.date.y, r.date.m, r.date.d] : r.code; };
+  assert.deepEqual(P('15 March 1995'), [1995, 3, 15]);
+  assert.deepEqual(P('/15 march 1995'), [1995, 3, 15]);
+  assert.deepEqual(P('March 15, 1995'), [1995, 3, 15]);
+  assert.deepEqual(P('15th of Mar 95'), [1995, 3, 15]);
+  assert.deepEqual(P('14 march 1988'), [1988, 3, 14]);
+  assert.deepEqual(P('3/14/88'), [1988, 3, 14]);
+  assert.deepEqual(P('3/15/95'), [1995, 3, 15]);
+  assert.deepEqual(P('15.03.1995'), [1995, 3, 15]);
+  assert.deepEqual(P('1995-03-15'), [1995, 3, 15]);
+  assert.deepEqual(P('15031995'), [1995, 3, 15]);
+  assert.deepEqual(P('19950315'), [1995, 3, 15]);
+  assert.deepEqual(P('Wednesday 15 March 1995'), [1995, 3, 15]);
+  assert.deepEqual(P('sept 9 2001'), [2001, 9, 9]);
+  assert.deepEqual(P('1/2/2000'), [2000, 2, 1]);
+  assert.deepEqual(P('1/2/2000', { order: 'MDY' }), [2000, 1, 2]);
+  assert.equal(A.parseDate('1/2/2000').ambiguous, true);
+  assert.equal(A.parseDate('5/5/2000').ambiguous, false);
+  assert.deepEqual(P('1/1/26', { pivotYear: 2026 }), [2026, 1, 1]);
+  assert.deepEqual(P('1/1/27', { pivotYear: 2026 }), [1927, 1, 1]);
+  assert.equal(P('15 march'), 'incomplete');
+  assert.equal(P('15 3'), 'incomplete');
+  assert.equal(P(''), 'empty');
+  assert.equal(P('next tuesday'), 'unreadable');
+  assert.equal(P('31 april 1990'), 'day');
+  assert.equal(P('29 feb 2001'), 'day');
 });
 
 
-test("anniversary of 29 February is 1 March in a common year and 29 February in a leap year", function () {
-  assert.deepStrictEqual(age.anniversaryInYear(d(2000, 2, 29), 2001), d(2001, 3, 1));
-  assert.deepStrictEqual(age.anniversaryInYear(d(2000, 2, 29), 2004), d(2004, 2, 29));
-  assert.deepStrictEqual(age.anniversaryInYear(d(1995, 3, 15), 2026), d(2026, 3, 15));
+test('addMonths: 31 January plus one month is 1 March, 31 May plus one month is 1 July', () => {
+  assert.deepEqual(A.addMonths(D(2026, 1, 31), 1), D(2026, 3, 1));
+  assert.deepEqual(A.addMonths(D(2024, 1, 31), 1), D(2024, 3, 1));
+  assert.deepEqual(A.addMonths(D(2026, 5, 31), 1), D(2026, 7, 1));
+  assert.deepEqual(A.addMonths(D(2024, 2, 29), 12), D(2025, 3, 1));
+  assert.deepEqual(A.addMonths(D(2024, 2, 29), 48), D(2028, 2, 29));
 });
-
-test("born 29 February 2000, on 16 November 2026 is 26 years, 8 months and 15 days", function () {
-  expectYMD(d(2000, 2, 29), d(2026, 11, 16), 26, 8, 15);
-});
-
-test("chronological form is years;months;days", function () {
-  var t = age.diffYMD(d(1995, 3, 15), d(2026, 11, 16));
-  assert.strictEqual(age.formatChrono(t), "31;8;1");
-});
-
-test("Korean age: international years, year age, and se (plus one at New Year)", function () {
-  var k = age.koreanAge(d(1995, 3, 15), d(2026, 11, 16));
-  assert.strictEqual(k.international, 31);
-  assert.strictEqual(k.yearAge, 31);
-  assert.strictEqual(k.se, 32);
-  var winter = age.koreanAge(d(1995, 12, 15), d(2026, 11, 16));
-  assert.strictEqual(winter.international, 30);
-  assert.strictEqual(winter.yearAge, 31);
-  assert.strictEqual(winter.se, 32);
-});
-
-test("birth year window for someone aged 31 on 16 November 2026 is 17 Nov 1994 to 16 Nov 1995", function () {
-  var w = age.birthWindowFromAge(31, d(2026, 11, 16));
-  assert.deepStrictEqual(w.earliest, d(1994, 11, 17));
-  assert.deepStrictEqual(w.latest, d(1995, 11, 16));
-  assert.deepStrictEqual(w.years, [1994, 1995]);
-});
-
-test("dog years use size groups, not times seven", function () {
-  assert.strictEqual(age.dogHumanYears(1, "medium").humanYears, 15);
-  assert.strictEqual(age.dogHumanYears(2, "medium").humanYears, 24);
-  assert.strictEqual(age.dogHumanYears(5, "small").humanYears, 36);
-  assert.strictEqual(age.dogHumanYears(5, "medium").humanYears, 39);
-  assert.strictEqual(age.dogHumanYears(5, "large").humanYears, 42);
-  assert.strictEqual(age.dogHumanYears(5, "giant").humanYears, 45);
-  assert.notStrictEqual(age.dogHumanYears(5, "medium").humanYears, 35);
-});
-
-test("cat years: 15 in year one, 24 in year two, then plus four", function () {
-  assert.strictEqual(age.catHumanYears(1).humanYears, 15);
-  assert.strictEqual(age.catHumanYears(2).humanYears, 24);
-  assert.strictEqual(age.catHumanYears(6).humanYears, 40);
-});
-
-test("addDays inverse matches Julian day arithmetic", function () {
-  assert.deepStrictEqual(age.addDays(d(2000, 2, 28), 1), d(2000, 2, 29));
-  assert.deepStrictEqual(age.addDays(d(1900, 2, 28), 1), d(1900, 3, 1));
-  assert.deepStrictEqual(age.addDays(d(2026, 11, 16), -31), d(2026, 10, 16));
-});
-
-console.log("");
-console.log(passed + " passed, " + failed + " failed");
-if (failed) {
-  process.exit(1);
-}

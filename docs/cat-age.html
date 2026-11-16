@@ -1,129 +1,101 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en-GB">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex,nofollow">
-  <title>Cat Age Calculator: Cat Years to Human Years</title>
-  <meta name="description" content="Estimate a cat’s age in human years with the usual 15, then 24, then four-years-at-a-time curve — different from the dog table.">
-  <link rel="canonical" href="https://agecalculator.com/cat-age">
-  <link rel="stylesheet" href="css/styles.css">
-  <script type="application/ld+json">
-[
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Cat Age Calculator: Cat Years to Human Years</title>
+<meta name="description" content="Convert your cat’s age to human years, and see which life stage vets put them in: kitten, young adult, mature adult or senior.">
+<link rel="canonical" href="https://agecalculator.com/cat-age">
+
+<meta property="og:title" content="Cat Age Calculator: Cat Years to Human Years">
+<meta property="og:description" content="Convert your cat’s age to human years, and see which life stage vets put them in: kitten, young adult, mature adult or senior.">
+<meta property="og:url" content="https://agecalculator.com/cat-age">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#f1f1ec">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/libre-franklin-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "WebApplication",
+ "name": "Cat age calculator",
+ "url": "https://agecalculator.com/cat-age",
+ "applicationCategory": "UtilitiesApplication",
+ "operatingSystem": "All",
+ "browserRequirements": "Requires JavaScript",
+ "description": "Convert your cat’s age to human years, and see which life stage vets put them in: kitten, young adult, mature adult or senior.",
+ "offers": {
+  "@type": "Offer",
+  "price": "0",
+  "priceCurrency": "GBP"
+ }
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "BreadcrumbList",
+ "itemListElement": [
   {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "Cat Age Calculator",
-    "url": "https://agecalculator.com/cat-age",
-    "applicationCategory": "UtilitiesApplication",
-    "operatingSystem": "All",
-    "browserRequirements": "Requires a JavaScript-enabled browser.",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    },
-    "description": "Estimate a cat’s age in human years with the usual 15, then 24, then four-years-at-a-time curve — different from the dog table."
+   "@type": "ListItem",
+   "position": 1,
+   "name": "Home",
+   "item": "https://agecalculator.com/"
   },
   {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://agecalculator.com/"
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Cat age",
-        "item": "https://agecalculator.com/cat-age"
-      }
-    ]
+   "@type": "ListItem",
+   "position": 2,
+   "name": "Cat age calculator",
+   "item": "https://agecalculator.com/cat-age"
   }
-]
-  </script>
+ ]
+}
+</script>
 </head>
-<body data-page="cat">
-  <a class="skip" href="#main">Skip to content</a>
-  <div class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</div>
-  <div class="wrap">
-    <header class="site-header">
-      <a class="wordmark" href="./">Agecalculator.com</a>
-      <nav aria-label="Pages">
-        <ul>
-          <li><a href="./">Age calculator</a></li>
-          <li><a href="past">How old was I?</a></li>
-          <li><a href="difference">Age difference</a></li>
-          <li><a href="days-between-dates">Days between dates</a></li>
-          <li><a href="chronological-age">Chronological age</a></li>
-          <li><a href="birthday-countdown">Birthday countdown</a></li>
-        </ul>
-      </nav>
-    </header>
-    <main id="main">
-    <nav class="crumbs" aria-label="Breadcrumb">
-      <ol>
-        <li><a href="./">Home</a></li>
-        <li>Cat age</li>
-      </ol>
-    </nav>
-      <h1>Cat age calculator</h1>
-      <p class="lede">Estimate a cat’s age in human years with the usual 15, then 24, then four-years-at-a-time curve — different from the dog table.</p>
-      <form class="form-block" id="age-form" action="#" method="get">
-        <div class="field-row">
-          <div class="field">
-            <label for="pet-years">Cat’s age, years</label>
-            <input id="pet-years" type="number" name="years" min="0" max="40" step="1" required>
-          </div>
-          <div class="field">
-            <label for="pet-months">Extra months</label>
-            <input id="pet-months" type="number" name="months" min="0" max="11" step="1" value="0">
-          </div>
-        </div>
-        <div class="field">
-          <button type="submit">Estimate human years</button>
-        </div>
-      </form>
-      <p class="error" id="error" hidden role="alert"></p>
-      <div class="result" id="result" hidden>
-        <p class="record" id="record"></p>
-        <table class="figures">
-          <tbody>
-            <tr><th scope="row">Estimate</th><td id="fig-ymd"></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <section class="method">
-        <h2>The curve this page uses</h2>
-        <p>A widely used cat scale, and the one implemented here, is: year one is about 15 human years, year two brings the total to 24, and each year after that adds 4. A six-year-old cat is about 40 human years on that curve. There is no size-group split on this page, which is one reason it should not be copied from the <a href="dog-age">dog age</a> calculator.</p>
-        <p>This is an estimate used for a rough comparison, not a veterinary assessment, and not a claim about any one breed. Times seven is the wrong shortcut for cats as well as dogs: it undershoots the early years and does not match the later ones either.</p>
-      </section>
+<body data-page="cat-age">
+<div class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</div>
+<a class="skip" href="#tool">Skip to the calculator</a>
+<header class="mast"><div class="wrap">
+<a class="brand" href="./"><svg width="26" height="28" viewBox="0 0 26 28" aria-hidden="true"><rect x="1" y="3" width="24" height="24" fill="#fff" stroke="#1c1c1a" stroke-width="1.5"/><rect x="1" y="3" width="24" height="7" fill="#b4231b" stroke="#1c1c1a" stroke-width="1.5"/><circle cx="7.5" cy="6.5" r="1.4" fill="#fff"/><circle cx="18.5" cy="6.5" r="1.4" fill="#fff"/><path d="M7 1v4M19 1v4" stroke="#1c1c1a" stroke-width="1.5"/><path d="M8.2 22.5l4.3-8.8 4.3 8.8M9.8 19.4h5.4" fill="none" stroke="#1c1c1a" stroke-width="1.9"/></svg>agecalculator<span>.com</span></a>
+<nav aria-label="Calculators"><ul><li><a href="./">Age calculator</a></li><li><a href="difference">Age difference</a></li><li><a href="past">How old was I</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="birthday-countdown">Birthday countdown</a></li></ul></nav>
+<a class="tools-link" href="#all-tools">All calculators</a>
+</div></header>
+<main id="main">
+<div class="band"><div class="wrap">
+<p class="crumbs"><a href="./">Age calculator</a> <span aria-hidden="true">/</span> Cat age calculator</p><div class="intro"><h1>Cat age calculator</h1><p>Your cat’s age in human years, and their life stage.</p></div>
+<div class="calc" data-calc data-tool="cat" id="tool">
+<form class="entry" novalidate autocomplete="on">
+<fieldset class="pet-age"><legend>Cat’s age</legend><div class="parts two"><label><span>Years</span><input id="pet-y" type="text" inputmode="numeric" maxlength="2" placeholder="0"></label><label><span>Months</span><input id="pet-m" type="text" inputmode="numeric" maxlength="2" placeholder="0"></label></div></fieldset>
+</form>
+<div class="result"><div class="leaf" id="leaf" data-state="empty"><div class="leaf-head"><span>Today</span></div>
+<div class="leaf-body"><div class="lead"><p class="big"><span class="num">16</span><span class="unit">November</span></p>
+<p class="rest">Type a date and the result appears here as you go.</p></div></div>
+<noscript><p class="hint">This calculator needs JavaScript to work the result out. The method is written out below the tool if you’d rather do it on paper.</p></noscript></div><p class="sr-only" id="live" aria-live="polite"></p>
+<aside class="ad ad-below" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box">728 × 90 on desktop, 320 × 100 on phones</div></aside></div>
+</div>
+</div></div>
+<div class="wrap page"><div class="content">
+<p class="placeholder-note">Draft copy for SEO and Copywriter to check</p>
+<section>
+<h2>How cat years are counted</h2>
+<p>A cat’s first year is roughly 15 human years and the second takes them to about 24. After that each year adds around 4. A 10-year-old cat is about 56 in human years; a 15-year-old about 76.</p>
+<p>Unlike dogs, cats don’t vary much in size, so one rule fits most of them. Indoor cats tend to live longer than outdoor cats, but that changes how long they live, not how old a given age is.</p>
+</section>
+<aside class="ad ad-mid" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box">336 × 280 on desktop, 300 × 250 on phones</div></aside>
+<section class="tight">
+<h2>Life stages</h2>
+<p>The 2021 feline life stage guidelines from the American Animal Hospital Association and the American Association of Feline Practitioners use four stages: kitten, from birth to a year; young adult, 1 to 6; mature adult, 7 to 10; and senior, over 10. Vets often suggest more frequent check-ups from the senior stage.</p>
+</section>
 
-    </main>
-    <footer class="site-footer">
-      <nav aria-label="Footer">
-        <ul>
-          <li><a href="./">Age calculator</a></li>
-          <li><a href="past">How old was I?</a></li>
-          <li><a href="difference">Age difference</a></li>
-          <li><a href="days-between-dates">Days between dates</a></li>
-          <li><a href="chronological-age">Chronological age</a></li>
-          <li><a href="birthday-countdown">Birthday countdown</a></li>
-          <li><a href="how-old-will-i-be">How old will I be?</a></li>
-          <li><a href="what-year-was-i-born">What year was I born?</a></li>
-          <li><a href="korean-age">Korean age</a></li>
-          <li><a href="dog-age">Dog age</a></li>
-          <li><a href="cat-age" aria-current="page">Cat age</a></li>
-          <li><a href="privacy">Privacy</a></li>
-        </ul>
-      </nav>
-      <p class="note">Preview only. Dates are counted in the browser and are not sent to a server. Canonical tags point at the intended root URLs; this preview must stay noindex until William approves a launch. The live site is still at app.agecalculator.com.</p>
-    </footer>
-  </div>
-  <script src="js/age.js"></script>
-  <script src="js/site.js"></script>
+</div><aside class="side" aria-label="More calculators"><h2>More calculators</h2><ul><li><a href="./">Age calculator</a></li><li><a href="difference">Age difference</a></li><li><a href="past">How old was I?</a></li><li><a href="how-old-will-i-be">How old will I be?</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="birthday-countdown">Birthday countdown</a></li><li><a href="korean-age">Korean age</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a href="dog-age">Dog age</a></li></ul><aside class="ad ad-side" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box">300 × 600</div></aside></aside></div>
+</main>
+<footer class="foot"><div class="wrap">
+<div><h2>agecalculator.com</h2><p>Dates you type are worked out in your browser and aren’t sent anywhere. The site is paid for by the adverts on it.</p><p><a href="embed">Put this calculator on your own site</a> · <a href="privacy">Privacy</a></p></div>
+<div id="all-tools"><h2>All calculators</h2><ul class="foot-tools"><li><a href="./">Age calculator</a> <span>your age today or on any date</span></li><li><a href="difference">Age difference</a> <span>the gap between two people</span></li><li><a href="past">How old was I?</a> <span>age on a date in the past</span></li><li><a href="how-old-will-i-be">How old will I be?</a> <span>age in a future year</span></li><li><a href="days-between-dates">Days between dates</a> <span>any two dates, with weekdays</span></li><li><a href="chronological-age">Chronological age</a> <span>y;m;d on a test date, printable</span></li><li><a href="birthday-countdown">Birthday countdown</a> <span>days until the next one</span></li><li><a href="korean-age">Korean age</a> <span>all three counting systems</span></li><li><a href="what-year-was-i-born">What year was I born?</a> <span>birth year from an age</span></li><li><a href="dog-age">Dog age</a> <span>dog years by size</span></li></ul></div>
+</div></footer>
+<script src="dates.js" defer></script>
+<script src="app.js" defer></script>
 </body>
 </html>

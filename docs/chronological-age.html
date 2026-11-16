@@ -1,167 +1,154 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en-GB">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex,nofollow">
-  <title>Chronological Age Calculator for School and Test Forms</title>
-  <meta name="description" content="Date of birth and test date in, age as years;months;days out — the form used on school and SLP papers. A date helper, not a publisher’s official tool.">
-  <link rel="canonical" href="https://agecalculator.com/chronological-age">
-  <link rel="stylesheet" href="css/styles.css">
-  <script type="application/ld+json">
-[
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Chronological Age Calculator for Tests (Years;Months;Days)</title>
+<meta name="description" content="Work out a child’s chronological age on a test date as years;months;days, like 8;4;12. Copy it, or print a result slip or a whole class sheet.">
+<link rel="canonical" href="https://agecalculator.com/chronological-age">
+
+<meta property="og:title" content="Chronological Age Calculator for Tests (Years;Months;Days)">
+<meta property="og:description" content="Work out a child’s chronological age on a test date as years;months;days, like 8;4;12. Copy it, or print a result slip or a whole class sheet.">
+<meta property="og:url" content="https://agecalculator.com/chronological-age">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#f1f1ec">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/libre-franklin-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "WebApplication",
+ "name": "Chronological age calculator",
+ "url": "https://agecalculator.com/chronological-age",
+ "applicationCategory": "UtilitiesApplication",
+ "operatingSystem": "All",
+ "browserRequirements": "Requires JavaScript",
+ "description": "Work out a child’s chronological age on a test date as years;months;days, like 8;4;12. Copy it, or print a result slip or a whole class sheet.",
+ "offers": {
+  "@type": "Offer",
+  "price": "0",
+  "priceCurrency": "GBP"
+ }
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "BreadcrumbList",
+ "itemListElement": [
   {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "Chronological Age Calculator",
-    "url": "https://agecalculator.com/chronological-age",
-    "applicationCategory": "UtilitiesApplication",
-    "operatingSystem": "All",
-    "browserRequirements": "Requires a JavaScript-enabled browser.",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    },
-    "description": "Date of birth and test date in, age as years;months;days out — the form used on school and SLP papers. A date helper, not a publisher’s official tool."
+   "@type": "ListItem",
+   "position": 1,
+   "name": "Home",
+   "item": "https://agecalculator.com/"
   },
   {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://agecalculator.com/"
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Chronological age",
-        "item": "https://agecalculator.com/chronological-age"
-      }
-    ]
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "What does 8;4;12 mean?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Eight completed years, four completed months, and twelve leftover days on the test date. It is the same civil count as the homepage, written in the compact form used on many school and SLP forms."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Is this an official Pearson or Yale calculator?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "No. It is a date-difference helper. A test manual may use its own rounding rule. Check the manual you are scoring against before you write the figure on a form."
-        }
-      }
-    ]
+   "@type": "ListItem",
+   "position": 2,
+   "name": "Chronological age calculator",
+   "item": "https://agecalculator.com/chronological-age"
   }
-]
-  </script>
+ ]
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "Is this the same method the Pearson or Yale calculators use?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "It gives the same completed years, months and days for ordinary dates. Around the end of a month, calculators that “borrow” 30 days can be a day different. If your manual says how to borrow, follow it."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Do you store the names I type?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "No. The page has no server behind the form. Close the tab and they’re gone."
+   }
+  }
+ ]
+}
+</script>
 </head>
-<body data-page="chrono">
-  <a class="skip" href="#main">Skip to content</a>
-  <div class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</div>
-  <div class="wrap">
-    <header class="site-header">
-      <a class="wordmark" href="./">Agecalculator.com</a>
-      <nav aria-label="Pages">
-        <ul>
-          <li><a href="./">Age calculator</a></li>
-          <li><a href="past">How old was I?</a></li>
-          <li><a href="difference">Age difference</a></li>
-          <li><a href="days-between-dates">Days between dates</a></li>
-          <li><a href="chronological-age" aria-current="page">Chronological age</a></li>
-          <li><a href="birthday-countdown">Birthday countdown</a></li>
-        </ul>
-      </nav>
-    </header>
-    <main id="main">
-    <nav class="crumbs" aria-label="Breadcrumb">
-      <ol>
-        <li><a href="./">Home</a></li>
-        <li>Chronological age</li>
-      </ol>
-    </nav>
-      <h1>Chronological age calculator</h1>
-      <p class="lede">Date of birth and test date in; age as years;months;days out — the form used on many school and SLP papers. A date helper, not a publisher’s official tool.</p>
-      <form class="form-block" id="age-form" action="#" method="get">
-        <div class="field-row">
-          <div class="field">
-            <label for="birth">Date of birth</label>
-            <input id="birth" type="date" name="birth" required>
-          </div>
-          <div class="field">
-            <label for="asof">Test date</label>
-            <span class="hint" id="asof-hint">The date of the assessment, not necessarily today.</span>
-            <input id="asof" type="date" name="asof" aria-describedby="asof-hint" required>
-          </div>
-        </div>
-        <div class="field">
-          <button type="submit">Calculate chronological age</button>
-        </div>
-      </form>
-      <p class="error" id="error" hidden role="alert"></p>
-      <div class="result" id="result" hidden>
-        <p class="record" id="record"></p>
-        <table class="figures">
-          <tbody>
-            <tr><th scope="row">Chronological age</th><td id="fig-chrono"></td></tr>
-            <tr><th scope="row">Written out</th><td id="fig-ymd"></td></tr>
-            <tr><th scope="row">Total months</th><td id="fig-months"></td></tr>
-            <tr><th scope="row">Total days</th><td id="fig-days"></td></tr>
-          </tbody>
-        </table>
-        <div class="slip" id="slip"><pre id="slip-body" style="font:inherit;white-space:pre-wrap;margin:0"></pre><p class="copy-row"><button type="button" id="copy-result">Copy result</button></p></div>
-      </div>
-      <section class="method">
-        <h2>What this number is for</h2>
-        <p>Teachers, speech and language therapists, and psychologists often have to write a chronological age on a test form as years, months and days, for example 8;4;12. That is not a different kind of age from the homepage. It is the same civil count, labelled with a test date and printed in the compact style the forms expect.</p>
-        <p>The arithmetic is completed years, leftover months, leftover days, with 1 March as the anniversary of a 29 February birthday in a common year, and with 31 January plus one month falling on the last day of February. A child born on 15 March 2018, tested on 16 November 2026, has a chronological age of 8;8;1.</p>
-        <p>This is not an official Pearson, Yale, Gesell, or Super Duper tool, and it does not apply a publisher’s rounding rule. If the manual on your desk says to drop leftover days, or to count a month differently, follow the manual. The copy button and a print of this page give you a short slip: date of birth, test date, and the y;m;d figure.</p>
-      </section>
-    <section class="faq" aria-labelledby="faq-heading">
-      <h2 id="faq-heading">Questions people actually ask</h2>
-      <article>
-        <h3>What does 8;4;12 mean?</h3>
-        <p>Eight completed years, four completed months, and twelve leftover days on the test date. It is the same civil count as the homepage, written in the compact form used on many school and SLP forms.</p>
-      </article>
-      <article>
-        <h3>Is this an official Pearson or Yale calculator?</h3>
-        <p>No. It is a date-difference helper. A test manual may use its own rounding rule. Check the manual you are scoring against before you write the figure on a form.</p>
-      </article>
-    </section>
-    </main>
-    <footer class="site-footer">
-      <nav aria-label="Footer">
-        <ul>
-          <li><a href="./">Age calculator</a></li>
-          <li><a href="past">How old was I?</a></li>
-          <li><a href="difference">Age difference</a></li>
-          <li><a href="days-between-dates">Days between dates</a></li>
-          <li><a href="chronological-age" aria-current="page">Chronological age</a></li>
-          <li><a href="birthday-countdown">Birthday countdown</a></li>
-          <li><a href="how-old-will-i-be">How old will I be?</a></li>
-          <li><a href="what-year-was-i-born">What year was I born?</a></li>
-          <li><a href="korean-age">Korean age</a></li>
-          <li><a href="dog-age">Dog age</a></li>
-          <li><a href="cat-age">Cat age</a></li>
-          <li><a href="privacy">Privacy</a></li>
-        </ul>
-      </nav>
-      <p class="note">Preview only. Dates are counted in the browser and are not sent to a server. Canonical tags point at the intended root URLs; this preview must stay noindex until William approves a launch. The live site is still at app.agecalculator.com.</p>
-    </footer>
-  </div>
-  <script src="js/age.js"></script>
-  <script src="js/site.js"></script>
-</body>
+<body data-page="chronological-age">
+<div class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</div>
+<a class="skip" href="#tool">Skip to the calculator</a>
+<header class="mast"><div class="wrap">
+<a class="brand" href="./"><svg width="26" height="28" viewBox="0 0 26 28" aria-hidden="true"><rect x="1" y="3" width="24" height="24" fill="#fff" stroke="#1c1c1a" stroke-width="1.5"/><rect x="1" y="3" width="24" height="7" fill="#b4231b" stroke="#1c1c1a" stroke-width="1.5"/><circle cx="7.5" cy="6.5" r="1.4" fill="#fff"/><circle cx="18.5" cy="6.5" r="1.4" fill="#fff"/><path d="M7 1v4M19 1v4" stroke="#1c1c1a" stroke-width="1.5"/><path d="M8.2 22.5l4.3-8.8 4.3 8.8M9.8 19.4h5.4" fill="none" stroke="#1c1c1a" stroke-width="1.9"/></svg>agecalculator<span>.com</span></a>
+<nav aria-label="Calculators"><ul><li><a href="./">Age calculator</a></li><li><a href="difference">Age difference</a></li><li><a href="past">How old was I</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="chronological-age" aria-current="page">Chronological age</a></li><li><a href="birthday-countdown">Birthday countdown</a></li></ul></nav>
+<a class="tools-link" href="#all-tools">All calculators</a>
+</div></header>
+<main id="main">
+<div class="band"><div class="wrap">
+<p class="crumbs"><a href="./">Age calculator</a> <span aria-hidden="true">/</span> Chronological age calculator</p><div class="intro"><h1>Chronological age calculator</h1><p>Age on the test date as years;months;days, for score forms and reports.</p></div>
+<div class="calc" data-calc data-tool="chrono" id="tool">
+<form class="entry multi" novalidate autocomplete="on">
+<div class="datefield " data-datefield="dob">
+<label class="df-label" for="dob-q">Date of birth</label>
+<input id="dob-q" class="quick" type="text" spellcheck="false" autocomplete="off" placeholder="e.g. 4 July 2018" aria-describedby="dob-read">
+<div class="parts" role="group" aria-label="Date of birth: day, month and year">
+<label><span>Day</span><input class="p-d" type="text" inputmode="numeric" maxlength="2" placeholder="DD"></label>
+<label><span>Month</span><input class="p-m" type="text" inputmode="numeric" maxlength="2" placeholder="MM"></label>
+<label><span>Year</span><input class="p-y" type="text" inputmode="numeric" maxlength="4" placeholder="YYYY"></label>
+</div>
+<p class="readback" id="dob-read"></p>
+</div><div class="datefield " data-datefield="test">
+<label class="df-label" for="test-q">Test date</label>
+<input id="test-q" class="quick" type="text" spellcheck="false" autocomplete="off" placeholder="e.g. 16 November 2026" aria-describedby="test-read">
+<div class="parts" role="group" aria-label="Test date: day, month and year">
+<label><span>Day</span><input class="p-d" type="text" inputmode="numeric" maxlength="2" placeholder="DD"></label>
+<label><span>Month</span><input class="p-m" type="text" inputmode="numeric" maxlength="2" placeholder="MM"></label>
+<label><span>Year</span><input class="p-y" type="text" inputmode="numeric" maxlength="4" placeholder="YYYY"></label>
+</div>
+<p class="readback" id="test-read"></p>
+</div><label class="name inline">Pupil or client, optional <input id="pupil" type="text" autocomplete="off" placeholder="Name stays on this screen"></label>
+</form>
+<div class="result"><div class="leaf" id="leaf" data-state="empty"><div class="leaf-head"><span>Today</span></div>
+<div class="leaf-body"><div class="lead"><p class="big"><span class="num">16</span><span class="unit">November</span></p>
+<p class="rest">Type a date and the result appears here as you go.</p></div></div>
+<noscript><p class="hint">This calculator needs JavaScript to work the result out. The method is written out below the tool if you’d rather do it on paper.</p></noscript></div><p class="sr-only" id="live" aria-live="polite"></p>
+<p class="rule-line">A completed month lands on the same date next month. If that date doesn’t exist — 31 January to 1 March, or a 29 February birthday in a common year — it rolls to the 1st of the next month. Some calculators use the last day of February instead.</p>
+<aside class="ad ad-below" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box">728 × 90 on desktop, 320 × 100 on phones</div></aside></div>
+</div>
+</div></div>
+<div class="wrap page"><div class="content">
+<p class="placeholder-note">Draft copy for SEO and Copywriter to check</p>
+<section>
+<h2>Reading the result</h2>
+<p>8;4;12 means 8 years, 4 months and 12 days on the test date. A child born on 4 July 2018 and tested on 16 November 2026 is 8;4;12. Some forms write it 8-4 or 8:4 and leave the days off; copy whichever your form asks for.</p>
+<p>This is a date-difference helper. It isn’t an official tool from Pearson, Yale or any test publisher, and some manuals have their own rule for days, such as rounding 15 or more days up to the next month. The result shows that rounded figure separately so you can use it if your manual asks for it.</p>
+</section>
+<section id="class-sheet" class="sheet-section">
+<h2>Class sheet</h2>
+<p>Testing a group on the same day? Add each child here and print one A4 sheet. Names stay in this browser tab and disappear when you close it.</p>
+<div class="sheet" data-sheet>
+<div class="sheet-top"><label>Test date <input type="text" id="sheet-date" placeholder="e.g. 16 November 2026"></label><label>Group or class <input type="text" id="sheet-group" placeholder="e.g. Year 3, Oak class"></label></div>
+<table class="sheet-table"><thead><tr><th scope="col">Name</th><th scope="col">Date of birth</th><th scope="col">Age (y;m;d)</th><th scope="col">Months</th></tr></thead><tbody id="sheet-rows"></tbody></table>
+<div class="sheet-actions"><button type="button" class="btn btn-quiet" id="sheet-add">Add a row</button><button type="button" class="btn" id="sheet-print">Print the sheet</button></div>
+<p class="sheet-foot">Ages worked out at agecalculator.com/chronological-age. A 29 February birthday counts on 1 March in common years. Check your test manual’s rounding rule.</p>
+</div>
+</section>
+<aside class="ad ad-mid" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box">336 × 280 on desktop, 300 × 250 on phones</div></aside>
+<section class="tight">
+<h2>Why not just subtract the years?</h2>
+<p>Because norms tables change every few months at young ages, a child who is 5;11;28 is scored against a different row from one who is 6;0;2. Subtracting birth year from test year would put them in the same row. The calculator borrows months and days properly, including across short months and leap years.</p>
+</section>
+<section class="faq" aria-labelledby="faq-h"><h2 id="faq-h">Questions people ask</h2><details><summary>Is this the same method the Pearson or Yale calculators use?</summary><div><p>It gives the same completed years, months and days for ordinary dates. Around the end of a month, calculators that “borrow” 30 days can be a day different. If your manual says how to borrow, follow it.</p></div></details><details><summary>Do you store the names I type?</summary><div><p>No. The page has no server behind the form. Close the tab and they’re gone.</p></div></details></section>
+</div><aside class="side" aria-label="More calculators"><h2>More calculators</h2><ul><li><a href="./">Age calculator</a></li><li><a href="difference">Age difference</a></li><li><a href="past">How old was I?</a></li><li><a href="how-old-will-i-be">How old will I be?</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="birthday-countdown">Birthday countdown</a></li><li><a href="korean-age">Korean age</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a href="dog-age">Dog age</a></li><li><a href="cat-age">Cat age</a></li></ul><aside class="ad ad-side" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box">300 × 600</div></aside></aside></div>
+</main>
+<footer class="foot"><div class="wrap">
+<div><h2>agecalculator.com</h2><p>Dates you type are worked out in your browser and aren’t sent anywhere. The site is paid for by the adverts on it.</p><p><a href="embed">Put this calculator on your own site</a> · <a href="privacy">Privacy</a></p></div>
+<div id="all-tools"><h2>All calculators</h2><ul class="foot-tools"><li><a href="./">Age calculator</a> <span>your age today or on any date</span></li><li><a href="difference">Age difference</a> <span>the gap between two people</span></li><li><a href="past">How old was I?</a> <span>age on a date in the past</span></li><li><a href="how-old-will-i-be">How old will I be?</a> <span>age in a future year</span></li><li><a href="days-between-dates">Days between dates</a> <span>any two dates, with weekdays</span></li><li><a href="birthday-countdown">Birthday countdown</a> <span>days until the next one</span></li><li><a href="korean-age">Korean age</a> <span>all three counting systems</span></li><li><a href="what-year-was-i-born">What year was I born?</a> <span>birth year from an age</span></li><li><a href="dog-age">Dog age</a> <span>dog years by size</span></li><li><a href="cat-age">Cat age</a> <span>cat years and life stage</span></li></ul></div>
+</div></footer>
+<script src="dates.js" defer></script>
+<script src="app.js" defer></script>
+<script src="sheet.js" defer></script></body>
 </html>
