@@ -16,6 +16,9 @@
 .nav-menu { position: relative; font-size: 15px; }
 .nav-menu summary { list-style: none; display: inline-flex; align-items: center; gap: var(--s2); padding: var(--s3) var(--s2); cursor: pointer; color: var(--ink); font-weight: 600; border-radius: 2px; box-sizing: border-box; min-height: 44px; }
 .nav-menu summary::-webkit-details-marker { display: none; }
+/* Taps must hit the summary itself. On iOS Safari, an SVG or label inside
+   <summary> can swallow the second tap, leaving the menu stuck open. */
+.nav-menu summary svg, .nav-menu summary span { pointer-events: none; }
 .nav-menu summary:hover span { text-decoration: underline; text-underline-offset: 3px; }
 .nav-menu ul { position: absolute; right: 0; top: calc(100% + 4px); z-index: 4; list-style: none; margin: 0; padding: var(--s2) 0; min-width: 236px; background: var(--paper); border: 1.5px solid var(--ink); box-shadow: 4px 4px 0 -1.5px var(--paper), 4px 4px 0 0 var(--ink); }
 .nav-menu li a { display: block; padding: 9px var(--s4); color: var(--ink); text-decoration: none; }

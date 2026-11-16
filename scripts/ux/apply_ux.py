@@ -37,7 +37,7 @@ def mast(soup, slug, nav):
     logo_html = logo.decode() if logo else ""
     new = frag(
         f'<header class="mast"><div class="wrap"><a class="brand" href="./">{logo_html}<span class="wm">agecalculator<span>.com</span></span></a>'
-        f'<details class="nav-menu"><summary>{icon("menu")}<span>Calculators</span></summary><ul>{items}</ul></details></div></header>'
+        f'<details class="nav-menu"><summary aria-expanded="false" aria-controls="nav-menu-list">{icon("menu")}<span>Calculators</span></summary><ul id="nav-menu-list">{items}</ul></details></div></header>'
     )
     old.replace_with(new)
 
@@ -319,27 +319,68 @@ def nav_from_home(docs: Path):
 
 
 
-NAV_ESC = """<script>
+NAV_MENU = """<script>
 (function(){
+  var menu = document.querySelector('details.nav-menu');
+  if (!menu) return;
+  var summary = menu.querySelector('summary');
+  if (!summary) return;
+  var list = menu.querySelector('ul');
+  if (list && !list.id) list.id = 'nav-menu-list';
+  if (list) summary.setAttribute('aria-controls', list.id);
+
+  function sync() {
+    summary.setAttribute('aria-expanded', menu.open ? 'true' : 'false');
+  }
+  function setOpen(open) {
+    menu.open = !!open;
+    sync();
+  }
+  menu.addEventListener('toggle', sync);
+  sync();
+
+  /* Own the toggle. On iOS Safari a second tap on <summary> often fails to
+     close a native <details>, especially when the summary holds an SVG, and
+     later taps can miss menu links. preventDefault stops the native toggle
+     so it cannot fight this handler or an outside-click listener. */
+  summary.addEventListener('click', function (e) {
+    e.preventDefault();
+    setOpen(!menu.open);
+  });
+
+  /* pointerdown (capture) so a tap on ordinary text still closes the menu.
+     iOS Safari often does not fire click on non-interactive elements.
+     Ignore events inside the menu so this cannot re-toggle the summary. */
+  function onOutside(e) {
+    if (!menu.open) return;
+    if (menu.contains(e.target)) return;
+    setOpen(false);
+  }
+  document.addEventListener('pointerdown', onOutside, true);
+  document.addEventListener('click', onOutside);
+
+  menu.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a') : null;
+    if (a && menu.contains(a)) setOpen(false);
+  });
+
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Escape' && e.key !== 'Esc') return;
-    var menu = document.querySelector('details.nav-menu');
-    if (!menu || !menu.open) return;
-    menu.open = false;
-    var s = menu.querySelector('summary');
-    if (s) s.focus();
+    if (!menu.open) return;
+    setOpen(false);
+    summary.focus({ preventScroll: true });
   });
 })();
 </script>"""
 
 
-def ensure_nav_escape(soup):
+def ensure_nav_menu(soup):
     if not soup.body:
         return
-    for sc in soup.find_all("script"):
-        if sc.string and "details.nav-menu" in sc.string and "Escape" in sc.string:
-            return
-    soup.body.append(frag(NAV_ESC))
+    for sc in list(soup.find_all("script")):
+        if sc.string and "details.nav-menu" in sc.string:
+            sc.decompose()
+    soup.body.append(frag(NAV_MENU))
 
 
 
@@ -404,7 +445,7 @@ def apply_ux(docs: Path) -> int:
         if soup.head and not soup.select_one('link[href="ux.css"]'):
             soup.head.append(frag('<link rel="stylesheet" href="ux.css">'))
         ensure_noscript(soup)
-        ensure_nav_escape(soup)
+        ensure_nav_menu(soup)
         f.write_text(str(soup))
         n += 1
     css = (HERE / "ux.css").read_text()
