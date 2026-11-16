@@ -26,7 +26,7 @@ None of the following is approved by this document.
 
 **GitHub Pages at `agecalculator.com` and `www`, plus one free Netlify site whose only job is to 301 `app.agecalculator.com` to the new trailing-slash root URLs.** The redirect rules are already in `netlify-app-redirects/`. They must stay in place for at least a year (SEO Manager: preferably for the life of the site).
 
-The root build uses directory indexes (`docs/past/index.html` is `/past/`). GitHub Pages 301s `/past` to `/past/`. Legacy `/past.html`, `/how-old-am-i` and `/rodent-age-calculator.html` are stub pages (canonical, meta refresh, visible link), **not** true 301s. Flag that for SEO Manager.
+The root build uses directory indexes (`docs/past/index.html` is `/past/`). GitHub Pages 301s `/past` to `/past/`. There is no `/past.html` (or other directory `slug.html`) stub, because that file would be served at slashless `/past` and would block the 301. The only stubs are `/how-old-am-i`, `/date-of-birth` and `/rodent-age-calculator.html` (canonical to `/`, meta refresh `content="0"`, no noindex). Those stubs are still not true 301s.
 
 Credits: the `app.` site will share the dino.game team's Free-plan pool (300 credits/month on a credit-based plan; accounts created before 4 September 2025 may still be Legacy). Redirects count as web requests. Check credit use a week after launch. If `app.` traffic is heavy, ask William before moving that site to its own free account. When Free credits run out, **all** projects on the team pause and visitors see “Site not available.” Sources: [Credit-based pricing](https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/credit-based-pricing-plans/), [How credits work](https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/how-credits-work/), [Pricing](https://www.netlify.com/pricing/).
 
@@ -209,12 +209,12 @@ Do not delete `agecalculator-preview`. Do not change the Namecheap registration 
 
 ---
 
-## Flags for SEO Manager
+## SEO Manager rulings applied (16 November 2026)
 
-- **Trailing-slash canonicals** are now the rule, because GitHub Pages directory indexes 301 `/page` to `/page/`. This is the opposite of SEO spec §1 (recommend no trailing slash except `/`).
-- **Year pages 1960-2024** are real, unique-title, unique-canonical pages with a factual lede (weekday of 1 January, leap year or not), a prefilled tool, and a short note linking to `/past/`. They are **not** 65 hand-written articles. The SEO spec §1.4 said to consolidate year URLs, 301 them to `/past?year=`, and **not** put them in the sitemap. They are omitted from the sitemap for that reason. Please decide whether to keep them indexable, add them to the sitemap, or go back to a hub-only model.
-- **Years outside 1960-2024** are not prebuilt. `app /past/2025` 301s to `/past/?year=2025`. The calculator accepts 1000-2999 as typed dates; that is not a published URL range.
-- **Stubs are not 301s.** `/page.html`, `/how-old-am-i`, `/date-of-birth` and `/rodent-age-calculator.html` use `rel=canonical`, an instant meta refresh and a visible link.
+- **Trailing-slash URLs** everywhere: canonicals, internal links, the related-calculators row, og:url, JSON-LD urls and the sitemap. The homepage stays `https://agecalculator.com/`. There is no hreflang. App. 301s go in one hop to the slash URL (HTTPS; HTTP remains two hops on Netlify).
+- **Year pages 1960-2026** are kept. The original range was 1960-2024 because that is what the old app sitemap (lastmod 7 December 2025) and the redirect map listed; 2025 and 2026 were not in that sitemap. The range now includes 2025 and the current year, 2026 (67 pages). Titles are the plain form “Age in 1985”. Every year page canonicalises to `https://agecalculator.com/past/` (same og:url and JSON-LD url), stays out of the sitemap, and must not be noindexed at launch. App. `/past/YYYY` 301s to `/past/YYYY/` in one hop; years outside the range (e.g. 2027) go to `/past/?year=`.
+- **Legacy stubs only:** `/rodent-age-calculator.html`, `/how-old-am-i` and `/date-of-birth` (canonical to `/`, meta refresh 0, no noindex). Directory `slug.html` stubs were dropped so GitHub Pages can 301 `/slug` to `/slug/`. The redirect map has no apex `.html` rows. The 16 November Ahrefs export and GSC notes show one real apex `.html` backlink: `http://agecalculator.com/rodent-age-calculator.html` (Universitas Airlangga), which is kept. No conflict that would require republishing `difference.html` or similar.
+- **Launch checklist:** Enforce HTTPS on; `www` 301s to the apex; unknown apex paths return a real HTTP 404 from `404.html`.
 
 ---
 

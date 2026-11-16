@@ -5,8 +5,8 @@ A static preview of a new site for the root domain agecalculator.com, structured
 - Published (no custom domain): GitHub Pages from `main` `/docs`
 - Intended production host: **GitHub Pages** at the apex, with a **redirect-only Netlify site** for `app.agecalculator.com` 301s (same Netlify account as dino.game, after William approves). See `cutover/namecheap-plan.md`. Nothing live has been applied.
 - Pages are directory indexes (`docs/past/index.html` is `/past/`). Canonicals, internal links, og:url, JSON-LD URLs and the sitemap use a trailing slash (the homepage stays `https://agecalculator.com/`).
-- On this GitHub Pages preview, `/past` (no slash) should 301 to `/past/`. Legacy `/past.html` is a stub (canonical + meta refresh + visible link), not a 301. Same pattern for the other tool pages, `/how-old-am-i`, `/date-of-birth` and `/rodent-age-calculator.html`.
-- `/past/{year}/` is a static page for every year the old app sitemap listed, **1960-2024**. The hub `/past/` still honours `?year=` as a prefill. Years outside that range are not prebuilt; the app. 301 for e.g. `/past/2025` goes to `/past/?year=2025`.
+- On this GitHub Pages preview, `/past` (no slash) 301s to `/past/`. There is no `/past.html` stub: a `slug.html` file next to a `slug/` directory makes GitHub Pages serve the file at `/slug` and blocks that 301. The only stubs are the true legacy URLs: `/how-old-am-i`, `/date-of-birth` and `/rodent-age-calculator.html` (canonical to `/`, meta refresh 0, no noindex).
+- `/past/{year}/` is a static page for **1960-2026**. Titles are the plain form “Age in 1985”. Every year page canonicalises to `https://agecalculator.com/past/`, and none are in the sitemap. The hub `/past/` still honours `?year=` as a prefill. Years outside that range are not prebuilt; the app. 301 for e.g. `/past/2027` goes to `/past/?year=2027`.
 - Every page has `<meta name="robots" content="noindex,nofollow">`
 - `docs/robots.txt` disallows all crawlers (the live root robots.txt is a later, approved change)
 - Unique pre-rendered title, meta description, self-canonical (`https://agecalculator.com/…/`) and JSON-LD in the first HTML

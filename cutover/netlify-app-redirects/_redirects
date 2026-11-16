@@ -1,7 +1,8 @@
 # Redirect-only site for app.agecalculator.com.
 # Publish this directory. Do not attach agecalculator.com or www.
 # HTTP is two hops on Netlify (same-host HTTP→HTTPS first); https:// rules are the ones that fire.
-# Prebuilt year pages (old sitemap / redirect map): /past/1960/ … /past/2024/
+# Prebuilt year pages: /past/1960/ … /past/2026/, one hop to the trailing-slash URL.
+# Years outside that range go to /past/?year=.
 
 https://app.agecalculator.com/rodent-age-calculator.html  https://agecalculator.com/  301!
 https://app.agecalculator.com/how-old-am-i  https://agecalculator.com/  301!
@@ -140,10 +141,14 @@ https://app.agecalculator.com/past/2023  https://agecalculator.com/past/2023/  3
 http://app.agecalculator.com/past/2023  https://agecalculator.com/past/2023/  301!
 https://app.agecalculator.com/past/2024  https://agecalculator.com/past/2024/  301!
 http://app.agecalculator.com/past/2024  https://agecalculator.com/past/2024/  301!
+https://app.agecalculator.com/past/2025  https://agecalculator.com/past/2025/  301!
+http://app.agecalculator.com/past/2025  https://agecalculator.com/past/2025/  301!
+https://app.agecalculator.com/past/2026  https://agecalculator.com/past/2026/  301!
+http://app.agecalculator.com/past/2026  https://agecalculator.com/past/2026/  301!
 
 https://app.agecalculator.com/past  https://agecalculator.com/past/  301!
-http://app.agecalculator.com/past  https://agecalculator.com/past/  301!
 https://app.agecalculator.com/past/*  https://agecalculator.com/past/?year=:splat  301!
+http://app.agecalculator.com/past  https://agecalculator.com/past/  301!
 http://app.agecalculator.com/past/*  https://agecalculator.com/past/?year=:splat  301!
 
 https://app.agecalculator.com/difference  https://agecalculator.com/difference/  301!
@@ -273,6 +278,8 @@ http://app.agecalculator.com/  https://agecalculator.com/  301!
 /past/2022  https://agecalculator.com/past/2022/  301!
 /past/2023  https://agecalculator.com/past/2023/  301!
 /past/2024  https://agecalculator.com/past/2024/  301!
+/past/2025  https://agecalculator.com/past/2025/  301!
+/past/2026  https://agecalculator.com/past/2026/  301!
 /past  https://agecalculator.com/past/  301!
 /past/*  https://agecalculator.com/past/?year=:splat  301!
 /difference  https://agecalculator.com/difference/  301!

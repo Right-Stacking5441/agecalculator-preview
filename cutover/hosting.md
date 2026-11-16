@@ -12,7 +12,7 @@ The redirect-only site lives in `netlify-app-redirects/` in this folder. Do not 
 
 GitHub Pages serves `docs/past/index.html` as `/past/` and 301s `/past` (no slash) to `/past/`. The build now uses that form throughout: canonicals, internal links, og:url, JSON-LD and sitemap entries all have a trailing slash (the homepage is `https://agecalculator.com/`). This is the opposite of the earlier “no trailing slash except `/`” SEO recommendation, which assumed Cloudflare Pages or Netlify slashless URLs. Flag that change for SEO Manager.
 
-GitHub Pages cannot issue per-path 301s for `/past.html`, `/how-old-am-i` or `/rodent-age-calculator.html`. Those are prebuilt stub pages with `rel=canonical`, an instant meta refresh and a visible link. They are **not** true 301s. Flag that for SEO Manager.
+GitHub Pages cannot issue per-path 301s for `/how-old-am-i`, `/date-of-birth` or `/rodent-age-calculator.html`. Those are prebuilt stub pages with `rel=canonical` to `/`, an instant meta refresh (`content="0"`) and a visible link. They are **not** true 301s. They do not have noindex (SEO Manager, 16 November 2026). Do not also publish `slug.html` for directory pages: that file is served at slashless `/slug` and blocks the 301 to `/slug/`. The redirect map and the 16 November Ahrefs/GSC notes have no apex `/difference.html` (and similar) backlinks; the only real apex `.html` URL is `/rodent-age-calculator.html`.
 
 ## Launch-time robots (do not apply yet)
 
@@ -21,7 +21,7 @@ The preview keeps `<meta name="robots" content="noindex,nofollow">` on every pag
 At launch, in a reviewed commit on the **production** repo:
 
 - **Tool pages are indexable.** Remove the noindex/nofollow meta from the calculators (home, `/past/`, `/difference/`, `/days-between-dates/`, `/chronological-age/`, `/birthday-countdown/`, `/how-old-will-i-be/`, `/korean-age/`, `/what-year-was-i-born/`, `/dog-age/`, `/cat-age/`) and from `/privacy/` and `/contact/` if SEO Manager agrees they should be indexed. `/contact/` belongs in the root sitemap. Open `robots.txt` to allow those URLs.
-- **Year pages (`/past/1960/`–`/past/2024/`):** they exist with unique titles and self-canonicals. They are **not** in the preview sitemap, matching SEO spec §1.4 / §1.5. Confirm with SEO Manager before adding them at launch.
+- **Year pages (`/past/1960/`–`/past/2026/`):** keep them. Titles are the plain form “Age in 1985”. All of them canonicalise to `https://agecalculator.com/past/` (and the same og:url / JSON-LD url). They stay **out of the sitemap**. At launch they must **not** be noindexed (only the preview’s site-wide noindex applies today). App. `/past/YYYY` 301s to `/past/YYYY/` in one hop; years outside 1960-2026 go to `/past/?year=`.
 - **`/widget/` and `/embed/` stay noindex**, with `noindex` only (not `nofollow`), so the credit link still counts.
 - Take the preview banner off every page.
 
@@ -48,6 +48,6 @@ The preview itself remains on GitHub Pages until cutover; the Netlify paragraph 
 1. Keep this repo noindex until the go-ahead to index.
 2. Create a new public production GitHub repo, publish from `/docs`, add `docs/CNAME` with `agecalculator.com`, and attach the custom domain only there (verify the domain first).
 3. Create the redirect-only Netlify site from `cutover/netlify-app-redirects/`, on the dino.game account, and attach only `app.agecalculator.com`.
-4. When William says go: switch Namecheap to BasicDNS, enter the record table in `namecheap-plan.md`, wait for Let's Encrypt on GitHub Pages and on the Netlify `app.` alias, test mail, then remove noindex / open `robots.txt` in a reviewed production commit, and fill the privacy date.
+4. When William says go: switch Namecheap to BasicDNS, enter the record table in `namecheap-plan.md`, wait for Let's Encrypt on GitHub Pages and on the Netlify `app.` alias, turn **Enforce HTTPS** on, confirm `www` 301s to the apex, test mail, then remove noindex / open `robots.txt` in a reviewed production commit (year pages included: no noindex, still off the sitemap), and fill the privacy date. Unknown apex paths must return a real HTTP 404 from `404.html`.
 5. A week after launch: check Netlify credit use on the shared team. If the pool is running low, ask William before moving `app.` to its own free account.
 6. Leave this GitHub Pages preview up as a fallback until you are sure.

@@ -1,29 +1,27 @@
 """Old and new URLs to check so none 404 after the GitHub Pages cutover."""
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
+from promote_dirs import YEAR_MIN, YEAR_MAX, DIR_PAGES  # noqa: E402
+
 SEO_MAP = Path("/workspace/marketing/seo/2026-11-16-agecalculator-redirect-map.csv")
 SITEMAP = ROOT / "docs" / "sitemap.xml"
-YEAR_MIN, YEAR_MAX = 1960, 2024
 
-TOOL_SLUGS = [
-    "difference",
-    "past",
-    "days-between-dates",
-    "chronological-age",
-    "birthday-countdown",
-    "how-old-will-i-be",
-    "korean-age",
-    "what-year-was-i-born",
-    "dog-age",
-    "cat-age",
-    "privacy",
-    "contact",
-    "embed",
-    "widget",
+TOOL_SLUGS = list(DIR_PAGES)
+
+STUB_PATHS = [
+    "/how-old-am-i",
+    "/how-old-am-i/",
+    "/how-old-am-i.html",
+    "/date-of-birth",
+    "/date-of-birth/",
+    "/date-of-birth.html",
+    "/rodent-age-calculator.html",
 ]
 
 
@@ -43,17 +41,7 @@ def year_paths() -> list[str]:
 
 
 def stub_paths() -> list[str]:
-    paths = [f"/{slug}.html" for slug in TOOL_SLUGS]
-    paths += [
-        "/how-old-am-i",
-        "/how-old-am-i/",
-        "/how-old-am-i.html",
-        "/date-of-birth",
-        "/date-of-birth/",
-        "/date-of-birth.html",
-        "/rodent-age-calculator.html",
-    ]
-    return paths
+    return list(STUB_PATHS)
 
 
 def slash_variants(path: str) -> list[str]:
@@ -79,8 +67,15 @@ def preview_paths() -> list[str]:
     return out
 
 
+def directory_slashless() -> list[str]:
+    """Paths that must 301 to the trailing-slash form on GitHub Pages."""
+    paths = [f"/{slug}" for slug in TOOL_SLUGS]
+    paths += [f"/past/{y}" for y in range(YEAR_MIN, YEAR_MAX + 1)]
+    return paths
+
+
 def app_redirects() -> list[tuple[str, str]]:
-    """(old app path, expected Location on https://agecalculator.com)."""
+    """(old app path, expected Location on https://agecalculator.com). One hop to the slash URL."""
     pairs = [
         ("/", "https://agecalculator.com/"),
         ("/past", "https://agecalculator.com/past/"),
@@ -92,11 +87,11 @@ def app_redirects() -> list[tuple[str, str]]:
         ("/rodent-age-calculator.html", "https://agecalculator.com/"),
         ("/robots.txt", "https://agecalculator.com/robots.txt"),
     ]
-    for y in (1960, 1990, 2010, 2024):
+    for y in (YEAR_MIN, 1990, 2010, 2024, 2025, YEAR_MAX):
         pairs.append((f"/past/{y}", f"https://agecalculator.com/past/{y}/"))
         pairs.append((f"/past/{y}/", f"https://agecalculator.com/past/{y}/"))
-    # A year that was never in the old sitemap: hub + ?year=
-    pairs.append(("/past/2025", "https://agecalculator.com/past/?year=2025"))
+    # A year outside the prebuilt range: hub + ?year=
+    pairs.append((f"/past/{YEAR_MAX + 1}", f"https://agecalculator.com/past/?year={YEAR_MAX + 1}"))
     return pairs
 
 

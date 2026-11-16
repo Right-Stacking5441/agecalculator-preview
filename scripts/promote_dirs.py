@@ -6,11 +6,13 @@ builds flat files. This step:
 - moves each page (except index.html and 404.html) to <slug>/index.html
 - rewrites relative asset and internal links for the new depth
 - sets trailing-slash canonicals, og:url and JSON-LD URLs
-- writes a static /past/<year>/ page for every year the old site listed
-  (1960-2024)
-- writes stub pages for legacy URLs GitHub Pages cannot 301
-- rewrites sitemap.xml to trailing-slash loc values (no year URLs; see the
-  flag for SEO Manager in the cutover plan)
+- writes a static /past/<year>/ page for 1960-2026, each canonicalised to
+  https://agecalculator.com/past/ (not listed in the sitemap; no extra noindex)
+- writes stub pages only for true legacy URLs GitHub Pages cannot 301
+  (/rodent-age-calculator.html, /how-old-am-i, /date-of-birth). Directory
+  pages are not also written as slug.html, because that file steals the
+  slashless /slug → /slug/ 301 on GitHub Pages.
+- rewrites sitemap.xml to trailing-slash loc values (no year URLs)
 """
 from __future__ import annotations
 
@@ -23,8 +25,9 @@ ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
 CANON = "https://agecalculator.com"
 
-# Years the old app sitemap and redirect map listed as real /past/{year} URLs.
-YEAR_MIN, YEAR_MAX = 1960, 2024
+# Old sitemap and redirect map listed 1960-2024. SEO Manager (16 Nov 2026)
+# asked to keep the year pages and extend the range through the current year.
+YEAR_MIN, YEAR_MAX = 1960, 2026
 
 # Pages that become /slug/ (not the homepage, not 404).
 DIR_PAGES = [
@@ -47,15 +50,18 @@ DIR_PAGES = [
 # Filename (at docs root) or directory slug → destination path on the live root.
 # These cannot be 301s on GitHub Pages, so they are stubs.
 STUBS = [
-    # Flat .html leftovers once the real page lives at /slug/
-    *[(f"{slug}.html", f"/{slug}/") for slug in DIR_PAGES],
-    # Apex aliases from the SEO map, plus the university .html link.
+    # Apex aliases from the SEO map, plus the university .html backlink.
+    # Do not also write DIR_PAGES as slug.html: on GitHub Pages that file is
+    # served at slashless /slug and blocks the 301 to /slug/.
     ("how-old-am-i/index.html", "/"),
     ("date-of-birth/index.html", "/"),
     ("how-old-am-i.html", "/"),
     ("date-of-birth.html", "/"),
     ("rodent-age-calculator.html", "/"),
 ]
+
+# Leftovers from an earlier build that must be deleted, never republished.
+DROPPED_STUBS = [f"{slug}.html" for slug in DIR_PAGES]
 
 ASSETS = {
     "styles.css",
@@ -260,12 +266,12 @@ def year_intro(year: int) -> tuple[str, str, str, str]:
         if leap
         else f"{year} was not a leap year, with {days} days."
     )
-    title = f"How old was I in {year}? | agecalculator.com"
+    title = f"Age in {year}"
     desc = (
-        f"How old were you in {year}? 1 January {year} was a {wd}. {leap_bit} "
-        f"Type your date of birth to see your age on that day, or pick any other date in {year}."
+        f"Age on 1 January {year}, a {wd}. {leap_bit} "
+        f"Type your date of birth to see your age on that day, or pick another date in {year}."
     )
-    h1 = f"How old was I in {year}?"
+    h1 = f"Age in {year}"
     lede = (
         f"1 January {year} was a {wd}. {leap_bit} "
         f"The date below is filled in as 1 January {year}. Type your date of birth to see your exact age on that day, "
@@ -274,7 +280,7 @@ def year_intro(year: int) -> tuple[str, str, str, str]:
     return title, desc, h1, lede
 
 
-def _replace_head_text(html: str, title: str, desc: str, h1: str, lede: str) -> str:
+def _replace_head_text(html: str, title: str, desc: str, h1: str, lede: str, *, jsonld: bool = True) -> str:
     html = re.sub(r"<title>[^<]*</title>", f"<title>{title}</title>", html, count=1)
     html = re.sub(
         r'<meta property="og:title" content="[^"]*">',
@@ -310,14 +316,15 @@ def _replace_head_text(html: str, title: str, desc: str, h1: str, lede: str) -> 
             count=1,
             flags=re.S,
         )
-    html = re.sub(r'("name":\s*")[^"]*(")', lambda m: m.group(1) + title + m.group(2), html, count=1)
-    once = {"n": 0}
+    if jsonld:
+        html = re.sub(r'("name":\s*")[^"]*(")', lambda m: m.group(1) + title + m.group(2), html, count=1)
+        once = {"n": 0}
 
-    def repl_desc(m):
-        once["n"] += 1
-        return (m.group(1) + desc + m.group(2)) if once["n"] == 1 else m.group(0)
+        def repl_desc(m):
+            once["n"] += 1
+            return (m.group(1) + desc + m.group(2)) if once["n"] == 1 else m.group(0)
 
-    html = re.sub(r'("description":\s*")[^"]*(")', repl_desc, html, count=1)
+        html = re.sub(r'("description":\s*")[^"]*(")', repl_desc, html, count=1)
     return html
 
 
@@ -359,9 +366,10 @@ def write_year_pages(docs: Path = DOCS) -> list[Path]:
     written = []
     for year in range(YEAR_MIN, YEAR_MAX + 1):
         title, desc, h1, lede = year_intro(year)
-        # Start from the hub HTML (already depth 1) and rewrite to depth 2.
-        html = rewrite_html(base, 2, f"/past/{year}/")
-        html = _replace_head_text(html, title, desc, h1, lede)
+        # Depth 2 for assets and internal links. Canonical, og:url and JSON-LD
+        # url all point at the /past/ hub (SEO Manager, 16 Nov 2026).
+        html = rewrite_html(base, 2, "/past/")
+        html = _replace_head_text(html, title, desc, h1, lede, jsonld=False)
         # Mark the year so app.js can prefill even if the path is rewritten.
         html = html.replace("<html", f'<html data-past-year="{year}"', 1)
         # Prefill class, matching the hub's ?year= behaviour.
@@ -398,7 +406,6 @@ def stub_html(dest_path: str, depth: int) -> str:
         "<head>\n"
         '<meta charset="utf-8">\n'
         '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
-        '<meta name="robots" content="noindex,nofollow">\n'
         f"<title>This page has moved</title>\n"
         f'<link rel="canonical" href="{target}">\n'
         f'<meta property="og:url" content="{target}">\n'
@@ -445,9 +452,9 @@ SITEMAP_PAGES = [
 
 
 def write_sitemap(docs: Path = DOCS, lastmod: str = "2026-11-16") -> None:
-    # Year URLs are intentionally omitted, matching SEO spec §1.4 / §1.5.
-    # Flag this for SEO Manager: the year pages exist with self-canonicals but
-    # are not listed here.
+    # Year URLs are omitted (SEO Manager, 16 Nov 2026): keep the pages, canonical
+    # to /past/, and do not noindex them at launch. The preview still carries the
+    # site-wide noindex until the launch commit.
     lines = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
@@ -486,6 +493,17 @@ def finish_promoted(docs: Path = DOCS) -> None:
             issues.append(f"{rel} canonical is not the production host: {can}")
         elif can != CANON + "/" and not can.endswith("/") and not Path(can).suffix:
             issues.append(f"{rel} canonical is missing a trailing slash: {can}")
+        # Year pages must canonicalise to the hub, not to /past/{year}/.
+        parts = rel.parts
+        if len(parts) == 3 and parts[0] == "past" and parts[1].isdigit() and parts[2] == "index.html":
+            if can != CANON + "/past/":
+                issues.append(f"{rel} year page canonical should be {CANON}/past/, got {can}")
+        # Legacy stubs: canonical to the target, meta refresh 0, no noindex.
+        if rel.as_posix() in {s[0] for s in STUBS}:
+            if "noindex" in text:
+                issues.append(f"{rel} stub must not have noindex")
+            if 'http-equiv="refresh"' not in text or 'content="0;url=' not in text:
+                issues.append(f"{rel} stub missing content=\"0\" meta refresh")
     if issues:
         raise SystemExit("share/canonical mismatch:\n  " + "\n  ".join(issues))
     print("canonical and og:url match on every page; 404 has neither")

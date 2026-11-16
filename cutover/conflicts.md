@@ -47,3 +47,7 @@ From the development box, `curl` to `http://agecalculator.com/` was intercepted 
 ## 11. `http://app` will chain if only TLS is upgraded on Replit
 
 Until `app` is proxied (conflict 1), Replit may 301 `http://app` to `https://app` and only then would a later rule send you to the root. That would be two hops, against row 75. Proxying `app` and using Rule 3 (both schemes in one rule) is what makes it one hop.
+
+## Directory slug.html stubs (resolved)
+
+An earlier preview build wrote `docs/past.html` (and the same for every directory page) as a stub. On GitHub Pages that file is served at slashless `/past`, so `/past` was a 200 stub instead of a 301 to `/past/`. Those `slug.html` files have been dropped. The redirect map has no apex `.html` rows. Ahrefs (16 November 2026 export) and the GSC notes show one real apex `.html` backlink, `http://agecalculator.com/rodent-age-calculator.html`, which is still a stub. There is no conflict that would require bringing `difference.html` or similar back.

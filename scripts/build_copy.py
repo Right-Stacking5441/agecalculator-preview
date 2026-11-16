@@ -618,12 +618,12 @@ SHELLS = Path(__file__).resolve().parent / "page_shells"
 
 def clean_promoted():
     """Remove directory pages and stubs from a previous promote, so restore_shells starts clean."""
-    from promote_dirs import DIR_PAGES, STUBS
+    from promote_dirs import DIR_PAGES, STUBS, DROPPED_STUBS
     for slug in DIR_PAGES:
         d = DOCS / slug
         if d.is_dir():
             shutil.rmtree(d)
-    for rel, _dest in STUBS:
+    for rel in [s[0] for s in STUBS] + list(DROPPED_STUBS):
         path = DOCS / rel
         if path.is_file():
             path.unlink()

@@ -246,7 +246,8 @@ check_asset_200() {
 echo "agecalculator.com cutover verify (GitHub Pages root, Netlify app. 301s)"
 echo "-----------------------------------------------------------"
 
-# Path sweep on the apex (slashless directories should 301 to slash; slash and stubs 200).
+# Path sweep on the apex. Slashless /slug and /past/YYYY must 301 to the slash form
+# (a 200 stub body is a failure). Slash URLs 200. Legacy stubs 200 (no noindex).
 # Uses the same list as the local preview check.
 python3 "$(dirname "$0")/verify_preview.py" --base "$ROOT" || failed=$((failed + 1))
 
@@ -262,7 +263,9 @@ check_301_two_hops "http://www.agecalculator.com/" "https://www.agecalculator.co
 check_301 "https://app.agecalculator.com/" "$ROOT/" "https://app.../"
 check_301 "https://app.agecalculator.com/past" "$ROOT/past/" "https://app.../past"
 check_301 "https://app.agecalculator.com/past/1990" "$ROOT/past/1990/" "https://app.../past/1990"
-check_301 "https://app.agecalculator.com/past/2025" "$ROOT/past/?year=2025" "https://app.../past/2025 (not a prebuilt year)"
+check_301 "https://app.agecalculator.com/past/2025" "$ROOT/past/2025/" "https://app.../past/2025"
+check_301 "https://app.agecalculator.com/past/2026" "$ROOT/past/2026/" "https://app.../past/2026"
+check_301 "https://app.agecalculator.com/past/2027" "$ROOT/past/?year=2027" "https://app.../past/2027 (outside prebuilt range)"
 check_301 "https://app.agecalculator.com/difference" "$ROOT/difference/" "https://app.../difference"
 check_301 "https://app.agecalculator.com/how-old-am-i" "$ROOT/" "https://app.../how-old-am-i"
 check_301 "https://app.agecalculator.com/date-of-birth" "$ROOT/" "https://app.../date-of-birth"

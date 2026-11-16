@@ -38,3 +38,9 @@ Do these in a reviewed launch commit and the cutover window, not on the preview.
    - `python3 cutover/verify-404-nojs.py` (Playwright, JavaScript off, against a nested path that should 404 (not `/past/1990/`, which is now a real page))
 
 8. **A week after launch:** check Netlify credit use on the shared dino.game team (the `app.` 301 site and dino.game share the Free-plan pool; if it runs out, both pause). If `app.` traffic is heavy, ask William before moving that site to its own free account.
+
+9. **Enforce HTTPS** on the production GitHub Pages settings once the certificate is issued.
+10. **www 301s to the apex**, path preserved (`/difference/` stays `/difference/`).
+11. **Unknown apex paths** return HTTP 404 from `docs/404.html` (confirm with `curl -o /dev/null -w '%{http_code}'` after cutover, and already on the hosted preview).
+12. **Year pages at launch:** remove the preview noindex with the other tool pages (do not leave a year-specific noindex). Keep them out of the sitemap. They already canonicalise to `/past/`.
+13. **Legacy stubs** keep the meta refresh `content="0"` and the canonical to `/`. Do not add noindex back.
