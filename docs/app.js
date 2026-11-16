@@ -613,9 +613,15 @@
   });
   window.addEventListener('afterprint', function () { document.body.removeAttribute('data-print'); });
 
-  /* /past?year=1990 prefill: 1 January of that year, said out loud in the UI */
-  if (tool === 'past' && q.get('year') && on) {
-    var ys = String(q.get('year') || '');
+  /* /past/1990/ or /past?year=1990 prefill: 1 January of that year, said out loud in the UI */
+  var yearFromPath = (function () {
+    var root = document.documentElement;
+    if (root && root.getAttribute('data-past-year')) return root.getAttribute('data-past-year');
+    var m = (location.pathname || '').match(/\/past\/(\d{4})\/?$/);
+    return m ? m[1] : '';
+  })();
+  if (tool === 'past' && (q.get('year') || yearFromPath) && on) {
+    var ys = String(q.get('year') || yearFromPath || '');
     if (/^\d{4}$/.test(ys)) {
       var yy = +ys;
       if (yy >= A.MIN_YEAR && yy <= A.MAX_YEAR) {

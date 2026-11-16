@@ -1,5 +1,7 @@
 # Rollback
 
+> **Superseded for the live root.** HC CEO chose option (c) on 16 November 2026: the apex is GitHub Pages, and Netlify handles only `app.` 301s, with Namecheap BasicDNS and Namecheap free Email Forwarding. Follow `namecheap-plan.md` and `hosting.md`. This file is kept as earlier working notes and must not be applied as written.
+
 Use this if the cutover misbehaves. It restores the situation observed on 16 November 2026, Europe/London: the tool on `app.agecalculator.com` (Replit / Google Frontend at `34.111.179.208`), the apex catch-all 301 to the app homepage, and no `www` record.
 
 Do not apply a rollback “just in case” before anything has been changed.

@@ -16,7 +16,7 @@ You can put the same age calculator that runs on our homepage on your own site f
 Paste this anywhere you can add HTML, including WordPress, Squarespace and Google Sites:
 
 ```html
-<iframe src="https://agecalculator.com/widget" title="Age calculator" width="100%" height="760" style="border:0;max-width:440px" loading="lazy"></iframe>
+<iframe src="https://agecalculator.com/widget/" title="Age calculator" width="100%" height="760" style="border:0;max-width:440px" loading="lazy"></iframe>
 <p><a href="https://agecalculator.com/">Age calculator by agecalculator.com</a></p>
 ```
 
@@ -41,7 +41,7 @@ Both versions fill the width they are given, up to 440 pixels. To make the calcu
 The iframe version can open with a date already in place. Add it to the address:
 
 ```html
-<iframe src="https://agecalculator.com/widget?dob=15%20March%201995&tz=Europe/London" title="Age calculator" width="100%" height="760" style="border:0;max-width:440px" loading="lazy"></iframe>
+<iframe src="https://agecalculator.com/widget/?dob=15%20March%201995&tz=Europe/London" title="Age calculator" width="100%" height="760" style="border:0;max-width:440px" loading="lazy"></iframe>
 ```
 
 `dob` fills in the date of birth (written in words or numbers, with spaces as `%20`), `on` sets the "age on" date, and `tz` sets the time zone used for "today". Without `tz`, the calculator uses each visitor's own time zone. The script version doesn't take these options.

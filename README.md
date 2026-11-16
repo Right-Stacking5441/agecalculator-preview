@@ -1,17 +1,18 @@
 # agecalculator.com preview (not live)
 
-A static, no-build preview of a new site for the root domain agecalculator.com, structured to the 16 November 2026 SEO spec. It is **not** the live site and must not be pointed at the live domain.
+A static preview of a new site for the root domain agecalculator.com, structured to the 16 November 2026 SEO spec, then adjusted for GitHub Pages directory URLs. It is **not** the live site and must not be pointed at the live domain.
 
 - Published (no custom domain): GitHub Pages from `main` `/docs`
-- Intended production host: **Cloudflare Pages** (free). See `cutover/` — not applied.
-- Pages are flat `docs/*.html` files so Cloudflare Pages can serve `/past` (no trailing slash). Canonicals and internal links have no trailing slash.
-- On this GitHub Pages preview, `past.html` is also served at `/past` (no trailing slash). `/past/` and other trailing-slash paths 404. `/past?year=` is the same page; the year only pre-fills the form.
+- Intended production host: **GitHub Pages** at the apex, with a **redirect-only Netlify site** for `app.agecalculator.com` 301s (same Netlify account as dino.game, after William approves). See `cutover/namecheap-plan.md`. Nothing live has been applied.
+- Pages are directory indexes (`docs/past/index.html` is `/past/`). Canonicals, internal links, og:url, JSON-LD URLs and the sitemap use a trailing slash (the homepage stays `https://agecalculator.com/`).
+- On this GitHub Pages preview, `/past` (no slash) should 301 to `/past/`. Legacy `/past.html` is a stub (canonical + meta refresh + visible link), not a 301. Same pattern for the other tool pages, `/how-old-am-i`, `/date-of-birth` and `/rodent-age-calculator.html`.
+- `/past/{year}/` is a static page for every year the old app sitemap listed, **1960-2024**. The hub `/past/` still honours `?year=` as a prefill. Years outside that range are not prebuilt; the app. 301 for e.g. `/past/2025` goes to `/past/?year=2025`.
 - Every page has `<meta name="robots" content="noindex,nofollow">`
 - `docs/robots.txt` disallows all crawlers (the live root robots.txt is a later, approved change)
-- Unique pre-rendered title, meta description, self-canonical (`https://agecalculator.com/…`) and JSON-LD in the first HTML
-- `/past/{year}` is not a set of pages; `past.html` reads `?year=` and pre-fills 1 January
-- Design: torn desk-calendar leaf, self-hosted Libre Franklin, no adverts. Shared date module is `docs/dates.js` (designer SPEC §8). A completed month lands on the same date next month; if that date does not exist it rolls to the 1st of the next month, so 31 January plus one month is 1 March (in leap years and common years) and a 29 February birthday in a common year is counted on 1 March. This site does not use the last day of February. The rule is shown in a short line under the chronological-age tool, and in that page’s FAQ and the home FAQ where the copy mentions it. Worked examples: `cutover/date-rules.md`.
-- `/past?year=` reads the year in JS to pre-fill the form. The static canonical and og:url stay `https://agecalculator.com/past` with no query string; no script rewrites them.
+- Unique pre-rendered title, meta description, self-canonical (`https://agecalculator.com/…/`) and JSON-LD in the first HTML
+- Design: torn desk-calendar leaf, self-hosted Libre Franklin, no adverts. Shared date module is `docs/dates.js`. A completed month lands on the same date next month; if that date does not exist it rolls to the 1st of the next month. Worked examples: `cutover/date-rules.md`.
 - Unit tests (Node, no dependencies): `node --test tests/age.test.js`
+- Copy check: `python3 tests/compare_copy.py`
+- Local URL check (no 404s on sitemap, year and stub paths): `python3 cutover/verify_preview.py --docs docs`
 
 Do not change live DNS, redirects or app.agecalculator.com from this repository. The ready-to-apply cutover pack is in `cutover/` and must not be applied until William says so.

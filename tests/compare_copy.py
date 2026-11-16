@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compare the visible text of each docs/*.html page to its approved markdown file."""
+"""Compare the visible text of each docs page (directory index or homepage) to its approved markdown file."""
 from __future__ import annotations
 import html as htmllib
 import json
@@ -13,21 +13,29 @@ DOCS = ROOT / "docs"
 
 MAP = {
     "home.md": "index.html",
-    "past.md": "past.html",
-    "difference.md": "difference.html",
-    "days-between-dates.md": "days-between-dates.html",
-    "chronological-age.md": "chronological-age.html",
-    "birthday-countdown.md": "birthday-countdown.html",
-    "how-old-will-i-be.md": "how-old-will-i-be.html",
-    "korean-age.md": "korean-age.html",
-    "what-year-was-i-born.md": "what-year-was-i-born.html",
-    "dog-age.md": "dog-age.html",
-    "cat-age.md": "cat-age.html",
-    "privacy.md": "privacy.html",
-    "contact.md": "contact.html",
-    "embed.md": "embed.html",
-    "widget.md": "widget.html",
+    "past.md": "past/index.html",
+    "difference.md": "difference/index.html",
+    "days-between-dates.md": "days-between-dates/index.html",
+    "chronological-age.md": "chronological-age/index.html",
+    "birthday-countdown.md": "birthday-countdown/index.html",
+    "how-old-will-i-be.md": "how-old-will-i-be/index.html",
+    "korean-age.md": "korean-age/index.html",
+    "what-year-was-i-born.md": "what-year-was-i-born/index.html",
+    "dog-age.md": "dog-age/index.html",
+    "cat-age.md": "cat-age/index.html",
+    "privacy.md": "privacy/index.html",
+    "contact.md": "contact/index.html",
+    "embed.md": "embed/index.html",
+    "widget.md": "widget/index.html",
 }
+
+def page_key(html_name: str) -> str:
+    """Map directory indexes back to the old flat filename (privacy/index.html -> privacy.html)."""
+    path = Path(html_name)
+    if path.name == "index.html" and path.parent.as_posix() not in (".", ""):
+        return path.parent.name + ".html"
+    return path.name
+
 
 STALE = [
     "The site is paid for by the adverts on it",
@@ -222,7 +230,7 @@ def main() -> int:
         m = re.search(r'<div class="intro"><h1>[^<]*</h1><p(?: class="lede")?>(.*?)</p></div>', html, re.S)
         if m:
             lede = fold(re.sub(r"<[^>]+>", "", m.group(1)))
-        elif html_name == "privacy.html":
+        elif page_key(html_name) == "privacy.html":
             m = re.search(r"<h1>[^<]*</h1>\s*<p>(.*?)</p>", html, re.S)
             lede = fold(re.sub(r"<[^>]+>", "", m.group(1))) if m else ""
         page_title = title.group(1) if title else ""
@@ -235,12 +243,12 @@ def main() -> int:
             issues.append(f"META md={meta['meta']!r} html={page_desc!r}")
         if meta["h1"] and fold(page_h1) != fold(meta["h1"]):
             issues.append(f"H1 md={meta['h1']!r} html={page_h1!r}")
-        if meta["lede"] and html_name != "widget.html" and fold(lede) != fold(meta["lede"]):
+        if meta["lede"] and page_key(html_name) != "widget.html" and fold(lede) != fold(meta["lede"]):
             issues.append(f"LEDE md={meta['lede']!r} html={lede!r}")
 
         hay = visible_text(html)
 
-        if html_name == "widget.html":
+        if page_key(html_name) == "widget.html":
             for needle in [
                 "Date of birth",
                 "e.g. 15 March 1995",
@@ -294,7 +302,7 @@ def main() -> int:
             if stale in html:
                 issues.append(f"STALE: {stale!r}")
 
-        if html_name == "privacy.html":
+        if page_key(html_name) == "privacy.html":
             if "[PLACEHOLDER: date this policy is published]" not in html:
                 issues.append("PRIVACY placeholder missing: [PLACEHOLDER: date this policy is published]")
             if "[PLACEHOLDER: contact email address]" in html:
@@ -303,26 +311,28 @@ def main() -> int:
                 issues.append("PRIVACY contact email hello@agecalculator.com missing")
             if "Hurrell Capital Limited, a company registered in England and Wales (company number 15158828)" not in html:
                 issues.append("PRIVACY operator details missing")
-            if "hosted on Netlify" not in html or "www.netlify.com/pdf/netlify-dpa.pdf" not in html:
-                issues.append("PRIVACY Netlify hosting sentence or DPA link missing")
-            if "Netlify, Inc." not in html:
-                issues.append("PRIVACY Netlify, Inc. entity name missing")
+            if "hosted on GitHub Pages" not in html or "docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages" not in html:
+                issues.append("PRIVACY GitHub Pages hosting sentence or docs link missing")
+            if "docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" not in html:
+                issues.append("PRIVACY GitHub General Privacy Statement link missing")
+            if "www.netlify.com/pdf/netlify-dpa.pdf" not in html or "Netlify, Inc." not in html:
+                issues.append("PRIVACY Netlify app-redirect processor paragraph or DPA link missing")
+            if "30 days" not in html or "13 months" not in html:
+                issues.append("PRIVACY Netlify log retention periods missing")
             if "noindex" not in html:
                 issues.append("PRIVACY missing noindex")
 
-        if html_name == "contact.html":
+        if page_key(html_name) == "contact.html":
             if "hello@agecalculator.com" not in html:
                 issues.append("CONTACT email hello@agecalculator.com missing")
             if "mailto:hello@agecalculator.com" not in html:
                 issues.append("CONTACT mailto:hello@agecalculator.com missing")
             if "noindex" not in html:
                 issues.append("CONTACT missing noindex")
-            if "href=\"contact\">Contact</a>" not in html and "href='contact'>Contact</a>" not in html:
-                # footer link may use href=contact without quotes? no
-                if 'href="contact"' not in html:
-                    issues.append("CONTACT footer (or page) missing contact href — expected on every page")
+            if not re.search(r'href=["\'](?:\./|\.\./)*contact/?["\']', html):
+                issues.append("CONTACT footer (or page) missing contact href — expected on every page")
 
-        if html_name == "embed.html":
+        if page_key(html_name) == "embed.html":
             if "https://agecalculator.com/embed.js" not in html:
                 issues.append("EMBED script URL missing")
 

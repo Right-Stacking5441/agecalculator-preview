@@ -9,9 +9,12 @@ import html as htmllib
 import json
 import re
 import sys
+import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(Path(__file__).resolve().parent) not in sys.path:
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
 COPY = ROOT / "copy-approved"
 DOCS = ROOT / "docs"
 FRAG = Path(__file__).resolve().parent / "fragments"
@@ -613,6 +616,23 @@ def ensure_chrono_rule_line(html: str) -> str:
 
 SHELLS = Path(__file__).resolve().parent / "page_shells"
 
+def clean_promoted():
+    """Remove directory pages and stubs from a previous promote, so restore_shells starts clean."""
+    from promote_dirs import DIR_PAGES, STUBS
+    for slug in DIR_PAGES:
+        d = DOCS / slug
+        if d.is_dir():
+            shutil.rmtree(d)
+    for rel, _dest in STUBS:
+        path = DOCS / rel
+        if path.is_file():
+            path.unlink()
+        # also drop empty stub dirs such as how-old-am-i/
+        parent = path.parent
+        if parent != DOCS and parent.is_dir() and not any(parent.rglob("*")):
+            parent.rmdir()
+
+
 def restore_shells():
     """Reset HTML to the pre-UX shells so the UX transform is reproducible."""
     if not SHELLS.exists():
@@ -695,6 +715,7 @@ def finish_pages():
     print("canonical and og:url match on every page; 404 has neither")
 
 def main():
+    clean_promoted()
     restore_shells()
     for md_name, html_name in PAGE.items():
         raw = (COPY / md_name).read_text()
@@ -735,13 +756,14 @@ def main():
     patch_widget()
     patch_app_widget_hint()
     apply_ux_pass()
-    finish_pages()
+    from promote_dirs import run as promote_run
+    promote_run(DOCS)
 
     # confirm embed.js URL untouched in snippets
-    emb = (DOCS / "embed.html").read_text()
+    emb = (DOCS / "embed" / "index.html").read_text()
     if "https://agecalculator.com/embed.js" not in emb:
         raise SystemExit("embed.js URL missing from embed.html")
-    if "https://agecalculator.com/widget" not in emb:
+    if "https://agecalculator.com/widget/" not in emb:
         raise SystemExit("widget URL missing from snippets")
 
 if __name__ == "__main__":

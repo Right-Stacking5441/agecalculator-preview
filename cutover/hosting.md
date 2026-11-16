@@ -1,74 +1,53 @@
-# Recommended hosting for the root
+# Hosting for the root
 
-**Recommendation: Cloudflare Pages, on the existing Cloudflare zone, at $0 a month.**
+**Recommendation (HC CEO, 16 November 2026): GitHub Pages for the live root, and a redirect-only Netlify site for `app.agecalculator.com` 301s, on the existing dino.game Netlify account.**
 
-The Free plan includes Pages (custom domain, 500 builds a month, HTTPS). The zone for agecalculator.com is already on Cloudflare (nameservers `alexia` and `christian`), so the apex can be attached as a Pages custom domain without a new registrar or a paid host. There is no monthly Pages fee on Free. Confirm the Hurrell Capital Cloudflare account’s plan in the dashboard before cutover; nothing here requires a paid upgrade if Single Redirects still allow at least four wildcard rules (Free allows 10 per zone).
+This is option (c). The preview stays on GitHub Pages (`Right-Stacking5441/agecalculator-preview`, `main` `/docs`) and stays noindex. The live root should be a **new public production repo**, also published from `/docs`, with the custom domain attached only there. Do not attach `agecalculator.com` to this preview repo.
 
-## Why not GitHub Pages for the live root
+Netlify is **not** the live root. Putting the whole site on the dino.game Free team would share a 300-credit monthly cap with dino.game; when that cap is hit, **every** site on the team pauses. Using Netlify only for `app.` 301s keeps credit use small. Check credit use a week after launch. If `app.` traffic is heavy, move that redirect site to its own free Netlify account, with William's OK.
 
-The preview is on GitHub Pages (`Right-Stacking5441/agecalculator-preview`, `main` `/docs`) and should stay there as a noindex preview. It is the wrong host for the live root:
+The redirect-only site lives in `netlify-app-redirects/` in this folder. Do not create the Netlify site or change DNS until William approves.
 
-- A `docs/past/index.html` file is served as `/past/` with a trailing slash. The SEO map wants no trailing slash except `/`.
-- This preview does serve `past.html` at `/past`, but `/past/` 404s, and GitHub Pages will not give the 301 trailing-slash behaviour the map wants. Prefer Cloudflare Pages for the live root.
-- The zone already sits on Cloudflare. Putting the root on GitHub Pages would mean new DNS, a custom-domain setup, and a second place to hang 301s.
+## Why directory indexes (trailing slashes)
 
-## How Cloudflare Pages gives clean, slashless URLs
+GitHub Pages serves `docs/past/index.html` as `/past/` and 301s `/past` (no slash) to `/past/`. The build now uses that form throughout: canonicals, internal links, og:url, JSON-LD and sitemap entries all have a trailing slash (the homepage is `https://agecalculator.com/`). This is the opposite of the earlier “no trailing slash except `/`” SEO recommendation, which assumed Cloudflare Pages or Netlify slashless URLs. Flag that change for SEO Manager.
 
-Cloudflare Pages’ own serving rules (docs updated 11 November 2026):
-
-- `past.html` is served at `/past` (no trailing slash).
-- `/past.html` is redirected to `/past`.
-- A folder `past/index.html` would be served at `/past/` (with a slash) — so this build does **not** use folders for HTML pages.
-
-The preview build was flattened to match that: `docs/past.html`, `docs/difference.html`, and so on. Canonicals are already `https://agecalculator.com/past` (no slash). Internal links use relative, extensionless, slashless hrefs (`past`, `difference`, `./` for home). `/past?year=1990` is the path `/past` plus a query string; Pages passes the query through, and `docs/app.js` reads `?year=` and pre-fills 1 January. The static canonical stays `https://agecalculator.com/past` with no query string.
-
-A `wrangler.toml` sits at the repo root with `pages_build_output_dir = "docs"`. Do not connect this project to the live apex until approval. `404.html` is present, so Pages will 404 unknown paths instead of falling back to the homepage (this matches the map’s “root 404s if no page”).
-
-## Trailing-slash 301s should be zone rules, not Pages defaults
-
-If a request for `/difference/` reaches Pages, Pages may 307 (temporary) to `/difference`. The map wants a **301**. The zone Redirect Rule in `redirects-and-dns.md` (trailing slash, except `/`) should run first so that hop is a 301 and never depends on Pages’ 307.
-
-
+GitHub Pages cannot issue per-path 301s for `/past.html`, `/how-old-am-i` or `/rodent-age-calculator.html`. Those are prebuilt stub pages with `rel=canonical`, an instant meta refresh and a visible link. They are **not** true 301s. Flag that for SEO Manager.
 
 ## Launch-time robots (do not apply yet)
 
 The preview keeps `<meta name="robots" content="noindex,nofollow">` on every page, and `docs/robots.txt` still disallows all crawlers. Do not change that until William says the root may be indexed.
 
-At launch, in a reviewed commit:
+At launch, in a reviewed commit on the **production** repo:
 
-- **Tool pages are indexable.** Remove the noindex/nofollow meta from the calculators (home, `/past`, `/difference`, `/days-between-dates`, `/chronological-age`, `/birthday-countdown`, `/how-old-will-i-be`, `/korean-age`, `/what-year-was-i-born`, `/dog-age`, `/cat-age`) and from `/privacy` and `/contact` if SEO Manager agrees they should be indexed. `/contact` is treated like `/privacy`: indexable at launch, and it belongs in the root sitemap (indexable root pages only). Open `robots.txt` to allow those URLs (the live root robots.txt is a later, approved change).
-- **`/widget` and `/embed` stay noindex**, with `noindex` only (not `nofollow`), so the credit link on those pages still counts. They are an iframe target and an instructions page, not landing pages.
-- Take the preview banner off every page, including `/widget` (it already has no banner, so it would not appear inside a third-party embed).
+- **Tool pages are indexable.** Remove the noindex/nofollow meta from the calculators (home, `/past/`, `/difference/`, `/days-between-dates/`, `/chronological-age/`, `/birthday-countdown/`, `/how-old-will-i-be/`, `/korean-age/`, `/what-year-was-i-born/`, `/dog-age/`, `/cat-age/`) and from `/privacy/` and `/contact/` if SEO Manager agrees they should be indexed. `/contact/` belongs in the root sitemap. Open `robots.txt` to allow those URLs.
+- **Year pages (`/past/1960/`–`/past/2024/`):** they exist with unique titles and self-canonicals. They are **not** in the preview sitemap, matching SEO spec §1.4 / §1.5. Confirm with SEO Manager before adding them at launch.
+- **`/widget/` and `/embed/` stay noindex**, with `noindex` only (not `nofollow`), so the credit link still counts.
+- Take the preview banner off every page.
 
-## Sitemap (do not apply yet)
+## Sitemap (do not apply changes to live until launch)
 
-The live root sitemap (`docs/sitemap.xml`) should list indexable root pages only: the tool pages above, plus `/privacy` and `/contact` once those are indexable. `/contact` is already in `docs/sitemap.xml` as `https://agecalculator.com/contact`. Do not include `/widget` or `/embed`.
+`docs/sitemap.xml` lists indexable root pages only, with trailing slashes: the tool hubs, plus `/privacy/` and `/contact/`. It does not list `/widget/`, `/embed/`, stubs, or the 65 year pages.
 
-## Launch-time privacy hosting sentence (do not apply yet)
+## Privacy hosting wording (approved; already on the preview)
 
-The preview is still on GitHub Pages, so `privacy.md` and `docs/privacy.html` keep the GitHub hosting paragraph below. Do not swap it until the live root is on Cloudflare Pages. The publish-date placeholder stays until launch day, when it is filled in the same reviewed commit as this swap.
+Legal Manager supplied the live wording on 16 November 2026. It is already in `copy-approved/privacy.md` and the built `docs/privacy/index.html`. There is no later “swap the hosting sentence” step for Cloudflare Pages or for Netlify-as-root. At launch, fill only `[PLACEHOLDER: date this policy is published]`.
 
-### Before (leave this on the preview)
-
-```
-These pages are hosted on GitHub Pages. According to [GitHub's own documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), when a GitHub Pages site is visited, the visitor's IP address is logged and stored for security purposes, whether or not the visitor is signed in to GitHub.
-```
-
-### After (use this on the live root, once it is on Cloudflare Pages)
-
-Drawn from Cloudflare's own wording. The Privacy Policy (effective 4 November 2025) says that when End Users access a customer's websites that use Cloudflare's services, "The information processed may include but is not limited to IP addresses, traffic routing data, system configuration information, and other information about traffic to and from Customers’ websites, devices, applications, and/or networks." Cloudflare's GDPR documentation says: "Cloudflare maintains log data about events on our network. Some of this log data will include information about visitors to and/or authorized users of a customer's domains, networks, websites, application programming interfaces ("APIs"), or applications… This metadata contains extremely limited personal data, most often in the form of IP addresses. We process this type of information on behalf of our customers in our data centers in the U.S. and Europe for a limited period of time." Sources: https://www.cloudflare.com/privacypolicy/ and https://www.cloudflare.com/trust-hub/gdpr/. Do not invent retention periods or purposes beyond that.
-
-Replacement paragraph for `privacy.md` (typograph apostrophes the same way as the rest of the page when building the HTML):
+The approved paragraphs are:
 
 ```
-These pages are hosted on Cloudflare Pages. According to [Cloudflare's Privacy Policy](https://www.cloudflare.com/privacypolicy/), when people visit a customer's website that uses Cloudflare's services, Cloudflare processes information about that visit that may include the visitor's IP address, traffic routing data, system configuration information, and other information about traffic to and from the site. Cloudflare's [GDPR documentation](https://www.cloudflare.com/trust-hub/gdpr/) says it maintains log data about events on its network, that some of this log data includes information about visitors to a customer's websites, most often in the form of IP addresses, and that it processes this information on behalf of its customers in data centers in the U.S. and Europe for a limited period of time.
+These pages are hosted on GitHub Pages, a service of GitHub, Inc. in the United States. According to [GitHub's documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), when a GitHub Pages site is visited, the visitor's IP address is logged and stored for security purposes, whether or not the visitor is signed in to GitHub. We rely on our legitimate interest in keeping the site secure and available. GitHub handles this data under the [GitHub General Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement), which does not give a fixed retention period. Transfers to the United States are covered by GitHub's certification under the EU-U.S. Data Privacy Framework and its UK Extension (the UK-US data bridge).
+
+Old links on app.agecalculator.com are redirected to this site by Netlify, Inc., which acts as our processor. When you follow one of those links, Netlify logs your IP address and request details. According to [Netlify's Data Processing Agreement](https://www.netlify.com/pdf/netlify-dpa.pdf) (last updated 13 November 2026), its CDN traffic and access logs are kept online for 30 days and in archival storage for up to 13 months, and logs used to investigate security or abuse can be kept for up to 6 years. Transfers are covered by the EU-U.S. Data Privacy Framework or the European Commission's Standard Contractual Clauses and, for UK data, the UK International Data Transfer Addendum.
 ```
 
-At launch, in the same reviewed commit that attaches the apex and opens indexing: replace the GitHub paragraph in `privacy.md` and `docs/privacy.html` with the after paragraph, and fill `[PLACEHOLDER: date this policy is published]`. Leave the HTML comment `<!-- Hosting will switch to Cloudflare Pages at launch. -->` out of the live page once the swap is done.
+The preview itself remains on GitHub Pages until cutover; the Netlify paragraph describes the planned `app.` redirect host. Flag for Legal only if they want a further pass. The example of a year link in “Links with dates in them” was updated from `/past?year=1990` to `/past/1990/` to match the new URLs. There was no separate recipients or retention section; GitHub and Netlify are described in these two paragraphs only.
 
 ## After approval (not now)
 
 1. Keep this repo noindex until the go-ahead to index.
-2. Create a Cloudflare Pages project from this repository, output directory `docs`, no production custom domain yet if you want a `*.pages.dev` dry run first.
-3. When William says go: attach `agecalculator.com` as the production domain, apply the DNS, Redirect Rules, and Email Routing steps in `redirects-and-dns.md`, swap the privacy hosting paragraph to the Cloudflare Pages sentence in this file, fill the privacy publish date, then remove noindex / open `robots.txt` in a reviewed commit.
-4. Leave the GitHub Pages preview up as a fallback until you are sure, or delete its Pages custom-domain settings (it has none today).
+2. Create a new public production GitHub repo, publish from `/docs`, add `docs/CNAME` with `agecalculator.com`, and attach the custom domain only there (verify the domain first).
+3. Create the redirect-only Netlify site from `cutover/netlify-app-redirects/`, on the dino.game account, and attach only `app.agecalculator.com`.
+4. When William says go: switch Namecheap to BasicDNS, enter the record table in `namecheap-plan.md`, wait for Let's Encrypt on GitHub Pages and on the Netlify `app.` alias, test mail, then remove noindex / open `robots.txt` in a reviewed production commit, and fill the privacy date.
+5. A week after launch: check Netlify credit use on the shared team. If the pool is running low, ask William before moving `app.` to its own free account.
+6. Leave this GitHub Pages preview up as a fallback until you are sure.

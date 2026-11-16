@@ -1,0 +1,7 @@
+# Redirect-only Netlify site for app.agecalculator.com.
+# Create this as a new site on the existing dino.game Netlify account after William approves.
+# Do not attach agecalculator.com or www to this site.
+# Do not connect the agecalculator-preview repo to this site.
+
+[build]
+  publish = "."

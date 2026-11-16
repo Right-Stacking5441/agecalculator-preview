@@ -1,5 +1,7 @@
 # Conflicts and gaps in the 81-row redirect map
 
+> **Superseded for the live root.** HC CEO chose option (c) on 16 November 2026: the apex is GitHub Pages, and Netlify handles only `app.` 301s, with Namecheap BasicDNS and Namecheap free Email Forwarding. Follow `namecheap-plan.md` and `hosting.md`. This file is kept as earlier working notes and must not be applied as written.
+
 None of these block the pack, but they should be read before anyone applies it.
 
 ## 1. `app` is not on Cloudflare today (Rules will not fire)

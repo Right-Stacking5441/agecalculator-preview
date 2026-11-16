@@ -1,5 +1,7 @@
 # Cloudflare Redirect Rules and DNS changes (not applied)
 
+> **Superseded for the live root.** HC CEO chose option (c) on 16 November 2026: the apex is GitHub Pages, and Netlify handles only `app.` 301s, with Namecheap BasicDNS and Namecheap free Email Forwarding. Follow `namecheap-plan.md` and `hosting.md`. This file is kept as earlier working notes and must not be applied as written.
+
 Apply these only after William approves. Do them in this order. First match wins for Single Redirects, so the year rule must sit above the general path-preserving rule.
 
 These four Single Redirects plus one deletion fit the Free plan (10 Single Redirects per zone). They use wildcard matching, not regex (regex needs Business). They cover both `http` and `https` in one rule each, so you do not get a chain such as `http://app` → `https://app` → `https://agecalculator.com`.

@@ -30,13 +30,15 @@ Where you type your own date of birth, the box is marked as a birthday field, so
 
 ## Links with dates in them
 
-Some pages can be filled in from the web address, for example `/?dob=15 March 1995`, `/past?year=1990` or `?tz=Europe/London` to choose the time zone used for "today". The page reads these in your browser in the same way as anything you type.
+Some pages can be filled in from the web address, for example `/?dob=15 March 1995`, `/past/1990/` or `?tz=Europe/London` to choose the time zone used for "today". The page reads these in your browser in the same way as anything you type.
 
 Bear in mind that anything in a web address is part of the request your browser sends for the page, is kept in your browser history, and is visible to anyone you share the link with. If you'd rather a date of birth didn't appear in any of those places, type it into the box instead of using a link.
 
 ## What our hosting provider receives
 
-These pages are hosted on Netlify. According to [Netlify's Data Processing Agreement](https://www.netlify.com/pdf/netlify-dpa.pdf) (last updated 13 November 2026), Netlify, Inc. processes personal data on behalf of the site operator when it hosts a website. That personal data may include the visitor's IP address and device, browser and request metadata (such as user agent, request headers and timestamps) in request and function logs. Netlify says it processes this data as necessary to perform its services. For transfers of this data from the EEA or Switzerland, Netlify relies on its certification under the EU-U.S. and Swiss-U.S. Data Privacy Frameworks, and on the EU Standard Contractual Clauses if those frameworks are not available; transfers protected by the UK GDPR are subject to the UK International Data Transfer Addendum. [The DPA does not state a specific retention period for visitor request logs, other than that Netlify processes customer data for the duration of its agreement with the site operator.]
+These pages are hosted on GitHub Pages, a service of GitHub, Inc. in the United States. According to [GitHub's documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), when a GitHub Pages site is visited, the visitor's IP address is logged and stored for security purposes, whether or not the visitor is signed in to GitHub. We rely on our legitimate interest in keeping the site secure and available. GitHub handles this data under the [GitHub General Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement), which does not give a fixed retention period. Transfers to the United States are covered by GitHub's certification under the EU-U.S. Data Privacy Framework and its UK Extension (the UK-US data bridge).
+
+Old links on app.agecalculator.com are redirected to this site by Netlify, Inc., which acts as our processor. When you follow one of those links, Netlify logs your IP address and request details. According to [Netlify's Data Processing Agreement](https://www.netlify.com/pdf/netlify-dpa.pdf) (last updated 13 November 2026), its CDN traffic and access logs are kept online for 30 days and in archival storage for up to 13 months, and logs used to investigate security or abuse can be kept for up to 6 years. Transfers are covered by the EU-U.S. Data Privacy Framework or the European Commission's Standard Contractual Clauses and, for UK data, the UK International Data Transfer Addendum.
 
 ## Fonts, scripts and outside services
 
