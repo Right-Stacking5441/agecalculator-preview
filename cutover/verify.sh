@@ -144,6 +144,62 @@ check_email_routing_dns() {
   return 1
 }
 
+
+# 404 page at nested paths (M6 gate): HTML 404, root-relative asset/nav URLs only.
+# Also confirm the assets those URLs point at actually exist.
+check_404_page() {
+  local path="$1"
+  local url="$ROOT$path"
+  local tmp status ctype
+  tmp="$(mktemp)"
+  status="$(curl -sS -o "$tmp" -w '%{http_code}' --max-redirs 0 --connect-timeout 15 --max-time 25 "$url" 2>/dev/null || true)"
+  ctype="$(curl -sSI --max-redirs 0 --connect-timeout 15 --max-time 25 "$url" 2>/dev/null | tr -d '\r' | awk 'BEGIN{IGNORECASE=1} /^Content-Type:/{sub(/^Content-Type:[[:space:]]*/,""); print; exit}')"
+  if [ "$status" != "404" ] || ! printf '%s' "$ctype" | grep -qi 'text/html'; then
+    echo "FAIL  404 $path"
+    echo "      expected: 404 text/html"
+    echo "      got:      status=${status:-?} type=${ctype:-<none>}"
+    failed=$((failed + 1))
+    rm -f "$tmp"
+    return 1
+  fi
+  local rel
+  rel="$(grep -Eo '(href|src)="[^"]*"' "$tmp" | grep -Ev '="(/|#|https://|mailto:)' || true)"
+  if [ -n "$rel" ]; then
+    echo "FAIL  404 $path has relative URLs:"
+    printf '%s\n' "$rel" | sed 's/^/      /'
+    failed=$((failed + 1))
+    rm -f "$tmp"
+    return 1
+  fi
+  if grep -q '<base' "$tmp" || grep -q 'document.write' "$tmp"; then
+    echo "FAIL  404 $path still has a <base> or document.write"
+    failed=$((failed + 1))
+    rm -f "$tmp"
+    return 1
+  fi
+  echo "ok    404 $path  (404 text/html, root-relative URLs)"
+  passed=$((passed + 1))
+  rm -f "$tmp"
+}
+
+check_asset_200() {
+  local path="$1"
+  local expect_type="$2"
+  local url="$ROOT$path"
+  local status ctype
+  status="$(curl -sS -o /dev/null -w '%{http_code}' --max-redirs 0 --connect-timeout 15 --max-time 25 "$url" 2>/dev/null || true)"
+  ctype="$(curl -sSI --max-redirs 0 --connect-timeout 15 --max-time 25 "$url" 2>/dev/null | tr -d '\r' | awk 'BEGIN{IGNORECASE=1} /^Content-Type:/{sub(/^Content-Type:[[:space:]]*/,""); print; exit}')"
+  if [ "$status" != "200" ] || ! printf '%s' "$ctype" | grep -qi "$expect_type"; then
+    echo "FAIL  asset $path"
+    echo "      expected: 200 $expect_type"
+    echo "      got:      status=${status:-?} type=${ctype:-<none>}"
+    failed=$((failed + 1))
+    return 1
+  fi
+  echo "ok    asset $path  200 $ctype"
+  passed=$((passed + 1))
+}
+
 echo "agecalculator.com cutover verify (single 301 hop, curl -sSI)"
 echo "-----------------------------------------------------------"
 
@@ -188,6 +244,16 @@ check_200 "https://agecalculator.com/past?year=1990" "https://agecalculator.com/
 
 # Email Routing MX and SPF (forwarding itself is a manual test email)
 check_email_routing_dns
+
+# M6 gate: nested 404s are HTML 404s with root-relative URLs; assets exist
+echo "----  404 page and static assets (M6)"
+check_404_page "/past/1990"
+check_404_page "/a/b/c"
+check_404_page "/nope"
+check_asset_200 "/styles.css" "text/css"
+check_asset_200 "/fonts/libre-franklin-var.woff2" "font/woff2\|application/font\|octet-stream"
+check_asset_200 "/favicon.ico" "image/"
+check_asset_200 "/favicon.svg" "image/"
 
 echo "-----------------------------------------------------------"
 echo "$passed passed, $failed failed"

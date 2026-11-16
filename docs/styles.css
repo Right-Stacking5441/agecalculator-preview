@@ -393,7 +393,7 @@ body.widget { background: var(--paper); padding: var(--s4); font-size: 16px; }
 .widget .month { width: 150px; }
 .widget .month td { height: 21px; }
 .widget .ledger { grid-template-columns: 1fr; font-size: 15px; }
-.widget .credit { font-size: 14px; margin: var(--s4) 0 0; }
+.widget .credit { font-size: 14px; margin: 6px 0 0; }
 
 @media (max-width: 1080px) { .embed-page { grid-template-columns: minmax(0, 1fr); } .embed-preview { position: static; } }
 @media (max-width: 760px) {
@@ -716,8 +716,9 @@ body[data-page="chronological-age"] .content > section:not(.faq) { grid-template
   .content > section:not(.faq) > h2 { border-top: 0; padding-top: 0; font-size: 22px; margin-bottom: var(--s4); }
   .content > .placeholder-note { margin-left: 0; }
 }
+.dateline .dl-short { display: none; }
 @media (max-width: 760px) {
-  .dateline span { display: none; }
+  .dateline .dl-doy { display: none; }
   .dateline { font-size: 14px; }
   .mast .wrap { min-height: 46px; }
   .mast .tools-link { display: none; }
@@ -926,4 +927,18 @@ body.widget { --leaf-h: 470px; }
   }
   .obj-pair .pair-say .unit { display: inline; width: auto; }
   .pair-say, .lead { min-width: 0; overflow: visible; }
+}
+
+/* N2: mast date at narrow widths, and the 7px /difference overflow at 768px. */
+@media (max-width: 380px) {
+  .mast .wrap { gap: var(--s3); max-width: 100%; }
+  .dateline { white-space: normal; min-width: 0; text-align: right; line-height: 1.3; }
+  .dateline .dl-long { display: none; }
+  .dateline .dl-short { display: inline; }
+}
+.obj-pair .pair-say { min-width: 0; }
+@media (min-width: 761px) and (max-width: 1080px) {
+  /* calc is capped at 720px in this range, so a 640px first column
+     leaves only ~40px for the result and the page scrolls sideways. */
+  .obj-pair { grid-template-columns: minmax(0, 1fr) min-content; }
 }
