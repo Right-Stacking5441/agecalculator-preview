@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Post-cutover checks for the agecalculator.com redirect map.
-# Uses curl -sSI (HEAD, no follow) and asserts a single 301 to the expected target.
+# Uses curl -sSI (HEAD, no follow). Most HTTPS rules are a single 301 to the
+# expected target. HTTP is often two hops on Netlify (same-host HTTP→HTTPS first).
 # Do not treat a run against today's live zone as a reason to change DNS:
 # these assertions describe the *after* state and will fail until cutover is applied.
 set -u
@@ -103,6 +104,18 @@ check_301() {
   passed=$((passed + 1))
 }
 
+# Two hops, each asserted without -L, then the final URL must be 200.
+# Used where Netlify's automatic same-host HTTP→HTTPS upgrade runs first.
+check_301_two_hops() {
+  local url="$1"
+  local hop1="$2"
+  local final="$3"
+  local label="${4:-$url}"
+  check_301 "$url" "$hop1" "$label (hop 1 of 2)" || return 1
+  check_301 "$hop1" "$final" "$label (hop 2 of 2)" || return 1
+  check_200 "$final" "$final (final after $label)"
+}
+
 check_200() {
   local url="$1"
   local label="${2:-$url}"
@@ -122,7 +135,9 @@ check_200() {
 }
 
 
-# Email Routing DNS only. hello@agecalculator.com must forward to
+# Email DNS only. At launch, replace the Cloudflare MX/SPF assertions
+# below with the Namecheap forwarding values copied from the dashboard.
+# Email Routing DNS only (current function, pre-cutover). hello@agecalculator.com must forward to
 # hurrellcapital@gmail.com; that forward cannot be proved from DNS, so after
 # cutover send a test message and confirm it arrives. These checks only assert
 # that MX points at Cloudflare Email Routing and that the SPF TXT record is present.
@@ -228,7 +243,7 @@ check_asset_200() {
   passed=$((passed + 1))
 }
 
-echo "agecalculator.com cutover verify (single 301 hop, curl -sSI)"
+echo "agecalculator.com cutover verify (curl -sSI, no follow; some HTTP URLs are two hops)"
 echo "-----------------------------------------------------------"
 
 # Year pages from app (map rows, including 2025 which is not in the old sitemap)
@@ -244,26 +259,44 @@ check_301 "https://app.agecalculator.com/" "$ROOT/" "https://app.../"
 check_301 "https://app.agecalculator.com/privacy" "$ROOT/privacy" "https://app.../privacy"
 check_301 "https://app.agecalculator.com/robots.txt" "$ROOT/robots.txt" "https://app.../robots.txt"
 
-# HTTP apex: one hop to HTTPS root, path preserved (not to app)
+# HTTP apex: Netlify upgrades HTTP to HTTPS on the same host first.
+# Paths that are already the canonical HTTPS URL are one hop (scheme only).
+# Paths that then need a further rule are two hops. See namecheap-plan.md.
 check_301 "http://agecalculator.com/" "$ROOT/" "http://agecalculator.com/"
 check_301 "http://agecalculator.com/difference" "$ROOT/difference" "http://agecalculator.com/difference"
-check_301 "http://agecalculator.com/past/1990" "$ROOT/past?year=1990" "http://agecalculator.com/past/1990"
+check_301_two_hops "http://agecalculator.com/past/1990" "https://agecalculator.com/past/1990" "$ROOT/past?year=1990" "http://agecalculator.com/past/1990"
 
-# www (http and https)
+# www HTTPS: one hop to the apex (automatic primary-domain redirect, path kept).
+# www HTTP: two hops (HTTP→HTTPS on www, then www→apex).
 check_301 "https://www.agecalculator.com/" "$ROOT/" "https://www.agecalculator.com/"
 check_301 "https://www.agecalculator.com/difference" "$ROOT/difference" "https://www.../difference"
 check_301 "https://www.agecalculator.com/past/1990" "$ROOT/past?year=1990" "https://www.../past/1990"
-check_301 "http://www.agecalculator.com/" "$ROOT/" "http://www.agecalculator.com/"
-check_301 "http://www.agecalculator.com/difference" "$ROOT/difference" "http://www.../difference"
+check_301_two_hops "http://www.agecalculator.com/" "https://www.agecalculator.com/" "$ROOT/" "http://www.agecalculator.com/"
+check_301_two_hops "http://www.agecalculator.com/difference" "https://www.agecalculator.com/difference" "$ROOT/difference" "http://www.../difference"
 
-# HTTP app: one hop (not http->https app->root)
-check_301 "http://app.agecalculator.com/" "$ROOT/" "http://app.agecalculator.com/"
-check_301 "http://app.agecalculator.com/difference" "$ROOT/difference" "http://app.../difference"
-check_301 "http://app.agecalculator.com/past/1990" "$ROOT/past?year=1990" "http://app.../past/1990"
+# HTTP app: two hops (HTTP→HTTPS on app, then the app host rule to the apex).
+check_301_two_hops "http://app.agecalculator.com/" "https://app.agecalculator.com/" "$ROOT/" "http://app.agecalculator.com/"
+check_301_two_hops "http://app.agecalculator.com/difference" "https://app.agecalculator.com/difference" "$ROOT/difference" "http://app.../difference"
+check_301_two_hops "http://app.agecalculator.com/past/1990" "https://app.agecalculator.com/past/1990" "$ROOT/past?year=1990" "http://app.../past/1990"
 
 # Trailing slash on the HTTPS apex (not the homepage)
 check_301 "https://agecalculator.com/difference/" "$ROOT/difference" "https://agecalculator.com/difference/"
 check_301 "https://agecalculator.com/past/" "$ROOT/past" "https://agecalculator.com/past/"
+
+
+# /rodent-age-calculator.html (SEO Manager, 16 Nov 2026).
+# A university page links to http://agecalculator.com/rodent-age-calculator.html.
+# All 6 combinations (http/https × apex/www/app). curl without -L on each hop.
+# HTTPS: one 301, Location https://agecalculator.com/, then that URL returns 200.
+# HTTP: two hops — same-host HTTP→HTTPS first, then the HTTPS rule to the apex.
+echo "----  /rodent-age-calculator.html (6 combinations)"
+check_301 "https://agecalculator.com/rodent-age-calculator.html" "$ROOT/" "https://agecalculator.com/rodent-age-calculator.html"
+check_301 "https://www.agecalculator.com/rodent-age-calculator.html" "$ROOT/" "https://www.../rodent-age-calculator.html"
+check_301 "https://app.agecalculator.com/rodent-age-calculator.html" "$ROOT/" "https://app.../rodent-age-calculator.html"
+check_200 "$ROOT/" "https://agecalculator.com/ (final after HTTPS rodent)"
+check_301_two_hops "http://agecalculator.com/rodent-age-calculator.html" "https://agecalculator.com/rodent-age-calculator.html" "$ROOT/" "http://agecalculator.com/rodent-age-calculator.html"
+check_301_two_hops "http://www.agecalculator.com/rodent-age-calculator.html" "https://www.agecalculator.com/rodent-age-calculator.html" "$ROOT/" "http://www.../rodent-age-calculator.html"
+check_301_two_hops "http://app.agecalculator.com/rodent-age-calculator.html" "https://app.agecalculator.com/rodent-age-calculator.html" "$ROOT/" "http://app.../rodent-age-calculator.html"
 
 # Destinations must be 200, not a second redirect
 check_200 "https://agecalculator.com/" "https://agecalculator.com/ (final)"
@@ -273,11 +306,12 @@ check_200 "https://agecalculator.com/past?year=1990" "https://agecalculator.com/
 # Email Routing MX and SPF (forwarding itself is a manual test email)
 check_email_routing_dns
 
-# M6 gate: nested 404s are HTML 404s with root-relative URLs; assets exist
+# M6 gate: nested 404s are HTML 404s with root-relative URLs; assets exist.
+# Do not use /past/1990 here: on Netlify that path 301s to /past?year=1990.
 echo "----  404 page and static assets (M6)"
-check_404_page "/past/1990"
 check_404_page "/a/b/c"
 check_404_page "/nope"
+check_404_page "/no-such/nested/path"
 check_asset_200 "/styles.css" "text/css"
 check_asset_200 "/fonts/libre-franklin-var.woff2" "font/woff2\|application/font\|octet-stream"
 check_asset_200 "/favicon.ico" "image/"

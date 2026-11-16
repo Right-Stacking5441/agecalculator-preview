@@ -1,0 +1,145 @@
+# Production Netlify configuration for agecalculator.com.
+# The preview repo is still published from /docs on GitHub Pages and stays
+# noindex until launch. This file is not live until a Netlify site is created
+# (after William's approval) with this repository or a production copy, and
+# the custom domains attached. Do not create that site or change DNS here.
+#
+# Trailing-slash rules are intentionally omitted. Official docs say you
+# cannot use a redirect rule to add or remove a trailing slash, because CDN
+# normalisation treats /path and /path/ as the same and a slash-stripping
+# rule would loop:
+# https://docs.netlify.com/manage/routing/redirects/redirect-options/
+# With a file at /page.html, Netlify's Support Guide (reviewed July 2025)
+# says /page/ is already a 301 to /page. Pretty URLs, left on, also 301
+# /page.html to /page.
+# https://answers.netlify.com/t/support-guide-how-can-i-alter-trailing-slash-behaviour-in-my-urls-will-enabling-pretty-urls-help/31191
+#
+# www → apex is handled automatically when the apex is the primary domain:
+# https://docs.netlify.com/manage/domains/manage-domains/manage-multiple-domains/
+# app. is a domain alias on the same site; those host rules must be forced
+# so existing files do not shadow the 301s.
+
+[build]
+  publish = "docs"
+
+[build.processing.html]
+  pretty_urls = true
+
+# --- /rodent-age-calculator.html (SEO Manager, 16 Nov 2026) ---
+# A university page links to http://agecalculator.com/rodent-age-calculator.html.
+# Full-URL host rules, before any generic rules, for apex, www and app.
+# HTTPS should be one 301 to https://agecalculator.com/.
+# HTTP cannot be a single hop on Netlify: Support says the automatic
+# same-host HTTP→HTTPS upgrade runs first, and http:// rules do not fire.
+# See cutover/namecheap-plan.md. The http:// rules are still listed (official
+# docs still show them "if you don't force_ssl") but expect two hops.
+
+[[redirects]]
+  from = "https://agecalculator.com/rodent-age-calculator.html"
+  to = "https://agecalculator.com/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://agecalculator.com/rodent-age-calculator.html"
+  to = "https://agecalculator.com/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://www.agecalculator.com/rodent-age-calculator.html"
+  to = "https://agecalculator.com/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.agecalculator.com/rodent-age-calculator.html"
+  to = "https://agecalculator.com/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://app.agecalculator.com/rodent-age-calculator.html"
+  to = "https://agecalculator.com/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://app.agecalculator.com/rodent-age-calculator.html"
+  to = "https://agecalculator.com/"
+  status = 301
+  force = true
+
+# --- app. year URLs (more specific than the catch-all; HTTP and HTTPS) ---
+
+[[redirects]]
+  from = "https://app.agecalculator.com/past/:year"
+  to = "https://agecalculator.com/past?year=:year"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://app.agecalculator.com/past/:year"
+  to = "https://agecalculator.com/past?year=:year"
+  status = 301
+  force = true
+
+# --- app. alias slugs ---
+
+[[redirects]]
+  from = "https://app.agecalculator.com/how-old-am-i"
+  to = "https://agecalculator.com/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://app.agecalculator.com/how-old-am-i"
+  to = "https://agecalculator.com/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://app.agecalculator.com/date-of-birth"
+  to = "https://agecalculator.com/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://app.agecalculator.com/date-of-birth"
+  to = "https://agecalculator.com/"
+  status = 301
+  force = true
+
+# --- app. everything else, path preserved ---
+
+[[redirects]]
+  from = "https://app.agecalculator.com/*"
+  to = "https://agecalculator.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://app.agecalculator.com/*"
+  to = "https://agecalculator.com/:splat"
+  status = 301
+  force = true
+
+# --- apex / www alias slugs and year URLs ---
+
+[[redirects]]
+  from = "/how-old-am-i"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/date-of-birth"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/past/:year"
+  to = "/past?year=:year"
+  status = 301
+  force = true

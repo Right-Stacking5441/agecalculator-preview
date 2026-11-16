@@ -303,8 +303,10 @@ def main() -> int:
                 issues.append("PRIVACY contact email hello@agecalculator.com missing")
             if "Hurrell Capital Limited, a company registered in England and Wales (company number 15158828)" not in html:
                 issues.append("PRIVACY operator details missing")
-            if "GitHub Pages" not in html or "docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages" not in html:
-                issues.append("PRIVACY GitHub Pages hosting sentence or docs link missing")
+            if "hosted on Netlify" not in html or "www.netlify.com/pdf/netlify-dpa.pdf" not in html:
+                issues.append("PRIVACY Netlify hosting sentence or DPA link missing")
+            if "Netlify, Inc." not in html:
+                issues.append("PRIVACY Netlify, Inc. entity name missing")
             if "noindex" not in html:
                 issues.append("PRIVACY missing noindex")
 

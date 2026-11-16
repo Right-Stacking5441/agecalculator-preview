@@ -36,7 +36,7 @@ Bear in mind that anything in a web address is part of the request your browser 
 
 ## What our hosting provider receives
 
-These pages are hosted on GitHub Pages. According to [GitHub's own documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), when a GitHub Pages site is visited, the visitor's IP address is logged and stored for security purposes, whether or not the visitor is signed in to GitHub.
+These pages are hosted on Netlify. According to [Netlify's Data Processing Agreement](https://www.netlify.com/pdf/netlify-dpa.pdf) (last updated 13 November 2026), Netlify, Inc. processes personal data on behalf of the site operator when it hosts a website. That personal data may include the visitor's IP address and device, browser and request metadata (such as user agent, request headers and timestamps) in request and function logs. Netlify says it processes this data as necessary to perform its services. For transfers of this data from the EEA or Switzerland, Netlify relies on its certification under the EU-U.S. and Swiss-U.S. Data Privacy Frameworks, and on the EU Standard Contractual Clauses if those frameworks are not available; transfers protected by the UK GDPR are subject to the UK International Data Transfer Addendum. [The DPA does not state a specific retention period for visitor request logs, other than that Netlify processes customer data for the duration of its agreement with the site operator.]
 
 ## Fonts, scripts and outside services
 
