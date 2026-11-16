@@ -1,6 +1,18 @@
-# Other local WIP in this folder, not part of the Pages preview
+.DS_Store
+__pycache__/
+*.pyc
+
+# If the parallel UI working copy is recreated here, keep it out of this repo.
+# The archive is /workspace/agecalculator-ui-wip/.
+/screenshots/
+/build/
 /app.js
 /dates.js
 /styles.css
-/tests/dates.test.js
+/embed.js
+/embed.html
+/widget.html
+/sheet.js
+/shoot.py
+/favicon.svg
 /fonts/

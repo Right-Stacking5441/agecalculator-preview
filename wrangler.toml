@@ -1,0 +1,6 @@
+# Cloudflare Pages config for the eventual root deploy.
+# Do not apply this to agecalculator.com until William approves cutover.
+# The noindex preview remains on GitHub Pages until then.
+name = "agecalculator"
+compatibility_date = "2026-11-16"
+pages_build_output_dir = "docs"
