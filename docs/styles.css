@@ -516,7 +516,7 @@ body[data-page="how-old-will-i-be"], body[data-page="what-year-was-i-born"] { --
 .on p { padding: var(--s2) 0; border-top: 1px dotted var(--ink-3); border-bottom: 1px dotted var(--ink-3); }
 
 /* Ads: present, reserved, quiet. */
-.ad .ad-label { font-size: 11px; letter-spacing: .06em; color: #8d8c84; }
+.ad .ad-label { font-size: 11px; letter-spacing: .06em; color: #67675e; }
 .ad .ad-box { background: none !important; border: 1px dotted #c3c1b8 !important; color: #a3a29a; font-size: 12px; }
 
 /* Body copy: headings hung in the margin, like an almanac. */
@@ -799,4 +799,36 @@ body[data-page="how-old-will-i-be"], body[data-page="what-year-was-i-born"] { --
 }
 @media print {
   .preview-banner, .rule-line, .ad { display: none !important; }
+}
+
+
+/* Reserve the empty result card's height so JS drawing the calendar or
+   paper object doesn't push the advert and the page down (mobile CLS).
+   Heights are the measured empty-state card at that width, rounded up. */
+@media (max-width: 760px) {
+  body[data-page="home"] .leaf[data-state="empty"] { min-height: 480px; }
+  body[data-page="past"] .leaf[data-state="empty"] { min-height: 456px; }
+  body[data-page="korean-age"] .leaf[data-state="empty"] { min-height: 456px; }
+  body[data-page="birthday-countdown"] .leaf[data-state="empty"] { min-height: 456px; }
+  body[data-page="how-old-will-i-be"] .leaf[data-state="empty"] { min-height: 182px; }
+  body[data-page="difference"] .leaf[data-state="empty"],
+  body[data-page="days-between-dates"] .leaf[data-state="empty"] { min-height: 150px; }
+  body[data-page="chronological-age"] .leaf[data-state="empty"] { min-height: 314px; }
+  body[data-page="what-year-was-i-born"] .leaf[data-state="empty"] { min-height: 156px; }
+  body[data-page="dog-age"] .leaf[data-state="empty"] { min-height: 408px; }
+  body[data-page="cat-age"] .leaf[data-state="empty"] { min-height: 385px; }
+  body.widget .leaf[data-state="empty"] { min-height: 428px; }
+}
+@media (max-width: 390px) {
+  body[data-page="what-year-was-i-born"] .leaf[data-state="empty"] { min-height: 180px; }
+  body[data-page="cat-age"] .leaf[data-state="empty"] { min-height: 408px; }
+}
+@media (max-width: 360px) {
+  body[data-page="home"] .leaf[data-state="empty"] { min-height: 496px; }
+  body[data-page="korean-age"] .leaf[data-state="empty"] { min-height: 472px; }
+  body[data-page="chronological-age"] .leaf[data-state="empty"] { min-height: 324px; }
+}
+@media (max-width: 320px) {
+  body[data-page="chronological-age"] .leaf[data-state="empty"] { min-height: 400px; }
+  body[data-page="dog-age"] .leaf[data-state="empty"] { min-height: 432px; }
 }
