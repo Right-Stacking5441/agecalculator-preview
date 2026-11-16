@@ -282,3 +282,30 @@ test('addMonths: 31 January plus one month is 1 March, 31 May plus one month is 
   assert.deepEqual(A.addMonths(D(2024, 2, 29), 12), D(2025, 3, 1));
   assert.deepEqual(A.addMonths(D(2024, 2, 29), 48), D(2028, 2, 29));
 });
+
+test('seconds until midnight uses the next midnight in the zone, including DST days in Europe/London and America/New_York', () => {
+  const at = (tz, y, m, d, hh, mm, ss) => new Date(A.instantInZone(tz, y, m, d, hh, mm, ss));
+  const sec = (tz, date) => A.secondsUntilMidnight(tz, date);
+
+  // A common 24-hour day: 16 November 2026, Europe/London (GMT).
+  assert.equal(sec('Europe/London', at('Europe/London', 2026, 11, 16, 0, 0, 0)), 24 * 3600);
+  assert.equal(sec('Europe/London', at('Europe/London', 2026, 11, 16, 12, 0, 0)), 12 * 3600);
+  assert.equal(sec('Europe/London', at('Europe/London', 2026, 11, 16, 23, 59, 59)), 1);
+
+  // Europe/London springs forward at 01:00 on Sunday 29 March 2026: a 23-hour day.
+  assert.equal(sec('Europe/London', at('Europe/London', 2026, 3, 29, 0, 0, 0)), 23 * 3600);
+  // After the gap, 12:00 to midnight is still 12 hours.
+  assert.equal(sec('Europe/London', at('Europe/London', 2026, 3, 29, 12, 0, 0)), 12 * 3600);
+
+  // Europe/London falls back at 02:00 on Sunday 25 October 2026: a 25-hour day.
+  assert.equal(sec('Europe/London', at('Europe/London', 2026, 10, 25, 0, 0, 0)), 25 * 3600);
+  assert.equal(sec('Europe/London', at('Europe/London', 2026, 10, 25, 12, 0, 0)), 12 * 3600);
+
+  // America/New_York springs forward at 02:00 on Sunday 8 March 2026: a 23-hour day.
+  assert.equal(sec('America/New_York', at('America/New_York', 2026, 3, 8, 0, 0, 0)), 23 * 3600);
+  assert.equal(sec('America/New_York', at('America/New_York', 2026, 3, 8, 12, 0, 0)), 12 * 3600);
+
+  // America/New_York falls back at 02:00 on Sunday 1 November 2026: a 25-hour day.
+  assert.equal(sec('America/New_York', at('America/New_York', 2026, 11, 1, 0, 0, 0)), 25 * 3600);
+  assert.equal(sec('America/New_York', at('America/New_York', 2026, 11, 1, 12, 0, 0)), 12 * 3600);
+});

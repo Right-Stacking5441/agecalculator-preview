@@ -277,12 +277,14 @@ def main() -> int:
         if html_name == "privacy.html":
             for ph in [
                 "[PLACEHOLDER: date this policy is published]",
-                "[PLACEHOLDER: operator's legal name, for example Hurrell Capital Limited, and registered address if it is to be shown]",
                 "[PLACEHOLDER: contact email address]",
-                "[PLACEHOLDER: name of the hosting provider at launch, whether it keeps request logs, for how long, and whether any provider analytics are switched on.]",
             ]:
                 if ph not in html:
                     issues.append(f"PRIVACY placeholder missing: {ph}")
+            if "Hurrell Capital Limited, a company registered in England and Wales (company number 15158828)" not in html:
+                issues.append("PRIVACY operator details missing")
+            if "GitHub Pages" not in html or "docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages" not in html:
+                issues.append("PRIVACY GitHub Pages hosting sentence or docs link missing")
             if "noindex" not in html:
                 issues.append("PRIVACY missing noindex")
 

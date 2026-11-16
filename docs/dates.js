@@ -107,7 +107,7 @@
     return r;
   }
 
-  /* Korean counting systems, as used socially in South Korea. International age is the legal one from 28 June 2023. */
+  /* Korean counting systems, as used socially in South Korea. International age is the default in Korean law from 28 June 2023. */
   function koreanAges(b, at) {
     var r = age(b, at);
     if (!r.ok) return r;
@@ -154,7 +154,7 @@
     return r;
   }
   function catAge(ageYears) { return lookupChart(CAT_CHART, ageYears); }
-  /* Wang, I., et al. 2020, Cell Systems: human_age = 16 × ln(dog_age) + 31, natural log.
+  /* Wang, T., et al. 2020, Cell Systems: human_age = 16 × ln(dog_age) + 31, natural log.
      Not shown under 1 year (a log of a number below 1 is not meaningful here). */
   function dogAgeEpigenetic(ageYears) { return ageYears >= 1 ? 16 * Math.log(ageYears) + 31 : null; }
   /* 2021 AAHA/AAFP Feline Life Stage Guidelines: kitten birth–1, young adult 1–6,
@@ -228,11 +228,48 @@
     return { ok: true, date: v.date, ambiguous: ambiguous && !!alt, alt: alt };
   }
 
+
+  /* Instant of a wall-clock time in a named zone, and seconds until the next
+     midnight there (handles 23- and 25-hour DST days). */
+  function zoneParts(date, tz) {
+    var p = new Intl.DateTimeFormat('en-GB', {
+      timeZone: tz, year: 'numeric', month: 'numeric', day: 'numeric',
+      hour: 'numeric', minute: 'numeric', second: 'numeric', hourCycle: 'h23'
+    }).formatToParts(date);
+    var g = function (k) { return +p.filter(function (x) { return x.type === k; })[0].value; };
+    return { y: g('year'), m: g('month'), d: g('day'), hour: g('hour'), minute: g('minute'), second: g('second') };
+  }
+  function instantInZone(tz, y, m, d, hour, minute, second) {
+    var guess = Date.UTC(y, m - 1, d, hour, minute, second);
+    for (var i = 0; i < 8; i++) {
+      var p = zoneParts(new Date(guess), tz);
+      var asUtc = Date.UTC(p.y, p.m - 1, p.d, p.hour, p.minute, p.second);
+      var target = Date.UTC(y, m - 1, d, hour, minute, second);
+      var diff = target - asUtc;
+      if (diff === 0) break;
+      guess += diff;
+    }
+    return guess;
+  }
+  function nextMidnight(tz, now) {
+    now = now instanceof Date ? now : new Date(now);
+    var p = zoneParts(now, tz);
+    var nxt = new Date(Date.UTC(p.y, p.m - 1, p.d + 1));
+    return instantInZone(tz, nxt.getUTCFullYear(), nxt.getUTCMonth() + 1, nxt.getUTCDate(), 0, 0, 0);
+  }
+  function secondsUntilMidnight(tz, now) {
+    now = now instanceof Date ? now : new Date(now == null ? Date.now() : now);
+    var ms = nextMidnight(tz, now) - now.getTime();
+    var s = Math.ceil(ms / 1000);
+    return s < 0 ? 0 : s;
+  }
+
   var api = { MONTHS: MONTHS, WEEKDAYS: WEEKDAYS, MIN_YEAR: MIN_YEAR, MAX_YEAR: MAX_YEAR,
     isLeap: isLeap, daysInMonth: daysInMonth, dayNumber: dayNumber, weekday: weekday,
     dayOfYear: dayOfYear, addMonths: addMonths, validate: validate, age: age, cmp: cmp,
     between: between, koreanAges: koreanAges, dogAge: dogAge, dogAgeEpigenetic: dogAgeEpigenetic,
     DOG_CHART: DOG_CHART, CAT_CHART: CAT_CHART, DOG_SIZES: DOG_SIZES,
-    catAge: catAge, catStage: catStage, birthYear: birthYear, parseDate: parseDate };
+    catAge: catAge, catStage: catStage, birthYear: birthYear, parseDate: parseDate,
+    secondsUntilMidnight: secondsUntilMidnight, nextMidnight: nextMidnight, instantInZone: instantInZone };
   if (typeof module === 'object' && module.exports) module.exports = api; else root.AgeMaths = api;
 })(this);

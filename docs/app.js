@@ -163,7 +163,7 @@
       ['Months', fmt(r.totalMonths) + (r.days ? small('and ' + plural(r.days, 'day')) : '')],
       ['Weeks', fmt(r.weeks) + (r.weekRemainder ? small('and ' + plural(r.weekRemainder, 'day')) : '')],
       ['Days', fmt(r.totalDays)],
-      ['Hours', fmt(r.hours) + small('from midnight')],
+      ['Hours', fmt(r.hours) + small('days × 24, from midnight')],
       opts.chrono !== false ? ['Chronological age', r.years + ';' + r.months + ';' + r.days + small('<a href="chronological-age">for test forms</a>')] : null,
       ['Born on a', W[r.bornWeekday]],
       kor ? ['Korean age', kor.counting + small('year age ' + kor.yearAge + ', <a href="korean-age">why</a>')] : null
@@ -254,7 +254,7 @@
       if (needs(b)) return errOf(b, 'date') || emptyToday('Type a date of birth to see all three Korean ways of counting age side by side.');
       var k = A.koreanAges(b.value, at);
       if (!k.ok) return notice('Not born yet', 'That date is after ' + long(at) + '.');
-      var lead = big(k.international, 'years') + '<p class="rest">international age, the legal one in Korea since 28 June 2023</p>';
+      var lead = big(k.international, 'years') + '<p class="rest">international age, the default in Korean law since 28 June 2023</p>';
       var side = '<p class="bday-text"><span class="k">Korean age (세는 나이)</span><strong class="mid">' + k.counting + '</strong></p><p class="bday-text"><span class="k">Year age (연 나이)</span><strong class="mid">' + k.yearAge + '</strong></p>';
       var rows = [['International', k.international + small('goes up on your birthday')], ['Korean counting age', k.counting + small('1 at birth, +1 every 1 January')], ['Year age', k.yearAge + small(at.y + ' − ' + b.value.y)], ['Next birthday', long(k.r.next)]];
       return { state: 'result', say: 'International age ' + k.international + ', Korean age ' + k.counting + ', year age ' + k.yearAge + '.', html: head('On <b>' + short(at) + '</b>') + body(lead, side) + ledger(rows) };
@@ -274,11 +274,11 @@
   var CHART_SRC = 'https://www.aaha.org/wp-content/uploads/globalassets/02-guidelines/canine-life-stage-2019/canine_and_feline_age_chart_poster.pdf';
   function petChartNote(kind, r, size) {
     if (r.ok) return null;
-    if (kind === 'dog' && r.code === 'below-chart') return 'The AAHA chart starts at 1 year for dogs, so this page doesn’t give an estimate under a year.';
-    if (kind === 'cat' && r.code === 'below-chart') return 'The AAHA chart starts at 6 months for cats, so this page doesn’t give an estimate under that.';
-    if (kind === 'dog' && size === 'giant') return 'The AAHA chart has no giant-breed figures beyond 16 years.';
-    if (kind === 'dog') return 'The AAHA chart for this size goes up to ' + r.max + ' years, and this page doesn’t invent figures past that.';
-    return 'The AAHA chart for cats goes up to 21 years, and this page doesn’t invent figures past that.';
+    if (kind === 'dog' && r.code === 'below-chart') return 'The AAHA-published chart starts at 1 year for dogs, so this page doesn’t give an estimate under a year.';
+    if (kind === 'cat' && r.code === 'below-chart') return 'The AAHA-published chart starts at 6 months for cats, so this page doesn’t give an estimate under that.';
+    if (kind === 'dog' && size === 'giant') return 'The AAHA-published chart has no giant-breed figures beyond 16 years.';
+    if (kind === 'dog') return 'The AAHA-published chart for this size goes up to ' + r.max + ' years, and this page doesn’t invent figures past that.';
+    return 'The AAHA-published chart for cats goes up to 21 years, and this page doesn’t invent figures past that.';
   }
   function pet(kind) {
     var y = +$v('pet-y') || 0, mo = +$v('pet-m') || 0, size = checked('size') || 'medium';
@@ -321,26 +321,47 @@
   document.querySelectorAll('[data-calc] input:not(.quick):not(.p-d):not(.p-m):not(.p-y), [data-calc] select:not(#zone)').forEach(function (i) { i.addEventListener(i.type === 'checkbox' || i.type === 'radio' ? 'change' : 'input', go); });
   root.querySelectorAll('form').forEach(function (f) { f.addEventListener('submit', function (e) { e.preventDefault(); go(); }); });
 
-  /* Countdown clock: the only thing on the site that ticks. */
+  /* Refresh "today" if a tab is left open past midnight in the chosen zone.
+     Honour ?today= so screenshots and tests stay pinned. */
+  function refreshToday() {
+    if (q.get('today')) return false;
+    var next = todayIn(zone);
+    if (same(next, today)) return false;
+    today = next;
+    fillBirthYearTable();
+    lastHtml = '';
+    if (ready) go();
+    return true;
+  }
+
+  /* Countdown clock: the only thing on the site that ticks. Seconds left are
+     measured to the next midnight in the chosen zone, not a flat 86400s, so
+     23- and 25-hour DST days come out right. */
   var clockTimer;
   function tick() {
-    var c = leaf.querySelector('[data-clock]');
+    var rolled = refreshToday();
+    if (rolled) return; /* go() already called tick() */
+    var c = leaf && leaf.querySelector('[data-clock]');
     clearTimeout(clockTimer);
-    if (!c) return;
-    var s, parts;
+    var s;
     try {
-      parts = new Intl.DateTimeFormat('en-GB', { timeZone: zone, hour: 'numeric', minute: 'numeric', second: 'numeric', hourCycle: 'h23' }).formatToParts(new Date());
-      var g = function (k) { return +parts.filter(function (x) { return x.type === k; })[0].value; };
-      s = 86400 - (g('hour') * 3600 + g('minute') * 60 + g('second'));
+      s = A.secondsUntilMidnight(zone, new Date());
     } catch (e) {
       var now = new Date();
       s = 86400 - (now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds());
+      if (s <= 0) s += 86400;
     }
-    if (s <= 0) s += 86400;
-    var hh = Math.floor(s / 3600), mm = Math.floor((s % 3600) / 60), ss = s % 60;
-    c.textContent = hh + ' h ' + String(mm).padStart(2, '0') + ' m ' + String(ss).padStart(2, '0') + ' s';
-    clockTimer = setTimeout(tick, 1000);
+    if (c) {
+      var hh = Math.floor(s / 3600), mm = Math.floor((s % 3600) / 60), ss = s % 60;
+      c.textContent = hh + ' h ' + String(mm).padStart(2, '0') + ' m ' + String(ss).padStart(2, '0') + ' s';
+      clockTimer = setTimeout(tick, 1000);
+    } else {
+      clockTimer = setTimeout(tick, Math.min(Math.max(s, 1) * 1000, 2147483647));
+    }
   }
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') tick();
+  });
 
   /* Copy and print for the chronological-age slip */
   leaf.addEventListener('click', function (e) {
