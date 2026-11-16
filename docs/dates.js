@@ -114,20 +114,57 @@
     return { ok: true, international: r.years, counting: at.y - b.y + 1, yearAge: at.y - b.y, r: r };
   }
 
-  /* Pet ages. Rule of thumb: year one = 15 human years, year two = +9, then a fixed amount per year.
-     Dogs: the per-year amount rises with adult size. Cats: +4 per year. ageYears may be fractional. */
-  var DOG_STEP = { small: 4, medium: 5, large: 6, giant: 7 };
-  function petHumanYears(ageYears, step) {
-    if (ageYears <= 1) return 15 * ageYears;
-    if (ageYears <= 2) return 15 + 9 * (ageYears - 1);
-    return 24 + step * (ageYears - 2);
+  /* Pet ages from the AAHA-hosted Zoetis poster (2019):
+     https://www.aaha.org/wp-content/uploads/globalassets/02-guidelines/canine-life-stage-2019/canine_and_feline_age_chart_poster.pdf
+     Every human-year figure is taken from the printed chart. Between two neighbouring
+     chart ages we interpolate linearly. Ages below the first chart point, above the
+     last, or on a dash (giant dogs after 16) are refused, not invented. */
+  var DOG_SIZES = {
+    small:  { label: 'small',  lbs: 'up to 20 lb',  kg: 'about 9 kg',     band: '≤20 lbs (≤9.07 kg)' },
+    medium: { label: 'medium', lbs: '21 to 50 lb',  kg: 'about 9.5 to 23 kg', band: '21–50 lbs (9.52–22.7 kg)' },
+    large:  { label: 'large',  lbs: '51 to 90 lb',  kg: 'about 23 to 41 kg',  band: '51–90 lbs (23.1–40.8 kg)' },
+    giant:  { label: 'giant',  lbs: 'over 90 lb',   kg: 'about 41 kg',    band: '>90 lbs (>40.8 kg)' }
+  };
+  var DOG_CHART = {
+    small:  [[1,15],[2,24],[3,28],[4,32],[5,36],[6,40],[7,44],[8,48],[9,52],[10,56],[11,60],[12,64],[13,68],[14,72],[15,76],[16,80],[17,84],[18,88],[19,92],[20,96]],
+    medium: [[1,15],[2,24],[3,28],[4,33],[5,37],[6,42],[7,47],[8,51],[9,56],[10,60],[11,65],[12,69],[13,74],[14,78],[15,83],[16,87],[17,92],[18,96],[19,101],[20,105]],
+    large:  [[1,15],[2,24],[3,30],[4,35],[5,40],[6,45],[7,50],[8,55],[9,61],[10,66],[11,72],[12,77],[13,82],[14,88],[15,93],[16,99],[17,104],[18,109],[19,115],[20,120]],
+    giant:  [[1,15],[2,24],[3,32],[4,37],[5,42],[6,49],[7,56],[8,64],[9,71],[10,78],[11,86],[12,93],[13,101],[14,108],[15,115],[16,123]]
+  };
+  var CAT_CHART = [[0.5,10],[1,15],[2,24],[3,28],[4,32],[5,36],[6,40],[7,44],[8,48],[9,52],[10,56],[11,60],[12,64],[13,68],[14,72],[15,76],[16,80],[17,84],[18,88],[19,92],[20,96],[21,100]];
+
+  function lookupChart(points, ageYears) {
+    if (ageYears == null || isNaN(ageYears) || ageYears < 0) return { ok: false, code: 'invalid' };
+    var first = points[0], last = points[points.length - 1];
+    if (ageYears < first[0] - 1e-9) return { ok: false, code: 'below-chart', min: first[0], max: last[0] };
+    if (ageYears > last[0] + 1e-9) return { ok: false, code: 'above-chart', min: first[0], max: last[0] };
+    for (var i = 0; i < points.length; i++) {
+      if (Math.abs(points[i][0] - ageYears) < 1e-9) return { ok: true, human: points[i][1], interpolated: false };
+      if (i + 1 < points.length && ageYears > points[i][0] && ageYears < points[i + 1][0]) {
+        var a0 = points[i][0], h0 = points[i][1], a1 = points[i + 1][0], h1 = points[i + 1][1];
+        return { ok: true, human: h0 + (h1 - h0) * (ageYears - a0) / (a1 - a0), interpolated: true, from: a0, to: a1 };
+      }
+    }
+    return { ok: false, code: 'no-value' };
   }
-  function dogAge(ageYears, size) { return petHumanYears(ageYears, DOG_STEP[size] || 5); }
-  /* Wang et al. 2020 (Cell Systems), epigenetic clock fitted on Labrador retrievers: 16 ln(dog age) + 31. Not meaningful under 1 year. */
+  function dogAge(ageYears, size) {
+    size = DOG_CHART[size] ? size : 'medium';
+    var r = lookupChart(DOG_CHART[size], ageYears);
+    r.size = size;
+    return r;
+  }
+  function catAge(ageYears) { return lookupChart(CAT_CHART, ageYears); }
+  /* Wang, I., et al. 2020, Cell Systems: human_age = 16 × ln(dog_age) + 31, natural log.
+     Not shown under 1 year (a log of a number below 1 is not meaningful here). */
   function dogAgeEpigenetic(ageYears) { return ageYears >= 1 ? 16 * Math.log(ageYears) + 31 : null; }
-  function catAge(ageYears) { return petHumanYears(ageYears, 4); }
-  /* AAHA/AAFP 2021 feline life stages. */
-  function catStage(ageYears) { return ageYears < 1 ? 'Kitten' : ageYears < 7 ? 'Young adult' : ageYears < 11 ? 'Mature adult' : 'Senior'; }
+  /* 2021 AAHA/AAFP Feline Life Stage Guidelines: kitten birth–1, young adult 1–6,
+     mature adult 7–10, senior over 10. */
+  function catStage(ageYears) {
+    if (ageYears < 1) return 'Kitten';
+    if (ageYears < 7) return 'Young adult';
+    if (ageYears <= 10) return 'Mature adult';
+    return 'Senior';
+  }
 
   /* Birth year from an age on a given date. hadBirthday: true, false, or null for "not sure". */
   function birthYear(ageNow, at, hadBirthday) {
@@ -194,7 +231,8 @@
   var api = { MONTHS: MONTHS, WEEKDAYS: WEEKDAYS, MIN_YEAR: MIN_YEAR, MAX_YEAR: MAX_YEAR,
     isLeap: isLeap, daysInMonth: daysInMonth, dayNumber: dayNumber, weekday: weekday,
     dayOfYear: dayOfYear, addMonths: addMonths, validate: validate, age: age, cmp: cmp,
-    between: between, koreanAges: koreanAges, dogAge: dogAge, dogAgeEpigenetic: dogAgeEpigenetic, DOG_STEP: DOG_STEP,
+    between: between, koreanAges: koreanAges, dogAge: dogAge, dogAgeEpigenetic: dogAgeEpigenetic,
+    DOG_CHART: DOG_CHART, CAT_CHART: CAT_CHART, DOG_SIZES: DOG_SIZES,
     catAge: catAge, catStage: catStage, birthYear: birthYear, parseDate: parseDate };
   if (typeof module === 'object' && module.exports) module.exports = api; else root.AgeMaths = api;
 })(this);

@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Chronological Age Calculator for Tests (Years;Months;Days)</title>
-<meta name="description" content="Work out a child’s chronological age on a test date as years;months;days, like 8;4;12. Copy it, or print a result slip or a whole class sheet.">
+<title>Chronological Age Calculator for Tests (Y;M;D)</title>
+<meta name="description" content="Enter a date of birth and a test date to get chronological age as years;months;days, like 8;4;12. Copy it, print a slip, or do a whole class.">
 <link rel="canonical" href="https://agecalculator.com/chronological-age">
 
-<meta property="og:title" content="Chronological Age Calculator for Tests (Years;Months;Days)">
-<meta property="og:description" content="Work out a child’s chronological age on a test date as years;months;days, like 8;4;12. Copy it, or print a result slip or a whole class sheet.">
+<meta property="og:title" content="Chronological Age Calculator for Tests (Y;M;D)">
+<meta property="og:description" content="Enter a date of birth and a test date to get chronological age as years;months;days, like 8;4;12. Copy it, print a slip, or do a whole class.">
 <meta property="og:url" content="https://agecalculator.com/chronological-age">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#f1f1ec">
@@ -20,12 +20,12 @@
 {
  "@context": "https://schema.org",
  "@type": "WebApplication",
- "name": "Chronological age calculator",
+ "name": "Chronological Age Calculator for Tests (Y;M;D)",
  "url": "https://agecalculator.com/chronological-age",
  "applicationCategory": "UtilitiesApplication",
  "operatingSystem": "All",
  "browserRequirements": "Requires JavaScript",
- "description": "Work out a child’s chronological age on a test date as years;months;days, like 8;4;12. Copy it, or print a result slip or a whole class sheet.",
+ "description": "Enter a date of birth and a test date to get chronological age as years;months;days, like 8;4;12. Copy it, print a slip, or do a whole class.",
  "offers": {
   "@type": "Offer",
   "price": "0",
@@ -60,18 +60,42 @@
  "mainEntity": [
   {
    "@type": "Question",
-   "name": "Is this the same method the Pearson or Yale calculators use?",
+   "name": "What is chronological age on a test?",
    "acceptedAnswer": {
     "@type": "Answer",
-    "text": "It gives the same completed years, months and days for ordinary dates. Around the end of a month, calculators that “borrow” 30 days can be a day different. If your manual says how to borrow, follow it."
+    "text": "The child’s exact age on the day of testing, written as years, months and days, for example 8;4;12. Standardised tests use it to pick the right row in the norms tables."
    }
   },
   {
    "@type": "Question",
-   "name": "Do you store the names I type?",
+   "name": "How do you calculate chronological age by hand?",
    "acceptedAnswer": {
     "@type": "Answer",
-    "text": "No. The page has no server behind the form. Close the tab and they’re gone."
+    "text": "Write the test date above the date of birth as year, month, day and subtract each column from the right. If the days are short, borrow a month and add 30 days; if the months are short, borrow a year and add 12 months."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Is this the same as the Pearson or Yale calculators?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "It gives the same years, months and days for most dates. Around month ends, calculators that borrow 30 days can differ by a day or two. If your manual says how to borrow, follow it."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Should I round up the days?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Only if your test manual says to. Some round 15 or more days up to the next month; the result shows that figure separately so you can use it if needed."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Are the names I type stored?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "No. They stay in your browser tab and disappear when you close it."
    }
   }
  ]
@@ -120,28 +144,46 @@
 </div>
 </div></div>
 <div class="wrap page"><div class="content">
-<p class="placeholder-note">Draft copy for SEO and Copywriter to check</p>
 <section>
-<h2>Reading the result</h2>
-<p>8;4;12 means 8 years, 4 months and 12 days on the test date. A child born on 4 July 2018 and tested on 16 November 2026 is 8;4;12. Some forms write it 8-4 or 8:4 and leave the days off; copy whichever your form asks for.</p>
-<p>This is a date-difference helper. It isn’t an official tool from Pearson, Yale or any test publisher, and some manuals have their own rule for days, such as rounding 15 or more days up to the next month. The result shows that rounded figure separately so you can use it if your manual asks for it.</p>
+<p>This chronological age calculator takes a date of birth and a test date and gives the child’s age on that day in the years;months;days form used on score sheets, for example 8;4;12. It is meant for teachers, SENCOs, educational psychologists, and speech and language therapists filling in standardised test forms. The result also shows the age in total months, a months figure with 15 or more days rounded up, and buttons to copy the code or print a one-line slip for the file.</p>
+<p>It is a date-difference helper. It isn’t an official tool from Pearson, Yale or any test publisher. If your test manual has its own rule for days or rounding, the manual decides.</p>
 </section>
-<section id="class-sheet" class="sheet-section">
-<h2>Class sheet</h2>
-<p>Testing a group on the same day? Add each child here and print one A4 sheet. Names stay in this browser tab and disappear when you close it.</p>
-<div class="sheet" data-sheet>
-<div class="sheet-top"><label>Test date <input type="text" id="sheet-date" placeholder="e.g. 16 November 2026"></label><label>Group or class <input type="text" id="sheet-group" placeholder="e.g. Year 3, Oak class"></label></div>
-<table class="sheet-table"><thead><tr><th scope="col">Name</th><th scope="col">Date of birth</th><th scope="col">Age (y;m;d)</th><th scope="col">Months</th></tr></thead><tbody id="sheet-rows"></tbody></table>
-<div class="sheet-actions"><button type="button" class="btn btn-quiet" id="sheet-add">Add a row</button><button type="button" class="btn" id="sheet-print">Print the sheet</button></div>
-<p class="sheet-foot">Ages worked out at agecalculator.com/chronological-age. A 29 February birthday counts on 1 March in common years. Check your test manual’s rounding rule.</p>
-</div>
+<section>
+<h2>Reading a chronological age result</h2>
+<p>8;4;12 means 8 years, 4 months and 12 days on the test date. Some forms write it 8:4 or 8-4 and drop the days; copy whatever your form asks for. The “months” line is the same age as one number (8;4;12 is 100 months and 12 days), which some norms tables use instead.</p>
 </section>
 <aside class="ad ad-mid" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box">336 × 280 on desktop, 300 × 250 on phones</div></aside>
-<section class="tight">
-<h2>Why not just subtract the years?</h2>
-<p>Because norms tables change every few months at young ages, a child who is 5;11;28 is scored against a different row from one who is 6;0;2. Subtracting birth year from test year would put them in the same row. The calculator borrows months and days properly, including across short months and leap years.</p>
+<section>
+<h2>A worked example</h2>
+<p>A child born on 4 July 2018 is tested on 16 November 2026. Set out the way test manuals do it, test date on top:</p>
+<table class="working"><thead><tr><th></th><th>Year</th><th>Month</th><th>Day</th></tr></thead><tbody><tr><td>Test date</td><td>2026</td><td>11</td><td>16</td></tr><tr><td>Date of birth</td><td>2018</td><td>7</td><td>4</td></tr><tr><td>Chronological age</td><td>8</td><td>4</td><td>12</td></tr></tbody></table>
+<p>No borrowing is needed here, so the answer is 8;4;12, or 100 months. With 12 days left over, a manual that rounds 15 or more days up would still say 100 months.</p>
 </section>
-<section class="faq" aria-labelledby="faq-h"><h2 id="faq-h">Questions people ask</h2><details><summary>Is this the same method the Pearson or Yale calculators use?</summary><div><p>It gives the same completed years, months and days for ordinary dates. Around the end of a month, calculators that “borrow” 30 days can be a day different. If your manual says how to borrow, follow it.</p></div></details><details><summary>Do you store the names I type?</summary><div><p>No. The page has no server behind the form. Close the tab and they’re gone.</p></div></details></section>
+<section>
+<h2>The “borrow 30 days” method, and why it can differ by a day or two</h2>
+<p>When the test day is smaller than the birth day, paper methods borrow a month from the month column and add 30 days to the day column. When the test month is smaller than the birth month, they borrow a year and add 12 months.</p>
+<p>Take a child born on 15 January 2019 and tested on 10 March 2026. On paper: 10 is less than 15, so borrow, giving 40 minus 15 = 25 days, and the test month drops from 3 to 2. Then 2 minus 1 = 1 month, and 2026 minus 2019 = 7 years. That gives 7;1;25.</p>
+<p>This calculator counts on the real calendar instead. 15 January 2026 is the 7th birthday, 15 February is one month on, and from 15 February to 10 March is 23 days, because February 2026 had 28 days, not 30. So the result here is 7;1;23. Borrowing 30 days treats every month as 30 days long, so after a short February, or a 31-day month, the two methods can be a day or two apart. Years and months almost always agree. If your manual tells you to borrow 30 days, use its answer for the form.</p>
+</section>
+<section>
+<h2>Why not just subtract the years?</h2>
+<p>At young ages, norms tables move every few months. Two children born on 14 and 19 November 2020 and both tested on 16 November 2026 are 6;0;2 and 5;11;28, and they may well be scored on different rows. Subtracting the birth year from the test year makes them both 6. Months and days matter.</p>
+</section>
+<section id="class-sheet" class="sheet-section">
+<h2>Testing a whole class</h2>
+<p>The class sheet below the calculator takes one test date and a list of names and dates of birth, typed in words or numbers. Each row fills in y;m;d and months as you go, and “Print the sheet” gives one A4 page. Names stay in the browser tab and are gone when you close it.</p>
+</section>
+<section>
+<h2>Leap days</h2>
+<p>This calculator counts a 29 February birthday as falling on 1 March in common years. That is the rule in Scottish law under the <a href="https://www.legislation.gov.uk/ukpga/1991/50/section/6">Age of Legal Capacity (Scotland) Act 1991, section 6(2)</a>; the law in England, Wales and Northern Ireland does not name a date, and a test manual may have its own instruction. So a child born on 29 February 2020 is 6;8;18 on 16 November 2026. For everyday ages and birthdays, the main <a href="./">age calculator</a> uses the same rule.</p>
+<div class="sheet" data-sheet>
+<div class="sheet-top"><label>Test date (day/month/year) <input type="text" id="sheet-date" placeholder="e.g. 4/7/2018 or 16 November 2026"></label><label>Group or class <input type="text" id="sheet-group" placeholder="e.g. Year 3, Oak class"></label></div>
+<table class="sheet-table"><thead><tr><th scope="col">Name</th><th scope="col">Date of birth (day/month/year)</th><th scope="col">Age (y;m;d)</th><th scope="col">Months</th></tr></thead><tbody id="sheet-rows"></tbody></table>
+<div class="sheet-actions"><button type="button" class="btn btn-quiet" id="sheet-add">Add a row</button><button type="button" class="btn" id="sheet-print">Print the sheet</button></div>
+<p class="sheet-foot">Ages worked out at agecalculator.com/chronological-age. A 29 February birthday counts on 1 March in common years. Check your test manual’s rounding rule.</p>
+
+</section>
+<section class="faq" aria-labelledby="faq-h"><h2 id="faq-h">Questions people ask</h2><details><summary>What is chronological age on a test?</summary><div><p>The child’s exact age on the day of testing, written as years, months and days, for example 8;4;12. Standardised tests use it to pick the right row in the norms tables.</p></div></details><details><summary>How do you calculate chronological age by hand?</summary><div><p>Write the test date above the date of birth as year, month, day and subtract each column from the right. If the days are short, borrow a month and add 30 days; if the months are short, borrow a year and add 12 months.</p></div></details><details><summary>Is this the same as the Pearson or Yale calculators?</summary><div><p>It gives the same years, months and days for most dates. Around month ends, calculators that borrow 30 days can differ by a day or two. If your manual says how to borrow, follow it.</p></div></details><details><summary>Should I round up the days?</summary><div><p>Only if your test manual says to. Some round 15 or more days up to the next month; the result shows that figure separately so you can use it if needed.</p></div></details><details><summary>Are the names I type stored?</summary><div><p>No. They stay in your browser tab and disappear when you close it.</p></div></details></section>
 </div><aside class="side" aria-label="More calculators"><h2>More calculators</h2><ul><li><a href="./">Age calculator</a></li><li><a href="difference">Age difference</a></li><li><a href="past">How old was I?</a></li><li><a href="how-old-will-i-be">How old will I be?</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="birthday-countdown">Birthday countdown</a></li><li><a href="korean-age">Korean age</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a href="dog-age">Dog age</a></li><li><a href="cat-age">Cat age</a></li></ul><aside class="ad ad-side" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box">300 × 600</div></aside></aside></div>
 </main>
 <footer class="foot"><div class="wrap">

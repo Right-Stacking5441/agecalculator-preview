@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Age Difference Calculator: Years, Months and Days Apart</title>
-<meta name="description" content="Enter two dates of birth and see exactly how far apart two people are in age, in years, months and days, plus the gap in days and weeks.">
+<title>Age Difference Calculator: Years, Months and Days</title>
+<meta name="description" content="Enter two dates of birth to see exactly how much older one person is, in years, months and days, plus the gap in days and weeks.">
 <link rel="canonical" href="https://agecalculator.com/difference">
 
-<meta property="og:title" content="Age Difference Calculator: Years, Months and Days Apart">
-<meta property="og:description" content="Enter two dates of birth and see exactly how far apart two people are in age, in years, months and days, plus the gap in days and weeks.">
+<meta property="og:title" content="Age Difference Calculator: Years, Months and Days">
+<meta property="og:description" content="Enter two dates of birth to see exactly how much older one person is, in years, months and days, plus the gap in days and weeks.">
 <meta property="og:url" content="https://agecalculator.com/difference">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#f1f1ec">
@@ -20,12 +20,12 @@
 {
  "@context": "https://schema.org",
  "@type": "WebApplication",
- "name": "Age Difference Calculator",
+ "name": "Age Difference Calculator: Years, Months and Days",
  "url": "https://agecalculator.com/difference",
  "applicationCategory": "UtilitiesApplication",
  "operatingSystem": "All",
  "browserRequirements": "Requires JavaScript",
- "description": "Enter two dates of birth and see exactly how far apart two people are in age, in years, months and days, plus the gap in days and weeks.",
+ "description": "Enter two dates of birth to see exactly how much older one person is, in years, months and days, plus the gap in days and weeks.",
  "offers": {
   "@type": "Offer",
   "price": "0",
@@ -63,7 +63,15 @@
    "name": "Is the age difference the same every year?",
    "acceptedAnswer": {
     "@type": "Answer",
-    "text": "In days, yes. In whole years it changes by one for part of each year, between the two birthdays."
+    "text": "In days, yes. In whole years it changes by one for part of each year, in the weeks between the older person’s birthday and the younger person’s."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "How do I work out an age difference by hand?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Subtract the earlier date of birth from the later one: count whole years, then whole months, then the remaining days. 2 June 1990 to 20 September 1993 is 3 years, 3 months and 18 days."
    }
   },
   {
@@ -71,7 +79,15 @@
    "name": "Can I compare more than two people?",
    "acceptedAnswer": {
     "@type": "Answer",
-    "text": "Not yet on one screen. Work out the gap for each pair, or compare everyone with the eldest."
+    "text": "Not on one screen. Work out each pair, or compare everyone with the eldest."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Are the names I type saved?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "No. The calculation runs in your browser, and the names are only used to label the result on your screen."
    }
   }
  ]
@@ -120,22 +136,37 @@
 </div>
 </div></div>
 <div class="wrap page"><div class="content">
-<p class="placeholder-note">Draft copy for SEO and Copywriter to check</p>
 <section>
-<h2>How the gap is worked out</h2>
-<p>The gap is counted from the earlier birthday to the later one, the same way an age is: whole years, then whole months, then the days left over. Someone born on 2 June 1990 is 3 years, 3 months and 18 days older than someone born on 20 September 1993, which is 1,206 days.</p>
-<p>That number of days never changes. The difference in their ages, as you’d say it out loud, does. From 2 June to 19 September each year the older one is 4 years older on paper (say 36 and 32), and for the rest of the year it’s 3 (36 and 33). Both are true, which is why a precise gap is more useful than subtracting one age from another.</p>
+<p>Put in two dates of birth and the age difference calculator shows the gap between them: whole years first, then months, then days. It also says who is older, by how many days in total, and gives the same gap in weeks and months. Names are optional. They only label the result, so “Sam is older by 1,206 days” reads better than “Person A”.</p>
+<p>The order you type the dates in doesn’t matter. The calculator works out which birthday came first and counts forward from it.</p>
 </section>
-<section class="tight">
-<h2>Two people with the same birthday</h2>
-<p>If both dates are the same day and month, the gap is a whole number of years and stays that way all year. Twins born either side of midnight can be a day apart and have different birthdays, which this page will show as 1 day.</p>
+<section>
+<h2>How the age difference calculator works out the gap</h2>
+<p>The gap is counted the same way an age is. Start at the earlier date of birth, count the whole years until you would pass the later one, then the whole months, then the days left over.</p>
+<p>Take two people born on 2 June 1990 and 20 September 1993:</p>
+<ul><li>2 June 1990 to 2 June 1993 is 3 years.</li><li>2 June 1993 to 2 September 1993 is 3 months.</li><li>2 September to 20 September is 18 days.</li></ul>
+<p>So the older one is 3 years, 3 months and 18 days older. Counted in days, that is 1,206, or 172 weeks and 2 days.</p>
 </section>
 <aside class="ad ad-mid" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box">336 × 280 on desktop, 300 × 250 on phones</div></aside>
-<section class="tight">
-<h2>Names stay on your screen</h2>
-<p>The name boxes only label the result. Nothing you type is sent to us or saved.</p>
+<section>
+<h2>Why their ages don’t always differ by the same number</h2>
+<p>The 1,206 days never change. The difference you’d say out loud does. Between 2 June and 19 September each year, the older person has had their birthday and the younger one hasn’t, so their ages are 4 apart. As of 16 November 2026, for example, they are 36 and 33, which is 3 apart. On 1 August 2027 they will be 37 and 33.</p>
+<p>Both answers are right, which is why the result has a line saying the ages differ by “3 or 4, depending on the time of year”. If you only subtract one age from another, you get whichever of the two happens to apply today. The years, months and days figure is the one that stays put.</p>
+<p>If the two people share a birthday (same day and month, different years), the gap is a whole number of years and the line says it holds all year.</p>
 </section>
-<section class="faq" aria-labelledby="faq-h"><h2 id="faq-h">Questions people ask</h2><details><summary>Is the age difference the same every year?</summary><div><p>In days, yes. In whole years it changes by one for part of each year, between the two birthdays.</p></div></details><details><summary>Can I compare more than two people?</summary><div><p>Not yet on one screen. Work out the gap for each pair, or compare everyone with the eldest.</p></div></details></section>
+<section>
+<h2>Leap days and month ends</h2>
+<p>This calculator counts a 29 February birthday as falling on 1 March in common years, the same rule as the rest of the site. Months are counted on the real calendar too, so a gap that starts on 31 January reaches its first whole month on 1 March, because February has no 31st. Common date libraries clamp to the last day of the month instead, so other tools can differ by a day around month ends.</p>
+</section>
+<section>
+<h2>Twins and same-day births</h2>
+<p>Twins born either side of midnight have different dates of birth, and the calculator will show them as 1 day apart. If you type the same date twice, it says so rather than showing a gap of zero years, zero months and zero days.</p>
+</section>
+<section>
+<h2>Other things people use it for</h2>
+<p>Couples comparing ages, siblings settling an argument, and anyone filling in a form that asks for the age gap between a parent and a child. For the span between any two dates that aren’t birthdays, such as the start and end of a tenancy, <a href="days-between-dates">days between dates</a> is the better tool, because it can count the end day and gives a weekday total. For one person’s age on a given day, use the main <a href="./">age calculator</a>.</p>
+</section>
+<section class="faq" aria-labelledby="faq-h"><h2 id="faq-h">Questions people ask</h2><details><summary>Is the age difference the same every year?</summary><div><p>In days, yes. In whole years it changes by one for part of each year, in the weeks between the older person’s birthday and the younger person’s.</p></div></details><details><summary>How do I work out an age difference by hand?</summary><div><p>Subtract the earlier date of birth from the later one: count whole years, then whole months, then the remaining days. 2 June 1990 to 20 September 1993 is 3 years, 3 months and 18 days.</p></div></details><details><summary>Can I compare more than two people?</summary><div><p>Not on one screen. Work out each pair, or compare everyone with the eldest.</p></div></details><details><summary>Are the names I type saved?</summary><div><p>No. The calculation runs in your browser, and the names are only used to label the result on your screen.</p></div></details></section>
 </div><aside class="side" aria-label="More calculators"><h2>More calculators</h2><ul><li><a href="./">Age calculator</a></li><li><a href="past">How old was I?</a></li><li><a href="how-old-will-i-be">How old will I be?</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="birthday-countdown">Birthday countdown</a></li><li><a href="korean-age">Korean age</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a href="dog-age">Dog age</a></li><li><a href="cat-age">Cat age</a></li></ul><aside class="ad ad-side" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box">300 × 600</div></aside></aside></div>
 </main>
 <footer class="foot"><div class="wrap">

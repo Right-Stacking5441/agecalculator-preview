@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>Age Calculator: How Old Am I?</title>
-<meta name="description" content="Type a date of birth, like 15 March 1995 or 3/15/95, and get your age in years, months and days. You can also pick a date that isn’t today. Leap-year birthdays included.">
+<meta name="description" content="Type a date of birth, like 15 March 1995 or 3/15/95, and get your exact age in years, months and days, today or on any date. Leap days included.">
 <link rel="canonical" href="https://agecalculator.com/">
 
 <meta property="og:title" content="Age Calculator: How Old Am I?">
-<meta property="og:description" content="Type a date of birth, like 15 March 1995 or 3/15/95, and get your age in years, months and days. You can also pick a date that isn’t today. Leap-year birthdays included.">
+<meta property="og:description" content="Type a date of birth, like 15 March 1995 or 3/15/95, and get your exact age in years, months and days, today or on any date. Leap days included.">
 <meta property="og:url" content="https://agecalculator.com/">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#f1f1ec">
@@ -20,12 +20,12 @@
 {
  "@context": "https://schema.org",
  "@type": "WebApplication",
- "name": "Age Calculator",
+ "name": "Age Calculator: How Old Am I?",
  "url": "https://agecalculator.com/",
  "applicationCategory": "UtilitiesApplication",
  "operatingSystem": "All",
  "browserRequirements": "Requires JavaScript",
- "description": "Type a date of birth, like 15 March 1995 or 3/15/95, and get your age in years, months and days. You can also pick a date that isn’t today. Leap-year birthdays included.",
+ "description": "Type a date of birth, like 15 March 1995 or 3/15/95, and get your exact age in years, months and days, today or on any date. Leap days included.",
  "offers": {
   "@type": "Offer",
   "price": "0",
@@ -57,7 +57,7 @@
    "name": "How old am I if I was born on 15 March 1995?",
    "acceptedAnswer": {
     "@type": "Answer",
-    "text": "On 16 November 2026 you’re 31 years, 8 months and 1 day old, and you turn 32 on Monday 15 March 2027. For a different day, press Change next to “Age on” and type it in."
+    "text": "As of 16 November 2026, you are 31 years, 8 months and 1 day old, and you turn 32 on Monday 15 March 2027. For any other day, press Change and type it in."
    }
   },
   {
@@ -65,7 +65,7 @@
    "name": "If I was born on 29 February, when do I turn a year older?",
    "acceptedAnswer": {
     "@type": "Answer",
-    "text": "On 1 March in years that have no 29 February, and on the 29th itself in leap years. That’s how this calculator counts, and it’s what Scottish law says: in a year without 29 February, the birthday is taken to be 1 March. The law in England, Wales and Northern Ireland doesn’t name a date, and some places and rules use 28 February. If a particular law or contract says otherwise, go by that."
+    "text": "This calculator counts it as 1 March in years with no 29 February, and the 29th itself in leap years. That matches Scottish law; the law in England, Wales and Northern Ireland does not name a date."
    }
   },
   {
@@ -73,7 +73,7 @@
    "name": "Does this use Korean age or international age?",
    "acceptedAnswer": {
     "@type": "Answer",
-    "text": "International age: you start at 0 and add a year on each birthday. South Korea has used it for official purposes since June 2023. Tick Show Korean age to see the traditional count as well."
+    "text": "International age: you start at 0 and add a year on each birthday. Tick Show Korean age to see the traditional count beside it."
    }
   },
   {
@@ -81,15 +81,15 @@
    "name": "Can I see my age on a date in the past or the future?",
    "acceptedAnswer": {
     "@type": "Answer",
-    "text": "Yes. Press Change next to “Age on” and type any date. There are also pages for how old you were on a past date and how old you’ll be in a future year."
+    "text": "Yes. Press Change and type any date. There are also separate pages for how old you were on a past date and how old you will be in a future year."
    }
   },
   {
    "@type": "Question",
-   "name": "How does this calculator count a month, or a 29 February birthday?",
+   "name": "Why is my age in months and days sometimes surprising at the end of a month?",
    "acceptedAnswer": {
     "@type": "Answer",
-    "text": "A completed month lands on the same date next month. If that date doesn’t exist — there is no 31 February, and some years have no 29 February — it rolls to the 1st of the next month, so 31 January plus one month is 1 March, and a 29 February birthday counts on 1 March in a common year. Common date libraries (for example date-fns, Python’s dateutil and Java’s LocalDate) use the last day of the month instead, so around month ends other tools can differ by a day or two."
+    "text": "Months aren’t all the same length. If you were born on 31 January, there is no 31 February, so your first whole month is counted on 1 March, the same rule used for 29 February. On 28 February the result shows 0 months and 28 days; on 1 March it shows exactly 1 month. Common date libraries clamp to the last day of the month instead (31 January plus a month becomes 28 February), so other tools can differ by a day around month ends."
    }
   }
  ]
@@ -144,27 +144,27 @@
 </div>
 </div></div>
 <div class="wrap page"><div class="content">
-
 <section>
-<h2>How this calculator counts age</h2>
-<p>Your age goes up by one on your birthday, the way it does on a passport or a school form. The calculator counts the completed years first, then the whole months left over, then the days left after that. That’s the big figure and the line under it in the result.</p>
-<p>The list underneath (months, weeks, days and hours) is the same stretch of time measured in a single unit, so those numbers don’t add on to your age. Hours are counted from midnight, because a date of birth on its own doesn’t say what time you arrived.</p>
+<p>Type a date of birth in the box and this age calculator gives your age as completed years, then months, then days, worked out to today’s date in your time zone. The big number is your age as you’d write it on a form. The line under it is the months and days since your last birthday. Below that, the same stretch of time is given in single units: total months, weeks, days and hours.</p>
+<p>The box reads dates the way people type them: 15 March 1995, 15/03/1995, 1995-03-15 or 15031995 all work, and the line underneath says how it has read your entry. If a date could go either way, like 1/2/2000, it follows your browser’s language setting and offers the other reading with one tap.</p>
+</section>
+<section>
+<h2>How this age calculator counts</h2>
+<p>Your age goes up by one on your birthday, the same way it does on a passport or a school form. The calculator counts whole years first, then the whole months left over, then the days left after that.</p>
+<p>The single-unit figures don’t add on to your age. 380 months and 1,652 weeks are two ways of measuring the same span, not extra time. Hours are counted from midnight on the day you were born, because a date of birth on its own doesn’t record what time you arrived.</p>
 </section>
 <section>
 <h2>A worked example: 15 March 1995</h2>
-<p>The example in the box is 15 March 1995. As of 16 November 2026, someone born that day is 31 years, 8 months and 1 day old. On paper it goes like this:</p>
-<table class="working">
-<tr><td>2026 − 1995, and 15 March 2026 has already been</td><td>31 years</td></tr>
-<tr><td>15 March to 15 November</td><td>8 months</td></tr>
-<tr><td>15 November to 16 November</td><td>1 day</td></tr>
-<tr class="total"><td>Age on 16 November 2026</td><td>31 y 8 m 1 d</td></tr>
-</table>
-<p>If this year’s birthday hasn’t come round yet, take one off the years and count the months from last year’s birthday instead.</p>
+<p>As of 16 November 2026, someone born on 15 March 1995 is 31 years, 8 months and 1 day old. On paper:</p>
+<ul><li>2026 minus 1995 is 31, and their birthday on 15 March 2026 has already passed, so 31 completed years.</li><li>15 March to 15 November is 8 whole months.</li><li>15 November to 16 November is 1 day.</li></ul>
+<p>That is 11,569 days in total. They were born on a Wednesday, and they turn 32 on Monday 15 March 2027, 119 days away. If this year’s birthday is still to come, take one off the years and count the months from last year’s birthday instead.</p>
 </section>
+<aside class="ad ad-mid" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box">336 × 280 on desktop, 300 × 250 on phones</div></aside>
 <section>
 <h2>Born on 29 February</h2>
-<p>A 29 February birthday only exists in leap years: 2024, 2028, 2032 and so on. In the other three years this calculator counts you a year older on 1 March, the day after 28 February. That’s the rule written into Scottish law. Elsewhere in the UK the law doesn’t name a date, and some places and rules use 28 February instead. Every result on this site uses that rule. If a particular law or contract says otherwise, go by that.</p>
-<p>Take someone born on 29 February 2000. Their 26th birthday counted on 1 March 2026, because 2026 has no 29 February. On 16 November 2026 they are 26 years, 8 months and 18 days old: eight months takes them to 29 October, and 18 more days to the 16th. Their next birthday counts on Monday 1 March 2027, and in 2028 it’s back on the 29th.</p>
+<p>A 29 February birthday only exists in leap years, such as 2024, 2028 and 2032. In the other three years, this calculator counts a 29 February birthday as falling on 1 March, the day after 28 February, and every tool on this site uses that rule. It is the rule written into Scottish law by the <a href="https://www.legislation.gov.uk/ukpga/1991/50/section/6">Age of Legal Capacity (Scotland) Act 1991, section 6(2)</a>. The law in England, Wales and Northern Ireland does not name a date, so if a particular contract or document says something else, go by its wording.</p>
+<p>Take someone born on 29 February 2000. There was no 29 February in 2026, so their 26th birthday counted on 1 March 2026. As of 16 November 2026, they are 26 years, 8 months and 18 days old: eight whole months takes them from 1 March to 29 October, and 18 more days reach the 16th. Their next birthday counts on Monday 1 March 2027. In 2028 it is back on the 29th.</p>
+<p>The same rule covers month ends. There is no 31 February, so a month after 31 January is 1 March here. Plenty of people born on a leap day celebrate on 28 February, and that’s fine for a party. The calculator just doesn’t treat it as the day the age changes.</p>
 <figure class="diagram"><svg viewBox="0 0 640 170" role="img" aria-labelledby="leap-t"><title id="leap-t">In 2026 the 29 February birthday counts on 1 March; in 2028 it falls on 29 February.</title>
 <style>.lbl{font:700 17px "Libre Franklin",Arial,sans-serif;fill:#1c1c1a}.cell{fill:#fff;stroke:#1c1c1a;stroke-width:1.5}.d{font:700 18px "Libre Franklin",Arial,sans-serif;text-anchor:middle;fill:#1c1c1a}.m{font:500 11px "Libre Franklin",Arial,sans-serif;text-anchor:middle;fill:#66655e;letter-spacing:.05em}.perf{stroke:#9b9a92;stroke-width:1.5;stroke-dasharray:3 3}.ringp{fill:none;stroke:#b4231b;stroke-width:1.8;stroke-linecap:round}.note{font:700 15px "Libre Franklin",Arial,sans-serif;fill:#b4231b}.note2{font:400 14px "Libre Franklin",Arial,sans-serif;fill:#45443f}</style>
 <text x="0" y="34" class="lbl">2026</text>
@@ -200,30 +200,21 @@
 <text x="308" y="151" class="m">Mar</text>
 <text x="348" y="114" class="note">Turns 28</text><text x="348" y="132" class="note2">the real date</text>
 </svg><figcaption>Someone born on 29 February 2000. In common years the age changes on 1 March.</figcaption></figure>
-<p>Plenty of people born on the day celebrate on 28 February instead. That’s fine for a party. The calculator just doesn’t treat it as the day the age changes.</p>
 </section>
-<section class="tight">
-<h2>Which day is “today”?</h2>
-<p>The calculator works with calendar dates, not clock times, and takes today’s date from the time zone your device reports. The zone is shown next to the date. When it’s already Tuesday in London it can still be Monday in Los Angeles, so on the day of a birthday the answer depends on where you are. To use a different zone, press Change under the date of birth and pick one.</p>
+<section>
+<h2>Which day counts as today</h2>
+<p>The calculator works with calendar dates, not clock times. It takes today’s date from the time zone your device reports and shows that zone beside the date. When it is already Tuesday in London it can still be Monday in Los Angeles, so on the day of a birthday the answer depends on where you are. Press Change to pick another zone, or to type a different “age on” date altogether.</p>
 </section>
-<aside class="ad ad-mid" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box">336 × 280 on desktop, 300 × 250 on phones</div></aside>
 <section>
 <h2>Other ways of counting age</h2>
-<p>South Korea has used international age, the kind shown here, for legal and official purposes since 28 June 2023. Two older systems are still common in everyday life: Korean age, where you’re 1 at birth and everyone gets a year older on 1 January, and year age, which is this year minus your birth year. Tick Show Korean age to add it to your result, or use the <a href="korean-age">Korean age calculator</a> to see all three side by side. That page explains the counting; it isn’t legal advice.</p>
-<p>Schools, speech and language therapists and psychologists often need a child’s age on the day of a test, written as years;months;days, like 8;4;12. Your result shows that line too. The <a href="chronological-age">chronological age calculator</a> is built for the job, with a test date field and a slip you can print for the file. If the test manual has its own rounding rule, the manual wins.</p>
+<p>South Korea standardised on international age, the kind shown here, for legal and administrative purposes from 28 June 2023. Two older systems are still heard in everyday life there: Korean age, where you are 1 at birth and everyone gets a year older on 1 January, and year age, which is simply this year minus your birth year. Tick Show Korean age to add it to your result, or use the <a href="korean-age">Korean age calculator</a> to see all three side by side. That page explains the counting. It isn’t legal advice.</p>
+<p>Schools, speech and language therapists and psychologists usually want a child’s age on the day of a test, written as years;months;days, for example 8;4;12. Your result shows that line as well. The <a href="chronological-age">chronological age calculator</a> is built for the job, with a test date field, a printable slip and a class sheet. If a test manual has its own rounding rule, follow the manual.</p>
 </section>
-<section class="tight">
-<h2>Other calculators</h2>
-<ul class="related">
-<li><a href="difference">Age difference between two people</a></li>
-<li><a href="past">How old was I on a past date?</a></li>
-<li><a href="days-between-dates">Days between two dates</a></li>
-<li><a href="birthday-countdown">Birthday countdown</a></li>
-<li><a href="dog-age">Dog age in human years</a></li>
-<li><a href="cat-age">Cat age in human years</a></li>
-</ul>
+<section>
+<h2>More calculators</h2>
+<ul><li><a href="difference">Age difference between two people</a></li><li><a href="past">How old was I on a past date?</a></li><li><a href="days-between-dates">Days between two dates</a></li><li><a href="birthday-countdown">Birthday countdown</a></li><li><a href="dog-age">Dog age in human years</a></li><li><a href="cat-age">Cat age in human years</a></li></ul>
 </section>
-<section class="faq" aria-labelledby="faq-h"><h2 id="faq-h">Questions people ask</h2><details><summary>How old am I if I was born on 15 March 1995?</summary><div><p>On 16 November 2026 you’re 31 years, 8 months and 1 day old, and you turn 32 on Monday 15 March 2027. For a different day, press Change next to “Age on” and type it in.</p></div></details><details><summary>If I was born on 29 February, when do I turn a year older?</summary><div><p>On 1 March in years that have no 29 February, and on the 29th itself in leap years. That’s how this calculator counts, and it’s what Scottish law says: in a year without 29 February, the birthday is taken to be 1 March. The law in England, Wales and Northern Ireland doesn’t name a date, and some places and rules use 28 February. If a particular law or contract says otherwise, go by that.</p></div></details><details><summary>Does this use Korean age or international age?</summary><div><p>International age: you start at 0 and add a year on each birthday. South Korea has used it for official purposes since June 2023. Tick Show Korean age to see the traditional count as well.</p></div></details><details><summary>Can I see my age on a date in the past or the future?</summary><div><p>Yes. Press Change next to “Age on” and type any date. There are also pages for <a href="past">how old you were on a past date</a> and <a href="how-old-will-i-be">how old you’ll be in a future year</a>.</p></div></details><details><summary>How does this calculator count a month, or a 29 February birthday?</summary><div><p>A completed month lands on the same date next month. If that date doesn’t exist — there is no 31 February, and some years have no 29 February — it rolls to the 1st of the next month, so 31 January plus one month is 1 March, and a 29 February birthday counts on 1 March in a common year. Common date libraries (for example date-fns, Python’s dateutil and Java’s LocalDate) use the last day of the month instead, so around month ends other tools can differ by a day or two.</p></div></details></section>
+<section class="faq" aria-labelledby="faq-h"><h2 id="faq-h">Questions people ask</h2><details><summary>How old am I if I was born on 15 March 1995?</summary><div><p>As of 16 November 2026, you are 31 years, 8 months and 1 day old, and you turn 32 on Monday 15 March 2027. For any other day, press Change and type it in.</p></div></details><details><summary>If I was born on 29 February, when do I turn a year older?</summary><div><p>This calculator counts it as 1 March in years with no 29 February, and the 29th itself in leap years. That matches Scottish law; the law in England, Wales and Northern Ireland does not name a date.</p></div></details><details><summary>Does this use Korean age or international age?</summary><div><p>International age: you start at 0 and add a year on each birthday. Tick Show Korean age to see the traditional count beside it.</p></div></details><details><summary>Can I see my age on a date in the past or the future?</summary><div><p>Yes. Press Change and type any date. There are also separate pages for how old you were on a past date and <a href="how-old-will-i-be">how old you will be</a> in a future year.</p></div></details><details><summary>Why is my age in months and days sometimes surprising at the end of a month?</summary><div><p>Months aren’t all the same length. If you were born on 31 January, there is no 31 February, so your first whole month is counted on 1 March, the same rule used for 29 February. On 28 February the result shows 0 months and 28 days; on 1 March it shows exactly 1 month. Common date libraries clamp to the last day of the month instead (31 January plus a month becomes 28 February), so other tools can differ by a day around month ends.</p></div></details></section>
 </div><aside class="side" aria-label="More calculators"><h2>More calculators</h2><ul><li><a href="difference">Age difference</a></li><li><a href="past">How old was I?</a></li><li><a href="how-old-will-i-be">How old will I be?</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="birthday-countdown">Birthday countdown</a></li><li><a href="korean-age">Korean age</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a href="dog-age">Dog age</a></li><li><a href="cat-age">Cat age</a></li></ul><aside class="ad ad-side" aria-label="Advertisement"><span class="ad-label">Advertisement</span><div class="ad-box">300 × 600</div></aside></aside></div>
 </main>
 <footer class="foot"><div class="wrap">

@@ -140,7 +140,7 @@
   });
   if (zoneSel) {
     zoneSel.options[0].textContent = zone; zoneSel.value = zone;
-    zoneSel.addEventListener('change', function () { var wasToday = !on.value || same(on.value, today); zone = zoneSel.value; today = todayIn(zone); if (wasToday) on.set(today); refreshOnLabel(); go(); });
+    zoneSel.addEventListener('change', function () { var wasToday = !on.value || same(on.value, today); zone = zoneSel.value; today = todayIn(zone); if (wasToday) on.set(today); refreshOnLabel(); fillBirthYearTable(); go(); });
   }
   if (on && q.get('on')) { onBox.hidden = false; onBtn.setAttribute('aria-expanded', 'true'); onBtn.textContent = 'Use today'; }
 
@@ -193,7 +193,7 @@
       var b = fields.dob, yr = +$v('in-year');
       if (needs(b)) return errOf(b, 'date') || emptyToday('Type a date of birth, then a year or an exact date in the future.');
       if (on && on.value) return ageCore(b.value, on.value);
-      if (!yr || String(yr).length !== 4) return notice('Which year?', 'Type a four-digit year, like 2050, or pick an exact date.');
+      if (!yr || String(yr).length !== 4 || yr < A.MIN_YEAR || yr > A.MAX_YEAR) return notice('Which year?', 'Type a year between ' + A.MIN_YEAR + ' and ' + A.MAX_YEAR + ', like 2050, or pick an exact date.');
       var bd = A.addMonths(b.value, 12 * (yr - b.value.y));
       if (yr < b.value.y) return notice('Before you were born', yr + ' is before ' + b.value.y + '.');
       var after = yr - b.value.y, before = Math.max(0, after - 1), at = { y: yr, m: 12, d: 31 };
@@ -269,21 +269,33 @@
     }
   };
 
+  var CHART_SRC = 'https://www.aaha.org/wp-content/uploads/globalassets/02-guidelines/canine-life-stage-2019/canine_and_feline_age_chart_poster.pdf';
+  function petChartNote(kind, r, size) {
+    if (r.ok) return null;
+    if (kind === 'dog' && r.code === 'below-chart') return 'The AAHA chart starts at 1 year for dogs, so this page doesn’t give an estimate under a year.';
+    if (kind === 'cat' && r.code === 'below-chart') return 'The AAHA chart starts at 6 months for cats, so this page doesn’t give an estimate under that.';
+    if (kind === 'dog' && size === 'giant') return 'The AAHA chart has no giant-breed figures beyond 16 years.';
+    if (kind === 'dog') return 'The AAHA chart for this size goes up to ' + r.max + ' years, and this page doesn’t invent figures past that.';
+    return 'The AAHA chart for cats goes up to 21 years, and this page doesn’t invent figures past that.';
+  }
   function pet(kind) {
     var y = +$v('pet-y') || 0, mo = +$v('pet-m') || 0, size = checked('size') || 'medium';
     if (!$v('pet-y') && !$v('pet-m')) {
-      var ages = [1, 2, 3, 5, 7, 10, 12, 15], t;
-      if (kind === 'dog') t = '<tr><th scope="col">Dog</th><th scope="col">Small</th><th scope="col">Medium</th><th scope="col">Large</th><th scope="col">Giant</th></tr>' + ages.map(function (x) { return '<tr><td>' + x + '</td>' + ['small', 'medium', 'large', 'giant'].map(function (z) { return '<td>' + fmt(A.dogAge(x, z)) + '</td>'; }).join('') + '</tr>'; }).join('');
-      else t = '<tr><th scope="col">Cat</th><th scope="col">Human</th><th scope="col">Stage</th></tr>' + ages.map(function (x) { return '<tr><td>' + x + '</td><td>' + fmt(A.catAge(x)) + '</td><td>' + A.catStage(x) + '</td></tr>'; }).join('');
-      return { state: 'empty', html: head(kind === 'dog' ? 'Dog years at a glance' : 'Cat years at a glance') + '<table class="chart"><caption class="sr-only">Human years by age</caption>' + t + '</table><p class="hint">Type your ' + kind + '’s age for an exact figure' + (kind === 'dog' ? ', and pick their adult size.' : '.') + '</p>' };
+      var ages = [1, 2, 3, 5, 7, 10, 12, 15], tbl;
+      if (kind === 'dog') tbl = '<tr><th scope="col">Dog</th><th scope="col">Small</th><th scope="col">Medium</th><th scope="col">Large</th><th scope="col">Giant</th></tr>' + ages.map(function (x) { return '<tr><td>' + x + '</td>' + ['small', 'medium', 'large', 'giant'].map(function (z) { var r = A.dogAge(x, z); return '<td>' + (r.ok ? fmt(r.human) : '–') + '</td>'; }).join('') + '</tr>'; }).join('');
+      else tbl = '<tr><th scope="col">Cat</th><th scope="col">Human</th><th scope="col">Stage</th></tr>' + ages.map(function (x) { var r = A.catAge(x); return '<tr><td>' + x + '</td><td>' + (r.ok ? fmt(r.human) : '–') + '</td><td>' + A.catStage(x) + '</td></tr>'; }).join('');
+      return { state: 'empty', html: head(kind === 'dog' ? 'Dog years at a glance' : 'Cat years at a glance') + '<table class="chart"><caption class="sr-only">Human years by age, from the AAHA-published chart</caption>' + tbl + '</table><p class="hint">Type your ' + kind + '’s age for an exact figure' + (kind === 'dog' ? ', and pick their adult size.' : '.') + ' Figures are from the <a href="' + CHART_SRC + '">AAHA-published pet age chart</a>.</p>' };
     }
-    if (mo > 11 || y > 40) return notice('Check the age', 'Months go from 0 to 11. Over a year? Put the years in the first box.');
-    var age = y + mo / 12, human = kind === 'dog' ? A.dogAge(age, size) : A.catAge(age);
-    var lead = big(fmt(human), 'in human years') + '<p class="rest">for a ' + (kind === 'dog' ? size + ' dog' : 'cat') + ' aged ' + (y ? plural(y, 'year') : '') + (y && mo ? ' and ' : '') + (mo ? plural(mo, 'month') : '') + '</p>';
+    if (mo > 11) return notice('Check the age', 'Months go from 0 to 11. Over a year? Put the years in the first box.');
+    var age = y + mo / 12, r = kind === 'dog' ? A.dogAge(age, size) : A.catAge(age);
+    if (!r.ok) return notice('Not on the chart', petChartNote(kind, r, size));
+    var aged = (y ? plural(y, 'year') : '') + (y && mo ? ' and ' : '') + (mo ? plural(mo, 'month') : '');
+    var lead = big(fmt(r.human), 'in human years') + '<p class="rest">for a ' + (kind === 'dog' ? size + ' dog' : 'cat') + ' aged ' + aged + (r.interpolated ? small('interpolated between ' + r.from + ' and ' + r.to) : '') + '</p>';
+    var src = '<a href="' + CHART_SRC + '">AAHA-published chart</a>';
     var rows = kind === 'dog'
-      ? [['Rule used', '15, then +9, then +' + A.DOG_STEP[size] + ' a year'], ['DNA-clock estimate', age >= 1 ? fmt(A.dogAgeEpigenetic(age)) + small('Wang et al. 2020') : '<span class="muted">not for under-ones</span>'], ['The old “× 7” rule', fmt(age * 7)]]
-      : [['Rule used', '15, then +9, then +4 a year'], ['Life stage', A.catStage(age) + small('AAHA/AAFP 2021')], ['The old “× 7” rule', fmt(age * 7)]];
-    return { state: 'result', say: 'About ' + fmt(human) + ' in human years.', html: head(kind === 'dog' ? 'Dog years' : 'Cat years') + body(lead) + ledger(rows) };
+      ? [['Source', src], r.interpolated ? ['Between chart ages', r.from + ' and ' + r.to + ' years'] : null, ['DNA-clock estimate', age >= 1 ? fmt(A.dogAgeEpigenetic(age)) + small('16 × ln(age) + 31, Wang et al. 2020') : '<span class="muted">not for under-ones</span>'], ['The old “× 7” rule', fmt(age * 7)]]
+      : [['Source', src], ['Life stage', A.catStage(age) + small('AAHA/AAFP 2021')], ['The old “× 7” rule', fmt(age * 7)]];
+    return { state: 'result', say: 'About ' + fmt(r.human) + ' in human years.', html: head(kind === 'dog' ? 'Dog years' : 'Cat years') + body(lead) + ledger(rows) };
   }
 
   /* ---------- render loop ---------- */
@@ -313,7 +325,16 @@
     var c = leaf.querySelector('[data-clock]');
     clearTimeout(clockTimer);
     if (!c) return;
-    var now = new Date(), s = 86400 - (now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds());
+    var s, parts;
+    try {
+      parts = new Intl.DateTimeFormat('en-GB', { timeZone: zone, hour: 'numeric', minute: 'numeric', second: 'numeric', hourCycle: 'h23' }).formatToParts(new Date());
+      var g = function (k) { return +parts.filter(function (x) { return x.type === k; })[0].value; };
+      s = 86400 - (g('hour') * 3600 + g('minute') * 60 + g('second'));
+    } catch (e) {
+      var now = new Date();
+      s = 86400 - (now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds());
+    }
+    if (s <= 0) s += 86400;
     var hh = Math.floor(s / 3600), mm = Math.floor((s % 3600) / 60), ss = s % 60;
     c.textContent = hh + ' h ' + String(mm).padStart(2, '0') + ' m ' + String(ss).padStart(2, '0') + ' s';
     clockTimer = setTimeout(tick, 1000);
@@ -333,7 +354,23 @@
     if (yy > 1000 && yy < 3000) { onBox.hidden = false; onBtn.setAttribute('aria-expanded', 'true'); onBtn.textContent = 'Use today'; on.set({ y: yy, m: 1, d: 1 }); var yn = document.getElementById('year-note'); if (yn) { yn.hidden = false; yn.textContent = 'You came here from a ' + yy + ' link, so the date is set to 1 January ' + yy + '. Change it to any day you like.'; } }
   }
 
-  window.AgeCalcPage = { go: go, fields: fields, setToday: function (d) { today = d; go(); } };
+
+  function fillBirthYearTable() {
+    var box = document.querySelector('.years[data-years]');
+    if (!box) return;
+    var y = today.y;
+    box.setAttribute('data-years', String(y));
+    var heading = document.getElementById('birth-year-heading');
+    if (heading) heading.textContent = 'Age and birth year in ' + y;
+var blocks = [[1, 25], [26, 50], [51, 75], [76, 100]];
+    box.innerHTML = blocks.map(function (r) {
+      var rows = [];
+      for (var a = r[0]; a <= r[1]; a++) rows.push('<tr' + (a === 31 ? ' class="this"' : '') + '><td>' + a + '</td><td>' + (y - a - 1) + ' or ' + (y - a) + '</td></tr>');
+      return '<table><caption>Ages ' + r[0] + '–' + r[1] + '</caption><tbody>' + rows.join('') + '</tbody></table>';
+    }).join('');
+  }
+  fillBirthYearTable();
+  window.AgeCalcPage = { go: go, fields: fields, setToday: function (d) { today = d; fillBirthYearTable(); go(); } };
   ready = true;
   go();
 })();

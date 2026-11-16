@@ -179,17 +179,64 @@ test('Korean ages', () => {
   assert.deepEqual([k2.international, k2.counting, k2.yearAge], [0, 2, 1]);
 });
 
-test('pet ages', () => {
-  assert.equal(A.dogAge(1, 'medium'), 15);
-  assert.equal(A.dogAge(2, 'small'), 24);
-  assert.equal(A.dogAge(7, 'small'), 44);
-  assert.equal(A.dogAge(7, 'giant'), 59);
-  assert.equal(A.dogAge(0.5, 'large'), 7.5);
-  assert.equal(Math.round(A.dogAgeEpigenetic(7)), 62);
-  assert.equal(A.dogAgeEpigenetic(0.5), null);
-  assert.equal(A.catAge(3), 28);
-  assert.equal(A.catStage(12), 'Senior');
+test('AAHA chart: every printed dog and cat value', () => {
+  const dogs = {
+    small:  { 1:15, 2:24, 3:28, 4:32, 5:36, 6:40, 7:44, 8:48, 9:52, 10:56, 11:60, 12:64, 13:68, 14:72, 15:76, 16:80, 17:84, 18:88, 19:92, 20:96 },
+    medium: { 1:15, 2:24, 3:28, 4:33, 5:37, 6:42, 7:47, 8:51, 9:56, 10:60, 11:65, 12:69, 13:74, 14:78, 15:83, 16:87, 17:92, 18:96, 19:101, 20:105 },
+    large:  { 1:15, 2:24, 3:30, 4:35, 5:40, 6:45, 7:50, 8:55, 9:61, 10:66, 11:72, 12:77, 13:82, 14:88, 15:93, 16:99, 17:104, 18:109, 19:115, 20:120 },
+    giant:  { 1:15, 2:24, 3:32, 4:37, 5:42, 6:49, 7:56, 8:64, 9:71, 10:78, 11:86, 12:93, 13:101, 14:108, 15:115, 16:123 },
+  };
+  for (const [size, pts] of Object.entries(dogs)) {
+    for (const [age, human] of Object.entries(pts)) {
+      const r = A.dogAge(+age, size);
+      assert.equal(r.ok, true, `${size} ${age}`);
+      assert.equal(r.human, human, `${size} ${age}`);
+      assert.equal(r.interpolated, false);
+    }
+  }
+  assert.deepEqual([A.dogAge(10, 'medium').human, A.dogAge(10, 'large').human, A.dogAge(10, 'giant').human], [60, 66, 78]);
+  const cats = { 0.5:10, 1:15, 2:24, 3:28, 4:32, 5:36, 6:40, 7:44, 8:48, 9:52, 10:56, 11:60, 12:64, 13:68, 14:72, 15:76, 16:80, 17:84, 18:88, 19:92, 20:96, 21:100 };
+  for (const [age, human] of Object.entries(cats)) {
+    const r = A.catAge(+age);
+    assert.equal(r.ok, true, `cat ${age}`);
+    assert.equal(r.human, human, `cat ${age}`);
+  }
+});
+
+test('AAHA chart: interpolation, refusals and life stages', () => {
+  // 4 years 6 months is halfway between 4 (32) and 5 (36) on the cat chart = 34, as the copy says.
+  const mid = A.catAge(4.5);
+  assert.equal(mid.ok, true);
+  assert.equal(mid.interpolated, true);
+  assert.equal(mid.human, 34);
+  // Linear interpolation for a medium dog between 10 (60) and 11 (65).
+  const d = A.dogAge(10.5, 'medium');
+  assert.equal(d.ok, true);
+  assert.equal(d.interpolated, true);
+  assert.equal(d.human, 62.5);
+  assert.equal(A.dogAge(0.5, 'large').ok, false);
+  assert.equal(A.dogAge(0.5, 'large').code, 'below-chart');
+  assert.equal(A.catAge(0.4).ok, false);
+  assert.equal(A.dogAge(17, 'giant').ok, false);
+  assert.equal(A.dogAge(21, 'small').ok, false);
+  assert.equal(A.catAge(22).ok, false);
   assert.equal(A.catStage(0.4), 'Kitten');
+  assert.equal(A.catStage(1), 'Young adult');
+  assert.equal(A.catStage(6.9), 'Young adult');
+  assert.equal(A.catStage(7), 'Mature adult');
+  assert.equal(A.catStage(10), 'Mature adult');
+  assert.equal(A.catStage(10.1), 'Senior');
+  assert.equal(A.catStage(12), 'Senior');
+});
+
+test('DNA-clock estimate is 16 × ln(dog age) + 31 (Wang et al. 2020)', () => {
+  assert.equal(A.dogAgeEpigenetic(0.5), null);
+  assert.ok(Math.abs(A.dogAgeEpigenetic(1) - 31) < 1e-9);
+  // Copy's worked example: 16 × ln(7) + 31 ≈ 62.
+  assert.equal(Math.round(A.dogAgeEpigenetic(7)), 62);
+  assert.ok(Math.abs(A.dogAgeEpigenetic(7) - (16 * Math.log(7) + 31)) < 1e-12);
+  assert.equal(Math.round(A.dogAgeEpigenetic(10)), 68);
+  assert.equal(Math.round(A.dogAgeEpigenetic(4)), 53);
 });
 
 test('birth year from age', () => {
