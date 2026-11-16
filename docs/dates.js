@@ -359,6 +359,19 @@
 
   function yearsOldUnit(n) { return n === 1 ? 'year old' : 'years old'; }
 
+  /* Non-zero years, months and days, with correct plurals, e.g. "1 month and 2 days". */
+  function partsWords(years, months, days) {
+    function part(n, w) { return n + ' ' + w + (n === 1 ? '' : 's'); }
+    var parts = [];
+    if (years) parts.push(part(years, 'year'));
+    if (months) parts.push(part(months, 'month'));
+    if (days) parts.push(part(days, 'day'));
+    if (!parts.length) return '';
+    if (parts.length === 1) return parts[0];
+    if (parts.length === 2) return parts[0] + ' and ' + parts[1];
+    return parts[0] + ', ' + parts[1] + ' and ' + parts[2];
+  }
+
   /* Whole years and months only. Rejects ".", "abc", "1e1", negatives. */
   function parsePetAge(yStr, mStr) {
     yStr = String(yStr == null ? '' : yStr).trim();
@@ -378,7 +391,7 @@
     between: between, koreanAges: koreanAges, dogAge: dogAge, dogAgeEpigenetic: dogAgeEpigenetic,
     DOG_CHART: DOG_CHART, CAT_CHART: CAT_CHART, DOG_SIZES: DOG_SIZES,
     catAge: catAge, catStage: catStage, birthYear: birthYear, parseDate: parseDate,
-    ageInCalendarYear: ageInCalendarYear, yearsOldUnit: yearsOldUnit, parsePetAge: parsePetAge,
+    ageInCalendarYear: ageInCalendarYear, yearsOldUnit: yearsOldUnit, partsWords: partsWords, parsePetAge: parsePetAge,
     secondsUntilMidnight: secondsUntilMidnight, nextMidnight: nextMidnight, instantInZone: instantInZone };
   if (typeof module === 'object' && module.exports) module.exports = api; else root.AgeMaths = api;
 })(this);

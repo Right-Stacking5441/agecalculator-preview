@@ -102,7 +102,17 @@
 <a class="skip" href="#tool">Skip to the calculator</a>
 <header class="mast"><div class="wrap">
 <a class="brand" href="./"><svg width="26" height="28" viewBox="0 0 26 28" aria-hidden="true"><rect x="1" y="3" width="24" height="24" fill="#fff" stroke="#1c1c1a" stroke-width="1.5"/><rect x="1" y="3" width="24" height="7" fill="#b4231b" stroke="#1c1c1a" stroke-width="1.5"/><circle cx="7.5" cy="6.5" r="1.4" fill="#fff"/><circle cx="18.5" cy="6.5" r="1.4" fill="#fff"/><path d="M7 1v4M19 1v4" stroke="#1c1c1a" stroke-width="1.5"/><path d="M8.2 22.5l4.3-8.8 4.3 8.8M9.8 19.4h5.4" fill="none" stroke="#1c1c1a" stroke-width="1.9"/></svg>agecalculator<span>.com</span></a>
-<p class="dateline" id="dateline"><b><span class="dl-wd">Monday </span>16 November 2026</b> <span>day 320 of the year</span></p>
+<p class="dateline" id="dateline"></p>
+<script>
+(function(){
+  var el=document.getElementById('dateline'); if(!el) return;
+  var M=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var W=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var n=new Date(), y=n.getFullYear(), m=n.getMonth()+1, d=n.getDate();
+  var mon=M[m-1], doy=Math.round((Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/864e5)+1;
+  el.innerHTML='<b><span class="dl-wd">'+W[n.getDay()]+' </span><span class="dl-long">'+d+' '+mon+' '+y+'</span><span class="dl-short">'+d+' '+mon.slice(0,3)+' '+y+'</span></b> <span class="dl-doy">day '+doy+' of the year</span>';
+})();
+</script>
 <a class="tools-link" href="#all-tools">All calculators</a>
 </div></header>
 <main id="main">

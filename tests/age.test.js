@@ -476,3 +476,18 @@ test('plural-style counts: 1 is singular for days, weeks, months and years', () 
   assert.equal(plural(1, 'month'), '1 month');
   assert.equal(plural(2, 'month'), '2 months');
 });
+
+test('partsWords shows every non-zero part with correct plurals', () => {
+  assert.equal(A.partsWords(0, 1, 2), '1 month and 2 days');
+  assert.equal(A.partsWords(0, 1, 0), '1 month');
+  assert.equal(A.partsWords(1, 0, 0), '1 year');
+  assert.equal(A.partsWords(2, 0, 1), '2 years and 1 day');
+  assert.equal(A.partsWords(1, 2, 3), '1 year, 2 months and 3 days');
+  assert.equal(A.partsWords(0, 0, 1), '1 day');
+  assert.equal(A.partsWords(0, 0, 0), '');
+  // 14 October to 16 November is 1 month and 2 days, 33 days in all.
+  const r = A.age(D(2026, 10, 14), D(2026, 11, 16));
+  assert.deepEqual(ymd(r), [0, 1, 2]);
+  assert.equal(r.totalDays, 33);
+  assert.equal(A.partsWords(r.years, r.months, r.days), '1 month and 2 days');
+});

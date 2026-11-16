@@ -5,6 +5,17 @@
 # these assertions describe the *after* state and will fail until cutover is applied.
 set -u
 
+# Portable header lookup. mawk and BSD awk have no ignore-case flag; HTTP/2
+# headers are lower-case. Use tolower() so this works everywhere.
+header_val() {
+  local name="$1" text="$2"
+  printf '%s' "$text" | tr -d '\r' | awk -v n="$name" '
+    BEGIN { n = tolower(n) }
+    tolower($0) ~ "^" n ":" { sub(/^[^:]*:[[:space:]]*/, ""); print; exit }
+  '
+}
+
+
 ROOT="https://agecalculator.com"
 failed=0
 passed=0
@@ -51,7 +62,7 @@ check_301() {
   local out status location
   out="$(curl -sSI --max-redirs 0 --connect-timeout 15 --max-time 25 "$url" 2>&1)" || true
   status="$(printf '%s' "$out" | tr -d '\r' | awk 'BEGIN{s=""} /^HTTP\//{s=$2} END{print s}')"
-  location="$(printf '%s' "$out" | tr -d '\r' | awk 'BEGIN{IGNORECASE=1} /^Location:/{sub(/^Location:[[:space:]]*/,""); print; exit}')"
+  location="$(header_val Location "$out")"
 
   if [ "$status" != "301" ]; then
     echo "FAIL  $label"
@@ -81,7 +92,7 @@ check_200() {
   local out status location
   out="$(curl -sSI --max-redirs 0 --connect-timeout 15 --max-time 25 "$url" 2>&1)" || true
   status="$(printf '%s' "$out" | tr -d '\r' | awk 'BEGIN{s=""} /^HTTP\//{s=$2} END{print s}')"
-  location="$(printf '%s' "$out" | tr -d '\r' | awk 'BEGIN{IGNORECASE=1} /^Location:/{sub(/^Location:[[:space:]]*/,""); print; exit}')"
+  location="$(header_val Location "$out")"
   if [ "$status" != "200" ] || [ -n "$location" ]; then
     echo "FAIL  $label"
     echo "      expected: 200 with no Location"
@@ -153,7 +164,7 @@ check_404_page() {
   local tmp status ctype
   tmp="$(mktemp)"
   status="$(curl -sS -o "$tmp" -w '%{http_code}' --max-redirs 0 --connect-timeout 15 --max-time 25 "$url" 2>/dev/null || true)"
-  ctype="$(curl -sSI --max-redirs 0 --connect-timeout 15 --max-time 25 "$url" 2>/dev/null | tr -d '\r' | awk 'BEGIN{IGNORECASE=1} /^Content-Type:/{sub(/^Content-Type:[[:space:]]*/,""); print; exit}')"
+  ctype="$(header_val Content-Type "$(curl -sSI --max-redirs 0 --connect-timeout 15 --max-time 25 "$url" 2>/dev/null || true)")"
   if [ "$status" != "404" ] || ! printf '%s' "$ctype" | grep -qi 'text/html'; then
     echo "FAIL  404 $path"
     echo "      expected: 404 text/html"
@@ -188,7 +199,7 @@ check_asset_200() {
   local url="$ROOT$path"
   local status ctype
   status="$(curl -sS -o /dev/null -w '%{http_code}' --max-redirs 0 --connect-timeout 15 --max-time 25 "$url" 2>/dev/null || true)"
-  ctype="$(curl -sSI --max-redirs 0 --connect-timeout 15 --max-time 25 "$url" 2>/dev/null | tr -d '\r' | awk 'BEGIN{IGNORECASE=1} /^Content-Type:/{sub(/^Content-Type:[[:space:]]*/,""); print; exit}')"
+  ctype="$(header_val Content-Type "$(curl -sSI --max-redirs 0 --connect-timeout 15 --max-time 25 "$url" 2>/dev/null || true)")"
   if [ "$status" != "200" ] || ! printf '%s' "$ctype" | grep -qi "$expect_type"; then
     echo "FAIL  asset $path"
     echo "      expected: 200 $expect_type"

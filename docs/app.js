@@ -234,12 +234,9 @@
       var agoN = A.cmp(today, at), ago = 'that’s in the future';
       if (same(at, today)) ago = 'today';
       else if (agoN >= 0) {
-        var agoR = A.age(at, today), agoMain = '';
-        if (agoR.ok) {
-          if (agoR.years) agoMain += plural(agoR.years, 'year');
-          if (agoR.months) agoMain += (agoMain ? ' ' : '') + plural(agoR.months, 'month');
-        }
+        var agoR = A.age(at, today);
         var agoDays = fmt(agoN) + (agoN === 1 ? ' day' : ' days');
+        var agoMain = (agoR.ok && (agoR.years || agoR.months)) ? A.partsWords(agoR.years, agoR.months, agoR.days) : '';
         ago = agoMain ? agoMain + small('(' + agoDays + ' in all)') : agoDays;
       }
       var verb = same(at, today) ? 'are' : (A.cmp(at, today) > 0 ? 'will be' : 'were');
