@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Age Calculator: How Old Am I?</title>
+  <meta name="description" content="Type a date of birth — 15 March 1995, or 3/15/95 — and get your age in years, months and days. You can also pick a date that isn’t today. Leap-year birthdays included.">
+  <link rel="canonical" href="https://agecalculator.com/">
+  <link rel="stylesheet" href="css/styles.css">
+  <script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Age Calculator",
+    "url": "https://agecalculator.com/",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires a JavaScript-enabled browser.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Type a date of birth — 15 March 1995, or 3/15/95 — and get your age in years, months and days. You can also pick a date that isn’t today. Leap-year birthdays included."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://agecalculator.com/"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How old am I if I was born on 15 March 1995?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "On 16 November 2026 you are 31 years, 8 months and 1 day old. Type that date of birth in the form if you want the same result on today’s date in your own time zone."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "If I was born on 29 February, when do I turn a year older?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "In a leap year, on 29 February. In a common year, on 1 March. That is the usual UK and US civil convention, and it is the rule this calculator uses. So a person born on 29 February 2000 turns 26 on 1 March 2026, and on 16 November 2026 is 26 years, 8 months and 15 days old."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does this use Korean age or international age?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "International age, counted from the birthday. South Korea has used international age for legal purposes since June 2023. Traditional Korean age (se) and year age are listed on the Korean age page, and you can also reveal the numbers here with the optional toggle."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I see my age on a date in the past or the future?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Change “Age on this date” to any calendar day. For a date that has already passed, the How old was I? page is the dedicated tool. For a date still to come, use How old will I be?"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why is my age in months and days sometimes surprising at the end of a month?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "If you were born on the 31st, the next month that does not have a 31st uses its last day as the anniversary. 31 January plus one month is 28 February, or 29 February in a leap year, not 3 March. The leftover days are then counted from that last day."
+        }
+      }
+    ]
+  }
+]
+  </script>
+</head>
+<body data-page="home">
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</div>
+  <div class="wrap">
+    <header class="site-header">
+      <a class="wordmark" href="index.html">Agecalculator.com</a>
+      <nav aria-label="Pages">
+        <ul>
+          <li><a href="index.html" aria-current="page">Age calculator</a></li>
+          <li><a href="past/">How old was I?</a></li>
+          <li><a href="difference/">Age difference</a></li>
+          <li><a href="days-between-dates/">Days between dates</a></li>
+          <li><a href="chronological-age/">Chronological age</a></li>
+          <li><a href="birthday-countdown/">Birthday countdown</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main id="main">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol><li>Home</li></ol>
+    </nav>
+      <h1>Age Calculator</h1>
+      <p class="subhead">How old am I today — or on any date I choose?</p>
+      <form class="form-block" id="age-form" action="#" method="get">
+        <div class="field">
+          <label for="natural">Quick date entry</label>
+          <span class="hint" id="natural-hint">Optional. Examples: 15 March 1995, 3/15/95, or 1995-03-15. If both numbers could be a day, day/month/year is assumed; 3/15/95 is read as 15 March because 15 cannot be a month.</span>
+          <input id="natural" type="text" name="natural" autocomplete="off" spellcheck="false" aria-describedby="natural-hint natural-status" placeholder="e.g. 15 March 1995">
+          <span class="hint" id="natural-status" role="status"></span>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="birth">Date of birth</label>
+            <input id="birth" type="date" name="birth" required>
+          </div>
+          <div class="field">
+            <label for="asof">Age on this date</label>
+            <span class="hint" id="asof-hint">Defaults to today in your time zone. <span id="today-stamp"></span></span>
+            <input id="asof" type="date" name="asof" aria-describedby="asof-hint" required>
+          </div>
+        </div>
+        <label class="check"><input id="korean-toggle" type="checkbox"> Show Korean age</label>
+        <div class="field" style="margin-top:16px">
+          <button type="submit">Calculate age</button>
+        </div>
+      </form>
+      <p class="error" id="error" hidden role="alert"></p>
+      <div class="result" id="result" hidden>
+        <p class="record" id="record"></p>
+        <table class="figures">
+          <tbody>
+            <tr><th scope="row">Exact age</th><td id="fig-ymd"></td></tr>
+            <tr><th scope="row">Chronological age</th><td id="fig-chrono"></td></tr>
+            <tr><th scope="row">Total months</th><td id="fig-months"></td></tr>
+            <tr><th scope="row">Total weeks</th><td id="fig-weeks"></td></tr>
+            <tr><th scope="row">Total days</th><td id="fig-days"></td></tr>
+            <tr><th scope="row">Total hours</th><td id="fig-hours"></td></tr>
+            <tr id="next-row"><th scope="row">Next birthday</th><td id="fig-next"></td></tr>
+          </tbody>
+        </table>
+        <p class="note-inline" id="korean-box" hidden><span id="korean-line"></span> Full explanation on the <a href="korean-age/">Korean age</a> page.</p><p class="note-inline">The <span class="chrono">years;months;days</span> figure is the same age written for a school or test form. See <a href="chronological-age/">chronological age</a>.</p>
+      </div>
+      <section class="method" aria-labelledby="how-heading">
+        <h2 id="how-heading">How this calculator counts age</h2>
+        <p>Age goes up on the birthday, in the usual UK and US civil sense. The result is completed years, then leftover months, then leftover days. If you have already filled in the form, the sentence above the table is the same count written out in words.</p>
+        <p>The calculator uses calendar dates, not a time of day. Weeks, hours and total days are taken from the number of midnights between the two dates (seven days to a week, 24 hours to a day).</p>
+      </section>
+      <section class="method" aria-labelledby="example-heading">
+        <h2 id="example-heading">A worked example, on 16 November 2026</h2>
+        <p>Take the placeholder date, 15 March 1995, and today as written here: 16 November 2026.</p>
+        <p>2026 − 1995 = 31, and 15 March has already passed, so the completed years are 31. From 15 March 2026 to 15 November 2026 is eight months. 15 November to 16 November is one day. The age is 31 years, 8 months and 1 day. In the school-form style that is 31;8;1.</p>
+      </section>
+      <section class="method" aria-labelledby="leap-heading">
+        <h2 id="leap-heading">Leap-year birthdays</h2>
+        <p>If you were born on 29 February, you have a 29 February birthday only in a leap year. In a common year this calculator treats the next day, 1 March, as the day you turn the next year older. That is the usual civil convention in the UK and the US, and it is the rule implemented here — not 28 February, and not the JavaScript habit of overflowing a missing date into early March when adding a month to 31 January.</p>
+        <p>Walked against 16 November 2026: a person born on 29 February 2000 turned 26 on 1 March 2026. From 1 March to 1 November is eight months, then 15 days, so on 16 November 2026 they are 26 years, 8 months and 15 days old.</p>
+        <p>A different rule applies when the question is “31 January plus one month”. There the missing day is the last day of February (28 or 29), because you are adding a month, not celebrating a 29 February birthday. Both rules are used in the arithmetic, in those two situations.</p>
+      </section>
+      <section class="method" aria-labelledby="tz-heading">
+        <h2 id="tz-heading">Time zones</h2>
+        <p>The calculator uses a single calendar date, not a timestamp. If it is already Tuesday in London and still Monday in Los Angeles, “today” is a different day. The form defaults to today in your browser’s time zone, shows that zone under the field, and lets you change the date.</p>
+      </section>
+      <section class="method" aria-labelledby="other-heading">
+        <h2 id="other-heading">Other ways of counting age</h2>
+        <p>South Korea has used international age for legal purposes since June 2023. “Korean age” (1 at birth, then plus one every New Year) and “year age” (current year minus birth year) are still used socially. This homepage counts international age. The numbers under the Korean-age toggle, and the <a href="korean-age/">Korean age calculator</a>, are for the social systems — they are not a legal source.</p>
+        <p>Schools and psychologists often want chronological age as years, months and days on a test date, written 8;4;12. The figure in the result table is that same count. The <a href="chronological-age/">chronological age</a> page is labelled for a test date and can copy a result slip. It is a date-difference helper, not an official Pearson, Yale, or publisher tool.</p>
+      </section>
+      <section class="method" aria-labelledby="also-heading">
+        <h2 id="also-heading">Other tools on this site</h2>
+        <ul class="tools">
+          <li><a href="difference/">Age difference</a> between two people or two dates of birth.</li>
+          <li><a href="past/">How old was I?</a> — exact age on a date in the past.</li>
+          <li><a href="days-between-dates/">Days between dates</a> — a duration, not someone’s age.</li>
+          <li><a href="birthday-countdown/">Birthday countdown</a> — days until the next one.</li>
+          <li><a href="dog-age/">Dog age</a> and <a href="cat-age/">cat age</a>, with different curves.</li>
+        </ul>
+      </section>
+    <section class="faq" aria-labelledby="faq-heading">
+      <h2 id="faq-heading">Questions people actually ask</h2>
+      <article>
+        <h3>How old am I if I was born on 15 March 1995?</h3>
+        <p>On 16 November 2026 you are 31 years, 8 months and 1 day old. Type that date of birth in the form if you want the same result on today’s date in your own time zone.</p>
+      </article>
+      <article>
+        <h3>If I was born on 29 February, when do I turn a year older?</h3>
+        <p>In a leap year, on 29 February. In a common year, on 1 March. That is the usual UK and US civil convention, and it is the rule this calculator uses. So a person born on 29 February 2000 turns 26 on 1 March 2026, and on 16 November 2026 is 26 years, 8 months and 15 days old.</p>
+      </article>
+      <article>
+        <h3>Does this use Korean age or international age?</h3>
+        <p>International age, counted from the birthday. South Korea has used international age for legal purposes since June 2023. Traditional Korean age (se) and year age are listed on the Korean age page, and you can also reveal the numbers here with the optional toggle.</p>
+      </article>
+      <article>
+        <h3>Can I see my age on a date in the past or the future?</h3>
+        <p>Yes. Change “Age on this date” to any calendar day. For a date that has already passed, the How old was I? page is the dedicated tool. For a date still to come, use How old will I be?</p>
+      </article>
+      <article>
+        <h3>Why is my age in months and days sometimes surprising at the end of a month?</h3>
+        <p>If you were born on the 31st, the next month that does not have a 31st uses its last day as the anniversary. 31 January plus one month is 28 February, or 29 February in a leap year, not 3 March. The leftover days are then counted from that last day.</p>
+      </article>
+    </section>
+    </main>
+    <footer class="site-footer">
+      <nav aria-label="Footer">
+        <ul>
+          <li><a href="index.html" aria-current="page">Age calculator</a></li>
+          <li><a href="past/">How old was I?</a></li>
+          <li><a href="difference/">Age difference</a></li>
+          <li><a href="days-between-dates/">Days between dates</a></li>
+          <li><a href="chronological-age/">Chronological age</a></li>
+          <li><a href="birthday-countdown/">Birthday countdown</a></li>
+          <li><a href="how-old-will-i-be/">How old will I be?</a></li>
+          <li><a href="what-year-was-i-born/">What year was I born?</a></li>
+          <li><a href="korean-age/">Korean age</a></li>
+          <li><a href="dog-age/">Dog age</a></li>
+          <li><a href="cat-age/">Cat age</a></li>
+          <li><a href="privacy/">Privacy</a></li>
+        </ul>
+      </nav>
+      <p class="note">Preview only. Dates are counted in the browser and are not sent to a server. Canonical tags point at the intended root URLs; this preview must stay noindex until William approves a launch. The live site is still at app.agecalculator.com.</p>
+    </footer>
+  </div>
+  <script src="js/age.js"></script>
+  <script src="js/site.js"></script>
+</body>
+</html>

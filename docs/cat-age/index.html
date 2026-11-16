@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Cat Age Calculator: Cat Years to Human Years</title>
+  <meta name="description" content="Estimate a cat’s age in human years with the usual 15, then 24, then four-years-at-a-time curve — different from the dog table.">
+  <link rel="canonical" href="https://agecalculator.com/cat-age">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Cat Age Calculator",
+    "url": "https://agecalculator.com/cat-age",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires a JavaScript-enabled browser.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Estimate a cat’s age in human years with the usual 15, then 24, then four-years-at-a-time curve — different from the dog table."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://agecalculator.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Cat age",
+        "item": "https://agecalculator.com/cat-age"
+      }
+    ]
+  }
+]
+  </script>
+</head>
+<body data-page="cat">
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</div>
+  <div class="wrap">
+    <header class="site-header">
+      <a class="wordmark" href="../">Agecalculator.com</a>
+      <nav aria-label="Pages">
+        <ul>
+          <li><a href="../">Age calculator</a></li>
+          <li><a href="../past/">How old was I?</a></li>
+          <li><a href="../difference/">Age difference</a></li>
+          <li><a href="../days-between-dates/">Days between dates</a></li>
+          <li><a href="../chronological-age/">Chronological age</a></li>
+          <li><a href="../birthday-countdown/">Birthday countdown</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main id="main">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="../">Home</a></li>
+        <li>Cat age</li>
+      </ol>
+    </nav>
+      <h1>Cat age calculator</h1>
+      <p class="lede">Estimate a cat’s age in human years with the usual 15, then 24, then four-years-at-a-time curve — different from the dog table.</p>
+      <form class="form-block" id="age-form" action="#" method="get">
+        <div class="field-row">
+          <div class="field">
+            <label for="pet-years">Cat’s age, years</label>
+            <input id="pet-years" type="number" name="years" min="0" max="40" step="1" required>
+          </div>
+          <div class="field">
+            <label for="pet-months">Extra months</label>
+            <input id="pet-months" type="number" name="months" min="0" max="11" step="1" value="0">
+          </div>
+        </div>
+        <div class="field">
+          <button type="submit">Estimate human years</button>
+        </div>
+      </form>
+      <p class="error" id="error" hidden role="alert"></p>
+      <div class="result" id="result" hidden>
+        <p class="record" id="record"></p>
+        <table class="figures">
+          <tbody>
+            <tr><th scope="row">Estimate</th><td id="fig-ymd"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <section class="method">
+        <h2>The curve this page uses</h2>
+        <p>A widely used cat scale, and the one implemented here, is: year one is about 15 human years, year two brings the total to 24, and each year after that adds 4. A six-year-old cat is about 40 human years on that curve. There is no size-group split on this page, which is one reason it should not be copied from the <a href="../dog-age/">dog age</a> calculator.</p>
+        <p>This is an estimate used for a rough comparison, not a veterinary assessment, and not a claim about any one breed. Times seven is the wrong shortcut for cats as well as dogs: it undershoots the early years and does not match the later ones either.</p>
+      </section>
+
+    </main>
+    <footer class="site-footer">
+      <nav aria-label="Footer">
+        <ul>
+          <li><a href="../">Age calculator</a></li>
+          <li><a href="../past/">How old was I?</a></li>
+          <li><a href="../difference/">Age difference</a></li>
+          <li><a href="../days-between-dates/">Days between dates</a></li>
+          <li><a href="../chronological-age/">Chronological age</a></li>
+          <li><a href="../birthday-countdown/">Birthday countdown</a></li>
+          <li><a href="../how-old-will-i-be/">How old will I be?</a></li>
+          <li><a href="../what-year-was-i-born/">What year was I born?</a></li>
+          <li><a href="../korean-age/">Korean age</a></li>
+          <li><a href="../dog-age/">Dog age</a></li>
+          <li><a href="./" aria-current="page">Cat age</a></li>
+          <li><a href="../privacy/">Privacy</a></li>
+        </ul>
+      </nav>
+      <p class="note">Preview only. Dates are counted in the browser and are not sent to a server. Canonical tags point at the intended root URLs; this preview must stay noindex until William approves a launch. The live site is still at app.agecalculator.com.</p>
+    </footer>
+  </div>
+  <script src="../js/age.js"></script>
+  <script src="../js/site.js"></script>
+</body>
+</html>

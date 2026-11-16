@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Days Between Dates Calculator</title>
+  <meta name="description" content="How many days sit between two calendar dates, plus the same span in weeks, months and years. This is a date duration, not someone’s age.">
+  <link rel="canonical" href="https://agecalculator.com/days-between-dates">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Days Between Dates Calculator",
+    "url": "https://agecalculator.com/days-between-dates",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires a JavaScript-enabled browser.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "How many days sit between two calendar dates, plus the same span in weeks, months and years. This is a date duration, not someone’s age."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://agecalculator.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Days between dates",
+        "item": "https://agecalculator.com/days-between-dates"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Does the count include both dates?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The figure is the number of midnights between the two dates. 1 January to 2 January is 1 day. 1 January to 1 January is 0. If you need an inclusive hotel-style count, add one."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why do you also show years and months?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Because a stretch of 800 days is easier to picture as 2 years, 2 months and a leftover. The heading figure is still the day count, which is the intent of this page."
+        }
+      }
+    ]
+  }
+]
+  </script>
+</head>
+<body data-page="days">
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</div>
+  <div class="wrap">
+    <header class="site-header">
+      <a class="wordmark" href="../">Agecalculator.com</a>
+      <nav aria-label="Pages">
+        <ul>
+          <li><a href="../">Age calculator</a></li>
+          <li><a href="../past/">How old was I?</a></li>
+          <li><a href="../difference/">Age difference</a></li>
+          <li><a href="./" aria-current="page">Days between dates</a></li>
+          <li><a href="../chronological-age/">Chronological age</a></li>
+          <li><a href="../birthday-countdown/">Birthday countdown</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main id="main">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="../">Home</a></li>
+        <li>Days between dates</li>
+      </ol>
+    </nav>
+      <h1>Days between dates</h1>
+      <p class="lede">How many days sit between two calendar dates, plus the same span written as years, months and weeks. This is a duration, not a person’s age.</p>
+      <form class="form-block" id="age-form" action="#" method="get">
+        <div class="field-row">
+          <div class="field">
+            <label for="first">First date</label>
+            <input id="first" type="date" name="first" required>
+          </div>
+          <div class="field">
+            <label for="second">Second date</label>
+            <input id="second" type="date" name="second" required>
+          </div>
+        </div>
+        <div class="field">
+          <button type="submit">Count the days</button>
+        </div>
+      </form>
+      <p class="error" id="error" hidden role="alert"></p>
+      <div class="result" id="result" hidden>
+        <p class="record" id="record"></p>
+        <table class="figures">
+          <tbody>
+            <tr><th scope="row">Days between</th><td id="fig-days"></td></tr>
+            <tr><th scope="row">As years, months and days</th><td id="fig-ymd"></td></tr>
+            <tr><th scope="row">Total months</th><td id="fig-months"></td></tr>
+            <tr><th scope="row">Total weeks</th><td id="fig-weeks"></td></tr>
+            <tr><th scope="row">Total hours</th><td id="fig-hours"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <section class="method">
+        <h2>A duration, not an age</h2>
+        <p>If a project started on 15 March 1995 and ended on 16 November 2026, 11,568 days sit between those mornings. That is also 31 years, 8 months and 1 day — the same arithmetic as the age calculator, used here as a length of time. The page leads with the day count because that is what “days between dates” asks for.</p>
+        <p>The <a href="../difference/">age difference</a> page is the better place if you are comparing two people’s birthdays. This one is for contracts, trip lengths, and “how many days until then” when the two dates are just dates.</p>
+        <p>Leap days in the span are included in the day total: 28 February 2000 to 1 March 2000 is two days, because 2000 was a leap year; 28 February 1900 to 1 March 1900 is one day, because 1900 was not. Month-end rules are the same as elsewhere: 31 January plus one month is the last day of February, not 3 March.</p>
+      </section>
+    <section class="faq" aria-labelledby="faq-heading">
+      <h2 id="faq-heading">Questions people actually ask</h2>
+      <article>
+        <h3>Does the count include both dates?</h3>
+        <p>The figure is the number of midnights between the two dates. 1 January to 2 January is 1 day. 1 January to 1 January is 0. If you need an inclusive hotel-style count, add one.</p>
+      </article>
+      <article>
+        <h3>Why do you also show years and months?</h3>
+        <p>Because a stretch of 800 days is easier to picture as 2 years, 2 months and a leftover. The heading figure is still the day count, which is the intent of this page.</p>
+      </article>
+    </section>
+    </main>
+    <footer class="site-footer">
+      <nav aria-label="Footer">
+        <ul>
+          <li><a href="../">Age calculator</a></li>
+          <li><a href="../past/">How old was I?</a></li>
+          <li><a href="../difference/">Age difference</a></li>
+          <li><a href="./" aria-current="page">Days between dates</a></li>
+          <li><a href="../chronological-age/">Chronological age</a></li>
+          <li><a href="../birthday-countdown/">Birthday countdown</a></li>
+          <li><a href="../how-old-will-i-be/">How old will I be?</a></li>
+          <li><a href="../what-year-was-i-born/">What year was I born?</a></li>
+          <li><a href="../korean-age/">Korean age</a></li>
+          <li><a href="../dog-age/">Dog age</a></li>
+          <li><a href="../cat-age/">Cat age</a></li>
+          <li><a href="../privacy/">Privacy</a></li>
+        </ul>
+      </nav>
+      <p class="note">Preview only. Dates are counted in the browser and are not sent to a server. Canonical tags point at the intended root URLs; this preview must stay noindex until William approves a launch. The live site is still at app.agecalculator.com.</p>
+    </footer>
+  </div>
+  <script src="../js/age.js"></script>
+  <script src="../js/site.js"></script>
+</body>
+</html>

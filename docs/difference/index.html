@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Age Difference Calculator: Years, Months and Days</title>
+  <meta name="description" content="Enter two dates of birth and see the gap in years, months and days — useful for siblings, couples, or any two people. Not the same as a days-between-dates count.">
+  <link rel="canonical" href="https://agecalculator.com/difference">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Age Difference Calculator",
+    "url": "https://agecalculator.com/difference",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires a JavaScript-enabled browser.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Enter two dates of birth and see the gap in years, months and days — useful for siblings, couples, or any two people. Not the same as a days-between-dates count."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://agecalculator.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Age difference",
+        "item": "https://agecalculator.com/difference"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is this the same as days between dates?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. This page is the gap between two dates of birth, written as years, months and days — “four years and two months older”. Days between dates leads with the raw day count, for durations that are not someone’s age."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What if I enter the later date first?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The calculator puts the two dates in order and says so. The gap is the same either way."
+        }
+      }
+    ]
+  }
+]
+  </script>
+</head>
+<body data-page="difference">
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</div>
+  <div class="wrap">
+    <header class="site-header">
+      <a class="wordmark" href="../">Agecalculator.com</a>
+      <nav aria-label="Pages">
+        <ul>
+          <li><a href="../">Age calculator</a></li>
+          <li><a href="../past/">How old was I?</a></li>
+          <li><a href="./" aria-current="page">Age difference</a></li>
+          <li><a href="../days-between-dates/">Days between dates</a></li>
+          <li><a href="../chronological-age/">Chronological age</a></li>
+          <li><a href="../birthday-countdown/">Birthday countdown</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main id="main">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="../">Home</a></li>
+        <li>Age difference</li>
+      </ol>
+    </nav>
+      <h1>Age difference calculator</h1>
+      <p class="lede">Enter two dates of birth, or any two calendar dates you want to compare as ages. The result is the gap in completed years, months and days.</p>
+      <form class="form-block" id="age-form" action="#" method="get">
+        <div class="field-row">
+          <div class="field">
+            <label for="first">First date / person A</label>
+            <input id="first" type="date" name="first" required>
+          </div>
+          <div class="field">
+            <label for="second">Second date / person B</label>
+            <input id="second" type="date" name="second" required>
+          </div>
+        </div>
+        <div class="field">
+          <button type="submit">Calculate difference</button>
+        </div>
+      </form>
+      <p class="error" id="error" hidden role="alert"></p>
+      <div class="result" id="result" hidden>
+        <p class="record" id="record"></p>
+        <table class="figures">
+          <tbody>
+            <tr><th scope="row">Exact difference</th><td id="fig-ymd"></td></tr>
+            <tr><th scope="row">Total months</th><td id="fig-months"></td></tr>
+            <tr><th scope="row">Total weeks</th><td id="fig-weeks"></td></tr>
+            <tr><th scope="row">Total days</th><td id="fig-days"></td></tr>
+            <tr><th scope="row">Total hours</th><td id="fig-hours"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <section class="method">
+        <h2>What “age difference” means here</h2>
+        <p>If one person was born on 15 March 1995 and the other on 1 January 1990, the younger one is 5 years, 2 months and 14 days younger. That is an age gap, not a hotel stay and not a countdown. The arithmetic is the same civil count as the homepage, including 1 March for a 29 February birthday in a common year, and the January 31 month-end clamp.</p>
+        <p>The live app already had a /difference path, and it sat at about position 9 for “age calculator difference” — then lost the click because every page on the app shared the same title. This page has its own title and meta, and it should keep the /difference slug when the root site eventually replaces the app host.</p>
+        <p>If you only need how many days sit between two dates, use <a href="../days-between-dates/">days between dates</a>. If you want one person’s age on a date in the past, use <a href="../past/">How old was I?</a>.</p>
+      </section>
+    <section class="faq" aria-labelledby="faq-heading">
+      <h2 id="faq-heading">Questions people actually ask</h2>
+      <article>
+        <h3>Is this the same as days between dates?</h3>
+        <p>No. This page is the gap between two dates of birth, written as years, months and days — “four years and two months older”. Days between dates leads with the raw day count, for durations that are not someone’s age.</p>
+      </article>
+      <article>
+        <h3>What if I enter the later date first?</h3>
+        <p>The calculator puts the two dates in order and says so. The gap is the same either way.</p>
+      </article>
+    </section>
+    </main>
+    <footer class="site-footer">
+      <nav aria-label="Footer">
+        <ul>
+          <li><a href="../">Age calculator</a></li>
+          <li><a href="../past/">How old was I?</a></li>
+          <li><a href="./" aria-current="page">Age difference</a></li>
+          <li><a href="../days-between-dates/">Days between dates</a></li>
+          <li><a href="../chronological-age/">Chronological age</a></li>
+          <li><a href="../birthday-countdown/">Birthday countdown</a></li>
+          <li><a href="../how-old-will-i-be/">How old will I be?</a></li>
+          <li><a href="../what-year-was-i-born/">What year was I born?</a></li>
+          <li><a href="../korean-age/">Korean age</a></li>
+          <li><a href="../dog-age/">Dog age</a></li>
+          <li><a href="../cat-age/">Cat age</a></li>
+          <li><a href="../privacy/">Privacy</a></li>
+        </ul>
+      </nav>
+      <p class="note">Preview only. Dates are counted in the browser and are not sent to a server. Canonical tags point at the intended root URLs; this preview must stay noindex until William approves a launch. The live site is still at app.agecalculator.com.</p>
+    </footer>
+  </div>
+  <script src="../js/age.js"></script>
+  <script src="../js/site.js"></script>
+</body>
+</html>

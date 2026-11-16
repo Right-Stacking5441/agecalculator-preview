@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>How Old Was I? Age on a Date in the Past</title>
+  <meta name="description" content="Pick a date of birth and a date in the past — 1 January 1990, or any day you choose — and see the exact age on that morning.">
+  <link rel="canonical" href="https://agecalculator.com/past">
+  <link rel="stylesheet" href="../css/styles.css">
+  <script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "How Old Was I?",
+    "url": "https://agecalculator.com/past",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires a JavaScript-enabled browser.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Pick a date of birth and a date in the past — 1 January 1990, or any day you choose — and see the exact age on that morning."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://agecalculator.com/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "How old was I?",
+        "item": "https://agecalculator.com/past"
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "If I only know the year, which date should I use?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "This page treats “in 1990” as 1 January 1990 unless you change it. That default is shown when you open a year link, because a year is not a single day."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I use a date in the future?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You can, and the arithmetic is the same, but the How old will I be? page is written for that question."
+        }
+      }
+    ]
+  }
+]
+  </script>
+</head>
+<body data-page="past">
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</div>
+  <div class="wrap">
+    <header class="site-header">
+      <a class="wordmark" href="../">Agecalculator.com</a>
+      <nav aria-label="Pages">
+        <ul>
+          <li><a href="../">Age calculator</a></li>
+          <li><a href="./" aria-current="page">How old was I?</a></li>
+          <li><a href="../difference/">Age difference</a></li>
+          <li><a href="../days-between-dates/">Days between dates</a></li>
+          <li><a href="../chronological-age/">Chronological age</a></li>
+          <li><a href="../birthday-countdown/">Birthday countdown</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main id="main">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="../">Home</a></li>
+        <li>How old was I?</li>
+      </ol>
+    </nav>
+      <h1 id="page-title">How old was I?</h1>
+      <p class="subhead">Exact age on a date you choose, not a year stuffed into 65 thin pages.</p>
+      <p class="lede">Pick a date of birth and a date that has already happened. The result is the exact age on that morning, in completed years, months and days.</p>
+      <p class="note-inline" id="year-default"></p>
+      <form class="form-block" id="age-form" action="#" method="get">
+        <div class="field-row">
+          <div class="field">
+            <label for="birth">Date of birth</label>
+            <input id="birth" type="date" name="birth" required>
+          </div>
+          <div class="field">
+            <label for="asof">Date in the past</label>
+            <input id="asof" type="date" name="asof" required>
+          </div>
+        </div>
+        <div class="field">
+          <button type="submit">Calculate age</button>
+        </div>
+      </form>
+      <p class="error" id="error" hidden role="alert"></p>
+      <div class="result" id="result" hidden>
+        <p class="record" id="record"></p>
+        <table class="figures">
+          <tbody>
+            <tr><th scope="row">Exact age</th><td id="fig-ymd"></td></tr>
+            <tr><th scope="row">Total months</th><td id="fig-months"></td></tr>
+            <tr><th scope="row">Total weeks</th><td id="fig-weeks"></td></tr>
+            <tr><th scope="row">Total days</th><td id="fig-days"></td></tr>
+            <tr><th scope="row">Total hours</th><td id="fig-hours"></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <section class="method">
+        <h2>How this page is meant to be used</h2>
+        <p>The old site had a thin page for every year from 1960 to 2024, each with the same title and about 30 words. Those URLs collected impressions — “if I was born in 1998, how old am I?” — and almost no clicks. This preview puts that job on one hub. If you arrive with a year in the query string, the past date is pre-filled as 1 January of that year, or today if the year is the current one, and the note above the form says so.</p>
+        <p>The count is the same as the homepage: completed years, leftover months, leftover days, with 1 March as the civil anniversary of a 29 February birthday in a common year. A person born on 15 March 1995 was, on 1 January 2010, 14 years, 9 months and 17 days old.</p>
+        <p>If you want the gap between two people’s birthdays, use <a href="../difference/">age difference</a>. If you only want the number of days between two calendar dates, use <a href="../days-between-dates/">days between dates</a>.</p>
+      </section>
+      <h2 id="year-heading">Open a year</h2>
+      <p>Each link stays on this page and fills 1 January of that year (or today, for the current year). There are no separate /past/1990 pages in this preview.</p>
+      <ul class="years" aria-labelledby="year-heading">
+          <li><a href="?year=2024">2024</a></li>
+          <li><a href="?year=2023">2023</a></li>
+          <li><a href="?year=2022">2022</a></li>
+          <li><a href="?year=2021">2021</a></li>
+          <li><a href="?year=2020">2020</a></li>
+          <li><a href="?year=2019">2019</a></li>
+          <li><a href="?year=2018">2018</a></li>
+          <li><a href="?year=2017">2017</a></li>
+          <li><a href="?year=2016">2016</a></li>
+          <li><a href="?year=2015">2015</a></li>
+          <li><a href="?year=2014">2014</a></li>
+          <li><a href="?year=2013">2013</a></li>
+          <li><a href="?year=2012">2012</a></li>
+          <li><a href="?year=2011">2011</a></li>
+          <li><a href="?year=2010">2010</a></li>
+          <li><a href="?year=2009">2009</a></li>
+          <li><a href="?year=2008">2008</a></li>
+          <li><a href="?year=2007">2007</a></li>
+          <li><a href="?year=2006">2006</a></li>
+          <li><a href="?year=2005">2005</a></li>
+          <li><a href="?year=2004">2004</a></li>
+          <li><a href="?year=2003">2003</a></li>
+          <li><a href="?year=2002">2002</a></li>
+          <li><a href="?year=2001">2001</a></li>
+          <li><a href="?year=2000">2000</a></li>
+          <li><a href="?year=1999">1999</a></li>
+          <li><a href="?year=1998">1998</a></li>
+          <li><a href="?year=1997">1997</a></li>
+          <li><a href="?year=1996">1996</a></li>
+          <li><a href="?year=1995">1995</a></li>
+          <li><a href="?year=1994">1994</a></li>
+          <li><a href="?year=1993">1993</a></li>
+          <li><a href="?year=1992">1992</a></li>
+          <li><a href="?year=1991">1991</a></li>
+          <li><a href="?year=1990">1990</a></li>
+          <li><a href="?year=1989">1989</a></li>
+          <li><a href="?year=1988">1988</a></li>
+          <li><a href="?year=1987">1987</a></li>
+          <li><a href="?year=1986">1986</a></li>
+          <li><a href="?year=1985">1985</a></li>
+          <li><a href="?year=1984">1984</a></li>
+          <li><a href="?year=1983">1983</a></li>
+          <li><a href="?year=1982">1982</a></li>
+          <li><a href="?year=1981">1981</a></li>
+          <li><a href="?year=1980">1980</a></li>
+          <li><a href="?year=1979">1979</a></li>
+          <li><a href="?year=1978">1978</a></li>
+          <li><a href="?year=1977">1977</a></li>
+          <li><a href="?year=1976">1976</a></li>
+          <li><a href="?year=1975">1975</a></li>
+          <li><a href="?year=1974">1974</a></li>
+          <li><a href="?year=1973">1973</a></li>
+          <li><a href="?year=1972">1972</a></li>
+          <li><a href="?year=1971">1971</a></li>
+          <li><a href="?year=1970">1970</a></li>
+          <li><a href="?year=1969">1969</a></li>
+          <li><a href="?year=1968">1968</a></li>
+          <li><a href="?year=1967">1967</a></li>
+          <li><a href="?year=1966">1966</a></li>
+          <li><a href="?year=1965">1965</a></li>
+          <li><a href="?year=1964">1964</a></li>
+          <li><a href="?year=1963">1963</a></li>
+          <li><a href="?year=1962">1962</a></li>
+          <li><a href="?year=1961">1961</a></li>
+          <li><a href="?year=1960">1960</a></li>
+      </ul>
+    <section class="faq" aria-labelledby="faq-heading">
+      <h2 id="faq-heading">Questions people actually ask</h2>
+      <article>
+        <h3>If I only know the year, which date should I use?</h3>
+        <p>This page treats “in 1990” as 1 January 1990 unless you change it. That default is shown when you open a year link, because a year is not a single day.</p>
+      </article>
+      <article>
+        <h3>Can I use a date in the future?</h3>
+        <p>You can, and the arithmetic is the same, but the How old will I be? page is written for that question.</p>
+      </article>
+    </section>
+    </main>
+    <footer class="site-footer">
+      <nav aria-label="Footer">
+        <ul>
+          <li><a href="../">Age calculator</a></li>
+          <li><a href="./" aria-current="page">How old was I?</a></li>
+          <li><a href="../difference/">Age difference</a></li>
+          <li><a href="../days-between-dates/">Days between dates</a></li>
+          <li><a href="../chronological-age/">Chronological age</a></li>
+          <li><a href="../birthday-countdown/">Birthday countdown</a></li>
+          <li><a href="../how-old-will-i-be/">How old will I be?</a></li>
+          <li><a href="../what-year-was-i-born/">What year was I born?</a></li>
+          <li><a href="../korean-age/">Korean age</a></li>
+          <li><a href="../dog-age/">Dog age</a></li>
+          <li><a href="../cat-age/">Cat age</a></li>
+          <li><a href="../privacy/">Privacy</a></li>
+        </ul>
+      </nav>
+      <p class="note">Preview only. Dates are counted in the browser and are not sent to a server. Canonical tags point at the intended root URLs; this preview must stay noindex until William approves a launch. The live site is still at app.agecalculator.com.</p>
+    </footer>
+  </div>
+  <script src="../js/age.js"></script>
+  <script src="../js/site.js"></script>
+</body>
+</html>
