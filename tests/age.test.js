@@ -283,6 +283,52 @@ test('addMonths: 31 January plus one month is 1 March, 31 May plus one month is 
   assert.deepEqual(A.addMonths(D(2024, 2, 29), 48), D(2028, 2, 29));
 });
 
+
+test('last and next birthday when the chosen date is a birthday', () => {
+  const a = A.birthdayBounds(D(1995, 3, 15), D(2026, 3, 15));
+  assert.equal(a.onBirthday, true);
+  assert.equal(a.lastLabel, 'Birthday on that date');
+  assert.equal(a.nextLabel, 'Birthday after');
+  assert.deepEqual([a.last.y, a.last.m, a.last.d], [2026, 3, 15]);
+  assert.deepEqual([a.next.y, a.next.m, a.next.d], [2027, 3, 15]);
+  assert.equal(a.next.turning, 32);
+  assert.notDeepEqual([a.last.y, a.last.m, a.last.d], [a.next.y, a.next.m, a.next.d]);
+  assert.equal(a.months, 0);
+  assert.equal(a.days, 0);
+  assert.deepEqual(ymd(a.r), [31, 0, 0]);
+
+  const b = A.birthdayBounds(D(1996, 2, 29), D(2001, 3, 1));
+  assert.equal(b.onBirthday, true);
+  assert.equal(b.lastLabel, 'Birthday on that date');
+  assert.equal(b.nextLabel, 'Birthday after');
+  assert.deepEqual([b.last.y, b.last.m, b.last.d], [2001, 3, 1]);
+  assert.deepEqual([b.next.y, b.next.m, b.next.d], [2002, 3, 1]);
+  assert.equal(b.next.turning, 6);
+  assert.notDeepEqual([b.last.y, b.last.m, b.last.d], [b.next.y, b.next.m, b.next.d]);
+  assert.equal(b.months, 0);
+  assert.equal(b.days, 0);
+  assert.deepEqual(ymd(b.r), [5, 0, 0]);
+
+  const c = A.birthdayBounds(D(1995, 3, 15), D(1995, 3, 15));
+  assert.equal(c.bornDay, true);
+  assert.equal(c.lastLabel, 'Birthday on that date');
+  assert.deepEqual([c.last.y, c.last.m, c.last.d], [1995, 3, 15]);
+  assert.deepEqual([c.next.y, c.next.m, c.next.d], [1996, 3, 15]);
+  assert.equal(c.next.turning, 1);
+  assert.notEqual(c.next.turning, 0);
+  assert.equal(c.months, 0);
+  assert.equal(c.days, 0);
+  assert.deepEqual(ymd(c.r), [0, 0, 0]);
+
+  const mid = A.birthdayBounds(D(1995, 3, 15), D(2026, 11, 16));
+  assert.equal(mid.onBirthday, false);
+  assert.equal(mid.lastLabel, 'Birthday before');
+  assert.equal(mid.nextLabel, 'Birthday after');
+  assert.deepEqual([mid.last.y, mid.last.m, mid.last.d], [2026, 3, 15]);
+  assert.deepEqual([mid.next.y, mid.next.m, mid.next.d], [2027, 3, 15]);
+  assert.equal(mid.next.turning, 32);
+});
+
 test('seconds until midnight uses the next midnight in the zone, including DST days in Europe/London and America/New_York', () => {
   const at = (tz, y, m, d, hh, mm, ss) => new Date(A.instantInZone(tz, y, m, d, hh, mm, ss));
   const sec = (tz, date) => A.secondsUntilMidnight(tz, date);

@@ -264,9 +264,47 @@
     return s < 0 ? 0 : s;
   }
 
+
+  /* Last and next birthday around `at`. On a birthday the two would otherwise
+     be the same date (age().next is that day). In that case "next" is the
+     following year's birthday, and the label marks the day itself. */
+  function birthdayBounds(b, at) {
+    var r = age(b, at);
+    if (!r.ok) return r;
+    var onBirthday = r.next.isToday;
+    var last = onBirthday ? { y: r.next.y, m: r.next.m, d: r.next.d } : addMonths(b, 12 * r.years);
+    var next;
+    if (onBirthday) {
+      var n = addMonths(b, 12 * (r.years + 1));
+      next = {
+        y: n.y, m: n.m, d: n.d,
+        weekday: weekday(n.y, n.m, n.d),
+        daysUntil: cmp(n, at),
+        turning: r.years + 1,
+        isToday: false,
+        shifted: n.d !== b.d || n.m !== b.m
+      };
+    } else {
+      next = r.next;
+    }
+    return {
+      ok: true,
+      onBirthday: onBirthday,
+      bornDay: onBirthday && r.years === 0,
+      last: last,
+      next: next,
+      lastLabel: onBirthday ? 'Birthday on that date' : 'Birthday before',
+      nextLabel: 'Birthday after',
+      years: r.years,
+      months: r.months,
+      days: r.days,
+      r: r
+    };
+  }
+
   var api = { MONTHS: MONTHS, WEEKDAYS: WEEKDAYS, MIN_YEAR: MIN_YEAR, MAX_YEAR: MAX_YEAR,
     isLeap: isLeap, daysInMonth: daysInMonth, dayNumber: dayNumber, weekday: weekday,
-    dayOfYear: dayOfYear, addMonths: addMonths, validate: validate, age: age, cmp: cmp,
+    dayOfYear: dayOfYear, addMonths: addMonths, validate: validate, age: age, cmp: cmp, birthdayBounds: birthdayBounds,
     between: between, koreanAges: koreanAges, dogAge: dogAge, dogAgeEpigenetic: dogAgeEpigenetic,
     DOG_CHART: DOG_CHART, CAT_CHART: CAT_CHART, DOG_SIZES: DOG_SIZES,
     catAge: catAge, catStage: catStage, birthYear: birthYear, parseDate: parseDate,

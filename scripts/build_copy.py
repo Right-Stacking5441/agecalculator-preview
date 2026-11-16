@@ -577,6 +577,27 @@ def patch_app_widget_hint():
     p.write_text(t.replace(old, new, 1))
     print("patched app.js widget empty hint")
 
+CHRONO_RULE_LINE = (
+    '<p class="rule-line">A completed month lands on the same date next month. '
+    "If that date doesn’t exist (31 January to 1 March, or a 29 February birthday in a common year), "
+    "it rolls to the 1st of the next month. Some software, including common date libraries, uses the last day of the month instead, "
+    "so results can differ by a day around month ends.</p>"
+)
+
+def ensure_chrono_rule_line(html: str) -> str:
+    """Keep the month-end rule line under the chronological-age tool only."""
+    if 'class="rule-line"' in html:
+        return html
+    pat = re.compile(
+        r'(<p class="sr-only" id="live" aria-live="polite"></p>)(\s*)(<aside class="ad ad-below")'
+    )
+    html2, n = pat.subn(r"\1\n" + CHRONO_RULE_LINE + r"\n\3", html, count=1)
+    if n != 1:
+        raise SystemExit("could not insert chronological-age rule-line")
+    return html2
+
+
+
 def main():
     for md_name, html_name in PAGE.items():
         raw = (COPY / md_name).read_text()
@@ -598,6 +619,8 @@ def main():
                 html = fix_birth_year_placement(html)
         html = re.sub(r'<p class="placeholder-note">.*?</p>\n?', "", html)
         html = replace_footer(html)
+        if html_name == "chronological-age.html":
+            html = ensure_chrono_rule_line(html)
         if "noindex,nofollow" not in html and html_name in ("privacy.html", "embed.html", "widget.html"):
             raise SystemExit(f"noindex missing on {html_name}")
         if html_name not in ("privacy.html", "embed.html") and "noindex,nofollow" not in html:

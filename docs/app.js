@@ -152,12 +152,20 @@
     opts = opts || {};
     var r = A.age(b, at);
     if (!r.ok) return notice('Not born yet', long(b) + ' is ' + plural(r.daysUntil, 'day') + ' after ' + long(at) + '. Check the year, or change the “age on” date.', monthGrid(b.y, b.m, b.d, 'Date entered'));
+    var bounds = A.birthdayBounds(b, at);
     var nx = r.next, verb = A.cmp(at, today) > 0 ? 'will be' : A.cmp(at, today) < 0 ? 'were' : 'are';
-    var bdayLine = nx.isToday
-      ? '<span class="k">Birthday</span><strong>Today, ' + long(nx) + '</strong><br>Happy ' + ordinal(nx.turning) + ' birthday.'
-      : '<span class="k">Next birthday</span><strong>' + long(nx) + '</strong><br>' + (verb === 'are' ? 'You’ll be ' : 'Turning ') + nx.turning + '. <em class="count">' + plural(nx.daysUntil, 'day') + '</em> to go.';
+    var bdayLine, gridLabel = 'Next birthday';
+    if (bounds.bornDay) {
+      nx = bounds.next;
+      bdayLine = '<span class="k">Born on this date</span><strong>The day they were born</strong><br>Next birthday ' + long(nx) + ', turning 1. <em class="count">' + plural(nx.daysUntil, 'day') + '</em> to go.';
+    } else if (nx.isToday) {
+      gridLabel = 'Birthday';
+      bdayLine = '<span class="k">Birthday</span><strong>Today, ' + long(nx) + '</strong><br>Happy ' + ordinal(nx.turning) + ' birthday.';
+    } else {
+      bdayLine = '<span class="k">Next birthday</span><strong>' + long(nx) + '</strong><br>' + (verb === 'are' ? 'You’ll be ' : 'Turning ') + nx.turning + '. <em class="count">' + plural(nx.daysUntil, 'day') + '</em> to go.';
+    }
     var note = nx.shifted ? '<p class="bday-note">No 29 February in ' + nx.y + ', so the birthday counts on 1 March.</p>' : '';
-    var lead = big(r.years, r.years === 1 ? 'year' : 'years') + '<p class="rest">' + plural(r.months, 'month') + ' and ' + plural(r.days, 'day') + '</p>';
+    var lead = big(r.years, r.years === 1 ? 'year' : 'years') + '<p class="rest">' + plural(r.months, 'month') + ' and ' + plural(r.days, 'day') + (bounds.bornDay ? '. The day they were born' : '') + '</p>';
     var kor = opts.korean ? A.koreanAges(b, at) : null;
     var rows = [
       ['Months', fmt(r.totalMonths) + (r.days ? small('and ' + plural(r.days, 'day')) : '')],
@@ -169,7 +177,7 @@
       kor ? ['Korean age', kor.counting + small('year age ' + kor.yearAge + ', <a href="korean-age">why</a>')] : null
     ];
     var say = 'On ' + long(at) + ' you ' + verb + ' ' + ymdWords(r) + ' old. Next birthday ' + long(nx) + ', in ' + plural(nx.daysUntil, 'day') + '.';
-    return { state: 'result', say: say, html: head('Age on <b>' + short(at) + '</b>') + body(lead, monthGrid(nx.y, nx.m, nx.d, 'Next birthday') + '<div><p class="bday-text">' + bdayLine + '</p>' + note + '</div>') + ledger(rows) };
+    return { state: 'result', say: say, html: head('Age on <b>' + short(at) + '</b>') + body(lead, monthGrid(nx.y, nx.m, nx.d, gridLabel) + '<div><p class="bday-text">' + bdayLine + '</p>' + note + '</div>') + ledger(rows) };
   }
   function emptyToday(hint) {
     var at = onDate(), doy = A.dayOfYear(at.y, at.m, at.d);
@@ -199,10 +207,11 @@
       if (needs(b)) return errOf(b, 'date') || withCls(emptyToday('Type a date of birth, then the date you want to look back to.'), 'leaf-old');
       var r = A.age(b.value, at);
       if (!r.ok) return withCls(notice('Not born yet', long(b.value) + ' is after ' + long(at) + '.'), 'leaf-old');
-      var lead = big(r.years, r.years === 1 ? 'year old' : 'years old') + '<p class="rest">' + plural(r.months, 'month') + ' and ' + plural(r.days, 'day') + '</p>';
-      var prev = A.addMonths(b.value, 12 * r.years), nx = r.next;
+      var bounds = A.birthdayBounds(b.value, at);
+      var lead = big(r.years, r.years === 1 ? 'year old' : 'years old') + '<p class="rest">' + plural(r.months, 'month') + ' and ' + plural(r.days, 'day') + (bounds.bornDay ? '. The day they were born' : '') + '</p>';
+      var prev = bounds.last, nx = bounds.next;
       var side = monthGrid(at.y, at.m, at.d, 'The date you chose') + '<p class="bday-text"><span class="k">That day was a</span><strong>' + W[A.weekday(at.y, at.m, at.d)] + '</strong></p>';
-      var rows = [['Last birthday before it', plain(prev)], ['Next birthday after it', plain(nx) + small('turning ' + nx.turning)], ['Days lived by then', fmt(r.totalDays)], ['How long ago', A.cmp(today, at) >= 0 ? plural(A.age(at, today).years, 'year') + small(fmt(A.cmp(today, at)) + ' days') : 'that’s in the future']];
+      var rows = [[bounds.lastLabel, plain(prev)], [bounds.nextLabel, plain(nx) + small('turning ' + nx.turning)], ['Days lived by then', fmt(r.totalDays)], ['How long ago', A.cmp(today, at) >= 0 ? plural(A.age(at, today).years, 'year') + small(fmt(A.cmp(today, at)) + ' days') : 'that’s in the future']];
       return { state: 'result', cls: 'leaf-old', say: 'On ' + long(at) + ' you were ' + ymdWords(r) + ' old.', html: '<div class="leaf-head"><span>On</span> ' + stamp(at) + '</div>' + body(lead, side) + ledger(rows) };
     },
     /* A countdown is a tear-off pad: one sheet per day still to go (drawn up to a point). */
@@ -211,8 +220,11 @@
       if (needs(b)) return errOf(b, 'date') || withCls(emptyToday('Type a date of birth (yours, or someone you’re buying a card for).'), 'leaf-stack');
       var r = A.age(b.value, today);
       if (!r.ok) return notice('Not born yet', 'That date is after today.');
-      var nx = r.next, n = nx.daysUntil;
-      var lead = nx.isToday ? big('Today', '') + '<p class="rest">Happy ' + ordinal(nx.turning) + ' birthday.</p>'
+      var bounds = A.birthdayBounds(b.value, today);
+      var nx = bounds.bornDay ? bounds.next : r.next, n = nx.daysUntil;
+      var lead = bounds.bornDay
+        ? big(fmt(n), n === 1 ? 'sheet left' : 'sheets left') + '<p class="rest">The day they were born. The last sheet is ' + long(nx) + ', when you turn 1.</p>'
+        : nx.isToday ? big('Today', '') + '<p class="rest">Happy ' + ordinal(nx.turning) + ' birthday.</p>'
         : big(fmt(n), n === 1 ? 'sheet left' : 'sheets left') + '<p class="rest">Tear one off each morning. The last one is ' + long(nx) + ', when you turn ' + nx.turning + '.</p>';
       var rows = [['Weeks', fmt(Math.floor(n / 7)) + (n % 7 ? small('and ' + plural(n % 7, 'day')) : '')], ['Until midnight tonight', '<span data-clock>–</span>'], ['Weekend birthday?', (nx.weekday >= 5 ? 'Yes, a ' : 'No, a ') + W[nx.weekday]], ['Birthdays so far', fmt(r.years)]];
       var note = nx.shifted ? '<p class="bday-note">No 29 February in ' + nx.y + ', so we count down to 1 March.</p>' : '';
@@ -225,6 +237,13 @@
       if (on && on.value) return ageCore(b.value, on.value);
       if (!yr || String(yr).length !== 4 || yr < A.MIN_YEAR || yr > A.MAX_YEAR) return notice('Which year?', 'Type a year between ' + A.MIN_YEAR + ' and ' + A.MAX_YEAR + ', like 2050, or pick an exact date.');
       if (yr < b.value.y) return notice('Before you were born', yr + ' is before ' + b.value.y + '.');
+      if (yr === b.value.y) {
+        var first = A.addMonths(b.value, 12);
+        var html0 = planner(yr, b.value, null) +
+          '<div class="planner-say">' + big(1, 'year old') + '<p class="rest">from ' + long(first) + '. ' + yr + ' is the year they were born. The day they were born is ' + long(b.value) + '.</p></div>' +
+          ledger([['On 31 December ' + yr, '0 years'], ['Days from today to the first birthday', A.cmp(first, today) > 0 ? fmt(A.cmp(first, today)) : 'already passed'], ['First birthday is a', W[A.weekday(first.y, first.m, first.d)]]]);
+        return { state: 'result', cls: 'obj obj-planner', html: html0, say: yr + ' is the year they were born. They turn 1 on ' + long(first) + '.' };
+      }
       var bd = A.addMonths(b.value, 12 * (yr - b.value.y)), after = yr - b.value.y, before = Math.max(0, after - 1);
       var html = planner(yr, bd, [before, after]) +
         '<div class="planner-say">' + big(after, 'years old') + '<p class="rest">from ' + long(bd) + '. Until then, ' + before + '.</p></div>' +

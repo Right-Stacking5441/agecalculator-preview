@@ -797,6 +797,13 @@ body[data-page="how-old-will-i-be"], body[data-page="what-year-was-i-born"] { --
   line-height: 1.35;
   padding: 8px 20px;
 }
+.rule-line {
+  margin: 14px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--ink-2);
+  max-width: 36em;
+}
 @media print {
   .preview-banner, .rule-line, .ad { display: none !important; }
 }
