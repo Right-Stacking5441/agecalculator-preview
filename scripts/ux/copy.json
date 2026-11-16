@@ -1,0 +1,232 @@
+{
+ "_note": "Copy hooks (UX pass). Intros, headings, FAQ headings and old-screen fixes are Copywriter's FINAL copy of 16 Nov (/workspace/marketing/seo/agecalculator-copy/2026-11-16-ux-pass-copy.md). 'ui' strings are interface labels. build_ux.py and patch_js.py read from here; edit and run ux/run.sh.",
+ "pages": {
+  "index": {
+   "intro": "How old am I today? Type your date of birth and this age calculator gives your exact age in years, months and days, with the date of your next birthday.",
+   "howto": "How to use the age calculator",
+   "faq": "Age calculator FAQs",
+   "label": {
+    "dob": "Enter your date of birth"
+   }
+  },
+  "past": {
+   "intro": "How old was I on that day? Add your date of birth and any past date, such as an exam, a wedding or a date a form asks about, to see your age then.",
+   "howto": "How to find your age on a past date",
+   "faq": "Past age FAQs",
+   "label": {
+    "dob": "Your date of birth",
+    "on": "The date to look back to"
+   }
+  },
+  "difference": {
+   "intro": "Put in two dates of birth and the age difference calculator tells you who is older and by how much, down to the day.",
+   "howto": "How to use the age difference calculator",
+   "faq": "Age difference FAQs",
+   "label": {
+    "a": "First date of birth",
+    "b": "Second date of birth"
+   }
+  },
+  "days-between-dates": {
+   "intro": "Count the days between dates, say from today to a deadline, and see how many of them are weekdays and how many fall at the weekend.",
+   "howto": "How to count the days between dates",
+   "faq": "Days between dates FAQs",
+   "label": {
+    "start": "From",
+    "end": "To"
+   }
+  },
+  "chronological-age": {
+   "intro": "For test forms and reports, the chronological age calculator gives a child’s age on the test date as years;months;days, such as 8;4;12, ready to copy or print.",
+   "howto": "How to use the chronological age calculator",
+   "faq": "Chronological age FAQs",
+   "label": {
+    "dob": "Date of birth",
+    "test": "Test date"
+   }
+  },
+  "dog-age": {
+   "intro": "Enter your dog’s age and adult size, and the dog age calculator reads their age in human years from the AAHA-published chart, not the old times-seven rule.",
+   "howto": "How to use the dog age calculator",
+   "faq": "Dog age FAQs",
+   "label": {}
+  },
+  "cat-age": {
+   "intro": "Turn your cat’s age into human years with this cat age calculator. It reads the figure from the AAHA-published chart and tells you which life stage your cat has reached.",
+   "howto": "How to use the cat age calculator",
+   "faq": "Cat age FAQs",
+   "label": {}
+  },
+  "korean-age": {
+   "intro": "The Korean age calculator puts international age, Korean age and year age side by side for one date of birth, so you can see why a Korean age runs one or two years higher.",
+   "howto": "How to use the Korean age calculator",
+   "faq": "Korean age FAQs",
+   "label": {
+    "dob": "Enter your date of birth"
+   }
+  },
+  "birthday-countdown": {
+   "intro": "Our birthday countdown tells you how many days are left until the next birthday and what day of the week it falls on, with a clock ticking down to midnight tonight.",
+   "howto": "How to use the birthday countdown",
+   "faq": "Birthday countdown FAQs",
+   "label": {
+    "dob": "Enter the date of birth"
+   }
+  },
+  "how-old-will-i-be": {
+   "intro": "How old will I be in 2050, or in any other year? Put in your date of birth and a year to see the age you reach and the day you reach it.",
+   "howto": "How to work out a future age",
+   "faq": "Future age FAQs",
+   "label": {
+    "dob": "Enter your date of birth"
+   }
+  },
+  "what-year-was-i-born": {
+   "intro": "What year was I born, if I’m 31? Type your age and whether you’ve had your birthday yet this year, and you’ll get the year, or both years if you’re not sure.",
+   "howto": "How to find your birth year",
+   "faq": "Birth year FAQs",
+   "label": {}
+  }
+ },
+ "ui": {
+  "parts_toggle": "Type day, month and year separately",
+  "parts_toggle_aria": "Type the day, month and year in separate boxes",
+  "add_names": "Add names",
+  "add_name": "Add a name",
+  "time_zone": "Time zone",
+  "settings_today": "Age today,",
+  "settings_on": "Age on",
+  "settings_zone": "Time zone:",
+  "settings_button": "Change date or time zone",
+  "settings_button_future": "Change",
+  "settings_idle_future": "Or use an exact date",
+  "use_today": "Use today",
+  "more": "More",
+  "months_note": "How months are counted",
+  "korean_how": "How each is counted",
+  "empty": {
+   "age": "Your age will appear here.",
+   "past": "Your age on that date will appear here.",
+   "countdown": "The days to the next birthday will appear here.",
+   "korean": "All three ages will appear here.",
+   "future": "Your age in that year will appear here.",
+   "difference": "The age gap will appear here.",
+   "between": "The number of days will appear here.",
+   "chrono": "The age on the test date will appear here.",
+   "dog": "Your dog’s age in human years will appear here.",
+   "cat": "Your cat’s age in human years will appear here.",
+   "birthyear": "Your birth year will appear here."
+  },
+  "pet_source": "From the AAHA-published chart",
+  "pet_chart_dog": "Dog age chart",
+  "pet_chart_cat": "Cat age chart",
+  "pet_years_placeholder": "e.g. 5",
+  "pet_months_placeholder": "optional",
+  "weekdays": "Weekdays",
+  "weekdays_note": "Mon to Fri, bank holidays still counted",
+  "span_label_suffix": "from start to end"
+ },
+ "copy_fixes": [
+  [
+   "index",
+   "Tick Show Korean age to see the traditional count beside it.",
+   "Open More under your result to see your Korean age beside it."
+  ],
+  [
+   "index",
+   "Tick Show Korean age to add it to your result, or use the",
+   "Your Korean age is under More in your result, or use the"
+  ],
+  [
+   "index",
+   "total months, weeks, days and hours.",
+   "total months, weeks and days, with hours under More."
+  ],
+  [
+   "index",
+   "Your result shows that line as well.",
+   "Your result shows that line too, under More."
+  ],
+  [
+   "past",
+   ", and the same span in months, weeks and days.",
+   ", how many days you had lived by then, and how long ago the date was."
+  ],
+  [
+   "past",
+   "which is shown and can be changed.",
+   "which you can change under Time zone."
+  ],
+  [
+   "difference",
+   "It also says who is older, by how many days in total, and gives the same gap in weeks and months. Names are optional.",
+   "It also says who is older and by how many days, and under More gives the same gap in weeks and months. Names are optional: open Add names to type them."
+  ],
+  [
+   "dog-age",
+   "Beside it you’ll see a second estimate",
+   "Under More you’ll see a second estimate"
+  ],
+  [
+   "cat-age",
+   "If you leave the boxes empty, the result area shows a short chart of common ages instead.",
+   "Before you type an age, the result card has a short chart of common ages under “Cat age chart”."
+  ],
+  [
+   "birthday-countdown",
+   "Under that you’ll find the same wait in weeks, whether the birthday lands on a weekend, how many birthdays have gone by so far, and a clock counting down to midnight tonight.",
+   "Under that you’ll find the same wait in weeks and a clock counting down to midnight tonight. Open More to see whether the birthday lands on a weekend and how many birthdays have gone by so far."
+  ],
+  [
+   "birthday-countdown",
+   "<b>Weekend birthday?</b> tells you whether the date is a Saturday or Sunday. <b>Birthdays so far</b> is",
+   "Under More, <b>Weekend birthday?</b> tells you whether the date is a Saturday or Sunday, and <b>Birthdays so far</b> is"
+  ],
+  [
+   "birthday-countdown",
+   "and the line “Weekend birthday?” says whether",
+   "and the line “Weekend birthday?”, under More, says whether"
+  ],
+  [
+   "how-old-will-i-be",
+   "Or pick an exact future date",
+   "Or choose an exact future date"
+  ],
+  [
+   "how-old-will-i-be",
+   ", the weekday your birthday falls on, and how many days there are from today until it.",
+   ". Under More are the weekday your birthday falls on and how many days there are from today until it."
+  ],
+  [
+   "how-old-will-i-be",
+   "Press Change next to “Or pick” and type the date.",
+   "Press Change next to “Or use an exact date” and type the date."
+  ]
+ ],
+ "related_home": [
+  [
+   "difference",
+   "Age difference between two people"
+  ],
+  [
+   "past",
+   "How old was I on a past date?"
+  ],
+  [
+   "days-between-dates",
+   "Days between two dates"
+  ],
+  [
+   "birthday-countdown",
+   "Birthday countdown"
+  ],
+  [
+   "dog-age",
+   "Dog age in human years"
+  ],
+  [
+   "cat-age",
+   "Cat age in human years"
+  ]
+ ]
+}

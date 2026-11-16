@@ -1,64 +1,68 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en-GB">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>Age calculator widget</title>
-<meta name="description" content="Embeddable age calculator from agecalculator.com.">
-<link rel="canonical" href="https://agecalculator.com/widget">
-<meta name="robots" content="noindex,nofollow">
-<meta property="og:title" content="Age calculator widget">
-<meta property="og:description" content="Embeddable age calculator from agecalculator.com.">
-<meta property="og:url" content="https://agecalculator.com/widget">
-<meta property="og:type" content="website">
-<meta name="theme-color" content="#f1f1ec">
-<link rel="icon" href="favicon.ico" sizes="32x32">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<base target="_blank">
-<link rel="preload" href="fonts/libre-franklin-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="styles.css">
-<script>var q=location.search;if(/[?&](dob|a|b|start|end|test|on|year)=/.test(q))document.documentElement.classList.add('prefill');if(/[?&](on|year)=/.test(q))document.documentElement.classList.add('prefill-on')</script>
-</head>
+<meta content="Embeddable age calculator from agecalculator.com." name="description"/>
+<link href="https://agecalculator.com/widget" rel="canonical"/>
+<meta content="noindex,nofollow" name="robots"/>
+<meta content="Age calculator widget" property="og:title"/>
+<meta content="Embeddable age calculator from agecalculator.com." property="og:description"/>
+<meta content="https://agecalculator.com/widget" property="og:url"/>
+<meta content="website" property="og:type"/>
+<meta content="#f1f1ec" name="theme-color"/>
+<link href="favicon.ico" rel="icon" sizes="32x32"/>
+<link href="favicon.svg" rel="icon" type="image/svg+xml"/>
+<base target="_blank"/>
+<link as="font" crossorigin="" href="fonts/libre-franklin-var.woff2" rel="preload" type="font/woff2"/>
+<link href="styles.css" rel="stylesheet"/>
+<script>var q=location.search;if(/[?&](dob|a|b|start|end|test|on|year)=/.test(q))document.documentElement.classList.add('prefill');if(/[?&]year=/.test(q))document.documentElement.classList.add('prefill-year');if(/[?&](on|year)=/.test(q))document.documentElement.classList.add('prefill-on')</script>
+<link href="ux.css" rel="stylesheet"/></head>
 <body class="widget">
 <main>
 <h1 class="sr-only">Age calculator</h1>
-<div class="calc" data-calc data-tool="age">
-<form class="entry" novalidate>
+<div class="calc" data-calc="" data-tool="age">
+<form class="entry" novalidate="">
 <p class="w-title">Age calculator</p>
-<div class="datefield " data-datefield="dob">
+<div class="datefield" data-datefield="dob">
 <label class="df-label" for="dob-q">Date of birth</label>
-<input id="dob-q" class="quick" type="text" spellcheck="false" autocomplete="bday" placeholder="e.g. 15 March 1995" aria-describedby="dob-read">
-<div class="parts" role="group" aria-label="Date of birth: day, month and year">
-<label><span>Day</span><input class="p-d" type="text" inputmode="numeric" maxlength="2" placeholder="DD" autocomplete="bday-day"></label>
-<label><span>Month</span><input class="p-m" type="text" inputmode="numeric" maxlength="2" placeholder="MM" autocomplete="bday-month"></label>
-<label><span>Year</span><input class="p-y" type="text" inputmode="numeric" maxlength="4" placeholder="YYYY" autocomplete="bday-year"></label>
-</div>
-<p class="readback" id="dob-read"></p>
-</div>
-<div class="on">
-<p>As of <span id="on-label">today, <b>16 November 2026</b> <span class="zone">&nbsp;</span></span> <button type="button" class="textbtn" id="on-toggle" aria-expanded="false" aria-controls="on-box">Change</button></p>
-<div id="on-box" hidden>
-<div class="datefield df-small" data-datefield="on">
-<label class="df-label" for="on-q">Age on this date</label>
-<input id="on-q" class="quick" type="text" spellcheck="false" autocomplete="off" placeholder="e.g. 1 January 2030" aria-describedby="on-read">
-<div class="parts" role="group" aria-label="Age on this date: day, month and year">
-<label><span>Day</span><input class="p-d" type="text" inputmode="numeric" maxlength="2" placeholder="DD"></label>
-<label><span>Month</span><input class="p-m" type="text" inputmode="numeric" maxlength="2" placeholder="MM"></label>
-<label><span>Year</span><input class="p-y" type="text" inputmode="numeric" maxlength="4" placeholder="YYYY"></label>
-</div>
-<p class="readback" id="on-read"></p>
-</div>
-<label class="zone-pick">Time zone for “today” <select id="zone"><option>Europe/London</option></select></label>
+<input aria-describedby="dob-read" autocomplete="bday" class="quick" id="dob-q" placeholder="e.g. 15 March 1995" spellcheck="false" type="text"/>
+<div class="df-foot"><p class="readback" id="dob-read"></p><button aria-controls="dob-parts" aria-expanded="false" aria-label="Type the day, month and year in separate boxes" class="textbtn parts-toggle" type="button"><svg aria-hidden="true" class="ic ic-boxes" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M3.4 8.9l4.7.1v6.1H3.5zM10 9h4.3l.1 6h-4.4zM16.4 8.9h4.2v6.2h-4.2z"></path></svg><span>Type day, month and year separately</span></button></div><div aria-label="Date of birth: day, month and year" class="parts" hidden="" id="dob-parts" role="group">
+<label><span>Day</span><input autocomplete="bday-day" class="p-d" inputmode="numeric" maxlength="2" placeholder="DD" type="text"/></label>
+<label><span>Month</span><input autocomplete="bday-month" class="p-m" inputmode="numeric" maxlength="2" placeholder="MM" type="text"/></label>
+<label><span>Year</span><input autocomplete="bday-year" class="p-y" inputmode="numeric" maxlength="4" placeholder="YYYY" type="text"/></label>
 </div>
 </div>
 </form>
-<div class="result"><div class="leaf" id="leaf" data-state="empty"><div class="leaf-head"><span>Today</span></div>
-<div class="leaf-body"><div class="lead"><p class="big"><span class="num">16</span><span class="unit">November</span></p>
-<p class="rest">Type a date of birth to see your age in years, months and days.</p></div></div>
-<noscript><p class="hint">This calculator needs JavaScript to work out the result. You can use it at agecalculator.com.</p></noscript></div><p class="sr-only" id="live" aria-live="polite"></p></div>
+<div class="result"><div class="leaf" data-state="empty" id="leaf"><div class="leaf-body"><div class="lead"><p class="ph-msg">Your age will appear here.</p></div></div><noscript><p class="hint">This calculator needs JavaScript to work out the result. You can use it at agecalculator.com.</p></noscript></div><p aria-live="polite" class="sr-only" id="live"></p><div class="on settings">
+<p><svg aria-hidden="true" class="ic ic-clock" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M12 3.4c4.9-.1 8.6 3.7 8.6 8.5 0 4.8-3.8 8.7-8.7 8.6-4.7-.1-8.4-3.9-8.3-8.7.1-4.6 3.6-8.3 8.6-8.5.6 0 1.2.1 1.7.2M12 7.4v4.8l3.1 2.1"></path></svg><span id="on-label">Age today</span><script>
+(function(){
+  var el=document.getElementById('on-label');
+  if(!el || el.hidden || el.getAttribute('data-idle')) return;
+  var M=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var W=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var n=new Date(), mon=M[n.getMonth()].slice(0,3);
+  el.innerHTML='Age today, <b>'+W[n.getDay()].slice(0,3)+' '+n.getDate()+' '+mon+' '+n.getFullYear()+'</b>';
+})();
+</script> <span class="tzline">Time zone: <span id="zone-now">Europe/London</span></span> <button aria-controls="on-box" aria-expanded="false" class="textbtn" data-label="Change date or time zone" id="on-toggle" type="button">Change date or time zone</button></p>
+<div hidden="" id="on-box">
+<div class="datefield df-small" data-datefield="on">
+<label class="df-label" for="on-q">Age on this date</label>
+<input aria-describedby="on-read" autocomplete="off" class="quick" id="on-q" placeholder="e.g. 1 January 2030" spellcheck="false" type="text"/>
+<div class="df-foot"><p class="readback" id="on-read"></p></div><div aria-label="Age on this date: day, month and year" class="parts" hidden="" id="on-parts" role="group">
+<label><span>Day</span><input class="p-d" inputmode="numeric" maxlength="2" placeholder="DD" type="text"/></label>
+<label><span>Month</span><input class="p-m" inputmode="numeric" maxlength="2" placeholder="MM" type="text"/></label>
+<label><span>Year</span><input class="p-y" inputmode="numeric" maxlength="4" placeholder="YYYY" type="text"/></label>
+</div>
+</div>
+<label class="zone-pick">Time zone for “today” <select id="zone"><option>Europe/London</option></select></label>
+</div>
+</div></div>
 </div>
 <p class="credit"><a href="https://agecalculator.com/">Age calculator by agecalculator.com</a></p>
 </main>
-<script src="dates.js" defer></script><script src="app.js" defer></script>
+<script defer="" src="dates.js"></script><script defer="" src="app.js"></script>
 </body>
 </html>

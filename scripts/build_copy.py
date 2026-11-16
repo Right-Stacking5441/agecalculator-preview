@@ -57,6 +57,8 @@ def typograph(s: str, *, in_placeholder=False) -> str:
         return f"\x00H{len(holders)-1}\x00"
     s = re.sub(r"\[PLACEHOLDER:[^\]]*\]", stash, s)
     s = re.sub(r"`[^`]+`", stash, s)
+    # William: no en or em dashes in any HTML.
+    s = s.replace("\u2013", "-").replace("\u2014", "-").replace("–", "-").replace("—", "-")
     def keep_case(a, b):
         def repl(m):
             src = m.group(0)
@@ -167,14 +169,15 @@ def parse_md(text: str):
         body, faq_chunk = parts[1], parts[2]
     else:
         body, faq_chunk = (parts[-1] if parts else text), ""
-    if "## Questions people ask" in body:
-        body, extra = body.split("## Questions people ask", 1)
-        if "## Questions people ask" not in faq_chunk:
-            faq_chunk = extra
-    if "## Questions people ask" in faq_chunk:
-        faq_raw = faq_chunk.split("## Questions people ask", 1)[1]
-    else:
-        faq_raw = ""
+    def _split_faq(chunk: str):
+        """Split at the FAQ heading: legacy 'Questions people ask' or '… FAQs'."""
+        m = re.search(r"^##[^\n]*(?:Questions people ask|\bFAQs)\s*$", chunk, re.M)
+        if not m:
+            return chunk, ""
+        return chunk[:m.start()], chunk[m.end():]
+    body, faq_from_body = _split_faq(body)
+    _rest, faq_from_chunk = _split_faq(faq_chunk)
+    faq_raw = faq_from_chunk or faq_from_body
     body = re.sub(r"^## Body\s*\n+", "", body.strip() + "\n")
     faqs = []
     blob = faq_raw.strip() + "\n"
@@ -354,7 +357,13 @@ def update_head(html: str, meta: dict, faqs) -> str:
         html = re.sub(r'<meta name="description" content="[^"]*">', f'<meta name="description" content="{desc}">', html, count=1)
         html = re.sub(r'<meta property="og:description" content="[^"]*">', f'<meta property="og:description" content="{desc}">', html, count=1)
     if meta.get("h1") and meta.get("lede") is not None:
-        if re.search(r'<div class="intro"><h1>', html):
+        def _intro(m):
+            return m.group(1) + meta["h1"] + m.group(3) + (meta["lede"] or m.group(4)) + m.group(5)
+        html, n = re.subn(
+            r'(<div class="intro">\s*<h1>)(.*?)(</h1>\s*<p(?: class="lede")?>)(.*?)(</p>)',
+            _intro, html, count=1, flags=re.S,
+        )
+        if n == 0 and re.search(r'<div class="intro"><h1>', html):
             html = re.sub(
                 r'(<div class="intro"><h1>)(.*?)(</h1><p(?: class="lede")?>)(.*?)(</p></div>)',
                 lambda m: m.group(1) + meta["h1"] + '</h1><p class="lede">' + (meta["lede"] or m.group(4)) + m.group(5),
@@ -566,8 +575,8 @@ def patch_app_widget_hint():
         ? 'Type a date of birth to see your age in years, months and days.'
         : 'Type your date of birth. Your age, next birthday and the same figure in months, weeks and days appear here as you type.');"""
     if old not in t:
-        if "document.body.classList.contains('widget')" in t:
-            print("app.js widget hint already present")
+        if "document.body.classList.contains('widget')" in t or "Your age will appear here." in t:
+            print("app.js widget hint already present (or UX empty state)")
             return
         raise SystemExit("age empty hint not found")
     p.write_text(t.replace(old, new, 1))
@@ -594,7 +603,34 @@ def ensure_chrono_rule_line(html: str) -> str:
 
 
 
+SHELLS = Path(__file__).resolve().parent / "page_shells"
+
+def restore_shells():
+    """Reset HTML to the pre-UX shells so the UX transform is reproducible."""
+    if not SHELLS.exists():
+        raise SystemExit(f"page shells missing at {SHELLS}")
+    for src in sorted(SHELLS.glob("*.html")):
+        (DOCS / src.name).write_text(src.read_text())
+        print("restored shell", src.name)
+
+def apply_ux_pass():
+    import sys
+    ux = Path(__file__).resolve().parent / "ux"
+    if str(ux) not in sys.path:
+        sys.path.insert(0, str(ux))
+    from apply_ux import apply_ux
+    n = apply_ux(DOCS)
+    print(f"applied UX structure to {n} pages")
+    import subprocess
+    prerender = Path(__file__).resolve().parent / "ux" / "prerender.py"
+    r = subprocess.run(
+        ["/workspace/.pwvenv/bin/python", str(prerender), str(DOCS)],
+        check=True,
+    )
+    print("prerendered calculator pages")
+
 def main():
+    restore_shells()
     for md_name, html_name in PAGE.items():
         raw = (COPY / md_name).read_text()
         meta, body, faqs = parse_md(raw)
@@ -633,6 +669,7 @@ def main():
 
     patch_widget()
     patch_app_widget_hint()
+    apply_ux_pass()
 
     # confirm embed.js URL untouched in snippets
     emb = (DOCS / "embed.html").read_text()

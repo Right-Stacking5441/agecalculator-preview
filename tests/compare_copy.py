@@ -95,11 +95,15 @@ def parse_md(text: str):
         body, faq_chunk = parts[1], parts[2]
     else:
         body, faq_chunk = (parts[-1] if parts else text), ""
-    if "## Questions people ask" in body:
-        body, extra = body.split("## Questions people ask", 1)
-        if "## Questions people ask" not in faq_chunk:
-            faq_chunk = extra
-    faq_raw = faq_chunk.split("## Questions people ask", 1)[1] if "## Questions people ask" in faq_chunk else ""
+    def _split_faq(chunk: str):
+        """Split at the FAQ heading: legacy 'Questions people ask' or '… FAQs'."""
+        m = re.search(r"^##[^\n]*(?:Questions people ask|\bFAQs)\s*$", chunk, re.M)
+        if not m:
+            return chunk, ""
+        return chunk[:m.start()], chunk[m.end():]
+    body, faq_from_body = _split_faq(body)
+    _rest, faq_from_chunk = _split_faq(faq_chunk)
+    faq_raw = faq_from_chunk or faq_from_body
     body = re.sub(r"^## Body\s*\n+", "", body.strip() + "\n")
     faqs = []
     for m in re.finditer(r"###\s+(.+?)\n(.*?)(?=\n### |\Z)", faq_raw.strip() + "\n", re.S):
@@ -154,13 +158,24 @@ def visible_text(html: str) -> str:
     # keep noscript (widget no-JS line is in there)
     html = re.sub(r"(?is)<script[^>]*>.*?</script>", " ", html)
     html = re.sub(r"(?is)<style[^>]*>.*?</style>", " ", html)
-    html = re.sub(r"(?is)</?(p|div|section|h[1-6]|li|ul|ol|tr|td|th|table|thead|tbody|blockquote|pre|br|hr|aside|header|footer|nav|main|article|figure|figcaption|fieldset|legend)[^>]*>", " ", html)
+    html = re.sub(r"(?is)</?(p|div|section|h[1-6]|li|ul|ol|tr|td|th|table|thead|tbody|blockquote|pre|br|hr|aside|header|footer|nav|main|article|figure|figcaption|fieldset|legend|details|summary)[^>]*>", " ", html)
     html = re.sub(r"<[^>]+>", "", html)
     return fold(html)
 
 
 def visible_faqs(html: str):
     out = []
+    # UX-pass FAQ: <details class="qa"><summary><h3>Q</h3>…</summary><div class="qa-a">A</div>
+    for m in re.finditer(
+        r'<details class="qa">\s*<summary>\s*<h3>(.*?)</h3>.*?</summary>\s*<div class="qa-a">(.*?)</div>\s*</details>',
+        html,
+        re.S,
+    ):
+        q = fold(re.sub(r"<[^>]+>", "", m.group(1)))
+        a = fold(re.sub(r"<[^>]+>", "", m.group(2)))
+        out.append((q, a))
+    if out:
+        return out
     for m in re.finditer(
         r"<details>\s*<summary>(.*?)</summary>\s*<div>\s*<p>(.*?)</p>\s*</div>\s*</details>",
         html,
@@ -203,7 +218,7 @@ def main() -> int:
         html = (DOCS / html_name).read_text()
         meta, units, faqs = parse_md(raw)
         title = re.search(r"<title>([^<]*)</title>", html)
-        desc = re.search(r'<meta name="description" content="([^"]*)">', html)
+        desc = re.search(r'<meta[^>]*name="description"[^>]*content="([^"]*)"', html) or re.search(r'<meta[^>]*content="([^"]*)"[^>]*name="description"', html)
         h1m = re.search(r"<h1>([^<]*)</h1>", html) or re.search(r'<p class="w-title">([^<]*)</p>', html)
         lede = ""
         m = re.search(r'<div class="intro"><h1>[^<]*</h1><p(?: class="lede")?>(.*?)</p></div>', html, re.S)
@@ -233,7 +248,7 @@ def main() -> int:
                 "e.g. 15 March 1995",
                 "Age on this date",
                 'Time zone for "today"',
-                "Type a date of birth to see your age in years, months and days.",
+                "Your age will appear here.",
                 "This calculator needs JavaScript to work out the result. You can use it at agecalculator.com.",
                 "Age calculator by agecalculator.com",
             ]:

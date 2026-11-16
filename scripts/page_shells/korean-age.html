@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Korean Age Calculator: International, Korean and Year Age</title>
+<meta name="description" content="See your international age, traditional Korean age and year age side by side, with what changed when South Korea made international age the default in law in June 2023.">
+<link rel="canonical" href="https://agecalculator.com/korean-age">
+
+<meta property="og:title" content="Korean Age Calculator: International, Korean and Year Age">
+<meta property="og:description" content="See your international age, traditional Korean age and year age side by side, with what changed when South Korea made international age the default in law in June 2023.">
+<meta property="og:url" content="https://agecalculator.com/korean-age">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#f1f1ec">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/libre-franklin-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "WebApplication",
+ "name": "Korean Age Calculator: International, Korean and Year Age",
+ "url": "https://agecalculator.com/korean-age",
+ "applicationCategory": "UtilitiesApplication",
+ "operatingSystem": "All",
+ "browserRequirements": "Requires JavaScript",
+ "description": "See your international age, traditional Korean age and year age side by side, with what changed when South Korea made international age the default in law in June 2023.",
+ "offers": {
+  "@type": "Offer",
+  "price": "0",
+  "priceCurrency": "GBP"
+ }
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "BreadcrumbList",
+ "itemListElement": [
+  {
+   "@type": "ListItem",
+   "position": 1,
+   "name": "Home",
+   "item": "https://agecalculator.com/"
+  },
+  {
+   "@type": "ListItem",
+   "position": 2,
+   "name": "Korean age calculator",
+   "item": "https://agecalculator.com/korean-age"
+  }
+ ]
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "How do I calculate my Korean age?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Take the current year, subtract your birth year, and add 1. Your birthday makes no difference. Someone born in 1995 is 32 in Korean age throughout 2026."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Why am I two years older in Korean age?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Before your birthday in a given year, Korean age is two more than international age: one for being counted as 1 at birth, and one for the new year that has already passed."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Does South Korea still use Korean age?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Not for legal or official purposes. Since 28 June 2023 international age is the default in Korean law, so ages in laws, contracts and official documents are read that way unless a rule says otherwise. A few rules, such as buying alcohol and tobacco (Youth Protection Act) and military service, still went by year age as of the 2023 change, and Korean age is still used informally."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "What is year age?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "The current year minus your birth year, with no birthday involved. It’s the middle number in the result."
+   }
+  }
+ ]
+}
+</script>
+<script>var q=location.search;if(/[?&](dob|a|b|start|end|test|on|year)=/.test(q))document.documentElement.classList.add('prefill');if(/[?&](on|year)=/.test(q))document.documentElement.classList.add('prefill-on')</script>
+</head>
+<body data-page="korean-age">
+<div class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</div>
+
+<a class="skip" href="#tool">Skip to the calculator</a>
+<header class="mast"><div class="wrap">
+<a class="brand" href="./"><svg width="26" height="28" viewBox="0 0 26 28" aria-hidden="true"><rect x="1" y="3" width="24" height="24" fill="#fff" stroke="#1c1c1a" stroke-width="1.5"/><rect x="1" y="3" width="24" height="7" fill="#b4231b" stroke="#1c1c1a" stroke-width="1.5"/><circle cx="7.5" cy="6.5" r="1.4" fill="#fff"/><circle cx="18.5" cy="6.5" r="1.4" fill="#fff"/><path d="M7 1v4M19 1v4" stroke="#1c1c1a" stroke-width="1.5"/><path d="M8.2 22.5l4.3-8.8 4.3 8.8M9.8 19.4h5.4" fill="none" stroke="#1c1c1a" stroke-width="1.9"/></svg>agecalculator<span>.com</span></a>
+<p class="dateline" id="dateline"></p>
+<script>
+(function(){
+  var el=document.getElementById('dateline'); if(!el) return;
+  var M=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var W=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var n=new Date(), y=n.getFullYear(), m=n.getMonth()+1, d=n.getDate();
+  var mon=M[m-1], doy=Math.round((Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/864e5)+1;
+  el.innerHTML='<b><span class="dl-wd">'+W[n.getDay()]+' </span><span class="dl-long">'+d+' '+mon+' '+y+'</span><span class="dl-short">'+d+' '+mon.slice(0,3)+' '+y+'</span></b> <span class="dl-doy">day '+doy+' of the year</span>';
+})();
+</script>
+<a class="tools-link" href="#all-tools">All calculators</a>
+</div></header>
+<main id="main">
+<div class="band"><div class="wrap">
+<p class="crumbs"><a href="./">Age calculator</a> <span aria-hidden="true">/</span> Korean age calculator</p><div class="intro"><h1>Korean age calculator</h1><p class="lede">International age, Korean age and year age, side by side.</p></div>
+<div class="calc" data-calc data-tool="korean" id="tool">
+<form class="entry" novalidate autocomplete="on">
+<div class="datefield " data-datefield="dob">
+<label class="df-label" for="dob-q">Date of birth</label>
+<input id="dob-q" class="quick" type="text" spellcheck="false" autocomplete="bday" placeholder="e.g. 15 March 1995" aria-describedby="dob-read">
+<div class="parts" role="group" aria-label="Date of birth: day, month and year">
+<label><span>Day</span><input class="p-d" type="text" inputmode="numeric" maxlength="2" placeholder="DD" autocomplete="bday-day"></label>
+<label><span>Month</span><input class="p-m" type="text" inputmode="numeric" maxlength="2" placeholder="MM" autocomplete="bday-month"></label>
+<label><span>Year</span><input class="p-y" type="text" inputmode="numeric" maxlength="4" placeholder="YYYY" autocomplete="bday-year"></label>
+</div>
+<p class="readback" id="dob-read"></p>
+</div><div class="on">
+<p>As of <span id="on-label">today, <b>16 November 2026</b> <span class="zone">&nbsp;</span></span> <button type="button" class="textbtn" id="on-toggle" aria-expanded="false" aria-controls="on-box">Change</button></p>
+<div id="on-box" hidden>
+<div class="datefield df-small" data-datefield="on">
+<label class="df-label" for="on-q">Age on this date</label>
+<input id="on-q" class="quick" type="text" spellcheck="false" autocomplete="off" placeholder="e.g. 1 January 2030" aria-describedby="on-read">
+<div class="parts" role="group" aria-label="Age on this date: day, month and year">
+<label><span>Day</span><input class="p-d" type="text" inputmode="numeric" maxlength="2" placeholder="DD"></label>
+<label><span>Month</span><input class="p-m" type="text" inputmode="numeric" maxlength="2" placeholder="MM"></label>
+<label><span>Year</span><input class="p-y" type="text" inputmode="numeric" maxlength="4" placeholder="YYYY"></label>
+</div>
+<p class="readback" id="on-read"></p>
+</div>
+<label class="zone-pick">Time zone for “today” <select id="zone"><option>Europe/London</option></select></label>
+</div>
+</div>
+</form>
+<div class="result"><div class="leaf" id="leaf" data-state="empty"><div class="leaf-head"><span>Today</span></div>
+<div class="leaf-body"><div class="lead"><p class="big"><span class="num">16</span><span class="unit">November</span></p>
+<p class="rest">Type a date and the result appears here as you go.</p></div></div>
+<noscript><p class="hint">This calculator needs JavaScript to work the result out. The method is written out below the tool if you’d rather do it on paper.</p></noscript></div><p class="sr-only" id="live" aria-live="polite"></p></div>
+</div>
+</div></div>
+<div class="wrap page"><div class="content">
+<section>
+<p>Type a date of birth and the Korean age calculator shows three numbers. The big one is international age, the default in Korean law since 28 June 2023. Beside it are traditional Korean age (세는 나이), still heard in everyday life, and year age (연 나이), which a few rules, such as buying alcohol and tobacco and military service, used when the change came in. The date is today in your time zone, and you can change it to see any of the three on another day, such as a past New Year’s Day.</p>
+</section>
+<section>
+<h2>What the Korean age calculator counts</h2>
+<p><b>International age (만 나이, man nai)</b> starts at 0 when you’re born and goes up by one on each birthday. It’s the age used in most of the world and everywhere else on this site, including the main <a href="./">age calculator</a>.</p>
+<p><b>Korean age (세는 나이, se-neun nai)</b> starts at 1 on the day you’re born, and everyone gets a year older together on 1 January, not on their birthday. A baby born on 31 December is 1 that day and 2 the next morning.</p>
+<p><b>Year age (연 나이, yeon nai)</b>, sometimes called calendar age, is the current year minus your birth year. Birthdays don’t come into it, so someone born in 1995 is 31 for the whole of 2026.</p>
+<p>The simple rule of thumb: Korean age is international age plus one if your birthday has already passed this year, and plus two if it hasn’t. Year age sits in between.</p>
+</section>
+<section>
+<h2>A worked example</h2>
+<p>As of 16 November 2026, someone born on 20 December 1995 has three different ages:</p>
+<ul><li>International age: their 2026 birthday is still a month away, so they’re 30.</li><li>Korean age: 2026 minus 1995 is 31, plus 1 for being counted as 1 at birth, so 32.</li><li>Year age: 2026 minus 1995, so 31.</li></ul>
+<p>On 20 December 2026 their international age becomes 31, and the other two stay where they are. On 1 January 2027, Korean age goes to 33 and year age to 32, while international age stays at 31 until the next December.</p>
+</section>
+<section>
+<h2>What changed in June 2023</h2>
+<p>Laws amending South Korea’s Civil Act and the Framework Act on Public Administration (행정기본법) took effect on 28 June 2023. From that date, ages in laws, contracts and official documents are read as international age unless a specific law says otherwise. The <a href="https://www.korea.kr/news/policyNewsView.do?newsId=148916838">Ministry of Government Legislation’s announcement</a>, published on korea.kr (in Korean), sets out the change, and <a href="https://www.reuters.com/world/asia-pacific/south-koreans-become-year-or-two-younger-traditional-way-counting-age-scrapped-2023-06-28/">Reuters reported</a> that South Koreans became a year or two younger on paper that day.</p>
+<p>International age was not new for official use. According to the <a href="https://blogs.loc.gov/law/2023/01/koreans-becoming-younger-unification-of-age-counting-systems/">Law Library of Congress</a>, it was already the legal age in principle, for things like voting and driving, though some individual laws, such as the Youth Protection Act and the Military Service Act, counted in year age. What the 2023 laws did was make international age the default, so a rule or a form that doesn’t say which age it means is read as international age. Laws that say otherwise keep their own rule.</p>
+<p>Some rules still use year age. In a <a href="https://www.korea.kr/news/policyNewsView.do?newsId=156577051">briefing on 26 June 2023</a>, published on the government’s korea.kr site (in Korean), the Minister of Government Legislation said a few exceptions would be kept for now: school starting age, the age for buying alcohol and tobacco under the Youth Protection Act, the age for sitting civil service exams, and military service duty. School entry and military service, he said, are run a whole year at a time. Korean age also lives on in conversation, especially among older people and when working out who is senior to whom.</p>
+<p>This page explains how the counting works. It is not legal advice. For anything with legal weight in Korea, check the wording of the rule itself.</p>
+</section>
+<section>
+<h2>Why three systems caused trouble</h2>
+<p>With three ages in use, a number on its own was ambiguous. The Law Library of Congress gives the example of a COVID-19 vaccine label in South Korea that said “not recommended for those under the age of 30”, which led many people to ask whether that meant Korean age or international age. If someone tells you their Korean age today, take two off to get their international age if their birthday hasn’t come yet this year, or one if it has.</p>
+</section>
+<section class="faq" aria-labelledby="faq-h"><h2 id="faq-h">Questions people ask</h2><dl class="qa-list"><div class="qa"><dt>How do I calculate my Korean age?</dt><dd><p>Take the current year, subtract your birth year, and add 1. Your birthday makes no difference. Someone born in 1995 is 32 in Korean age throughout 2026.</p></dd></div><div class="qa"><dt>Why am I two years older in Korean age?</dt><dd><p>Before your birthday in a given year, Korean age is two more than international age: one for being counted as 1 at birth, and one for the new year that has already passed.</p></dd></div><div class="qa"><dt>Does South Korea still use Korean age?</dt><dd><p>Not for legal or official purposes. Since 28 June 2023 international age is the default in Korean law, so ages in laws, contracts and official documents are read that way unless a rule says otherwise. A few rules, such as buying alcohol and tobacco (Youth Protection Act) and military service, still went by year age as of the 2023 change, and Korean age is still used informally.</p></dd></div><div class="qa"><dt>What is year age?</dt><dd><p>The current year minus your birth year, with no birthday involved. It’s the middle number in the result.</p></dd></div></dl></section>
+</div><aside class="side" aria-label="More calculators"><h2>More calculators</h2><ul><li><a href="./">Age calculator</a></li><li><a href="difference">Age difference</a></li><li><a href="past">How old was I?</a></li><li><a href="how-old-will-i-be">How old will I be?</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="birthday-countdown">Birthday countdown</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a href="dog-age">Dog age</a></li><li><a href="cat-age">Cat age</a></li></ul></aside></div>
+</main>
+<footer class="foot"><div class="wrap">
+<div id="all-tools" class="foot-index"><h2>Every calculator on the site</h2><ul class="foot-tools"><li><a href="./">Age calculator</a> <span>your age today or on any date</span></li><li><a href="difference">Age difference</a> <span>the gap between two people</span></li><li><a href="past">How old was I?</a> <span>age on a date in the past</span></li><li><a href="how-old-will-i-be">How old will I be?</a> <span>age in a future year</span></li><li><a href="days-between-dates">Days between dates</a> <span>any two dates, with weekdays</span></li><li><a href="chronological-age">Chronological age</a> <span>y;m;d on a test date, printable</span></li><li><a href="birthday-countdown">Birthday countdown</a> <span>days until the next one</span></li><li><a href="what-year-was-i-born">What year was I born?</a> <span>birth year from an age</span></li><li><a href="dog-age">Dog age</a> <span>dog years by size</span></li><li><a href="cat-age">Cat age</a> <span>cat years and life stage</span></li></ul></div>
+<div class="foot-small"><p><b>agecalculator.com</b>. Dates you type are worked out in your browser and aren’t sent anywhere. Free to use.</p><p><a href="embed">Put this calculator on your own site</a> · <a href="privacy">Privacy</a></p></div>
+</div></footer>
+<script src="dates.js" defer></script>
+<script src="app.js" defer></script>
+</body>
+</html>

@@ -1,22 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en-GB">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="noindex,nofollow" name="robots"/>
 <title>How Old Will I Be? Your Age in Any Future Year</title>
-<meta name="description" content="Find out how old you’ll be in 2030, 2050 or any year, and the date you turn that age. Or pick an exact future date for years, months and days.">
-<link rel="canonical" href="https://agecalculator.com/how-old-will-i-be">
-
-<meta property="og:title" content="How Old Will I Be? Your Age in Any Future Year">
-<meta property="og:description" content="Find out how old you’ll be in 2030, 2050 or any year, and the date you turn that age. Or pick an exact future date for years, months and days.">
-<meta property="og:url" content="https://agecalculator.com/how-old-will-i-be">
-<meta property="og:type" content="website">
-<meta name="theme-color" content="#f1f1ec">
-<link rel="icon" href="favicon.ico" sizes="32x32">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preload" href="fonts/libre-franklin-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="styles.css">
+<meta content="Find out how old you’ll be in 2030, 2050 or any year, and the date you turn that age. Or choose an exact future date for years, months and days." name="description"/>
+<link href="https://agecalculator.com/how-old-will-i-be" rel="canonical"/>
+<meta content="How Old Will I Be? Your Age in Any Future Year" property="og:title"/>
+<meta content="Find out how old you’ll be in 2030, 2050 or any year, and the date you turn that age. Or choose an exact future date for years, months and days." property="og:description"/>
+<meta content="https://agecalculator.com/how-old-will-i-be" property="og:url"/>
+<meta content="website" property="og:type"/>
+<meta content="#f1f1ec" name="theme-color"/>
+<link href="favicon.ico" rel="icon" sizes="32x32"/>
+<link href="favicon.svg" rel="icon" type="image/svg+xml"/>
+<link as="font" crossorigin="" href="fonts/libre-franklin-var.woff2" rel="preload" type="font/woff2"/>
+<link href="styles.css" rel="stylesheet"/>
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -26,32 +26,12 @@
  "applicationCategory": "UtilitiesApplication",
  "operatingSystem": "All",
  "browserRequirements": "Requires JavaScript",
- "description": "Find out how old you’ll be in 2030, 2050 or any year, and the date you turn that age. Or pick an exact future date for years, months and days.",
+ "description": "Find out how old you’ll be in 2030, 2050 or any year, and the date you turn that age. Or choose an exact future date for years, months and days.",
  "offers": {
   "@type": "Offer",
   "price": "0",
   "priceCurrency": "GBP"
  }
-}
-</script>
-<script type="application/ld+json">
-{
- "@context": "https://schema.org",
- "@type": "BreadcrumbList",
- "itemListElement": [
-  {
-   "@type": "ListItem",
-   "position": 1,
-   "name": "Home",
-   "item": "https://agecalculator.com/"
-  },
-  {
-   "@type": "ListItem",
-   "position": 2,
-   "name": "How old will I be?",
-   "item": "https://agecalculator.com/how-old-will-i-be"
-  }
- ]
 }
 </script>
 <script type="application/ld+json">
@@ -88,104 +68,78 @@
    "name": "Can I check my age on a specific future day?",
    "acceptedAnswer": {
     "@type": "Answer",
-    "text": "Yes. Press Change next to “Or pick” and type the date. The result then gives years, months and days on that day."
+    "text": "Yes. Press Change next to “Or use an exact date” and type the date. The result then gives years, months and days on that day."
    }
   }
  ]
 }
 </script>
-<script>var q=location.search;if(/[?&](dob|a|b|start|end|test|on|year)=/.test(q))document.documentElement.classList.add('prefill');if(/[?&](on|year)=/.test(q))document.documentElement.classList.add('prefill-on')</script>
-</head>
+<script>var q=location.search;if(/[?&](dob|a|b|start|end|test|on|year)=/.test(q))document.documentElement.classList.add('prefill');if(/[?&]year=/.test(q))document.documentElement.classList.add('prefill-year');if(/[?&](on|year)=/.test(q))document.documentElement.classList.add('prefill-on')</script>
+<link href="ux.css" rel="stylesheet"/></head>
 <body data-page="how-old-will-i-be">
-<div class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</div>
-
 <a class="skip" href="#tool">Skip to the calculator</a>
-<header class="mast"><div class="wrap">
-<a class="brand" href="./"><svg width="26" height="28" viewBox="0 0 26 28" aria-hidden="true"><rect x="1" y="3" width="24" height="24" fill="#fff" stroke="#1c1c1a" stroke-width="1.5"/><rect x="1" y="3" width="24" height="7" fill="#b4231b" stroke="#1c1c1a" stroke-width="1.5"/><circle cx="7.5" cy="6.5" r="1.4" fill="#fff"/><circle cx="18.5" cy="6.5" r="1.4" fill="#fff"/><path d="M7 1v4M19 1v4" stroke="#1c1c1a" stroke-width="1.5"/><path d="M8.2 22.5l4.3-8.8 4.3 8.8M9.8 19.4h5.4" fill="none" stroke="#1c1c1a" stroke-width="1.9"/></svg>agecalculator<span>.com</span></a>
-<p class="dateline" id="dateline"></p>
-<script>
-(function(){
-  var el=document.getElementById('dateline'); if(!el) return;
-  var M=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  var W=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  var n=new Date(), y=n.getFullYear(), m=n.getMonth()+1, d=n.getDate();
-  var mon=M[m-1], doy=Math.round((Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/864e5)+1;
-  el.innerHTML='<b><span class="dl-wd">'+W[n.getDay()]+' </span><span class="dl-long">'+d+' '+mon+' '+y+'</span><span class="dl-short">'+d+' '+mon.slice(0,3)+' '+y+'</span></b> <span class="dl-doy">day '+doy+' of the year</span>';
-})();
-</script>
-<a class="tools-link" href="#all-tools">All calculators</a>
-</div></header>
+<header class="mast"><div class="wrap"><a class="brand" href="./"><svg aria-hidden="true" height="28" viewbox="0 0 26 28" width="26"><rect fill="#fff" height="24" stroke="#1c1c1a" stroke-width="1.5" width="24" x="1" y="3"></rect><rect fill="#b4231b" height="7" stroke="#1c1c1a" stroke-width="1.5" width="24" x="1" y="3"></rect><circle cx="7.5" cy="6.5" fill="#fff" r="1.4"></circle><circle cx="18.5" cy="6.5" fill="#fff" r="1.4"></circle><path d="M7 1v4M19 1v4" stroke="#1c1c1a" stroke-width="1.5"></path><path d="M8.2 22.5l4.3-8.8 4.3 8.8M9.8 19.4h5.4" fill="none" stroke="#1c1c1a" stroke-width="1.9"></path></svg><span class="wm">agecalculator<span>.com</span></span></a><details class="nav-menu"><summary><svg aria-hidden="true" class="ic ic-menu" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M4 7.2c5.4-.3 10.7-.2 16 .1M4 12.1c5.3-.2 10.6-.1 16 0M4 16.9c3.6-.2 7.2-.2 10.8 0"></path></svg><span>Calculators</span></summary><ul><li><a href="./">Age calculator</a></li><li><a href="difference">Age difference</a></li><li><a href="past">How old was I?</a></li><li><a aria-current="page" href="how-old-will-i-be">How old will I be?</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="birthday-countdown">Birthday countdown</a></li><li><a href="korean-age">Korean age</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a href="dog-age">Dog age</a></li><li><a href="cat-age">Cat age</a></li></ul></details></div></header>
 <main id="main">
 <div class="band"><div class="wrap">
-<p class="crumbs"><a href="./">Age calculator</a> <span aria-hidden="true">/</span> How old will I be?</p><div class="intro"><h1>How old will I be?</h1><p class="lede">Your age in any future year, or on an exact date.</p></div>
-<div class="calc" data-calc data-tool="future" id="tool">
-<form class="entry" novalidate autocomplete="on">
-<div class="datefield " data-datefield="dob">
-<label class="df-label" for="dob-q">Date of birth</label>
-<input id="dob-q" class="quick" type="text" spellcheck="false" autocomplete="bday" placeholder="e.g. 15 March 1995" aria-describedby="dob-read">
-<div class="parts" role="group" aria-label="Date of birth: day, month and year">
-<label><span>Day</span><input class="p-d" type="text" inputmode="numeric" maxlength="2" placeholder="DD" autocomplete="bday-day"></label>
-<label><span>Month</span><input class="p-m" type="text" inputmode="numeric" maxlength="2" placeholder="MM" autocomplete="bday-month"></label>
-<label><span>Year</span><input class="p-y" type="text" inputmode="numeric" maxlength="4" placeholder="YYYY" autocomplete="bday-year"></label>
+<div class="calc" data-calc="" data-tool="future" id="tool">
+<div class="entry-col"><div class="intro"><h1>How old will I be?</h1><p class="lede">How old will I be in 2050, or in any other year? Put in your date of birth and a year to see the age you reach and the day you reach it.</p></div><form autocomplete="on" class="entry" novalidate="">
+<div class="datefield" data-datefield="dob">
+<label class="df-label" for="dob-q">Enter your date of birth</label>
+<input aria-describedby="dob-read" autocomplete="bday" class="quick" id="dob-q" placeholder="e.g. 15 March 1995" spellcheck="false" type="text"/>
+<div class="df-foot"><p class="readback" id="dob-read"></p><button aria-controls="dob-parts" aria-expanded="false" aria-label="Type the day, month and year in separate boxes" class="textbtn parts-toggle" type="button"><svg aria-hidden="true" class="ic ic-boxes" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M3.4 8.9l4.7.1v6.1H3.5zM10 9h4.3l.1 6h-4.4zM16.4 8.9h4.2v6.2h-4.2z"></path></svg><span>Type day, month and year separately</span></button></div><div aria-label="Date of birth: day, month and year" class="parts" hidden="" id="dob-parts" role="group">
+<label><span>Day</span><input autocomplete="bday-day" class="p-d" inputmode="numeric" maxlength="2" placeholder="DD" type="text"/></label>
+<label><span>Month</span><input autocomplete="bday-month" class="p-m" inputmode="numeric" maxlength="2" placeholder="MM" type="text"/></label>
+<label><span>Year</span><input autocomplete="bday-year" class="p-y" inputmode="numeric" maxlength="4" placeholder="YYYY" type="text"/></label>
 </div>
-<p class="readback" id="dob-read"></p>
-</div><label class="name year-in">In the year <input id="in-year" type="text" inputmode="numeric" maxlength="4" value="2050"></label><div class="on">
-<p>Or pick <span id="on-label" data-idle="an exact date instead of a year">today, <b>16 November 2026</b></span> <button type="button" class="textbtn" id="on-toggle" aria-expanded="false" aria-controls="on-box">Change</button></p>
-<div id="on-box" hidden>
+</div><label class="name year-in">In the year <input id="in-year" inputmode="numeric" maxlength="4" type="text" value="2050"/></label>
+</form></div>
+<div class="result"><div class="leaf obj obj-planner" data-state="empty" id="leaf"><p class="ph-msg">Your age in that year will appear here.</p><noscript><p class="hint">This calculator needs JavaScript to work the result out. The method is written out below the tool if you’d rather do it on paper.</p></noscript></div><p aria-live="polite" class="sr-only" id="live"></p><div class="on settings">
+<p><svg aria-hidden="true" class="ic ic-clock" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M12 3.4c4.9-.1 8.6 3.7 8.6 8.5 0 4.8-3.8 8.7-8.7 8.6-4.7-.1-8.4-3.9-8.3-8.7.1-4.6 3.6-8.3 8.6-8.5.6 0 1.2.1 1.7.2M12 7.4v4.8l3.1 2.1"></path></svg><span data-idle="Or use an exact date" id="on-label">Or use an exact date</span> <button aria-controls="on-box" aria-expanded="false" class="textbtn" data-label="Change" id="on-toggle" type="button">Change</button></p>
+<div hidden="" id="on-box">
 <div class="datefield df-small" data-datefield="on">
 <label class="df-label" for="on-q">Exact date</label>
-<input id="on-q" class="quick" type="text" spellcheck="false" autocomplete="off" placeholder="e.g. 1 January 2030" aria-describedby="on-read">
-<div class="parts" role="group" aria-label="Exact date: day, month and year">
-<label><span>Day</span><input class="p-d" type="text" inputmode="numeric" maxlength="2" placeholder="DD"></label>
-<label><span>Month</span><input class="p-m" type="text" inputmode="numeric" maxlength="2" placeholder="MM"></label>
-<label><span>Year</span><input class="p-y" type="text" inputmode="numeric" maxlength="4" placeholder="YYYY"></label>
+<input aria-describedby="on-read" autocomplete="off" class="quick" id="on-q" placeholder="e.g. 1 January 2030" spellcheck="false" type="text"/>
+<div class="df-foot"><p class="readback" id="on-read"></p></div><div aria-label="Exact date: day, month and year" class="parts" hidden="" id="on-parts" role="group">
+<label><span>Day</span><input class="p-d" inputmode="numeric" maxlength="2" placeholder="DD" type="text"/></label>
+<label><span>Month</span><input class="p-m" inputmode="numeric" maxlength="2" placeholder="MM" type="text"/></label>
+<label><span>Year</span><input class="p-y" inputmode="numeric" maxlength="4" placeholder="YYYY" type="text"/></label>
 </div>
-<p class="readback" id="on-read"></p>
 </div>
 <label class="zone-pick">Time zone for “today” <select id="zone"><option>Europe/London</option></select></label>
 </div>
-</div>
-</form>
-<div class="result"><div class="leaf" id="leaf" data-state="empty"><div class="leaf-head"><span>Today</span></div>
-<div class="leaf-body"><div class="lead"><p class="big"><span class="num">16</span><span class="unit">November</span></p>
-<p class="rest">Type a date and the result appears here as you go.</p></div></div>
-<noscript><p class="hint">This calculator needs JavaScript to work the result out. The method is written out below the tool if you’d rather do it on paper.</p></noscript></div><p class="sr-only" id="live" aria-live="polite"></p></div>
+</div></div>
 </div>
 </div></div>
-<div class="wrap page"><div class="content">
-<section>
+<div class="wrap page"><div class="content"><nav aria-labelledby="rel-h" class="related"><h2 id="rel-h">More calculators</h2><ul><li><a href="./">Age calculator</a></li><li><a href="difference">Age difference</a></li><li><a href="past">How old was I?</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="birthday-countdown">Birthday countdown</a></li><li><a href="korean-age">Korean age</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a href="dog-age">Dog age</a></li><li><a href="cat-age">Cat age</a></li></ul></nav>
+<details class="topic"><summary><h2>How to work out a future age</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>Type your date of birth and a year, and the page answers “how old will I be” in that year: the age you reach, the date you reach it, and the age you are before that date. The year box starts at 2050, so the first answer you see is for 2050. Change it to any year from 1000 to 2999.</p>
-<p>The result also lists your age on 1 January and on 31 December of that year, the weekday your birthday falls on, and how many days there are from today until it. If you’d rather know your age on one particular day, press Change and pick an exact date instead. The result then switches to years, months and days, the same as the main age calculator.</p>
-</section>
-<section>
-<h2>Two ages in one year</h2>
+<p>The result also lists your age on 1 January and on 31 December of that year. Under More are the weekday your birthday falls on and how many days there are from today until it. If you’d rather know your age on one particular day, press Change and pick an exact date instead. The result then switches to years, months and days, the same as the main age calculator.</p>
+</div></details>
+<details class="topic"><summary><h2>Two ages in one year</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>Everyone is two ages during a year, one before their birthday and one after, unless they were born on 1 January. That’s why a single number for “how old will I be in 2050” can be wrong for half the year.</p>
-</section>
-<section>
-<h2>A worked example</h2>
+</div></details>
+<details class="topic"><summary><h2>A worked example</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>Someone born on 15 March 1995 asks how old they will be in 2050.</p>
 <ul><li>2050 minus 1995 is 55. That is the age they reach on their birthday that year.</li><li>Their birthday in 2050 is Tuesday 15 March.</li><li>Before that, from 1 January to 14 March 2050, they are still 54.</li></ul>
-<p>So they are 54 at the start of 2050 and 55 from 15 March onwards, and they finish the year at 55. As of 16 November 2026, that birthday is 8,520 days away.</p>
-<p>For an exact date, the same person on 1 January 2040 will be 44 years, 9 months and 17 days old: 44 from their birthday in March 2039, then nine months to 15 December, then 17 days.</p>
-</section>
-<section>
-<h2>Born on 29 February</h2>
+<p>So they are 54 at the start of 2050 and 55 from 15 March onwards, and they finish the year at 55. Counted from 16 November 2026, that birthday was 8,520 days away.</p>
+<p>For an exact date, the same person is 44 years, 9 months and 17 days old on 1 January 2040: 44 from their birthday in March 2039, then nine months to 15 December, then 17 days.</p>
+</div></details>
+<details class="topic"><summary><h2>Born on 29 February</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>This calculator counts a 29 February birthday as falling on 1 March in common years. That is the rule in Scottish law under the <a href="https://www.legislation.gov.uk/ukpga/1991/50/section/6">Age of Legal Capacity (Scotland) Act 1991, section 6(2)</a>; the law in England, Wales and Northern Ireland does not name a date. 2050 isn’t a leap year, so someone born on 29 February 2000 turns 50 on Tuesday 1 March 2050, and the page says the birthday falls on 1 March. In a leap year such as 2048, it falls on the 29th. All the tools on this site use the same rule, including the <a href="./">age calculator</a>.</p>
-</section>
-<section>
-<h2>Why people ask “how old will I be?”</h2>
+</div></details>
+<details class="topic"><summary><h2>Why people ask “how old will I be?”</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>Mostly for planning. How old will I be when the mortgage is paid off, when the children leave school, when a pension can be drawn, or when a passport or driving licence next needs renewing. If the plan hangs on a specific day, use the exact date option, because “the year I turn 60” covers two different ages.</p>
 <p>People also ask it for fun about milestone years like 2030, 2050 or 2100. The year box takes any year from 1000 to 2999.</p>
 <p>If the year you type is before you were born, the page says so instead of giving a negative age. A year that has already gone works too; the “days from today” line just says the birthday has already passed. For dates in the past, though, <a href="past">how old was I</a> is set up for the job. To work out a birth year from an age rather than the other way round, use <a href="what-year-was-i-born">what year was I born</a>.</p>
-</section>
-<section class="faq" aria-labelledby="faq-h"><h2 id="faq-h">Questions people ask</h2><dl class="qa-list"><div class="qa"><dt>How old will I be in 2050?</dt><dd><p>Subtract your birth year from 2050. That’s the age you reach on your birthday in 2050; before that day you’ll be one younger. Born in 1995, you turn 55 in 2050 and are 54 until your birthday.</p></dd></div><div class="qa"><dt>How do I work out my age on a future date?</dt><dd><p>Subtract your birth year from the year of the date, then take one off if your birthday in that year falls after the date. For months and days as well, use the exact date option.</p></dd></div><div class="qa"><dt>What if I was born on 29 February?</dt><dd><p>This calculator counts your birthday as 1 March in years without a 29 February, and the 29th itself in leap years.</p></dd></div><div class="qa"><dt>Can I check my age on a specific future day?</dt><dd><p>Yes. Press Change next to “Or pick” and type the date. The result then gives years, months and days on that day.</p></dd></div></dl></section>
-</div><aside class="side" aria-label="More calculators"><h2>More calculators</h2><ul><li><a href="./">Age calculator</a></li><li><a href="difference">Age difference</a></li><li><a href="past">How old was I?</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="birthday-countdown">Birthday countdown</a></li><li><a href="korean-age">Korean age</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a href="dog-age">Dog age</a></li><li><a href="cat-age">Cat age</a></li></ul></aside></div>
+</div></details>
+<section aria-labelledby="faq-h" class="faq"><h2 id="faq-h">Future age FAQs</h2><details class="qa"><summary><h3>How old will I be in 2050?</h3><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="qa-a"><p>Subtract your birth year from 2050. That’s the age you reach on your birthday in 2050; before that day you’ll be one younger. Born in 1995, you turn 55 in 2050 and are 54 until your birthday.</p></div></details><details class="qa"><summary><h3>How do I work out my age on a future date?</h3><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="qa-a"><p>Subtract your birth year from the year of the date, then take one off if your birthday in that year falls after the date. For months and days as well, use the exact date option.</p></div></details><details class="qa"><summary><h3>What if I was born on 29 February?</h3><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="qa-a"><p>This calculator counts your birthday as 1 March in years without a 29 February, and the 29th itself in leap years.</p></div></details><details class="qa"><summary><h3>Can I check my age on a specific future day?</h3><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="qa-a"><p>Yes. Press Change next to “Or use an exact date” and type the date. The result then gives years, months and days on that day.</p></div></details></section>
+</div></div>
 </main>
 <footer class="foot"><div class="wrap">
-<div id="all-tools" class="foot-index"><h2>Every calculator on the site</h2><ul class="foot-tools"><li><a href="./">Age calculator</a> <span>your age today or on any date</span></li><li><a href="difference">Age difference</a> <span>the gap between two people</span></li><li><a href="past">How old was I?</a> <span>age on a date in the past</span></li><li><a href="days-between-dates">Days between dates</a> <span>any two dates, with weekdays</span></li><li><a href="chronological-age">Chronological age</a> <span>y;m;d on a test date, printable</span></li><li><a href="birthday-countdown">Birthday countdown</a> <span>days until the next one</span></li><li><a href="korean-age">Korean age</a> <span>all three counting systems</span></li><li><a href="what-year-was-i-born">What year was I born?</a> <span>birth year from an age</span></li><li><a href="dog-age">Dog age</a> <span>dog years by size</span></li><li><a href="cat-age">Cat age</a> <span>cat years and life stage</span></li></ul></div>
+<div class="foot-index" id="all-tools"><h2>Every calculator on the site</h2><ul class="foot-tools"><li><a href="./">Age calculator</a></li><li><a href="difference">Age difference</a></li><li><a href="past">How old was I?</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="birthday-countdown">Birthday countdown</a></li><li><a href="korean-age">Korean age</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a href="dog-age">Dog age</a></li><li><a href="cat-age">Cat age</a></li></ul></div>
 <div class="foot-small"><p><b>agecalculator.com</b>. Dates you type are worked out in your browser and aren’t sent anywhere. Free to use.</p><p><a href="embed">Put this calculator on your own site</a> · <a href="privacy">Privacy</a></p></div>
 </div></footer>
-<script src="dates.js" defer></script>
-<script src="app.js" defer></script>
+<script defer="" src="dates.js"></script>
+<script defer="" src="app.js"></script>
 </body>
 </html>

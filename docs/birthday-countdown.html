@@ -1,22 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en-GB">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="noindex,nofollow" name="robots"/>
 <title>Birthday Countdown: Days Until Your Next Birthday</title>
-<meta name="description" content="Type a date of birth to see how many days until the next birthday, the weekday it falls on, the age it brings, and a clock to midnight tonight.">
-<link rel="canonical" href="https://agecalculator.com/birthday-countdown">
-
-<meta property="og:title" content="Birthday Countdown: Days Until Your Next Birthday">
-<meta property="og:description" content="Type a date of birth to see how many days until the next birthday, the weekday it falls on, the age it brings, and a clock to midnight tonight.">
-<meta property="og:url" content="https://agecalculator.com/birthday-countdown">
-<meta property="og:type" content="website">
-<meta name="theme-color" content="#f1f1ec">
-<link rel="icon" href="favicon.ico" sizes="32x32">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preload" href="fonts/libre-franklin-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="styles.css">
+<meta content="Type a date of birth to see how many days until the next birthday, the weekday it falls on, the age it brings, and a clock to midnight tonight." name="description"/>
+<link href="https://agecalculator.com/birthday-countdown" rel="canonical"/>
+<meta content="Birthday Countdown: Days Until Your Next Birthday" property="og:title"/>
+<meta content="Type a date of birth to see how many days until the next birthday, the weekday it falls on, the age it brings, and a clock to midnight tonight." property="og:description"/>
+<meta content="https://agecalculator.com/birthday-countdown" property="og:url"/>
+<meta content="website" property="og:type"/>
+<meta content="#f1f1ec" name="theme-color"/>
+<link href="favicon.ico" rel="icon" sizes="32x32"/>
+<link href="favicon.svg" rel="icon" type="image/svg+xml"/>
+<link as="font" crossorigin="" href="fonts/libre-franklin-var.woff2" rel="preload" type="font/woff2"/>
+<link href="styles.css" rel="stylesheet"/>
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -37,26 +37,6 @@
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
- "@type": "BreadcrumbList",
- "itemListElement": [
-  {
-   "@type": "ListItem",
-   "position": 1,
-   "name": "Home",
-   "item": "https://agecalculator.com/"
-  },
-  {
-   "@type": "ListItem",
-   "position": 2,
-   "name": "Birthday countdown",
-   "item": "https://agecalculator.com/birthday-countdown"
-  }
- ]
-}
-</script>
-<script type="application/ld+json">
-{
- "@context": "https://schema.org",
  "@type": "FAQPage",
  "mainEntity": [
   {
@@ -72,7 +52,7 @@
    "name": "What day of the week is my birthday this year?",
    "acceptedAnswer": {
     "@type": "Answer",
-    "text": "The result names the weekday for your next birthday, and the line “Weekend birthday?” says whether it falls on a Saturday or Sunday."
+    "text": "The result names the weekday for your next birthday, and the line “Weekend birthday?”, under More, says whether it falls on a Saturday or Sunday."
    }
   },
   {
@@ -94,86 +74,60 @@
  ]
 }
 </script>
-<script>var q=location.search;if(/[?&](dob|a|b|start|end|test|on|year)=/.test(q))document.documentElement.classList.add('prefill');if(/[?&](on|year)=/.test(q))document.documentElement.classList.add('prefill-on')</script>
-</head>
+<script>var q=location.search;if(/[?&](dob|a|b|start|end|test|on|year)=/.test(q))document.documentElement.classList.add('prefill');if(/[?&]year=/.test(q))document.documentElement.classList.add('prefill-year');if(/[?&](on|year)=/.test(q))document.documentElement.classList.add('prefill-on')</script>
+<link href="ux.css" rel="stylesheet"/></head>
 <body data-page="birthday-countdown">
-<div class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</div>
-
 <a class="skip" href="#tool">Skip to the calculator</a>
-<header class="mast"><div class="wrap">
-<a class="brand" href="./"><svg width="26" height="28" viewBox="0 0 26 28" aria-hidden="true"><rect x="1" y="3" width="24" height="24" fill="#fff" stroke="#1c1c1a" stroke-width="1.5"/><rect x="1" y="3" width="24" height="7" fill="#b4231b" stroke="#1c1c1a" stroke-width="1.5"/><circle cx="7.5" cy="6.5" r="1.4" fill="#fff"/><circle cx="18.5" cy="6.5" r="1.4" fill="#fff"/><path d="M7 1v4M19 1v4" stroke="#1c1c1a" stroke-width="1.5"/><path d="M8.2 22.5l4.3-8.8 4.3 8.8M9.8 19.4h5.4" fill="none" stroke="#1c1c1a" stroke-width="1.9"/></svg>agecalculator<span>.com</span></a>
-<p class="dateline" id="dateline"></p>
-<script>
-(function(){
-  var el=document.getElementById('dateline'); if(!el) return;
-  var M=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  var W=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  var n=new Date(), y=n.getFullYear(), m=n.getMonth()+1, d=n.getDate();
-  var mon=M[m-1], doy=Math.round((Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/864e5)+1;
-  el.innerHTML='<b><span class="dl-wd">'+W[n.getDay()]+' </span><span class="dl-long">'+d+' '+mon+' '+y+'</span><span class="dl-short">'+d+' '+mon.slice(0,3)+' '+y+'</span></b> <span class="dl-doy">day '+doy+' of the year</span>';
-})();
-</script>
-<a class="tools-link" href="#all-tools">All calculators</a>
-</div></header>
+<header class="mast"><div class="wrap"><a class="brand" href="./"><svg aria-hidden="true" height="28" viewbox="0 0 26 28" width="26"><rect fill="#fff" height="24" stroke="#1c1c1a" stroke-width="1.5" width="24" x="1" y="3"></rect><rect fill="#b4231b" height="7" stroke="#1c1c1a" stroke-width="1.5" width="24" x="1" y="3"></rect><circle cx="7.5" cy="6.5" fill="#fff" r="1.4"></circle><circle cx="18.5" cy="6.5" fill="#fff" r="1.4"></circle><path d="M7 1v4M19 1v4" stroke="#1c1c1a" stroke-width="1.5"></path><path d="M8.2 22.5l4.3-8.8 4.3 8.8M9.8 19.4h5.4" fill="none" stroke="#1c1c1a" stroke-width="1.9"></path></svg><span class="wm">agecalculator<span>.com</span></span></a><details class="nav-menu"><summary><svg aria-hidden="true" class="ic ic-menu" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M4 7.2c5.4-.3 10.7-.2 16 .1M4 12.1c5.3-.2 10.6-.1 16 0M4 16.9c3.6-.2 7.2-.2 10.8 0"></path></svg><span>Calculators</span></summary><ul><li><a href="./">Age calculator</a></li><li><a href="difference">Age difference</a></li><li><a href="past">How old was I?</a></li><li><a href="how-old-will-i-be">How old will I be?</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="chronological-age">Chronological age</a></li><li><a aria-current="page" href="birthday-countdown">Birthday countdown</a></li><li><a href="korean-age">Korean age</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a href="dog-age">Dog age</a></li><li><a href="cat-age">Cat age</a></li></ul></details></div></header>
 <main id="main">
 <div class="band"><div class="wrap">
-<p class="crumbs"><a href="./">Age calculator</a> <span aria-hidden="true">/</span> Birthday countdown</p><div class="intro"><h1>Birthday countdown</h1><p class="lede">Days until the next birthday, and the day of the week it lands on.</p></div>
-<div class="calc" data-calc data-tool="countdown" id="tool">
-<form class="entry" novalidate autocomplete="on">
-<div class="datefield " data-datefield="dob">
-<label class="df-label" for="dob-q">Date of birth</label>
-<input id="dob-q" class="quick" type="text" spellcheck="false" autocomplete="bday" placeholder="e.g. 15 March 1995" aria-describedby="dob-read">
-<div class="parts" role="group" aria-label="Date of birth: day, month and year">
-<label><span>Day</span><input class="p-d" type="text" inputmode="numeric" maxlength="2" placeholder="DD" autocomplete="bday-day"></label>
-<label><span>Month</span><input class="p-m" type="text" inputmode="numeric" maxlength="2" placeholder="MM" autocomplete="bday-month"></label>
-<label><span>Year</span><input class="p-y" type="text" inputmode="numeric" maxlength="4" placeholder="YYYY" autocomplete="bday-year"></label>
+<div class="calc" data-calc="" data-tool="countdown" id="tool">
+<div class="entry-col"><div class="intro"><h1>Birthday countdown</h1><p class="lede">Our birthday countdown tells you how many days are left until the next birthday and what day of the week it falls on, with a clock ticking down to midnight tonight.</p></div><form autocomplete="on" class="entry" novalidate="">
+<div class="datefield" data-datefield="dob">
+<label class="df-label" for="dob-q">Enter the date of birth</label>
+<input aria-describedby="dob-read" autocomplete="bday" class="quick" id="dob-q" placeholder="e.g. 15 March 1995" spellcheck="false" type="text"/>
+<div class="df-foot"><p class="readback" id="dob-read"></p><button aria-controls="dob-parts" aria-expanded="false" aria-label="Type the day, month and year in separate boxes" class="textbtn parts-toggle" type="button"><svg aria-hidden="true" class="ic ic-boxes" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M3.4 8.9l4.7.1v6.1H3.5zM10 9h4.3l.1 6h-4.4zM16.4 8.9h4.2v6.2h-4.2z"></path></svg><span>Type day, month and year separately</span></button></div><div aria-label="Date of birth: day, month and year" class="parts" hidden="" id="dob-parts" role="group">
+<label><span>Day</span><input autocomplete="bday-day" class="p-d" inputmode="numeric" maxlength="2" placeholder="DD" type="text"/></label>
+<label><span>Month</span><input autocomplete="bday-month" class="p-m" inputmode="numeric" maxlength="2" placeholder="MM" type="text"/></label>
+<label><span>Year</span><input autocomplete="bday-year" class="p-y" inputmode="numeric" maxlength="4" placeholder="YYYY" type="text"/></label>
 </div>
-<p class="readback" id="dob-read"></p>
 </div>
-</form>
-<div class="result"><div class="leaf" id="leaf" data-state="empty"><div class="leaf-head"><span>Today</span></div>
-<div class="leaf-body"><div class="lead"><p class="big"><span class="num">16</span><span class="unit">November</span></p>
-<p class="rest">Type a date and the result appears here as you go.</p></div></div>
-<noscript><p class="hint">This calculator needs JavaScript to work the result out. The method is written out below the tool if you’d rather do it on paper.</p></noscript></div><p class="sr-only" id="live" aria-live="polite"></p></div>
+</form></div>
+<div class="result"><div class="leaf leaf-stack" data-state="empty" id="leaf"><div class="leaf-body"><div class="lead"><p class="ph-msg">The days to the next birthday will appear here.</p></div></div><noscript><p class="hint">This calculator needs JavaScript to work the result out. The method is written out below the tool if you’d rather do it on paper.</p></noscript></div><p aria-live="polite" class="sr-only" id="live"></p></div>
 </div>
 </div></div>
-<div class="wrap page"><div class="content">
-<section>
-<p>Type a date of birth and the birthday countdown shows how many days are left until the next birthday, the date and weekday it falls on, and the age it brings. Under that you’ll find the same wait in weeks, whether the birthday lands on a weekend, how many birthdays have gone by so far, and a clock counting down to midnight tonight. The clock is the only part of the page that moves.</p>
+<div class="wrap page"><div class="content"><nav aria-labelledby="rel-h" class="related"><h2 id="rel-h">More calculators</h2><ul><li><a href="./">Age calculator</a></li><li><a href="difference">Age difference</a></li><li><a href="past">How old was I?</a></li><li><a href="how-old-will-i-be">How old will I be?</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="korean-age">Korean age</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a href="dog-age">Dog age</a></li><li><a href="cat-age">Cat age</a></li></ul></nav>
+<details class="topic"><summary><h2>How to use the birthday countdown</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
+<p>Type a date of birth and the birthday countdown shows how many days are left until the next birthday, the date and weekday it falls on, and the age it brings. Under that you’ll find the same wait in weeks and a clock counting down to midnight tonight. Open More to see whether the birthday lands on a weekend and how many birthdays have gone by so far. The clock is the only part of the page that moves.</p>
 <p>If the birthday is today, the page says so and wishes a happy birthday, instead of counting to next year.</p>
-</section>
-<section>
-<h2>How the birthday countdown counts</h2>
+</div></details>
+<details class="topic"><summary><h2>How the birthday countdown counts</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>The big number is whole calendar days from today to the birthday. On the day before, it says 1. Today’s date comes from your time zone, so if you’re in London and the birthday person is in Sydney, their birthday will start nine to eleven hours before yours does, depending on the time of year, and this page won’t show it until it’s the day where you are.</p>
 <p>The “until midnight tonight” line ticks down the rest of today in your time zone. On the day before a birthday, the big number says 1 and the clock shows exactly how long is left.</p>
-</section>
-<section>
-<h2>A worked example</h2>
-<p>As of Monday 16 November 2026, someone born on 15 March 1995 has 119 days to go until their next birthday. Counted out:</p>
+</div></details>
+<details class="topic"><summary><h2>A worked example</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
+<p>On Monday 16 November 2026, someone born on 15 March 1995 had 119 days to go until their next birthday. Counted out:</p>
 <ul><li>Days left in November after the 16th: 14.</li><li>December: 31. January: 31. February 2027: 28, because 2027 isn’t a leap year.</li><li>Days in March up to the 15th: 15.</li></ul>
-<p>14 + 31 + 31 + 28 + 15 = 119 days, which is exactly 17 weeks. Their birthday falls on Monday 15 March 2027, when they turn 32. It isn’t a weekend birthday this time.</p>
-</section>
-<section>
-<h2>Born on 29 February</h2>
-<p>This calculator counts a 29 February birthday as falling on 1 March in common years, so in a year without 29 February the countdown runs to 1 March, and a note on the result says so. That is the rule in Scotland under the <a href="https://www.legislation.gov.uk/ukpga/1991/50/section/6">Age of Legal Capacity (Scotland) Act 1991, section 6(2)</a>; the law in England, Wales and Northern Ireland does not name a date. As of 16 November 2026, someone born on 29 February 2008 has 105 days to go, to Monday 1 March 2027, when they turn 19. In 2028 the countdown runs to 29 February itself. This is the same rule the main <a href="./">age calculator</a> uses, so the two pages always agree on the date.</p>
-</section>
-<section>
-<h2>Counting down for someone else</h2>
+<p>14 + 31 + 31 + 28 + 15 = 119 days, which is exactly 17 weeks. That birthday falls on Monday 15 March 2027, when they turn 32, so it isn’t a weekend birthday.</p>
+</div></details>
+<details class="topic"><summary><h2>Born on 29 February</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
+<p>This calculator counts a 29 February birthday as falling on 1 March in common years, so in a year without 29 February the countdown runs to 1 March, and a note on the result says so. That is the rule in Scotland under the <a href="https://www.legislation.gov.uk/ukpga/1991/50/section/6">Age of Legal Capacity (Scotland) Act 1991, section 6(2)</a>; the law in England, Wales and Northern Ireland does not name a date. On 16 November 2026, someone born on 29 February 2008 had 105 days to go, to Monday 1 March 2027, when they turn 19. In 2028 the countdown runs to 29 February itself. This is the same rule the main <a href="./">age calculator</a> uses, so the two pages always agree on the date.</p>
+</div></details>
+<details class="topic"><summary><h2>Counting down for someone else</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>Type their date of birth instead of yours. The result shows the age they’re turning, which is handy for the number on the card or the candles, and the weekday, which helps when you’re planning a party around it. If you want the gap between your age and theirs rather than a countdown, the <a href="difference">age difference calculator</a> does that.</p>
-</section>
-<section>
-<h2>What the other figures mean</h2>
-<p><b>Weeks</b> splits the same wait into whole weeks and leftover days. <b>Weekend birthday?</b> tells you whether the date is a Saturday or Sunday. <b>Birthdays so far</b> is the number of birthdays already had, which is the same as current age in completed years.</p>
+</div></details>
+<details class="topic"><summary><h2>What the other figures mean</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
+<p><b>Weeks</b> splits the same wait into whole weeks and leftover days. Under More, <b>Weekend birthday?</b> tells you whether the date is a Saturday or Sunday, and <b>Birthdays so far</b> is the number of birthdays already had, which is the same as current age in completed years.</p>
 <p>To count down to something that isn’t a birthday, such as a wedding, a due date or the end of term, put today and that date into <a href="days-between-dates">days between dates</a>. It gives the same day count plus weekdays.</p>
-</section>
-<section class="faq" aria-labelledby="faq-h"><h2 id="faq-h">Questions people ask</h2><dl class="qa-list"><div class="qa"><dt>How many days until my birthday?</dt><dd><p>Type your date of birth above and the big number is the answer, counted from today in your time zone. On the day before your birthday it shows 1.</p></dd></div><div class="qa"><dt>What day of the week is my birthday this year?</dt><dd><p>The result names the weekday for your next birthday, and the line “Weekend birthday?” says whether it falls on a Saturday or Sunday.</p></dd></div><div class="qa"><dt>What if my birthday is 29 February?</dt><dd><p>This calculator counts a 29 February birthday as 1 March in years without one, so the countdown runs to 1 March. In leap years it runs to the 29th.</p></dd></div><div class="qa"><dt>Does the countdown change with time zones?</dt><dd><p>Yes. It counts calendar days in your time zone, so someone on the other side of the world may reach their birthday a day earlier or later than the page shows for you.</p></dd></div></dl></section>
-</div><aside class="side" aria-label="More calculators"><h2>More calculators</h2><ul><li><a href="./">Age calculator</a></li><li><a href="difference">Age difference</a></li><li><a href="past">How old was I?</a></li><li><a href="how-old-will-i-be">How old will I be?</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="korean-age">Korean age</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a href="dog-age">Dog age</a></li><li><a href="cat-age">Cat age</a></li></ul></aside></div>
+</div></details>
+<section aria-labelledby="faq-h" class="faq"><h2 id="faq-h">Birthday countdown FAQs</h2><details class="qa"><summary><h3>How many days until my birthday?</h3><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="qa-a"><p>Type your date of birth above and the big number is the answer, counted from today in your time zone. On the day before your birthday it shows 1.</p></div></details><details class="qa"><summary><h3>What day of the week is my birthday this year?</h3><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="qa-a"><p>The result names the weekday for your next birthday, and the line “Weekend birthday?”, under More, says whether it falls on a Saturday or Sunday.</p></div></details><details class="qa"><summary><h3>What if my birthday is 29 February?</h3><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="qa-a"><p>This calculator counts a 29 February birthday as 1 March in years without one, so the countdown runs to 1 March. In leap years it runs to the 29th.</p></div></details><details class="qa"><summary><h3>Does the countdown change with time zones?</h3><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="qa-a"><p>Yes. It counts calendar days in your time zone, so someone on the other side of the world may reach their birthday a day earlier or later than the page shows for you.</p></div></details></section>
+</div></div>
 </main>
 <footer class="foot"><div class="wrap">
-<div id="all-tools" class="foot-index"><h2>Every calculator on the site</h2><ul class="foot-tools"><li><a href="./">Age calculator</a> <span>your age today or on any date</span></li><li><a href="difference">Age difference</a> <span>the gap between two people</span></li><li><a href="past">How old was I?</a> <span>age on a date in the past</span></li><li><a href="how-old-will-i-be">How old will I be?</a> <span>age in a future year</span></li><li><a href="days-between-dates">Days between dates</a> <span>any two dates, with weekdays</span></li><li><a href="chronological-age">Chronological age</a> <span>y;m;d on a test date, printable</span></li><li><a href="korean-age">Korean age</a> <span>all three counting systems</span></li><li><a href="what-year-was-i-born">What year was I born?</a> <span>birth year from an age</span></li><li><a href="dog-age">Dog age</a> <span>dog years by size</span></li><li><a href="cat-age">Cat age</a> <span>cat years and life stage</span></li></ul></div>
+<div class="foot-index" id="all-tools"><h2>Every calculator on the site</h2><ul class="foot-tools"><li><a href="./">Age calculator</a></li><li><a href="difference">Age difference</a></li><li><a href="past">How old was I?</a></li><li><a href="how-old-will-i-be">How old will I be?</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="korean-age">Korean age</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a href="dog-age">Dog age</a></li><li><a href="cat-age">Cat age</a></li></ul></div>
 <div class="foot-small"><p><b>agecalculator.com</b>. Dates you type are worked out in your browser and aren’t sent anywhere. Free to use.</p><p><a href="embed">Put this calculator on your own site</a> · <a href="privacy">Privacy</a></p></div>
 </div></footer>
-<script src="dates.js" defer></script>
-<script src="app.js" defer></script>
+<script defer="" src="dates.js"></script>
+<script defer="" src="app.js"></script>
 </body>
 </html>

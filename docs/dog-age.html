@@ -1,22 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en-GB">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex,nofollow">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="noindex,nofollow" name="robots"/>
 <title>Dog Age Calculator: Dog Years by Size</title>
-<meta name="description" content="Convert your dog’s age to human years by adult size, using the AAHA-published chart, with the 2020 DNA-clock estimate alongside. No times seven.">
-<link rel="canonical" href="https://agecalculator.com/dog-age">
-
-<meta property="og:title" content="Dog Age Calculator: Dog Years by Size">
-<meta property="og:description" content="Convert your dog’s age to human years by adult size, using the AAHA-published chart, with the 2020 DNA-clock estimate alongside. No times seven.">
-<meta property="og:url" content="https://agecalculator.com/dog-age">
-<meta property="og:type" content="website">
-<meta name="theme-color" content="#f1f1ec">
-<link rel="icon" href="favicon.ico" sizes="32x32">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preload" href="fonts/libre-franklin-var.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="styles.css">
+<meta content="Convert your dog’s age to human years by adult size, using the AAHA-published chart, with the 2020 DNA-clock estimate alongside. No times seven." name="description"/>
+<link href="https://agecalculator.com/dog-age" rel="canonical"/>
+<meta content="Dog Age Calculator: Dog Years by Size" property="og:title"/>
+<meta content="Convert your dog’s age to human years by adult size, using the AAHA-published chart, with the 2020 DNA-clock estimate alongside. No times seven." property="og:description"/>
+<meta content="https://agecalculator.com/dog-age" property="og:url"/>
+<meta content="website" property="og:type"/>
+<meta content="#f1f1ec" name="theme-color"/>
+<link href="favicon.ico" rel="icon" sizes="32x32"/>
+<link href="favicon.svg" rel="icon" type="image/svg+xml"/>
+<link as="font" crossorigin="" href="fonts/libre-franklin-var.woff2" rel="preload" type="font/woff2"/>
+<link href="styles.css" rel="stylesheet"/>
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -32,26 +32,6 @@
   "price": "0",
   "priceCurrency": "GBP"
  }
-}
-</script>
-<script type="application/ld+json">
-{
- "@context": "https://schema.org",
- "@type": "BreadcrumbList",
- "itemListElement": [
-  {
-   "@type": "ListItem",
-   "position": 1,
-   "name": "Home",
-   "item": "https://agecalculator.com/"
-  },
-  {
-   "@type": "ListItem",
-   "position": 2,
-   "name": "Dog age calculator",
-   "item": "https://agecalculator.com/dog-age"
-  }
- ]
 }
 </script>
 <script type="application/ld+json">
@@ -94,80 +74,55 @@
  ]
 }
 </script>
-<script>var q=location.search;if(/[?&](dob|a|b|start|end|test|on|year)=/.test(q))document.documentElement.classList.add('prefill');if(/[?&](on|year)=/.test(q))document.documentElement.classList.add('prefill-on')</script>
-</head>
+<script>var q=location.search;if(/[?&](dob|a|b|start|end|test|on|year)=/.test(q))document.documentElement.classList.add('prefill');if(/[?&]year=/.test(q))document.documentElement.classList.add('prefill-year');if(/[?&](on|year)=/.test(q))document.documentElement.classList.add('prefill-on')</script>
+<link href="ux.css" rel="stylesheet"/></head>
 <body data-page="dog-age">
-<div class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</div>
-
 <a class="skip" href="#tool">Skip to the calculator</a>
-<header class="mast"><div class="wrap">
-<a class="brand" href="./"><svg width="26" height="28" viewBox="0 0 26 28" aria-hidden="true"><rect x="1" y="3" width="24" height="24" fill="#fff" stroke="#1c1c1a" stroke-width="1.5"/><rect x="1" y="3" width="24" height="7" fill="#b4231b" stroke="#1c1c1a" stroke-width="1.5"/><circle cx="7.5" cy="6.5" r="1.4" fill="#fff"/><circle cx="18.5" cy="6.5" r="1.4" fill="#fff"/><path d="M7 1v4M19 1v4" stroke="#1c1c1a" stroke-width="1.5"/><path d="M8.2 22.5l4.3-8.8 4.3 8.8M9.8 19.4h5.4" fill="none" stroke="#1c1c1a" stroke-width="1.9"/></svg>agecalculator<span>.com</span></a>
-<p class="dateline" id="dateline"></p>
-<script>
-(function(){
-  var el=document.getElementById('dateline'); if(!el) return;
-  var M=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  var W=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  var n=new Date(), y=n.getFullYear(), m=n.getMonth()+1, d=n.getDate();
-  var mon=M[m-1], doy=Math.round((Date.UTC(y,m-1,d)-Date.UTC(y,0,1))/864e5)+1;
-  el.innerHTML='<b><span class="dl-wd">'+W[n.getDay()]+' </span><span class="dl-long">'+d+' '+mon+' '+y+'</span><span class="dl-short">'+d+' '+mon.slice(0,3)+' '+y+'</span></b> <span class="dl-doy">day '+doy+' of the year</span>';
-})();
-</script>
-<a class="tools-link" href="#all-tools">All calculators</a>
-</div></header>
+<header class="mast"><div class="wrap"><a class="brand" href="./"><svg aria-hidden="true" height="28" viewbox="0 0 26 28" width="26"><rect fill="#fff" height="24" stroke="#1c1c1a" stroke-width="1.5" width="24" x="1" y="3"></rect><rect fill="#b4231b" height="7" stroke="#1c1c1a" stroke-width="1.5" width="24" x="1" y="3"></rect><circle cx="7.5" cy="6.5" fill="#fff" r="1.4"></circle><circle cx="18.5" cy="6.5" fill="#fff" r="1.4"></circle><path d="M7 1v4M19 1v4" stroke="#1c1c1a" stroke-width="1.5"></path><path d="M8.2 22.5l4.3-8.8 4.3 8.8M9.8 19.4h5.4" fill="none" stroke="#1c1c1a" stroke-width="1.9"></path></svg><span class="wm">agecalculator<span>.com</span></span></a><details class="nav-menu"><summary><svg aria-hidden="true" class="ic ic-menu" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M4 7.2c5.4-.3 10.7-.2 16 .1M4 12.1c5.3-.2 10.6-.1 16 0M4 16.9c3.6-.2 7.2-.2 10.8 0"></path></svg><span>Calculators</span></summary><ul><li><a href="./">Age calculator</a></li><li><a href="difference">Age difference</a></li><li><a href="past">How old was I?</a></li><li><a href="how-old-will-i-be">How old will I be?</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="birthday-countdown">Birthday countdown</a></li><li><a href="korean-age">Korean age</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a aria-current="page" href="dog-age">Dog age</a></li><li><a href="cat-age">Cat age</a></li></ul></details></div></header>
 <main id="main">
 <div class="band"><div class="wrap">
-<p class="crumbs"><a href="./">Age calculator</a> <span aria-hidden="true">/</span> Dog age calculator</p><div class="intro"><h1>Dog age calculator</h1><p class="lede">Your dog’s age in human years, by adult size.</p></div>
-<div class="calc" data-calc data-tool="dog" id="tool">
-<form class="entry" novalidate autocomplete="on">
-<fieldset class="pet-age"><legend>Dog’s age</legend><div class="parts two"><label><span>Years</span><input id="pet-y" type="text" inputmode="numeric" maxlength="2" placeholder="0"></label><label><span>Months</span><input id="pet-m" type="text" inputmode="numeric" maxlength="2" placeholder="0"></label></div></fieldset><fieldset class="opts"><legend>Adult size</legend><label class="opt"><input type="radio" name="size" value="small"><span><b>Small</b> up to 20 lb (about 9 kg)</span></label><label class="opt"><input type="radio" name="size" value="medium" checked><span><b>Medium</b> 21 to 50 lb (about 9.5 to 23 kg)</span></label><label class="opt"><input type="radio" name="size" value="large"><span><b>Large</b> 51 to 90 lb (about 23 to 41 kg)</span></label><label class="opt"><input type="radio" name="size" value="giant"><span><b>Giant</b> over 90 lb (about 41 kg)</span></label></fieldset>
-</form>
-<div class="result"><div class="leaf obj obj-record" id="leaf" data-state="empty"><div class="leaf-head"><span>Today</span></div>
-<div class="leaf-body"><div class="lead"><p class="big"><span class="num">16</span><span class="unit">November</span></p>
-<p class="rest">Type a date and the result appears here as you go.</p></div></div>
-<noscript><p class="hint">This calculator needs JavaScript to work the result out. The method is written out below the tool if you’d rather do it on paper.</p></noscript></div><p class="sr-only" id="live" aria-live="polite"></p></div>
+<div class="calc" data-calc="" data-tool="dog" id="tool">
+<div class="entry-col"><div class="intro"><h1>Dog age calculator</h1><p class="lede">Enter your dog’s age and adult size, and the dog age calculator reads their age in human years from the AAHA-published chart, not the old times-seven rule.</p></div><form autocomplete="on" class="entry" novalidate="">
+<fieldset class="pet-age"><legend>Dog’s age</legend><div class="parts two"><label><span>Years</span><input id="pet-y" inputmode="numeric" maxlength="2" placeholder="e.g. 5" type="text"/></label><label><span>Months</span><input id="pet-m" inputmode="numeric" maxlength="2" placeholder="optional" type="text"/></label></div></fieldset><fieldset class="opts"><legend>Adult size</legend><label class="opt"><input name="size" type="radio" value="small"/><span><b>Small</b> up to 20 lb (about 9 kg)</span></label><label class="opt"><input checked="" name="size" type="radio" value="medium"/><span><b>Medium</b> 21 to 50 lb (about 9.5 to 23 kg)</span></label><label class="opt"><input name="size" type="radio" value="large"/><span><b>Large</b> 51 to 90 lb (about 23 to 41 kg)</span></label><label class="opt"><input name="size" type="radio" value="giant"/><span><b>Giant</b> over 90 lb (about 41 kg)</span></label></fieldset>
+</form></div>
+<div class="result"><div class="leaf obj obj-record" data-state="empty" id="leaf"><div class="record"><p class="ph-msg">Your dog’s age in human years will appear here.</p><details class="more"><summary>Dog age chart<svg aria-hidden="true" class="ic ic-chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="more-body"><table class="chart"><caption class="sr-only">Human years by age, from the AAHA-published chart</caption><tbody><tr><th scope="col">Age</th><th scope="col">Small</th><th scope="col">Medium</th><th scope="col">Large</th><th scope="col">Giant</th></tr><tr><td>1</td><td>15</td><td>15</td><td>15</td><td>15</td></tr><tr><td>2</td><td>24</td><td>24</td><td>24</td><td>24</td></tr><tr><td>3</td><td>28</td><td>28</td><td>30</td><td>32</td></tr><tr><td>5</td><td>36</td><td>37</td><td>40</td><td>42</td></tr><tr><td>7</td><td>44</td><td>47</td><td>50</td><td>56</td></tr><tr><td>10</td><td>56</td><td>60</td><td>66</td><td>78</td></tr><tr><td>12</td><td>64</td><td>69</td><td>77</td><td>93</td></tr><tr><td>15</td><td>76</td><td>83</td><td>93</td><td>115</td></tr></tbody></table><p class="rest">From the <a href="https://www.aaha.org/wp-content/uploads/globalassets/02-guidelines/canine-life-stage-2019/canine_and_feline_age_chart_poster.pdf">AAHA-published pet age chart</a>.</p></div></details></div><noscript><p class="hint">This calculator needs JavaScript to work the result out. The method is written out below the tool if you’d rather do it on paper.</p></noscript></div><p aria-live="polite" class="sr-only" id="live"></p></div>
 </div>
 </div></div>
-<div class="wrap page"><div class="content">
-<section>
-<p>Enter your dog’s age in years and months, pick their adult size, and the dog age calculator gives an estimate of their age in human years. The main figure comes from a size-based chart. Beside it you’ll see a second estimate from a 2020 DNA study, and the old “times seven” figure, so you can see how far apart the methods are.</p>
+<div class="wrap page"><div class="content"><nav aria-labelledby="rel-h" class="related"><h2 id="rel-h">More calculators</h2><ul><li><a href="./">Age calculator</a></li><li><a href="difference">Age difference</a></li><li><a href="past">How old was I?</a></li><li><a href="how-old-will-i-be">How old will I be?</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="birthday-countdown">Birthday countdown</a></li><li><a href="korean-age">Korean age</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a href="cat-age">Cat age</a></li></ul></nav>
+<details class="topic"><summary><h2>How to use the dog age calculator</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
+<p>Enter your dog’s age in years and months, pick their adult size, and the dog age calculator gives an estimate of their age in human years. The main figure comes from a size-based chart. Under More you’ll see a second estimate from a 2020 DNA study, and the old “times seven” figure, so you can see how far apart the methods are.</p>
 <p>Every figure here is an estimate. Breed, genetics and health all change how a particular dog ages. For anything about your dog’s health, your vet is the person to ask.</p>
-</section>
-<section>
-<h2>Why not just multiply by seven?</h2>
+</div></details>
+<details class="topic"><summary><h2>Why not just multiply by seven?</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>Dogs grow up far faster than people at the start and then slow down, and large dogs age faster than small ones later in life. On the size chart below, a one-year-old dog of any size already counts as 15 in human years, not 7. The American Veterinary Medical Association puts it plainly: <a href="https://www.avma.org/resources/pet-owners/petcare/senior-pets">dogs do not age at a rate of 7 human years per dog year</a>.</p>
-</section>
-<section>
-<h2>The size chart this dog age calculator uses</h2>
+</div></details>
+<details class="topic"><summary><h2>The size chart this dog age calculator uses</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>The figures come from the <a href="https://www.aaha.org/wp-content/uploads/globalassets/02-guidelines/canine-life-stage-2019/canine_and_feline_age_chart_poster.pdf">pet age chart published on the American Animal Hospital Association website</a>. The chart is a Zoetis poster, and its dog figures are adapted from the Dog Owner’s Home Veterinary Handbook. Every dog counts as 15 at one year old and 24 at two. After that the sizes split:</p>
 <table class="chart"><thead><tr><th>Dog’s age</th><th>Small, up to 20 lb (about 9 kg)</th><th>Medium, 21 to 50 lb (about 9.5 to 23 kg)</th><th>Large, 51 to 90 lb (about 23 to 41 kg)</th><th>Giant, over 90 lb (about 41 kg)</th></tr></thead><tbody><tr><td>3</td><td>28</td><td>28</td><td>30</td><td>32</td></tr><tr><td>5</td><td>36</td><td>37</td><td>40</td><td>42</td></tr><tr><td>7</td><td>44</td><td>47</td><td>50</td><td>56</td></tr><tr><td>10</td><td>56</td><td>60</td><td>66</td><td>78</td></tr><tr><td>12</td><td>64</td><td>69</td><td>77</td><td>93</td></tr><tr><td>15</td><td>76</td><td>83</td><td>93</td><td>115</td></tr></tbody></table>
 <p>Small dogs add 4 human years for each year after two. Medium dogs add 4 or 5 a year, and large dogs 5 or 6. Giant breeds add 7 or 8 a year from about age six.</p>
 <p>The calculator gives the chart figure for whole years and reads in a straight line between two printed ages for anything in between. The chart prints whole years only. Reading in a straight line between them is this site’s own method, not the chart’s. So a large dog of 7 years and 6 months comes out at 53 (halfway between 50 and 55, rounded to the nearest year). Dogs under 1 year aren’t shown, because the chart starts at 1. Giant dogs stop at 16 years and the other sizes stop at 20, because that is where the chart ends. The calculator doesn’t make up figures beyond it.</p>
 <p>Pick the size by the weight your dog is, or will be, as an adult. As a rough guide, a Border Collie is medium or large (30 to 55 lb, according to the <a href="https://www.akc.org/dog-breeds/border-collie/">American Kennel Club</a>), a Labrador large and a Great Dane giant. Crossbreeds go by adult weight. The calculator asks you to choose a size rather than type a weight. If your dog falls between two bands, say 20.5 lb, the chart doesn’t cover it, so pick the nearer size.</p>
-</section>
-<section>
-<h2>A worked example</h2>
+</div></details>
+<details class="topic"><summary><h2>A worked example</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>A 7-year-old Labrador weighing 30 kg is a large dog on the chart, so the calculator shows <b>50</b> human years. The DNA-clock formula gives 16 × ln(7) + 31, which is 16 × 1.946 + 31, or about <b>62</b>. Times seven gives 49. The two modern methods disagree by 12 years at this age, which is a fair picture of how rough any dog-to-human conversion is.</p>
-</section>
-<section>
-<h2>The DNA-clock estimate (Wang et al. 2020)</h2>
+</div></details>
+<details class="topic"><summary><h2>The DNA-clock estimate (Wang et al. 2020)</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>In 2020 a team led by Trey Ideker at UC San Diego published a study in Cell Systems comparing age-related DNA methylation in <a href="https://www.cell.com/cell-systems/fulltext/S2405-4712(20)30203-9">104 dogs, mostly Labrador retrievers, with 320 people</a>. They found the relationship is logarithmic, and fitted the formula:</p>
 <p>human age = 16 × ln(dog age) + 31</p>
 <p>where ln is the natural logarithm. By this measure a one-year-old dog is about 31 and a four-year-old about 53, much older than the chart suggests for young dogs. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7484147/">The study itself</a> notes the limit: it focused on Labrador retrievers, and breeds with very different lifespans “could yield different age-translation functions”. The <a href="https://www.nih.gov/news-events/news-releases/nih-researchers-reframe-dog-human-aging-comparisons">NIH release</a> says the same, though <a href="https://today.ucsd.edu/story/how-old-is-your-dog-in-human-years-scientists-develop-better-method-than-multiply-by-7">UC San Diego’s</a> lead researcher expects the clock to apply to all breeds. It also doesn’t take size into account. The calculator shows it as a second opinion, not the main result. Like the chart figure, it isn’t shown for dogs under one year. The study did compare puppies with babies (it matched about 8 weeks in dogs to about 9 months in humans), but at that age the formula is very sensitive to rounding, and below about seven and a half weeks it falls to zero or below, so this page keeps to adult dogs.</p>
-</section>
-<section>
-<h2>When is a dog a senior?</h2>
+</div></details>
+<details class="topic"><summary><h2>When is a dog a senior?</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>Larger dogs reach their senior years sooner. The <a href="https://www.avma.org/resources/pet-owners/petcare/senior-pets">AVMA’s senior pets guidance</a> gives these rough ages: small breeds 8 to 11 years, medium 8 to 10, large 8 to 9, and giant breeds 6 to 7. It recommends senior pets see a vet at least twice a year.</p>
 <p>For cats, the curve is different and size matters much less. The <a href="cat-age">cat age calculator</a> covers it.</p>
-</section>
-<section class="faq" aria-labelledby="faq-h"><h2 id="faq-h">Questions people ask</h2><dl class="qa-list"><div class="qa"><dt>How old is a 10-year-old dog in human years?</dt><dd><p>On the AAHA-published chart, about 56 for a small dog, 60 for a medium dog, 66 for a large dog and 78 for a giant breed. The DNA-clock formula gives about 68 regardless of size.</p></dd></div><div class="qa"><dt>Is one dog year really seven human years?</dt><dd><p>No. Dogs age much faster in their first two years and more slowly after that, and the rate depends on size. The AVMA says the seven-year rule is not correct.</p></dd></div><div class="qa"><dt>Which size should I choose for a crossbreed?</dt><dd><p>Go by the weight your dog is, or is expected to be, as an adult: up to about 9 kg is small, about 9.5 to 23 kg medium, 23 to 41 kg large, and over 41 kg giant.</p></dd></div><div class="qa"><dt>Why do big dogs age faster?</dt><dd><p>Large and giant breeds have shorter average lifespans and reach their senior years sooner, which is why the chart climbs faster for them after age two.</p></dd></div></dl></section>
-</div><aside class="side" aria-label="More calculators"><h2>More calculators</h2><ul><li><a href="./">Age calculator</a></li><li><a href="difference">Age difference</a></li><li><a href="past">How old was I?</a></li><li><a href="how-old-will-i-be">How old will I be?</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="birthday-countdown">Birthday countdown</a></li><li><a href="korean-age">Korean age</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a href="cat-age">Cat age</a></li></ul></aside></div>
+</div></details>
+<section aria-labelledby="faq-h" class="faq"><h2 id="faq-h">Dog age FAQs</h2><details class="qa"><summary><h3>How old is a 10-year-old dog in human years?</h3><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="qa-a"><p>On the AAHA-published chart, about 56 for a small dog, 60 for a medium dog, 66 for a large dog and 78 for a giant breed. The DNA-clock formula gives about 68 regardless of size.</p></div></details><details class="qa"><summary><h3>Is one dog year really seven human years?</h3><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="qa-a"><p>No. Dogs age much faster in their first two years and more slowly after that, and the rate depends on size. The AVMA says the seven-year rule is not correct.</p></div></details><details class="qa"><summary><h3>Which size should I choose for a crossbreed?</h3><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="qa-a"><p>Go by the weight your dog is, or is expected to be, as an adult: up to about 9 kg is small, about 9.5 to 23 kg medium, 23 to 41 kg large, and over 41 kg giant.</p></div></details><details class="qa"><summary><h3>Why do big dogs age faster?</h3><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="qa-a"><p>Large and giant breeds have shorter average lifespans and reach their senior years sooner, which is why the chart climbs faster for them after age two.</p></div></details></section>
+</div></div>
 </main>
 <footer class="foot"><div class="wrap">
-<div id="all-tools" class="foot-index"><h2>Every calculator on the site</h2><ul class="foot-tools"><li><a href="./">Age calculator</a> <span>your age today or on any date</span></li><li><a href="difference">Age difference</a> <span>the gap between two people</span></li><li><a href="past">How old was I?</a> <span>age on a date in the past</span></li><li><a href="how-old-will-i-be">How old will I be?</a> <span>age in a future year</span></li><li><a href="days-between-dates">Days between dates</a> <span>any two dates, with weekdays</span></li><li><a href="chronological-age">Chronological age</a> <span>y;m;d on a test date, printable</span></li><li><a href="birthday-countdown">Birthday countdown</a> <span>days until the next one</span></li><li><a href="korean-age">Korean age</a> <span>all three counting systems</span></li><li><a href="what-year-was-i-born">What year was I born?</a> <span>birth year from an age</span></li><li><a href="cat-age">Cat age</a> <span>cat years and life stage</span></li></ul></div>
+<div class="foot-index" id="all-tools"><h2>Every calculator on the site</h2><ul class="foot-tools"><li><a href="./">Age calculator</a></li><li><a href="difference">Age difference</a></li><li><a href="past">How old was I?</a></li><li><a href="how-old-will-i-be">How old will I be?</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="birthday-countdown">Birthday countdown</a></li><li><a href="korean-age">Korean age</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a href="cat-age">Cat age</a></li></ul></div>
 <div class="foot-small"><p><b>agecalculator.com</b>. Dates you type are worked out in your browser and aren’t sent anywhere. Free to use.</p><p><a href="embed">Put this calculator on your own site</a> · <a href="privacy">Privacy</a></p></div>
 </div></footer>
-<script src="dates.js" defer></script>
-<script src="app.js" defer></script>
+<script defer="" src="dates.js"></script>
+<script defer="" src="app.js"></script>
 </body>
 </html>
