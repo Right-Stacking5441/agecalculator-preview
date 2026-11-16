@@ -268,6 +268,13 @@ test('natural-language date parsing', () => {
   assert.deepEqual(P('1/1/27', { pivotYear: 2026 }), [1927, 1, 1]);
   // Birth fields: two-digit years stay in the past (default yearMode).
   assert.deepEqual(P('1/1/30', { pivotYear: 2026 }), [1930, 1, 1]);
+  // A two-digit year whose completed date is after today falls back a century.
+  assert.deepEqual(P('17/11/26', { pivotYear: 2026, today: D(2026, 11, 16) }), [1926, 11, 17]);
+  assert.deepEqual(P('17 November 26', { pivotYear: 2026, today: D(2026, 11, 16) }), [1926, 11, 17]);
+  assert.deepEqual(P('16/11/26', { pivotYear: 2026, today: D(2026, 11, 16) }), [2026, 11, 16]);
+  assert.deepEqual(P('15/11/26', { pivotYear: 2026, today: D(2026, 11, 16) }), [2026, 11, 15]);
+  // Target fields do not fall back; 17/11/26 can be tomorrow.
+  assert.deepEqual(P('17/11/26', { pivotYear: 2026, today: D(2026, 11, 16), yearMode: 'nearest' }), [2026, 11, 17]);
   // Target / future fields: nearest of this century and the last.
   assert.deepEqual(P('1/1/30', { pivotYear: 2026, yearMode: 'nearest' }), [2030, 1, 1]);
   assert.deepEqual(P('1/1/26', { pivotYear: 2026, yearMode: 'nearest' }), [2026, 1, 1]);
@@ -452,11 +459,20 @@ test('parsePetAge rejects non-whole ages and accepts years plus months', () => {
   assert.equal(yearsOnly.age, 2);
 });
 
-test('plural-style week counts: 8 days is 1 week and 1 day, 7 days is 1 week', () => {
-  // Mirrors the days-between label, which must use the same singular/plural rule as plural().
+test('plural-style counts: 1 is singular for days, weeks, months and years', () => {
+  // Mirrors UI labels that append a unit to a number (days-between, difference strip, how long ago).
   const plural = (k, w) => k + ' ' + w + (k === 1 ? '' : 's');
+  const unit = (n, one, many) => n + (n === 1 ? one : many);
   assert.equal(plural(Math.floor(8 / 7), 'week') + ' and ' + plural(8 % 7, 'day'), '1 week and 1 day');
   assert.equal(plural(Math.floor(7 / 7), 'week'), '1 week');
   assert.equal(plural(Math.floor(1 / 7), 'week'), '0 weeks');
   assert.equal(plural(Math.floor(14 / 7), 'week'), '2 weeks');
+  assert.equal(unit(1, ' day', ' days'), '1 day');
+  assert.equal(unit(0, ' day', ' days'), '0 days');
+  assert.equal(unit(2, ' day', ' days'), '2 days');
+  assert.equal(plural(0, 'year'), '0 years');
+  assert.equal(plural(1, 'year'), '1 year');
+  assert.equal(plural(2, 'year'), '2 years');
+  assert.equal(plural(1, 'month'), '1 month');
+  assert.equal(plural(2, 'month'), '2 months');
 });

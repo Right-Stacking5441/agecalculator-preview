@@ -74,7 +74,7 @@
     var read = el.querySelector('.readback');
     var f = { el: el, value: null, status: 'empty', message: '', alt: null };
     fields[name] = f;
-    var dateOpts = { order: ORDER, pivotYear: today.y, yearMode: /^(on|start|end|test)$/.test(name) ? 'nearest' : 'past' };
+    var dateOpts = function () { return { order: ORDER, pivotYear: today.y, today: today, yearMode: /^(on|start|end|test)$/.test(name) ? 'nearest' : 'past' }; };
     function show(text, kind, swap) {
       read.innerHTML = text + (swap ? ' <button type="button" class="textbtn swap">I meant ' + plain(swap) + '</button>' : '');
       read.className = 'readback' + (kind ? ' ' + kind : '');
@@ -89,7 +89,7 @@
     }
     function invalid(on) { quick.setAttribute('aria-invalid', String(!!on)); }
     quick.addEventListener('input', function () {
-      var r = A.parseDate(quick.value, dateOpts);
+      var r = A.parseDate(quick.value, dateOpts());
       if (r.ok) {
         setDate(r.date, true); invalid(false);
         show('Reading this as <b>' + long(r.date) + '</b>.', 'ok', r.ambiguous ? r.alt : null);
@@ -227,7 +227,16 @@
       var lead = big(r.years, r.years === 1 ? 'year old' : 'years old') + '<p class="rest">' + plural(r.months, 'month') + ' and ' + plural(r.days, 'day') + (bounds.bornDay ? '. The day they were born' : '') + '</p>';
       var prev = bounds.last, nx = bounds.next;
       var side = monthGrid(at.y, at.m, at.d, 'The date you chose') + '<p class="bday-text"><span class="k">That day was a</span><strong>' + W[A.weekday(at.y, at.m, at.d)] + '</strong></p>';
-      var ago = same(at, today) ? 'today' : (A.cmp(today, at) >= 0 ? plural(A.age(at, today).years, 'year') + small(fmt(A.cmp(today, at)) + ' days') : 'that’s in the future');
+      var agoN = A.cmp(today, at), ago = 'that’s in the future';
+      if (same(at, today)) ago = 'today';
+      else if (agoN >= 0) {
+        var agoR = A.age(at, today), agoMain = '';
+        if (agoR.ok) {
+          if (agoR.years) agoMain += plural(agoR.years, 'year');
+          if (agoR.months) agoMain += (agoMain ? ' ' : '') + plural(agoR.months, 'month');
+        }
+        ago = agoMain + small(fmt(agoN) + (agoN === 1 ? ' day' : ' days'));
+      }
       var verb = same(at, today) ? 'are' : (A.cmp(at, today) > 0 ? 'will be' : 'were');
       var rows = [[bounds.lastLabel, plain(prev)], [bounds.nextLabel, plain(nx) + small('turning ' + nx.turning)], ['Days lived by then', fmt(r.totalDays)], ['How long ago', ago]];
       return { state: 'result', cls: 'leaf-old', say: 'On ' + long(at) + ' you ' + verb + ' ' + ymdWords(r) + ' old.', html: '<div class="leaf-head"><span>On</span> ' + stamp(at) + '</div>' + body(lead, side) + ledger(rows) };
@@ -247,7 +256,7 @@
       var rows = [['Weeks', fmt(Math.floor(n / 7)) + (n % 7 ? small('and ' + plural(n % 7, 'day')) : '')], ['Until midnight tonight', '<span data-clock>–</span>'], ['Weekend birthday?', (nx.weekday >= 5 ? 'Yes, a ' : 'No, a ') + W[nx.weekday]], ['Birthdays so far', fmt(r.years)]];
       var note = nx.shifted ? '<p class="bday-note">No 29 February in ' + nx.y + ', so we count down to 1 March.</p>' : '';
       var depth = Math.max(1, Math.min(16, Math.ceil(n / 10)));
-      return { state: 'result', cls: 'leaf-stack', depth: depth, say: n + ' days until ' + long(nx) + '.', html: head('Counting from <b>' + short(today) + '</b>') + body(lead, monthGrid(nx.y, nx.m, nx.d, 'Birthday') + note) + ledger(rows) };
+      return { state: 'result', cls: 'leaf-stack', depth: depth, say: plural(n, 'day') + ' until ' + long(nx) + '.', html: head('Counting from <b>' + short(today) + '</b>') + body(lead, monthGrid(nx.y, nx.m, nx.d, 'Birthday') + note) + ledger(rows) };
     },
     future: function () {
       var b = fields.dob, yr = +$v('in-year');
@@ -282,7 +291,7 @@
       if (r.totalDays === 0) return notice('Same day', esc(na) + ' and ' + esc(nb) + ' were born on the same day.');
       var first = r.sign > 0 ? [a.value, na] : [b.value, nb], second = r.sign > 0 ? [b.value, nb] : [a.value, na];
       var html = '<div class="pair-leaves">' + miniLeaf(first[0], first[1], 'elder') +
-        '<div class="gap-measure"><span class="gm-label"><b>' + r.years + ' y ' + r.months + ' m ' + r.days + ' d</b>' + fmt(r.totalDays) + ' days</span><span class="gm-line" aria-hidden="true"></span></div>' +
+        '<div class="gap-measure"><span class="gm-label"><b>' + r.years + ' y ' + r.months + ' m ' + r.days + ' d</b>' + fmt(r.totalDays) + (r.totalDays === 1 ? ' day' : ' days') + '</span><span class="gm-line" aria-hidden="true"></span></div>' +
         miniLeaf(second[0], second[1]) + '</div>' +
         '<div class="pair-say">' + big(r.years, r.years === 1 ? 'year' : 'years') + '<p class="rest">' + plural(r.months, 'month') + ' and ' + plural(r.days, 'day') + '. ' + esc(first[1]) + ' is the elder.</p></div>' +
         ledger([['Days', fmt(r.totalDays)], ['Weeks', fmt(r.weeks) + (r.weekRemainder ? small('and ' + plural(r.weekRemainder, 'day')) : '')], ['Months', fmt(r.totalMonths) + (r.days ? small('and ' + plural(r.days, 'day')) : '')], ['Ages differ by', (r.months || r.days) ? r.years + ' or ' + (r.years + 1) + small('depending on the time of year') : r.years + small('all year')]]);
@@ -300,7 +309,7 @@
         miniLeaf(hi, r.sign > 0 ? 'End' : 'Start') + '</div>' +
         ledger([['Years, months, days', r.years + ' y ' + r.months + ' m ' + r.days + ' d'], ['Weekdays, Mon–Fri', fmt(r.weekdays + (inc && A.weekday(hi.y, hi.m, hi.d) < 5 ? 1 : 0)) + small('no bank holidays removed')],
           ['Weekend days', fmt(r.weekendDays + (inc && A.weekday(hi.y, hi.m, hi.d) >= 5 ? 1 : 0))], ['Months', fmt(r.totalMonths) + (r.days ? small('and ' + plural(r.days, 'day')) : '')], r.sign < 0 ? ['Order', 'End is before start; counted backwards'] : null]);
-      return { state: 'result', cls: 'obj obj-span', say: days + ' days between ' + plain(lo) + ' and ' + plain(hi) + '.', html: html };
+      return { state: 'result', cls: 'obj obj-span', say: plural(days, 'day') + ' between ' + plain(lo) + ' and ' + plain(hi) + '.', html: html };
     },
     /* A school record slip: the subtraction written the way it is on score forms. */
     chrono: function () {
@@ -319,7 +328,7 @@
       if (!r.ok) return notice('Check the dates', 'The test date is before the date of birth.');
       var code = r.years + ';' + r.months + ';' + r.days, rounded = r.totalMonths + (r.days >= 15 ? 1 : 0);
       var borrow = t.value.d < b.value.d
-        ? '<p class="slip-borrow">Days are counted from the real length of the borrowed month, not 30 days, so a by-hand 30-day sum can come out a day different.</p>'
+        ? '<p class="slip-borrow">Days are counted from the real length of the borrowed month, not 30 days, so a by-hand 30-day sum can come out up to two days different.</p>'
         : '';
       var html = '<div class="slip">' + slipHead + who + grid(t.value, b.value, r) + borrow +
         '<div class="slip-foot"><p class="big"><span class="num code">' + code + '</span></p><p class="rest">' + ymdWords(r) + '</p>' +

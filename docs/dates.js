@@ -177,8 +177,10 @@
   /* Natural-language date entry: "15 March 1995", "March 15, 1995", "15th mar 95", "3/15/95", "15.03.1995",
      "1995-03-15", "15031995". order: 'DMY' or 'MDY' decides only genuinely ambiguous all-number dates.
      Two-digit years: yearMode 'past' (default) is the most recent year that isn't after
-     pivotYear (birth dates). yearMode 'nearest' picks the closer of this century and the
-     last (target / future dates). A one-digit year is incomplete, not silently 2000. */
+     today (opts.today). If the completed date would be
+     later than today, it falls back to the previous century (17/11/26 on 16 Nov 2026
+     is 1926). yearMode 'nearest' picks the closer of this century and the last
+     (target / future dates). A one-digit year is incomplete, not silently 2000. */
   var MONTH_RE = /^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/;
   function parseDate(text, opts) {
     opts = opts || {};
@@ -223,6 +225,7 @@
     if (/^\d$/.test(String(y)) || String(y).length === 3) {
       return { ok: false, code: 'incomplete', field: 'year', message: 'Year should be four digits, like 1988.' };
     }
+    var twoDigitLast = null;
     if (/^\d{2}$/.test(String(y))) {
       var yy = +y, century = Math.floor(pivot / 100) * 100;
       var thisCent = century + yy, lastCent = century - 100 + yy;
@@ -231,10 +234,16 @@
         y = (dThis < dLast || (dThis === dLast && thisCent >= pivot)) ? thisCent : lastCent;
       } else {
         y = thisCent > pivot ? lastCent : thisCent;
+        if (y === thisCent && lastCent >= MIN_YEAR) twoDigitLast = lastCent;
       }
     }
     var v = validate(d, m, y);
     if (!v.ok) return v;
+    var today = opts.today;
+    if (twoDigitLast != null && today && cmp(v.date, today) > 0) {
+      var vLast = validate(d, m, twoDigitLast);
+      if (vLast.ok) { v = vLast; y = twoDigitLast; }
+    }
     if (ambiguous) { var vAlt = validate(m, d, y); if (vAlt.ok) alt = vAlt.date; }
     return { ok: true, date: v.date, ambiguous: ambiguous && !!alt, alt: alt };
   }
