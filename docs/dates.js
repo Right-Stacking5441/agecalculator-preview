@@ -364,6 +364,20 @@
     };
   }
 
+  /* When international (만) age next goes up, as a sentence. r.next.isToday means
+     the chosen date is a birthday, not that it is calendar today. On the day of
+     birth, international age is still 0 and goes up on the first birthday. */
+  function koreanIntlUpSentence(r, at, today, formatDate) {
+    if (r.next.isToday && r.years > 0) {
+      if (cmp(at, today) === 0) return 'International age went up today.';
+      if (cmp(at, today) > 0) return 'International age goes up on that day.';
+      return 'International age went up on that day.';
+    }
+    var next = r.next;
+    if (r.next.isToday && r.years === 0) next = addMonths({ y: next.y, m: next.m, d: next.d }, 12);
+    return 'International age goes up on ' + formatDate(next) + '.';
+  }
+
   function yearsOldUnit(n) { return n === 1 ? 'year old' : 'years old'; }
 
   /* Non-zero years, months and days, with correct plurals, e.g. "1 month and 2 days". */
@@ -408,6 +422,7 @@
     DOG_CHART: DOG_CHART, CAT_CHART: CAT_CHART, DOG_SIZES: DOG_SIZES,
     catAge: catAge, catStage: catStage, birthYear: birthYear, parseDate: parseDate, textFromParts: textFromParts,
     ageInCalendarYear: ageInCalendarYear, yearsOldUnit: yearsOldUnit, partsWords: partsWords, parsePetAge: parsePetAge,
+    koreanIntlUpSentence: koreanIntlUpSentence,
     secondsUntilMidnight: secondsUntilMidnight, nextMidnight: nextMidnight, instantInZone: instantInZone };
   if (typeof module === 'object' && module.exports) module.exports = api; else root.AgeMaths = api;
 })(this);

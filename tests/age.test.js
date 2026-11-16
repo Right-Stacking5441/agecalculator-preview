@@ -179,6 +179,27 @@ test('Korean ages', () => {
   assert.deepEqual([k2.international, k2.counting, k2.yearAge], [0, 2, 1]);
 });
 
+test('Korean page: international age sentence when the chosen date is a birthday', () => {
+  const fmt = t => t.d + ' ' + A.MONTHS[t.m - 1] + ' ' + t.y;
+  const today = D(2026, 11, 16);
+  const sent = (b, at) => A.koreanIntlUpSentence(A.age(b, at), at, today, fmt);
+
+  // (a) today is the birthday
+  assert.equal(sent(D(1990, 11, 16), today), 'International age went up today.');
+
+  // (b) the chosen date is a birthday, but it is not today
+  assert.equal(sent(D(1990, 11, 16), D(2025, 11, 16)), 'International age went up on that day.');
+  assert.equal(sent(D(1990, 11, 16), D(2027, 11, 16)), 'International age goes up on that day.');
+
+  // Not a birthday: still names the next one
+  assert.equal(sent(D(1990, 3, 14), today), 'International age goes up on 14 March 2027.');
+
+  // Born on the chosen date: international age is 0 and goes up on the first birthday
+  assert.equal(sent(today, today), 'International age goes up on 16 November 2027.');
+  assert.equal(sent(D(2020, 6, 1), D(2020, 6, 1)), 'International age goes up on 1 June 2021.');
+  assert.equal(sent(D(2024, 2, 29), D(2024, 2, 29)), 'International age goes up on 1 March 2025.');
+});
+
 test('AAHA chart: every printed dog and cat value', () => {
   const dogs = {
     small:  { 1:15, 2:24, 3:28, 4:32, 5:36, 6:40, 7:44, 8:48, 9:52, 10:56, 11:60, 12:64, 13:68, 14:72, 15:76, 16:80, 17:84, 18:88, 19:92, 20:96 },

@@ -465,7 +465,7 @@
         col(k.international, 'International age', '만 나이', 'Up on your birthday. The default in Korean law since 28 June 2023.', 'main') +
         col(k.counting, 'Korean age', '세는 나이', '1 at birth, plus one every 1 January.') +
         col(k.yearAge, 'Year age', '연 나이', at.y + ' minus ' + b.value.y + '.') + '</div>' +
-        '<p class="k-ny">Korean age and year age go up on <b>1 January ' + ny.y + '</b>, in ' + plural(toNy, 'day') + '. International age goes up on ' + short(k.r.next) + '.</p>' + more(ledger(hows), 'How each is counted');
+        '<p class="k-ny">Korean age and year age go up on <b>1 January ' + ny.y + '</b>, in ' + plural(toNy, 'day') + '. ' + A.koreanIntlUpSentence(k.r, at, today, short) + '</p>' + more(ledger(hows), 'How each is counted');
       return { state: 'result', cls: 'leaf-lunar', say: 'International age ' + k.international + ', Korean age ' + k.counting + ', year age ' + k.yearAge + '.', html: html };
     },
     dog: function () { return pet('dog'); },
