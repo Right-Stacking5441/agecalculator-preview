@@ -378,6 +378,24 @@
     return 'International age goes up on ' + formatDate(next) + '.';
   }
 
+  /* When Korean age and year age (세는 / 연) next go up — every 1 January.
+     If the chosen date is itself 1 January, say they already went up that day
+     (or will, if that 1 January is still in the future). Born on 1 January:
+     year age is still 0, so both go up on the next New Year. */
+  function koreanCountingUpSentence(r, at, today, formatDate) {
+    if (at.m === 1 && at.d === 1) {
+      if (r.years === 0 && r.months === 0 && r.days === 0) {
+        return 'Korean age and year age go up on ' + formatDate({ y: at.y + 1, m: 1, d: 1 }) + '.';
+      }
+      if (cmp(at, today) === 0) return 'Korean age and year age went up today.';
+      if (cmp(at, today) > 0) return 'Korean age and year age go up on that day.';
+      return 'Korean age and year age went up on that day.';
+    }
+    var ny = { y: at.y + 1, m: 1, d: 1 };
+    var days = cmp(ny, at);
+    return 'Korean age and year age go up on ' + formatDate(ny) + ', in ' + days + ' ' + (days === 1 ? 'day' : 'days') + '.';
+  }
+
   function yearsOldUnit(n) { return n === 1 ? 'year old' : 'years old'; }
 
   /* Non-zero years, months and days, with correct plurals, e.g. "1 month and 2 days". */
@@ -422,7 +440,7 @@
     DOG_CHART: DOG_CHART, CAT_CHART: CAT_CHART, DOG_SIZES: DOG_SIZES,
     catAge: catAge, catStage: catStage, birthYear: birthYear, parseDate: parseDate, textFromParts: textFromParts,
     ageInCalendarYear: ageInCalendarYear, yearsOldUnit: yearsOldUnit, partsWords: partsWords, parsePetAge: parsePetAge,
-    koreanIntlUpSentence: koreanIntlUpSentence,
+    koreanIntlUpSentence: koreanIntlUpSentence, koreanCountingUpSentence: koreanCountingUpSentence,
     secondsUntilMidnight: secondsUntilMidnight, nextMidnight: nextMidnight, instantInZone: instantInZone };
   if (typeof module === 'object' && module.exports) module.exports = api; else root.AgeMaths = api;
 })(this);

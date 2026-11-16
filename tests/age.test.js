@@ -200,6 +200,33 @@ test('Korean page: international age sentence when the chosen date is a birthday
   assert.equal(sent(D(2024, 2, 29), D(2024, 2, 29)), 'International age goes up on 1 March 2025.');
 });
 
+test('Korean page: counting and year age sentence when the chosen date is 1 January', () => {
+  const fmt = t => '1 January ' + t.y;
+  const today = D(2026, 11, 16);
+  const sent = (b, at) => A.koreanCountingUpSentence(A.age(b, at), at, today, fmt);
+
+  // Not 1 January: still names the next New Year and the days remaining
+  assert.equal(sent(D(1995, 3, 15), today), 'Korean age and year age go up on 1 January 2027, in 46 days.');
+
+  // (a) today is 1 January
+  const newYear = D(2026, 1, 1);
+  assert.equal(
+    A.koreanCountingUpSentence(A.age(D(1995, 3, 15), newYear), newYear, newYear, fmt),
+    'Korean age and year age went up today.'
+  );
+
+  // (b) the chosen date is 1 January, but it is not today
+  assert.equal(sent(D(1995, 3, 15), D(2025, 1, 1)), 'Korean age and year age went up on that day.');
+  assert.equal(sent(D(1995, 3, 15), D(2027, 1, 1)), 'Korean age and year age go up on that day.');
+
+  // Born on 1 January: year age is still 0 and both go up on the next New Year
+  assert.equal(sent(D(2020, 1, 1), D(2020, 1, 1)), 'Korean age and year age go up on 1 January 2021.');
+  assert.equal(
+    A.koreanCountingUpSentence(A.age(D(2026, 1, 1), D(2026, 1, 1)), D(2026, 1, 1), D(2026, 1, 1), fmt),
+    'Korean age and year age go up on 1 January 2027.'
+  );
+});
+
 test('AAHA chart: every printed dog and cat value', () => {
   const dogs = {
     small:  { 1:15, 2:24, 3:28, 4:32, 5:36, 6:40, 7:44, 8:48, 9:52, 10:56, 11:60, 12:64, 13:68, 14:72, 15:76, 16:80, 17:84, 18:88, 19:92, 20:96 },
