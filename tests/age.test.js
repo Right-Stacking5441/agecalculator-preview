@@ -496,3 +496,18 @@ test('partsWords shows every non-zero part with correct plurals', () => {
   assert.equal(r.totalDays, 33);
   assert.equal(A.partsWords(r.years, r.months, r.days), '1 month and 2 days');
 });
+
+test('textFromParts writes a valid date back, and clears incomplete or invalid boxes', () => {
+  const ok = A.textFromParts('18', '5', '1999');
+  assert.equal(ok.ok, true);
+  assert.equal(ok.text, '18 May 1999');
+  const clearedMonth = A.textFromParts('18', '', '1999');
+  assert.equal(clearedMonth.ok, false);
+  assert.equal(clearedMonth.text, '');
+  const invalid = A.textFromParts('31', '4', '1999');
+  assert.equal(invalid.ok, false);
+  assert.equal(invalid.text, '');
+  const empty = A.textFromParts('', '', '');
+  assert.equal(empty.ok, false);
+  assert.equal(empty.text, '');
+});

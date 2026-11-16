@@ -314,8 +314,7 @@ body[data-page="days-between-dates"] .entry .check, body[data-page="days-between
 /* 3. less dead space inside filled cards */
 .leaf[data-state="result"] .nextb { margin-top: var(--s4); padding-top: var(--s3); }
 .leaf[data-state="result"] details.more { margin-top: var(--s3); }
-/* Once a date reads back, the separate-boxes toggle steps aside (it returns if the boxes are open or on an error). */
-.df-foot:has(.readback.ok) .parts-toggle[aria-expanded="false"] { display: none; }
+/* The toggle stays visible so the user can switch between the text field and the boxes. */
 .leaf.obj-pair[data-state="result"] > :nth-child(1), .leaf.obj-span[data-state="result"] > :nth-child(1) { margin-top: var(--s3); }
 .on.settings .tzline { white-space: nowrap; }
 /* prefill: the settings line stays at the foot of the reserved column, so the card filling in moves nothing */
@@ -332,6 +331,10 @@ body[data-page="days-between-dates"] .entry .check, body[data-page="days-between
 .widget .parts-shared { display: none !important; }
 .widget .parts, .widget .parts:not([hidden]) { display: none !important; }
 .zone-pick select { font-size: 16px; }
+
+/* One input mode at a time: hide the text field and its label while the boxes are open. */
+.datefield.boxes-open > .df-label,
+.datefield.boxes-open > .quick { display: none; }
 /* Prefill reservations, measured by measure_h.py (UX pass). Max of 29 Feb and normal results. */
 body[data-page="home"] { --leaf-h: 459px; } body[data-page="past"] { --leaf-h: 456px; } body[data-page="difference"] { --leaf-h: 340px; } body[data-page="days-between-dates"] { --leaf-h: 487px; } body[data-page="chronological-age"] { --leaf-h: 564px; } body[data-page="korean-age"] { --leaf-h: 420px; } body[data-page="birthday-countdown"] { --leaf-h: 424px; } body[data-page="how-old-will-i-be"] { --leaf-h: 512px; }
 @media (max-width: 1080px) { body[data-page="home"] { --leaf-h: 428px; } body[data-page="past"] { --leaf-h: 424px; } body[data-page="difference"] { --leaf-h: 371px; } body[data-page="days-between-dates"] { --leaf-h: 442px; } body[data-page="chronological-age"] { --leaf-h: 515px; } body[data-page="korean-age"] { --leaf-h: 380px; } body[data-page="birthday-countdown"] { --leaf-h: 392px; } body[data-page="how-old-will-i-be"] { --leaf-h: 452px; } }

@@ -94,7 +94,7 @@ def today_short():
 
 
 NOSCRIPT_HIDE = (
-    '<noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg { display: none !important; }</style></noscript>'
+    '<noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript>'
 )
 
 
@@ -342,6 +342,23 @@ def ensure_nav_escape(soup):
     soup.body.append(frag(NAV_ESC))
 
 
+
+def fix_skip(soup, slug):
+    """Pages with no calculator should not say 'Skip to the calculator'."""
+    skip = soup.select_one("a.skip")
+    if not skip:
+        return
+    has_calc = soup.select_one("[data-calc], .calc")
+    if slug == "404" or not has_calc:
+        if slug == "404":
+            # The preview 404's document.write <base> would send href="#main" to the homepage.
+            skip.decompose()
+            return
+        skip["href"] = "#main"
+        skip.clear()
+        skip.string = "Skip to content"
+
+
 def apply_ux(docs: Path) -> int:
     docs = Path(docs)
     nav = nav_from_home(docs)
@@ -358,6 +375,7 @@ def apply_ux(docs: Path) -> int:
         soup = BeautifulSoup(raw, "html.parser")
         strip_noise(soup)
         mast(soup, slug, nav)
+        fix_skip(soup, slug)
         foot(soup)
         seo_and_pets(soup)
         cfg = P.get(slug)

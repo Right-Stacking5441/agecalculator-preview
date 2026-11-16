@@ -42,7 +42,7 @@ At launch, in a reviewed commit:
 
 ## Sitemap (do not apply yet)
 
-The live root sitemap should list indexable root pages only: the tool pages above, plus `/privacy` and `/contact` once those are indexable. Do not include `/widget` or `/embed`.
+The live root sitemap (`docs/sitemap.xml`) should list indexable root pages only: the tool pages above, plus `/privacy` and `/contact` once those are indexable. `/contact` is already in `docs/sitemap.xml` as `https://agecalculator.com/contact`. Do not include `/widget` or `/embed`.
 
 ## Launch-time privacy hosting sentence (do not apply yet)
 

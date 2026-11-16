@@ -10,8 +10,9 @@
   var q = new URLSearchParams(location.search);
   var lang = (navigator.language || 'en-GB');
   var ORDER = /^en-(US|PH)|^en$/.test(lang) && !/GB/.test(lang) ? 'MDY' : 'DMY';
-  var zone = (Intl.DateTimeFormat().resolvedOptions().timeZone) || 'Europe/London';
-  if (q.get('tz')) zone = q.get('tz');
+  var zoneName = function (z) { return z === 'Asia/Calcutta' ? 'Asia/Kolkata' : z; };
+  var zone = zoneName((Intl.DateTimeFormat().resolvedOptions().timeZone) || 'Europe/London');
+  if (q.get('tz')) zone = zoneName(q.get('tz'));
 
   /* ---------- small helpers ---------- */
   var fmt = function (x) { return Math.round(x).toLocaleString('en-GB'); };
@@ -83,20 +84,54 @@
     var f = { el: el, value: null, status: 'empty', message: '', alt: null };
     var pt = el.querySelector('.parts-toggle'), pbox = el.querySelector('.parts');
     var autoOpen = false, ptLab = pt && pt.querySelector('span');
-    function partsOpen(o) {
-      if (!pbox) return;
-      pbox.hidden = !o;
+    function labelToggles(o) {
       if (pt) pt.setAttribute('aria-expanded', String(o));
       if (ptLab) ptLab.textContent = o ? 'Use one box' : 'Type day, month and year separately';
       var sh = document.querySelector('.parts-toggle.shared');
       if (sh) {
-        if (o) sh.setAttribute('aria-expanded', 'true');
+        sh.setAttribute('aria-expanded', String(o));
         var shLab = sh.querySelector('span');
         if (shLab) shLab.textContent = o ? 'Use one box' : 'Type day, month and year separately';
       }
     }
-    if (pt) pt.addEventListener('click', function () { var o = pbox.hidden; partsOpen(o); if (o) parts[0].focus({ preventScroll: true }); });
+    function fillPartsFromQuick() {
+      var r = A.parseDate(quick.value, dateOpts());
+      if (r.ok) setDate(r.date, true);
+      else { parts[0].value = ''; parts[1].value = ''; parts[2].value = ''; }
+    }
+    function writeQuickFromParts() {
+      var r = A.textFromParts(parts[0].value, parts[1].value, parts[2].value);
+      if (r.ok) {
+        parts.forEach(function (x) { x.setAttribute('aria-invalid', 'false'); });
+        setDate(r.date); quick.value = r.text; invalid(false); show(rb(r.date), 'ok');
+      } else {
+        parts.forEach(function (x) { x.setAttribute('aria-invalid', 'false'); });
+        f.value = null; f.status = r.code; f.message = r.message;
+        quick.value = '';
+        if (!parts[0].value && !parts[1].value && !parts[2].value) { invalid(false); show('', ''); }
+        else show(r.message && r.code === 'incomplete' ? r.message : '', '');
+      }
+    }
+    function partsOpen(o) {
+      if (!pbox) return;
+      if (o) fillPartsFromQuick();
+      else writeQuickFromParts();
+      pbox.hidden = !o;
+      if (o) el.classList.add('boxes-open');
+      else el.classList.remove('boxes-open');
+      labelToggles(o);
+    }
+    if (pt) pt.addEventListener('click', function () {
+      var o = pbox.hidden;
+      partsOpen(o);
+      if (o) parts[0].focus({ preventScroll: true });
+      else quick.focus({ preventScroll: true });
+      go();
+    });
     fields[name] = f;
+    f.partsOpen = partsOpen;
+    f.parts = parts;
+    f.quick = quick;
     var dateOpts = function () { return { order: ORDER, pivotYear: today.y, today: today, yearMode: /^(on|start|end|test)$/.test(name) ? 'nearest' : 'past' }; };
     function show(text, kind, swap) {
       read.innerHTML = text + (swap ? ' <button type="button" class="textbtn swap">I meant ' + plain(swap) + '</button>' : '');
@@ -139,15 +174,7 @@
         p.value = p.value.replace(/\D/g, '').slice(0, i === 2 ? 4 : 2);
         var v = p.value, next = parts[i + 1];
         if (next && (v.length === 2 || (i === 0 && +v > 3) || (i === 1 && +v > 1))) { next.focus({ preventScroll: true }); next.select(); }
-        var r = A.validate(parts[0].value, parts[1].value, parts[2].value);
-        if (r.ok) {
-          parts.forEach(function (x) { x.setAttribute('aria-invalid', 'false'); });
-          setDate(r.date); quick.value = plain(r.date); invalid(false); show(rb(r.date), 'ok');
-        } else {
-          parts.forEach(function (x) { x.setAttribute('aria-invalid', 'false'); });
-          f.value = null; f.status = r.code; f.message = r.message;
-          show(r.message && r.code === 'incomplete' ? r.message : '', '');
-        }
+        writeQuickFromParts();
         go();
       });
       p.addEventListener('keydown', function (e) { if (e.key === 'Backspace' && !p.value && i > 0) { e.preventDefault(); parts[i - 1].focus({ preventScroll: true }); } });
@@ -175,6 +202,20 @@
   /* "Age on" date that defaults to today in a named time zone */
   var on = fields.on, onBox = document.getElementById('on-box'), onBtn = document.getElementById('on-toggle'), onLabel = document.getElementById('on-label');
   var zoneSel = document.getElementById('zone');
+  function fillZones() {
+    if (!zoneSel || !Intl.supportedValuesOf || zoneSel.options.length >= 3) return;
+    var seen = {};
+    seen[zone] = true;
+    Intl.supportedValuesOf('timeZone').forEach(function (z) {
+      z = zoneName(z);
+      if (seen[z]) return;
+      seen[z] = true;
+      var o = document.createElement('option');
+      o.textContent = z;
+      o.value = z;
+      zoneSel.appendChild(o);
+    });
+  }
   function onDate() { return on && on.value ? on.value : today; }
   function invalidOn() {
     if (!on || !onBox || onBox.hidden) return null;
@@ -184,11 +225,23 @@
     var ids = b.getAttribute('aria-controls').split(' ');
     b.addEventListener('click', function () {
       var o = b.getAttribute('aria-expanded') !== 'true';
-      b.setAttribute('aria-expanded', String(o));
-      ids.forEach(function (id) { var p = document.getElementById(id); if (p) p.hidden = !o; });
-      var lab = b.querySelector('span');
-      if (lab) lab.textContent = o ? 'Use one box' : 'Type day, month and year separately';
-      if (o) { var f = document.getElementById(ids[0]); if (f && f.querySelector('input')) f.querySelector('input').focus({ preventScroll: true }); }
+      var first = null;
+      ids.forEach(function (id) {
+        var box = document.getElementById(id);
+        var df = box && box.closest('[data-datefield]');
+        var name = df && df.getAttribute('data-datefield');
+        var fld = name && fields[name];
+        if (fld && fld.partsOpen) {
+          fld.partsOpen(o);
+          if (!first) first = fld;
+        } else if (box) box.hidden = !o;
+      });
+      if (o) {
+        if (first && first.parts && first.parts[0]) first.parts[0].focus({ preventScroll: true });
+      } else if (first && first.quick) {
+        first.quick.focus({ preventScroll: true });
+      }
+      go();
     });
   });
   function refreshOnLabel() {
@@ -196,26 +249,25 @@
     var d = onDate(), idle = onLabel.getAttribute('data-idle'), zn = document.getElementById('zone-now');
     if (zn) zn.textContent = zone;
     if (idle && onBox.hidden) { onLabel.textContent = idle; return; }
-    onLabel.innerHTML = (same(d, today) ? "Age today" : "Age on") + '<span class="on-date">, <b>' + short(d) + '</b></span>';
+    if (same(d, today)) onLabel.innerHTML = 'Age today<span class="on-date">, <b>' + short(d) + '</b></span>';
+    else onLabel.innerHTML = 'Age on <span class="on-date"><b>' + short(d) + '</b></span>';
   }
   if (onBtn) onBtn.addEventListener('click', function () {
     var open = onBox.hidden;
     onBox.hidden = !open; onBtn.setAttribute('aria-expanded', String(open)); onBtn.textContent = open ? "Use today" : (onBtn.getAttribute('data-label') || 'Change');
     if (open) {
       if (!on.value) on.set(today);
-      if (zoneSel && zoneSel.options.length < 3 && Intl.supportedValuesOf) {
-        Intl.supportedValuesOf('timeZone').forEach(function (z) { if (z !== zone) { var o = document.createElement('option'); o.textContent = z; zoneSel.appendChild(o); } });
-      }
+      fillZones();
       on.el.querySelector('.quick').focus({ preventScroll: true });
     } else { on.value = null; }
     refreshOnLabel(); go();
   });
   if (zoneSel) zoneSel.addEventListener('focus', function () {
-    if (zoneSel.options.length < 3 && Intl.supportedValuesOf) Intl.supportedValuesOf('timeZone').forEach(function (z) { if (z !== zone) { var o = document.createElement('option'); o.textContent = z; zoneSel.appendChild(o); } });
+    fillZones();
   });
   if (zoneSel) {
-    zoneSel.options[0].textContent = zone; zoneSel.value = zone;
-    zoneSel.addEventListener('change', function () { var wasToday = !on.value || same(on.value, today); zone = zoneSel.value; today = todayIn(zone); if (wasToday) on.set(today); refreshOnLabel(); fillBirthYearTable(); setDateline(); go(); });
+    zoneSel.options[0].textContent = zoneName(zone); zoneSel.options[0].value = zone; zoneSel.value = zone;
+    zoneSel.addEventListener('change', function () { var wasToday = !on.value || same(on.value, today); zone = zoneName(zoneSel.value); today = todayIn(zone); if (wasToday) on.set(today); refreshOnLabel(); fillBirthYearTable(); setDateline(); go(); });
   }
   if (on && q.get('on')) { onBox.hidden = false; onBtn.setAttribute('aria-expanded', 'true'); onBtn.textContent = 'Use today'; }
 

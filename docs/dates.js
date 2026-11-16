@@ -392,12 +392,21 @@
     return { ok: true, years: y, months: mo, age: y + mo / 12 };
   }
 
+
+  /* Plain text for the one-box field, given the day/month/year box values.
+     Incomplete or invalid boxes yield an empty string so the two modes stay in sync. */
+  function textFromParts(d, m, y) {
+    var r = validate(d, m, y);
+    if (!r.ok) return { ok: false, text: '', code: r.code, message: r.message || '', field: r.field || null };
+    return { ok: true, text: r.date.d + ' ' + MONTHS[r.date.m - 1] + ' ' + r.date.y, date: r.date };
+  }
+
   var api = { MONTHS: MONTHS, WEEKDAYS: WEEKDAYS, MIN_YEAR: MIN_YEAR, MAX_YEAR: MAX_YEAR,
     isLeap: isLeap, daysInMonth: daysInMonth, dayNumber: dayNumber, weekday: weekday,
     dayOfYear: dayOfYear, addMonths: addMonths, validate: validate, age: age, cmp: cmp, birthdayBounds: birthdayBounds,
     between: between, koreanAges: koreanAges, dogAge: dogAge, dogAgeEpigenetic: dogAgeEpigenetic,
     DOG_CHART: DOG_CHART, CAT_CHART: CAT_CHART, DOG_SIZES: DOG_SIZES,
-    catAge: catAge, catStage: catStage, birthYear: birthYear, parseDate: parseDate,
+    catAge: catAge, catStage: catStage, birthYear: birthYear, parseDate: parseDate, textFromParts: textFromParts,
     ageInCalendarYear: ageInCalendarYear, yearsOldUnit: yearsOldUnit, partsWords: partsWords, parsePetAge: parsePetAge,
     secondsUntilMidnight: secondsUntilMidnight, nextMidnight: nextMidnight, instantInZone: instantInZone };
   if (typeof module === 'object' && module.exports) module.exports = api; else root.AgeMaths = api;
