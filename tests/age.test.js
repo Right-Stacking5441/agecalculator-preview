@@ -266,6 +266,16 @@ test('natural-language date parsing', () => {
   assert.equal(A.parseDate('5/5/2000').ambiguous, false);
   assert.deepEqual(P('1/1/26', { pivotYear: 2026 }), [2026, 1, 1]);
   assert.deepEqual(P('1/1/27', { pivotYear: 2026 }), [1927, 1, 1]);
+  // Birth fields: two-digit years stay in the past (default yearMode).
+  assert.deepEqual(P('1/1/30', { pivotYear: 2026 }), [1930, 1, 1]);
+  // Target / future fields: nearest of this century and the last.
+  assert.deepEqual(P('1/1/30', { pivotYear: 2026, yearMode: 'nearest' }), [2030, 1, 1]);
+  assert.deepEqual(P('1/1/26', { pivotYear: 2026, yearMode: 'nearest' }), [2026, 1, 1]);
+  assert.deepEqual(P('1/1/99', { pivotYear: 2026, yearMode: 'nearest' }), [1999, 1, 1]);
+  assert.deepEqual(P('15 March 30', { pivotYear: 2026, yearMode: 'nearest' }), [2030, 3, 15]);
+  // A one-digit year is incomplete, not silently 2000.
+  assert.equal(P('1/1/0', { pivotYear: 2026 }), 'incomplete');
+  assert.equal(P('15 March 5', { pivotYear: 2026 }), 'incomplete');
   assert.equal(P('15 march'), 'incomplete');
   assert.equal(P('15 3'), 'incomplete');
   assert.equal(P(''), 'empty');
@@ -320,6 +330,16 @@ test('last and next birthday when the chosen date is a birthday', () => {
   assert.equal(c.days, 0);
   assert.deepEqual(ymd(c.r), [0, 0, 0]);
 
+  // Under 1, and not on the birth date itself: the earlier bound is the birth date, labelled "Born".
+  const baby = A.birthdayBounds(D(2026, 6, 1), D(2026, 11, 16));
+  assert.equal(baby.years, 0);
+  assert.equal(baby.onBirthday, false);
+  assert.equal(baby.lastLabel, 'Born');
+  assert.deepEqual([baby.last.y, baby.last.m, baby.last.d], [2026, 6, 1]);
+  assert.equal(baby.nextLabel, 'Birthday after');
+  assert.deepEqual([baby.next.y, baby.next.m, baby.next.d], [2027, 6, 1]);
+  assert.equal(baby.next.turning, 1);
+
   const mid = A.birthdayBounds(D(1995, 3, 15), D(2026, 11, 16));
   assert.equal(mid.onBirthday, false);
   assert.equal(mid.lastLabel, 'Birthday before');
@@ -354,4 +374,89 @@ test('seconds until midnight uses the next midnight in the zone, including DST d
   // America/New_York falls back at 02:00 on Sunday 1 November 2026: a 25-hour day.
   assert.equal(sec('America/New_York', at('America/New_York', 2026, 11, 1, 0, 0, 0)), 25 * 3600);
   assert.equal(sec('America/New_York', at('America/New_York', 2026, 11, 1, 12, 0, 0)), 12 * 3600);
+});
+
+test('validate: a 1–3 digit year box is incomplete, with a message once digits are typed', () => {
+  const short = A.validate('15', '3', '0');
+  assert.equal(short.ok, false);
+  assert.equal(short.code, 'incomplete');
+  assert.equal(short.field, 'year');
+  assert.match(short.message, /four digits/);
+  const emptyYear = A.validate('15', '3', '');
+  assert.equal(emptyYear.ok, false);
+  assert.equal(emptyYear.code, 'incomplete');
+  assert.equal(emptyYear.message, '');
+  const ok = A.validate('15', '3', '1995');
+  assert.equal(ok.ok, true);
+});
+
+test('age in a calendar year: birth year is 0, January 1 is safe, and 1996 is 1 year old', () => {
+  const b = D(1995, 3, 15);
+  const born = A.ageInCalendarYear(b, 1995);
+  assert.equal(born.ok, true);
+  assert.equal(born.bornYear, true);
+  assert.equal(born.after, 0);
+  assert.equal(born.jan1, null); // 1 January 1995 is before the birth date — not NaN
+  assert.equal(born.dec31.ok, true);
+  assert.equal(born.dec31.years, 0);
+  assert.deepEqual([born.firstBirthday.y, born.firstBirthday.m, born.firstBirthday.d], [1996, 3, 15]);
+
+  const next = A.ageInCalendarYear(b, 1996);
+  assert.equal(next.ok, true);
+  assert.equal(next.bornYear, false);
+  assert.equal(next.after, 1);
+  assert.equal(next.before, 0);
+  assert.equal(next.jan1.ok, true);
+  assert.equal(next.jan1.years, 0);
+  assert.equal(next.dec31.years, 1);
+  assert.equal(A.yearsOldUnit(next.after), 'year old');
+  assert.equal(A.yearsOldUnit(0), 'years old');
+  assert.equal(A.yearsOldUnit(2), 'years old');
+
+  const later = A.ageInCalendarYear(b, 2026);
+  assert.equal(later.after, 31);
+  assert.equal(later.before, 30);
+  assert.equal(later.jan1.years, 30);
+  assert.equal(later.dec31.years, 31);
+  assert.equal(A.yearsOldUnit(later.after), 'years old');
+
+  const before = A.ageInCalendarYear(b, 1994);
+  assert.equal(before.ok, false);
+  assert.equal(before.code, 'before-birth');
+
+  // Born on 1 January: 1 January of the birth year is already 0 years, not "not born yet".
+  const nye = A.ageInCalendarYear(D(1995, 1, 1), 1995);
+  assert.equal(nye.jan1.ok, true);
+  assert.equal(nye.jan1.years, 0);
+});
+
+test('parsePetAge rejects non-whole ages and accepts years plus months', () => {
+  assert.equal(A.parsePetAge('', '').code, 'empty');
+  assert.equal(A.parsePetAge('.5', '').ok, false);
+  assert.equal(A.parsePetAge('.5', '').code, 'invalid');
+  assert.equal(A.parsePetAge('-1', '').ok, false);
+  assert.equal(A.parsePetAge('abc', '').ok, false);
+  assert.equal(A.parsePetAge('1e1', '').ok, false);
+  assert.equal(A.parsePetAge('3', '12').code, 'months');
+  const ok = A.parsePetAge('3', '6');
+  assert.equal(ok.ok, true);
+  assert.equal(ok.years, 3);
+  assert.equal(ok.months, 6);
+  assert.equal(ok.age, 3.5);
+  const monthsOnly = A.parsePetAge('', '6');
+  assert.equal(monthsOnly.ok, true);
+  assert.equal(monthsOnly.years, 0);
+  assert.equal(monthsOnly.months, 6);
+  const yearsOnly = A.parsePetAge('2', '');
+  assert.equal(yearsOnly.ok, true);
+  assert.equal(yearsOnly.age, 2);
+});
+
+test('plural-style week counts: 8 days is 1 week and 1 day, 7 days is 1 week', () => {
+  // Mirrors the days-between label, which must use the same singular/plural rule as plural().
+  const plural = (k, w) => k + ' ' + w + (k === 1 ? '' : 's');
+  assert.equal(plural(Math.floor(8 / 7), 'week') + ' and ' + plural(8 % 7, 'day'), '1 week and 1 day');
+  assert.equal(plural(Math.floor(7 / 7), 'week'), '1 week');
+  assert.equal(plural(Math.floor(1 / 7), 'week'), '0 weeks');
+  assert.equal(plural(Math.floor(14 / 7), 'week'), '2 weeks');
 });

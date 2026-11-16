@@ -43,7 +43,7 @@
     if (!/^\d{1,2}$/.test(s[1])) return { ok: false, code: s[1] ? 'month' : 'incomplete', field: 'month', message: s[1] ? 'Month should be a number from 1 to 12.' : '' };
     if (!/^\d{1,4}$/.test(s[2])) return { ok: false, code: s[2] ? 'year' : 'incomplete', field: 'year', message: s[2] ? 'Year should be four digits, like 1988.' : '' };
     var dn = +s[0], mn = +s[1], yn = +s[2];
-    if (s[2].length < 4) return { ok: false, code: 'incomplete', field: 'year', message: '' };
+    if (s[2].length < 4) return { ok: false, code: 'incomplete', field: 'year', message: s[2].length ? 'Year should be four digits, like 1988.' : '' };
     if (mn < 1 || mn > 12) return { ok: false, code: 'month', field: 'month', message: 'Month should be a number from 1 to 12.' };
     if (yn < MIN_YEAR || yn > MAX_YEAR) return { ok: false, code: 'year', field: 'year', message: 'Use a year between ' + MIN_YEAR + ' and ' + MAX_YEAR + '.' };
     if (dn < 1) return { ok: false, code: 'day', field: 'day', message: 'Day should be a number from 1 to 31.' };
@@ -176,7 +176,9 @@
 
   /* Natural-language date entry: "15 March 1995", "March 15, 1995", "15th mar 95", "3/15/95", "15.03.1995",
      "1995-03-15", "15031995". order: 'DMY' or 'MDY' decides only genuinely ambiguous all-number dates.
-     Two-digit years resolve to the most recent year that isn't after pivotYear. */
+     Two-digit years: yearMode 'past' (default) is the most recent year that isn't after
+     pivotYear (birth dates). yearMode 'nearest' picks the closer of this century and the
+     last (target / future dates). A one-digit year is incomplete, not silently 2000. */
   var MONTH_RE = /^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/;
   function parseDate(text, opts) {
     opts = opts || {};
@@ -218,10 +220,19 @@
         else { d = a; m = b; ambiguous = a !== b; }
       }
     }
-    if (/^\d{1,2}$/.test(String(y))) {
+    if (/^\d$/.test(String(y)) || String(y).length === 3) {
+      return { ok: false, code: 'incomplete', field: 'year', message: 'Year should be four digits, like 1988.' };
+    }
+    if (/^\d{2}$/.test(String(y))) {
       var yy = +y, century = Math.floor(pivot / 100) * 100;
-      y = century + yy > pivot ? century - 100 + yy : century + yy;
-    } else if (String(y).length === 3) return { ok: false, code: 'incomplete', message: '' };
+      var thisCent = century + yy, lastCent = century - 100 + yy;
+      if (opts.yearMode === 'nearest') {
+        var dThis = Math.abs(thisCent - pivot), dLast = Math.abs(lastCent - pivot);
+        y = (dThis < dLast || (dThis === dLast && thisCent >= pivot)) ? thisCent : lastCent;
+      } else {
+        y = thisCent > pivot ? lastCent : thisCent;
+      }
+    }
     var v = validate(d, m, y);
     if (!v.ok) return v;
     if (ambiguous) { var vAlt = validate(m, d, y); if (vAlt.ok) alt = vAlt.date; }
@@ -293,7 +304,7 @@
       bornDay: onBirthday && r.years === 0,
       last: last,
       next: next,
-      lastLabel: onBirthday ? 'Birthday on that date' : 'Birthday before',
+      lastLabel: onBirthday ? 'Birthday on that date' : (r.years === 0 ? 'Born' : 'Birthday before'),
       nextLabel: 'Birthday after',
       years: r.years,
       months: r.months,
@@ -302,12 +313,63 @@
     };
   }
 
+
+  /* Age just before and after the birthday in a given calendar year.
+     1 January of the birth year is "not born yet" when the birthday is later. */
+  function ageInCalendarYear(b, yr) {
+    yr = +yr;
+    if (!yr || yr < MIN_YEAR || yr > MAX_YEAR) return { ok: false, code: 'year' };
+    if (yr < b.y) return { ok: false, code: 'before-birth' };
+    var first = addMonths(b, 12);
+    if (yr === b.y) {
+      var jan = { y: yr, m: 1, d: 1 };
+      var dec = { y: yr, m: 12, d: 31 };
+      return {
+        ok: true,
+        bornYear: true,
+        after: 0,
+        before: 0,
+        firstBirthday: first,
+        birthday: first,
+        jan1: cmp(jan, b) < 0 ? null : age(b, jan),
+        dec31: age(b, dec)
+      };
+    }
+    var after = yr - b.y;
+    return {
+      ok: true,
+      bornYear: false,
+      after: after,
+      before: after - 1,
+      birthday: addMonths(b, 12 * after),
+      firstBirthday: first,
+      jan1: age(b, { y: yr, m: 1, d: 1 }),
+      dec31: age(b, { y: yr, m: 12, d: 31 })
+    };
+  }
+
+  function yearsOldUnit(n) { return n === 1 ? 'year old' : 'years old'; }
+
+  /* Whole years and months only. Rejects ".", "abc", "1e1", negatives. */
+  function parsePetAge(yStr, mStr) {
+    yStr = String(yStr == null ? '' : yStr).trim();
+    mStr = String(mStr == null ? '' : mStr).trim();
+    if (!yStr && !mStr) return { ok: false, code: 'empty', message: '' };
+    if ((yStr && !/^\d+$/.test(yStr)) || (mStr && !/^\d+$/.test(mStr))) {
+      return { ok: false, code: 'invalid', message: 'Type the age in whole years and months, like 3 and 6. Fractions and words aren’t read.' };
+    }
+    var y = yStr ? +yStr : 0, mo = mStr ? +mStr : 0;
+    if (mo > 11) return { ok: false, code: 'months', message: 'Months go from 0 to 11. Over a year? Put the years in the first box.' };
+    return { ok: true, years: y, months: mo, age: y + mo / 12 };
+  }
+
   var api = { MONTHS: MONTHS, WEEKDAYS: WEEKDAYS, MIN_YEAR: MIN_YEAR, MAX_YEAR: MAX_YEAR,
     isLeap: isLeap, daysInMonth: daysInMonth, dayNumber: dayNumber, weekday: weekday,
     dayOfYear: dayOfYear, addMonths: addMonths, validate: validate, age: age, cmp: cmp, birthdayBounds: birthdayBounds,
     between: between, koreanAges: koreanAges, dogAge: dogAge, dogAgeEpigenetic: dogAgeEpigenetic,
     DOG_CHART: DOG_CHART, CAT_CHART: CAT_CHART, DOG_SIZES: DOG_SIZES,
     catAge: catAge, catStage: catStage, birthYear: birthYear, parseDate: parseDate,
+    ageInCalendarYear: ageInCalendarYear, yearsOldUnit: yearsOldUnit, parsePetAge: parsePetAge,
     secondsUntilMidnight: secondsUntilMidnight, nextMidnight: nextMidnight, instantInZone: instantInZone };
   if (typeof module === 'object' && module.exports) module.exports = api; else root.AgeMaths = api;
 })(this);

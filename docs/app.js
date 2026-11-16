@@ -61,7 +61,10 @@
     return '<p class="big"><span class="' + cls + '">' + num + '</span>' + (unit ? '<span class="unit">' + unit + '</span>' : '') + '</p>';
   }
   function body(leadHtml, sideHtml) { return '<div class="leaf-body"><div class="lead">' + leadHtml + '</div>' + (sideHtml ? '<div class="bday">' + sideHtml + '</div>' : '') + '</div>'; }
-  function notice(title, msg, side) { return { state: 'notice', html: head(title) + body('<p class="msg">' + msg + '</p>', side) }; }
+  function notice(title, msg, side) {
+    var plainMsg = String(msg || '').replace(/<[^>]+>/g, '');
+    return { state: 'notice', say: title + (plainMsg ? '. ' + plainMsg : ''), html: head(title) + body('<p class="msg" role="alert">' + msg + '</p>', side) };
+  }
 
   /* ---------- date fields: a quick box that reads plain English, plus day / month / year boxes ---------- */
   var fields = {};
@@ -71,9 +74,12 @@
     var read = el.querySelector('.readback');
     var f = { el: el, value: null, status: 'empty', message: '', alt: null };
     fields[name] = f;
+    var dateOpts = { order: ORDER, pivotYear: today.y, yearMode: /^(on|start|end|test)$/.test(name) ? 'nearest' : 'past' };
     function show(text, kind, swap) {
       read.innerHTML = text + (swap ? ' <button type="button" class="textbtn swap">I meant ' + plain(swap) + '</button>' : '');
       read.className = 'readback' + (kind ? ' ' + kind : '');
+      if (kind === 'err') read.setAttribute('role', 'alert');
+      else read.removeAttribute('role');
       var sb = read.querySelector('.swap');
       if (sb) sb.addEventListener('click', function () { setDate(swap, true); quick.value = plain(swap); f.alt = null; show('Reading this as <b>' + long(swap) + '</b>.', 'ok'); go(); });
     }
@@ -83,7 +89,7 @@
     }
     function invalid(on) { quick.setAttribute('aria-invalid', String(!!on)); }
     quick.addEventListener('input', function () {
-      var r = A.parseDate(quick.value, { order: ORDER, pivotYear: today.y });
+      var r = A.parseDate(quick.value, dateOpts);
       if (r.ok) {
         setDate(r.date, true); invalid(false);
         show('Reading this as <b>' + long(r.date) + '</b>.', 'ok', r.ambiguous ? r.alt : null);
@@ -109,6 +115,13 @@
         go();
       });
       p.addEventListener('keydown', function (e) { if (e.key === 'Backspace' && !p.value && i > 0) { e.preventDefault(); parts[i - 1].focus(); } });
+      p.addEventListener('blur', function () {
+        if (i === 2 && p.value && p.value.length < 4) {
+          var r = A.validate(parts[0].value, parts[1].value, parts[2].value);
+          f.value = null; f.status = 'incomplete'; f.message = r.message || 'Year should be four digits, like 1988.';
+          invalid(true); show(f.message, 'err');
+        }
+      });
     });
     f.set = function (d) { setDate(d, true); if (d) { quick.value = plain(d); show('Reading this as <b>' + long(d) + '</b>.', 'ok'); } };
     f.clearToToday = function () { f.set(today); };
@@ -176,7 +189,10 @@
       ['Born on a', W[r.bornWeekday]],
       kor ? ['Korean age', kor.counting + small('year age ' + kor.yearAge + ', <a href="korean-age">why</a>')] : null
     ];
-    var say = 'On ' + long(at) + ' you ' + verb + ' ' + ymdWords(r) + ' old. Next birthday ' + long(nx) + ', in ' + plural(nx.daysUntil, 'day') + '.';
+    var say = 'On ' + long(at) + ' you ' + verb + ' ' + ymdWords(r) + ' old.';
+    if (bounds.bornDay) say += ' The day they were born. Next birthday ' + long(nx) + ', turning 1, in ' + plural(nx.daysUntil, 'day') + '.';
+    else if (nx.isToday) say += ' Today. Happy ' + ordinal(nx.turning) + ' birthday.';
+    else say += ' Next birthday ' + long(nx) + ', in ' + plural(nx.daysUntil, 'day') + '.';
     return { state: 'result', say: say, html: head('Age on <b>' + short(at) + '</b>') + body(lead, monthGrid(nx.y, nx.m, nx.d, gridLabel) + '<div><p class="bday-text">' + bdayLine + '</p>' + note + '</div>') + ledger(rows) };
   }
   function emptyToday(hint) {
@@ -211,8 +227,10 @@
       var lead = big(r.years, r.years === 1 ? 'year old' : 'years old') + '<p class="rest">' + plural(r.months, 'month') + ' and ' + plural(r.days, 'day') + (bounds.bornDay ? '. The day they were born' : '') + '</p>';
       var prev = bounds.last, nx = bounds.next;
       var side = monthGrid(at.y, at.m, at.d, 'The date you chose') + '<p class="bday-text"><span class="k">That day was a</span><strong>' + W[A.weekday(at.y, at.m, at.d)] + '</strong></p>';
-      var rows = [[bounds.lastLabel, plain(prev)], [bounds.nextLabel, plain(nx) + small('turning ' + nx.turning)], ['Days lived by then', fmt(r.totalDays)], ['How long ago', A.cmp(today, at) >= 0 ? plural(A.age(at, today).years, 'year') + small(fmt(A.cmp(today, at)) + ' days') : 'that’s in the future']];
-      return { state: 'result', cls: 'leaf-old', say: 'On ' + long(at) + ' you were ' + ymdWords(r) + ' old.', html: '<div class="leaf-head"><span>On</span> ' + stamp(at) + '</div>' + body(lead, side) + ledger(rows) };
+      var ago = same(at, today) ? 'today' : (A.cmp(today, at) >= 0 ? plural(A.age(at, today).years, 'year') + small(fmt(A.cmp(today, at)) + ' days') : 'that’s in the future');
+      var verb = same(at, today) ? 'are' : (A.cmp(at, today) > 0 ? 'will be' : 'were');
+      var rows = [[bounds.lastLabel, plain(prev)], [bounds.nextLabel, plain(nx) + small('turning ' + nx.turning)], ['Days lived by then', fmt(r.totalDays)], ['How long ago', ago]];
+      return { state: 'result', cls: 'leaf-old', say: 'On ' + long(at) + ' you ' + verb + ' ' + ymdWords(r) + ' old.', html: '<div class="leaf-head"><span>On</span> ' + stamp(at) + '</div>' + body(lead, side) + ledger(rows) };
     },
     /* A countdown is a tear-off pad: one sheet per day still to go (drawn up to a point). */
     countdown: function () {
@@ -223,9 +241,9 @@
       var bounds = A.birthdayBounds(b.value, today);
       var nx = bounds.bornDay ? bounds.next : r.next, n = nx.daysUntil;
       var lead = bounds.bornDay
-        ? big(fmt(n), n === 1 ? 'sheet left' : 'sheets left') + '<p class="rest">The day they were born. The last sheet is ' + long(nx) + ', when you turn 1.</p>'
+        ? big(fmt(n), n === 1 ? 'day to go' : 'days to go') + '<p class="rest">The day they were born. Next birthday is ' + long(nx) + ', when you turn 1.</p>'
         : nx.isToday ? big('Today', '') + '<p class="rest">Happy ' + ordinal(nx.turning) + ' birthday.</p>'
-        : big(fmt(n), n === 1 ? 'sheet left' : 'sheets left') + '<p class="rest">Tear one off each morning. The last one is ' + long(nx) + ', when you turn ' + nx.turning + '.</p>';
+        : big(fmt(n), n === 1 ? 'day to go' : 'days to go') + '<p class="rest">until ' + long(nx) + ', when you turn ' + nx.turning + '.</p>';
       var rows = [['Weeks', fmt(Math.floor(n / 7)) + (n % 7 ? small('and ' + plural(n % 7, 'day')) : '')], ['Until midnight tonight', '<span data-clock>–</span>'], ['Weekend birthday?', (nx.weekday >= 5 ? 'Yes, a ' : 'No, a ') + W[nx.weekday]], ['Birthdays so far', fmt(r.years)]];
       var note = nx.shifted ? '<p class="bday-note">No 29 February in ' + nx.y + ', so we count down to 1 March.</p>' : '';
       var depth = Math.max(1, Math.min(16, Math.ceil(n / 10)));
@@ -237,17 +255,23 @@
       if (on && on.value) return ageCore(b.value, on.value);
       if (!yr || String(yr).length !== 4 || yr < A.MIN_YEAR || yr > A.MAX_YEAR) return notice('Which year?', 'Type a year between ' + A.MIN_YEAR + ' and ' + A.MAX_YEAR + ', like 2050, or pick an exact date.');
       if (yr < b.value.y) return notice('Before you were born', yr + ' is before ' + b.value.y + '.');
-      if (yr === b.value.y) {
-        var first = A.addMonths(b.value, 12);
+      var plan = A.ageInCalendarYear(b.value, yr);
+      function daysTo(d) {
+        var n = A.cmp(d, today);
+        return n > 0 ? fmt(n) : (n === 0 ? 'Today' : 'already passed');
+      }
+      function janLabel(part) { return part && part.ok ? plural(part.years, 'year') : 'not born yet'; }
+      if (plan.bornYear) {
+        var first = plan.firstBirthday;
         var html0 = planner(yr, b.value, null) +
-          '<div class="planner-say">' + big(1, 'year old') + '<p class="rest">from ' + long(first) + '. ' + yr + ' is the year they were born. The day they were born is ' + long(b.value) + '.</p></div>' +
-          ledger([['On 31 December ' + yr, '0 years'], ['Days from today to the first birthday', A.cmp(first, today) > 0 ? fmt(A.cmp(first, today)) : 'already passed'], ['First birthday is a', W[A.weekday(first.y, first.m, first.d)]]]);
+          '<div class="planner-say">' + big(0, 'years old') + '<p class="rest">' + yr + ' is the year they were born (' + long(b.value) + '). They turn 1 on ' + long(first) + '.</p></div>' +
+          ledger([['On 1 January ' + yr, janLabel(plan.jan1)], ['On 31 December ' + yr, janLabel(plan.dec31)], ['Days from today to the first birthday', daysTo(first)], ['First birthday is a', W[A.weekday(first.y, first.m, first.d)]]]);
         return { state: 'result', cls: 'obj obj-planner', html: html0, say: yr + ' is the year they were born. They turn 1 on ' + long(first) + '.' };
       }
-      var bd = A.addMonths(b.value, 12 * (yr - b.value.y)), after = yr - b.value.y, before = Math.max(0, after - 1);
+      var bd = plan.birthday, after = plan.after, before = plan.before;
       var html = planner(yr, bd, [before, after]) +
-        '<div class="planner-say">' + big(after, 'years old') + '<p class="rest">from ' + long(bd) + '. Until then, ' + before + '.</p></div>' +
-        ledger([['On 1 January ' + yr, plural(A.age(b.value, { y: yr, m: 1, d: 1 }).years, 'year')], ['On 31 December ' + yr, plural(A.age(b.value, { y: yr, m: 12, d: 31 }).years, 'year')], ['Days from today to that birthday', A.cmp(bd, today) > 0 ? fmt(A.cmp(bd, today)) : 'already passed'], ['That birthday is a', W[A.weekday(bd.y, bd.m, bd.d)]]]);
+        '<div class="planner-say">' + big(after, A.yearsOldUnit(after)) + '<p class="rest">from ' + long(bd) + '. Until then, ' + before + '.</p></div>' +
+        ledger([['On 1 January ' + yr, janLabel(plan.jan1)], ['On 31 December ' + yr, janLabel(plan.dec31)], ['Days from today to that birthday', daysTo(bd)], ['That birthday is a', W[A.weekday(bd.y, bd.m, bd.d)]]]);
       return { state: 'result', cls: 'obj obj-planner', html: html, say: 'In ' + yr + ' you turn ' + after + ' on ' + long(bd) + '.' };
     },
     /* Two leaves side by side, the gap between them measured like a drawing dimension. */
@@ -272,7 +296,7 @@
       var lo = r.sign > 0 ? a.value : b.value, hi = r.sign > 0 ? b.value : a.value;
       var weeksMarked = Math.min(Math.floor(days / 7), 52);
       var html = '<div class="span-row">' + miniLeaf(lo, r.sign > 0 ? 'Start' : 'End') +
-        '<div class="ruler"><span class="span-label"><b>' + fmt(days) + '</b> ' + (days === 1 ? 'day' : 'days') + '</span><span class="rule-ticks" aria-hidden="true" style="--weeks:' + Math.max(weeksMarked, 1) + '"></span><span class="span-sub">' + fmt(Math.floor(days / 7)) + ' weeks' + (days % 7 ? ' and ' + plural(days % 7, 'day') : '') + (inc ? ', end day counted' : '') + '</span></div>' +
+        '<div class="ruler"><span class="span-label"><b>' + fmt(days) + '</b> ' + (days === 1 ? 'day' : 'days') + '</span><span class="rule-ticks" aria-hidden="true" style="--weeks:' + Math.max(weeksMarked, 1) + '"></span><span class="span-sub">' + plural(Math.floor(days / 7), 'week') + (days % 7 ? ' and ' + plural(days % 7, 'day') : '') + (inc ? ', end day counted' : '') + '</span></div>' +
         miniLeaf(hi, r.sign > 0 ? 'End' : 'Start') + '</div>' +
         ledger([['Years, months, days', r.years + ' y ' + r.months + ' m ' + r.days + ' d'], ['Weekdays, Mon–Fri', fmt(r.weekdays + (inc && A.weekday(hi.y, hi.m, hi.d) < 5 ? 1 : 0)) + small('no bank holidays removed')],
           ['Weekend days', fmt(r.weekendDays + (inc && A.weekday(hi.y, hi.m, hi.d) >= 5 ? 1 : 0))], ['Months', fmt(r.totalMonths) + (r.days ? small('and ' + plural(r.days, 'day')) : '')], r.sign < 0 ? ['Order', 'End is before start; counted backwards'] : null]);
@@ -294,7 +318,10 @@
       var r = A.age(b.value, t.value);
       if (!r.ok) return notice('Check the dates', 'The test date is before the date of birth.');
       var code = r.years + ';' + r.months + ';' + r.days, rounded = r.totalMonths + (r.days >= 15 ? 1 : 0);
-      var html = '<div class="slip">' + slipHead + who + grid(t.value, b.value, r) +
+      var borrow = t.value.d < b.value.d
+        ? '<p class="slip-borrow">Days are counted from the real length of the borrowed month, not 30 days, so a by-hand 30-day sum can come out a day different.</p>'
+        : '';
+      var html = '<div class="slip">' + slipHead + who + grid(t.value, b.value, r) + borrow +
         '<div class="slip-foot"><p class="big"><span class="num code">' + code + '</span></p><p class="rest">' + ymdWords(r) + '</p>' +
         '<div class="slip-actions"><button type="button" class="btn" data-copy="' + code + '">Copy ' + code + '</button><button type="button" class="btn btn-quiet" data-print="slip">Print slip</button></div></div>' +
         ledger([['Age in months', fmt(r.totalMonths) + small('and ' + plural(r.days, 'day'))], ['Rounded to the month', fmt(rounded) + small('15+ days round up')]]) + '</div>';
@@ -320,7 +347,7 @@
     /* Birth year: file-divider tabs, one per possible year. */
     birthyear: function () {
       var a = $v('age-now'), had = checked('had'), at = onDate();
-      if (!a) return { state: 'empty', cls: 'obj obj-tabs', html: '<div class="ytabs"><div class="ytab blank"><span class="yt-tab">Born in</span><p class="yt-year">19··</p></div></div><p class="hint">Type an age. If you’re not sure whether the birthday has happened yet, you get both possible years.</p>' };
+      if (!a) return { state: 'empty', cls: 'obj obj-tabs', html: '<div class="ytabs"><div class="ytab blank"><span class="yt-tab">Born in</span><p class="yt-year" aria-hidden="true">19··</p></div></div><p class="hint">Type an age. If you’re not sure whether the birthday has happened yet, you get both possible years.</p>' };
       if (!/^\d{1,3}$/.test(a) || +a > 130) return notice('Check the age', 'Type an age in whole years, from 0 to 130.');
       var r = A.birthYear(+a, at, had === 'yes' ? true : had === 'no' ? false : null);
       var caps = r.years.length > 1 ? ['if your birthday is still to come in ' + at.y, 'if you’ve had it already'] : [had === 'yes' ? 'you’ve had your birthday this year' : 'your birthday is still to come'];
@@ -358,17 +385,18 @@
     return s.label.charAt(0).toUpperCase() + s.label.slice(1) + ', ' + s.lbs + ' (' + s.kg + ')';
   }
   function pet(kind) {
-    var y = +$v('pet-y') || 0, mo = +$v('pet-m') || 0, size = checked('size') || 'medium';
+    var parsed = A.parsePetAge($v('pet-y'), $v('pet-m')), size = checked('size') || 'medium';
     var tab = '<span class="rec-tab">' + (kind === 'dog' ? 'Dog' : 'Cat') + '</span>';
     var headRow = '<p class="rec-title">Age record</p>';
-    if (!$v('pet-y') && !$v('pet-m')) {
+    if (parsed.code === 'empty') {
       var ages = [1, 2, 3, 5, 7, 10, 12, 15], t;
       if (kind === 'dog') t = '<tr><th scope="col">Age</th><th scope="col">Small</th><th scope="col">Medium</th><th scope="col">Large</th><th scope="col">Giant</th></tr>' + ages.map(function (x) { return '<tr><td>' + x + '</td>' + ['small', 'medium', 'large', 'giant'].map(function (z) { var r = A.dogAge(x, z); return '<td>' + (r.ok ? fmt(r.human) : '–') + '</td>'; }).join('') + '</tr>'; }).join('');
       else t = '<tr><th scope="col">Age</th><th scope="col">Human</th><th scope="col">Stage</th></tr>' + ages.map(function (x) { var r = A.catAge(x); return '<tr><td>' + x + '</td><td>' + (r.ok ? fmt(r.human) : '–') + '</td><td>' + A.catStage(x) + '</td></tr>'; }).join('');
       return { state: 'empty', cls: 'obj obj-record', html: '<div class="record">' + tab + headRow + '<table class="chart"><caption class="sr-only">Human years by age, from the AAHA-published chart</caption>' + t + '</table><p class="hint">Type your ' + kind + '’s age for an exact figure' + (kind === 'dog' ? ', and pick their adult size.' : '.') + ' Figures are from the <a href="' + CHART_SRC + '">AAHA-published pet age chart</a>.</p></div>' };
     }
-    if (mo > 11) return notice('Check the age', 'Months go from 0 to 11. Over a year? Put the years in the first box.');
-    var age = y + mo / 12, r = kind === 'dog' ? A.dogAge(age, size) : A.catAge(age);
+    if (!parsed.ok) return notice('Check the age', parsed.message);
+    var y = parsed.years, mo = parsed.months, age = parsed.age;
+    var r = kind === 'dog' ? A.dogAge(age, size) : A.catAge(age);
     if (!r.ok) return notice('Not on the chart', petChartNote(kind, r, size));
     var aged = (y ? plural(y, 'year') : '') + (y && mo ? ' and ' : '') + (mo ? plural(mo, 'month') : '');
     var lines = [['Species', kind === 'dog' ? 'Dog' : 'Cat'], kind === 'dog' ? ['Adult size', sizeLabel(size)] : ['Life stage', A.catStage(age) + small('AAHA/AAFP 2021')], ['Age', aged || '0 months']];
@@ -400,7 +428,8 @@
     leaf.setAttribute('data-state', out.state);
     if (drew) { var ring = leaf.querySelector('.ring'); if (ring) ring.classList.add('draw'); }
     clearTimeout(liveTimer);
-    liveTimer = setTimeout(function () { live.textContent = out.say || ''; }, 700);
+    if (out.state === 'notice') live.textContent = out.say || '';
+    else liveTimer = setTimeout(function () { live.textContent = out.say || ''; }, 700);
     tick();
     if (document.body.classList.contains('widget') && window.parent !== window) window.parent.postMessage({ agecalcHeight: document.documentElement.scrollHeight }, '*');
   }
@@ -460,8 +489,16 @@
 
   /* /past?year=1990 prefill: 1 January of that year, said out loud in the UI */
   if (tool === 'past' && q.get('year') && on) {
-    var yy = +q.get('year');
-    if (yy > 1000 && yy < 3000) { onBox.hidden = false; onBtn.setAttribute('aria-expanded', 'true'); onBtn.textContent = 'Use today'; on.set({ y: yy, m: 1, d: 1 }); var yn = document.getElementById('year-note'); if (yn) { yn.hidden = false; yn.textContent = 'You came here from a ' + yy + ' link, so the date is set to 1 January ' + yy + '. Change it to any day you like.'; } }
+    var ys = String(q.get('year') || '');
+    if (/^\d{4}$/.test(ys)) {
+      var yy = +ys;
+      if (yy >= A.MIN_YEAR && yy <= A.MAX_YEAR) {
+        onBox.hidden = false; onBtn.setAttribute('aria-expanded', 'true'); onBtn.textContent = 'Use today';
+        on.set({ y: yy, m: 1, d: 1 });
+        var yn = document.getElementById('year-note');
+        if (yn) { yn.hidden = false; yn.textContent = 'You came here from a ' + yy + ' link, so the date is set to 1 January ' + yy + '. Change it to any day you like.'; }
+      }
+    }
   }
 
   function setDateline() {

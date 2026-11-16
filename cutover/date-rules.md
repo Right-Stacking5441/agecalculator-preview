@@ -54,7 +54,8 @@ out for.
    15 November 2027, in 364 days, turning 37.
 
 6. Born 16 November 2026, on 16 November 2026 (born today)
-   0 years, 0 months and 0 days. Next birthday is today, turning 0.
+   0 years, 0 months and 0 days. The day they were born. Next birthday
+   is 16 November 2027, turning 1.
 
 7. Born 29 February 2000, on 1 March 2001
    1 year, 0 months and 0 days (366 days). The birthday is counted

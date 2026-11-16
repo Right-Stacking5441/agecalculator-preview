@@ -12,13 +12,16 @@
 <meta property="og:url" content="https://agecalculator.com/widget">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#f1f1ec">
+<link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <base target="_blank">
 <link rel="preload" href="fonts/libre-franklin-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="styles.css">
-<script>if(location.search)document.documentElement.classList.add('prefill')</script>
+<script>var q=location.search;if(/[?&](dob|a|b|start|end|test|on|year)=/.test(q))document.documentElement.classList.add('prefill');if(/[?&](on|year)=/.test(q))document.documentElement.classList.add('prefill-on')</script>
 </head>
 <body class="widget">
+<main>
+<h1 class="sr-only">Age calculator</h1>
 <div class="calc" data-calc data-tool="age">
 <form class="entry" novalidate>
 <p class="w-title">Age calculator</p>
@@ -55,6 +58,7 @@
 <noscript><p class="hint">This calculator needs JavaScript to work out the result. You can use it at agecalculator.com.</p></noscript></div><p class="sr-only" id="live" aria-live="polite"></p></div>
 </div>
 <p class="credit"><a href="https://agecalculator.com/">Age calculator by agecalculator.com</a></p>
+</main>
 <script src="dates.js" defer></script><script src="app.js" defer></script>
 </body>
 </html>

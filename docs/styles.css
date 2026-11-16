@@ -161,9 +161,11 @@ p { margin: 0 0 var(--s4); text-wrap: pretty; }
 .ledger div { display: flex; align-items: baseline; gap: var(--s2); padding: 5px 0; border-bottom: 1px solid var(--rule-soft); }
 .ledger dt { flex: 1 1 auto; display: flex; align-items: baseline; gap: var(--s2); color: var(--ink-2); min-width: 0; }
 .ledger dt::after { content: ""; flex: 1; min-width: 12px; border-bottom: 1.5px dotted #a9a79e; transform: translateY(-4px); }
-.ledger dd { margin: 0; font-weight: 700; text-align: right; flex: 0 1 auto; }
-.ledger dd small { white-space: nowrap; }
+.ledger dd { margin: 0; font-weight: 700; text-align: right; flex: 0 1 auto; max-width: 55%; }
+.ledger dd small { white-space: normal; }
+.leaf-old .ledger dd small { display: block; }
 .ledger small { font-weight: 400; color: var(--ink-3); font-size: 14px; }
+[data-clock] { white-space: nowrap; }
 
 /* ---------- Ads ---------- */
 .ad { margin: 0 auto; text-align: center; }
@@ -315,6 +317,12 @@ p { margin: 0 0 var(--s4); text-wrap: pretty; }
 .readback.err { color: var(--sunday); font-weight: 600; }
 .readback .textbtn { font-size: 15px; }
 .year-note { font-size: 15px; background: var(--paper); border-left: 3px solid var(--sunday); padding: var(--s2) var(--s3); margin: 0; }
+.prefill-on #on-box[hidden] { display: block !important; visibility: hidden; }
+/* year= also reveals #year-note and fills the on-date readback; reserve that space too. */
+.prefill-on #year-note[hidden] { display: block !important; visibility: hidden; min-height: 77px; }
+.prefill-on [data-datefield="on"] .readback { min-height: 36px; }
+.prefill-on .on > p { display: flex; flex-wrap: wrap; align-items: flex-end; min-height: 84px; }
+.prefill-on #on-toggle { min-width: 70px; }
 .entry .on { margin-top: 0; }
 .on .zone { display: block; min-height: 1.45em; color: var(--ink-3); font-size: 14px; }
 #on-box { margin-top: var(--s4); }
@@ -419,7 +427,8 @@ body.widget { background: var(--paper); padding: var(--s4); font-size: 16px; }
 @page { size: A4; margin: 16mm 15mm; }
 @media print {
   body { font-size: 11pt; background: #fff; }
-  .mast, .foot, .ad, .side, .intro p, .crumbs, .skip, .entry, .content > *:not(.sheet-section), .faq, .slip-actions, .sheet-actions { display: none !important; }
+  .mast, .foot, .ad, .side, .intro p, .crumbs, .skip, .entry, .faq, .slip-actions, .sheet-actions { display: none !important; }
+  body[data-page] .content > *:not(.sheet-section) { display: none !important; }
   .band { background: none; border: 0; }
   .band .wrap, .wrap { padding: 0; max-width: none; }
   .page { display: block; padding: 0; }
@@ -437,6 +446,11 @@ body.widget { background: var(--paper); padding: var(--s4); font-size: 16px; }
   .sheet::before { content: "Chronological age, class sheet"; display: block; font-size: 18pt; font-weight: 800; margin-bottom: 6mm; }
   body[data-print="slip"] .leaf::after, body[data-page="chronological-age"]:not([data-print]) .leaf::after { content: "Worked out at agecalculator.com/chronological-age. A date-difference helper, not an official publisher tool. Check your test manual’s rounding rule."; display: block; font-size: 9pt; color: #444; margin-top: 4mm; }
   a { color: inherit; text-decoration: none; }
+  .obj-pair { display: block; grid-template-columns: none; }
+  .obj-pair .pair-say { margin-top: 4mm; display: flex; max-width: none; width: auto; }
+  .obj-pair .pair-say .unit { display: inline; width: auto; }
+  .pair-leaves, .span-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr) minmax(0, 1fr); max-width: none; }
+  .pair-say, .lead { min-width: 0; overflow: visible; }
 }
 
 .name.inline { font-size: 14px; font-weight: 600; color: var(--ink-2); margin-top: calc(var(--s3) * -1); }
@@ -444,6 +458,7 @@ body.widget { background: var(--paper); padding: var(--s4); font-size: 16px; }
 @media (max-width: 760px) {
   .entry.multi .parts { display: none; }
   .entry.multi .readback { min-height: 0; margin-top: var(--s1); }
+  .prefill-on .entry.multi [data-datefield="on"] .readback { min-height: 36px; }
   .entry.multi .quick { height: 50px; }
   .entry.multi { gap: var(--s3); }
   .entry.multi .name.inline { margin-top: 0; }
@@ -470,11 +485,13 @@ body.widget { background: var(--paper); padding: var(--s4); font-size: 16px; }
 .widget .parts, .widget .zone-pick { display: none; }
 .widget .on .zone { display: none; min-height: 0; }
 .widget .readback { min-height: 1.45em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.widget .readback:empty { min-height: 0; margin: 0; }
 .widget .ledger dd small { display: inline; white-space: nowrap; }
 @media (max-width: 360px) {
-  .widget .bday { grid-template-columns: 118px minmax(0, 1fr); gap: var(--s3); }
-  .widget .month { width: 118px; }
+  .widget .bday { display: block; }
+  .widget .bday .month { display: none; }
+  .widget .bday-text, .widget .bday-note { max-width: none; }
+  .widget .readback { white-space: normal; }
+  .widget #leaf { min-height: 0; }
 }
 .widget .ledger div:nth-child(n+4) { display: none; }
 .widget .entry { gap: var(--s3); margin-bottom: var(--s4); }
@@ -539,6 +556,8 @@ body[data-page="how-old-will-i-be"], body[data-page="what-year-was-i-born"] { --
 .page { padding-top: 72px; }
 .content { max-width: 800px; }
 .content > section:not(.faq) { display: grid; grid-template-columns: 180px minmax(0, 1fr); column-gap: var(--s6); grid-auto-flow: dense; }
+body[data-page="difference"] .content > section:not(.faq),
+body[data-page="chronological-age"] .content > section:not(.faq) { grid-template-columns: 200px minmax(0, 1fr); }
 .content > section:not(.faq) > h2 { grid-column: 1; grid-row: 1 / span 30; font-size: 18px; line-height: 1.25; padding-top: 3px; border-top: 3px solid var(--ink); align-self: start; }
 .content > section:not(.faq) > *:not(h2) { grid-column: 2; }
 .content > section:not(.faq) > .years { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -659,6 +678,8 @@ body[data-page="how-old-will-i-be"], body[data-page="what-year-was-i-born"] { --
 .slip .ledger { margin-top: var(--s4); }
 
 /* dog, cat: vet record card in a manila tab */
+.leaf.obj-record { padding-top: 30px; }
+.leaf.obj-record .record { margin-top: 0; }
 .record { position: relative; margin-top: 30px; background: var(--manila); border: 1.5px solid var(--ink); padding: var(--s4) var(--s5) var(--s5); }
 .rec-tab { position: absolute; left: -1.5px; top: -30px; height: 30px; padding: 5px var(--s5) 0; background: var(--manila); border: 1.5px solid var(--ink); border-bottom: 0; font-weight: 800; font-size: 15px; letter-spacing: .04em; }
 .rec-title { font-size: 13px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; color: #5b5039; margin: 0 0 var(--s3); }
@@ -703,7 +724,7 @@ body[data-page="how-old-will-i-be"], body[data-page="what-year-was-i-born"] { --
 .yt-tab { position: absolute; left: -1.5px; top: -28px; height: 28px; padding: 4px var(--s4) 0; background: inherit; border: 1.5px solid var(--ink); border-bottom: 0; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; }
 .ytab.second .yt-tab { left: auto; right: -1.5px; }
 .yt-year { font-size: 104px; font-weight: 800; line-height: .95; letter-spacing: -.03em; font-variant-numeric: tabular-nums; margin: 0; }
-.ytab.blank .yt-year { color: var(--rule); }
+.ytab.blank .yt-year { color: var(--ink-3); }
 .yt-cap { margin: var(--s2) 0 0; font-size: 16px; color: var(--ink-2); max-width: 24ch; }
 .yt-or { margin: 0 0 var(--s7); font-size: 18px; font-weight: 600; color: var(--ink-3); }
 .obj-tabs > .rest { margin-top: var(--s4); }
@@ -814,6 +835,13 @@ body[data-page="how-old-will-i-be"], body[data-page="what-year-was-i-born"] { --
   line-height: 1.35;
   padding: 8px 20px;
 }
+.slip-borrow {
+  margin: var(--s3) 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--ink-2);
+  max-width: 36em;
+}
 .rule-line {
   margin: 14px 0 0;
   font-size: 14px;
@@ -829,6 +857,8 @@ body[data-page="how-old-will-i-be"], body[data-page="what-year-was-i-born"] { --
 /* Reserve the empty result card's height so JS drawing the calendar or
    paper object doesn't push the advert and the page down (mobile CLS).
    Heights are the measured empty-state card at that width, rounded up. */
+body[data-page="dog-age"] .leaf[data-state="empty"],
+body[data-page="cat-age"] .leaf[data-state="empty"] { min-height: 425px; }
 @media (max-width: 760px) {
   body[data-page="home"] .leaf[data-state="empty"] { min-height: 480px; }
   body[data-page="past"] .leaf[data-state="empty"] { min-height: 456px; }
@@ -839,12 +869,12 @@ body[data-page="how-old-will-i-be"], body[data-page="what-year-was-i-born"] { --
   body[data-page="days-between-dates"] .leaf[data-state="empty"] { min-height: 150px; }
   body[data-page="chronological-age"] .leaf[data-state="empty"] { min-height: 314px; }
   body[data-page="what-year-was-i-born"] .leaf[data-state="empty"] { min-height: 156px; }
-  body[data-page="dog-age"] .leaf[data-state="empty"] { min-height: 408px; }
-  body[data-page="cat-age"] .leaf[data-state="empty"] { min-height: 385px; }
+  body[data-page="dog-age"] .leaf[data-state="empty"] { min-height: 438px; }
+  body[data-page="cat-age"] .leaf[data-state="empty"] { min-height: 438px; }
 }
 @media (max-width: 390px) {
   body[data-page="what-year-was-i-born"] .leaf[data-state="empty"] { min-height: 180px; }
-  body[data-page="cat-age"] .leaf[data-state="empty"] { min-height: 408px; }
+  body[data-page="cat-age"] .leaf[data-state="empty"] { min-height: 438px; }
 }
 @media (max-width: 360px) {
   body[data-page="home"] .leaf[data-state="empty"] { min-height: 496px; }
@@ -853,14 +883,25 @@ body[data-page="how-old-will-i-be"], body[data-page="what-year-was-i-born"] { --
 }
 @media (max-width: 320px) {
   body[data-page="chronological-age"] .leaf[data-state="empty"] { min-height: 400px; }
-  body[data-page="dog-age"] .leaf[data-state="empty"] { min-height: 432px; }
+  body[data-page="dog-age"] .leaf[data-state="empty"] { min-height: 461px; }
 }
 
 
 /* Prefill result height: when the URL has a query, reserve the filled-card
    height so JS drawing the result doesn't shift the page. --leaf-h is set per
    page below. Empty-state min-heights still apply without a query. */
-body[data-page="home"] { --leaf-h: 612px; }
+body[data-page="home"] { --leaf-h: 694px; }
+@media (min-width: 761px) {
+  body[data-page="home"] { --leaf-h: 518px; }
+  body[data-page="home"] .leaf[data-state="empty"] { min-height: 314px; }
+  .prefill #leaf { min-height: var(--leaf-h); }
+}
+@media (max-width: 360px) {
+  body[data-page="home"] { --leaf-h: 764px; }
+}
+@media (max-width: 320px) {
+  body[data-page="home"] { --leaf-h: 804px; }
+}
 body[data-page="difference"] { --leaf-h: 463px; }
 body[data-page="past"] { --leaf-h: 604px; }
 body[data-page="days-between-dates"] { --leaf-h: 336px; }
@@ -883,3 +924,6 @@ body.widget { --leaf-h: 470px; }
 }
 
 .widget #leaf { min-height: 470px; }
+@media (max-width: 360px) {
+  .widget #leaf { min-height: 0; }
+}

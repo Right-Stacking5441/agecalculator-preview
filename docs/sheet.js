@@ -41,9 +41,9 @@
     return i[0];
   }
   function calc() {
-    var t = A.parseDate(dateIn.value, { order: ORDER, pivotYear: today.y });
+    var t = A.parseDate(dateIn.value, { order: ORDER, pivotYear: today.y, yearMode: 'nearest' });
     rows.querySelectorAll('tr').forEach(function (tr) {
-      var b = A.parseDate(tr.querySelectorAll('input')[1].value, { order: ORDER, pivotYear: today.y }), out = tr.querySelector('.out'), m = tr.querySelector('.m');
+      var b = A.parseDate(tr.querySelectorAll('input')[1].value, { order: ORDER, pivotYear: today.y, yearMode: 'past' }), out = tr.querySelector('.out'), m = tr.querySelector('.m');
       if (!t.ok || !b.ok) { out.textContent = b.code === 'empty' ? '' : (b.ok ? '' : '?'); m.textContent = ''; return; }
       var r = A.age(b.date, t.date);
       out.textContent = r.ok ? r.years + ';' + r.months + ';' + r.days : 'after test';
