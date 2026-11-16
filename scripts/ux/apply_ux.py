@@ -5,7 +5,9 @@ page shells, so a future markdown rebuild reproduces the same structure.
 """
 from __future__ import annotations
 import json, re, sys
+from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 # Allow `import icons` when run from this directory or via build_copy.
 HERE = Path(__file__).resolve().parent
@@ -79,9 +81,30 @@ def datefields(soup, labels):
 
 def toggle_html(ids, shared):
     return (
-        f'<button type="button" class="textbtn parts-toggle{" shared" if shared else ""}" aria-expanded="false" aria-controls="{" ".join(ids)}" '
-        f'aria-label="{UI["parts_toggle_aria"]}">{icon("boxes")}<span>{UI["parts_toggle"]}</span></button>'
+        f'<button type="button" class="textbtn parts-toggle{" shared" if shared else ""}" aria-expanded="false" aria-controls="{" ".join(ids)}">'
+        f'{icon("boxes")}<span>{UI["parts_toggle"]}</span></button>'
     )
+
+
+def today_short():
+    n = datetime.now(ZoneInfo("Europe/London"))
+    wdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    return f"{wdays[n.weekday()]} {n.day} {months[n.month - 1]} {n.year}"
+
+
+NOSCRIPT_HIDE = (
+    '<noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg { display: none !important; }</style></noscript>'
+)
+
+
+def ensure_noscript(soup):
+    if not soup.head:
+        return
+    for ns in soup.head.find_all("noscript"):
+        if ns.find("style") and "on-date" in ns.get_text():
+            return
+    soup.head.append(frag(NOSCRIPT_HIDE))
 
 
 def parts_toggles(soup):
@@ -143,18 +166,33 @@ def settings_block(soup, slug):
         else:
             btn["data-label"] = UI["settings_button"]
             btn.string = UI["settings_button"]
-            # Neutral label in the HTML: no baked date when JS is off.
+            # Date sits in .on-date so first paint reserves the settings-line
+            # width. A noscript rule hides it when JavaScript is off.
             lab.clear()
-            lab.string = "Age today"
+            lab.append("Age today")
+            lab.append(frag(f'<span class="on-date">, <b>{today_short()}</b></span>'))
         if btn.has_attr("aria-label"):
             del btn["aria-label"]
         p.append(frag(icon("clock")))
         p.append(lab)
         if not future:
-            p.append(frag("<script>\n(function(){\n  var el=document.getElementById('on-label');\n  if(!el || el.hidden || el.getAttribute('data-idle')) return;\n  var M=['January','February','March','April','May','June','July','August','September','October','November','December'];\n  var W=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];\n  var n=new Date(), mon=M[n.getMonth()].slice(0,3);\n  el.innerHTML='Age today, <b>'+W[n.getDay()].slice(0,3)+' '+n.getDate()+' '+mon+' '+n.getFullYear()+'</b>';\n})();\n</script>"))
-            p.append(frag(f' <span class="tzline">{UI["settings_zone"]} <span id="zone-now">Europe/London</span></span>'))
-        p.append(" ")
-        p.append(btn)
+            p.append(frag("""<script>
+(function(){
+  var el=document.getElementById('on-label');
+  if(!el || el.hidden || el.getAttribute('data-idle')) return;
+  var M=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var W=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var n=new Date(), mon=M[n.getMonth()].slice(0,3);
+  var dspan=el.querySelector('.on-date');
+  if(!dspan){ dspan=document.createElement('span'); dspan.className='on-date'; el.appendChild(dspan); }
+  dspan.innerHTML=', <b>'+W[n.getDay()].slice(0,3)+' '+n.getDate()+' '+mon+' '+n.getFullYear()+'</b>';
+})();
+</script>"""))
+            if slug != "widget":
+                p.append(frag(f' <span class="tzline">{UI["settings_zone"]} <span id="zone-now">Europe/London</span></span>'))
+        if slug != "widget":
+            p.append(" ")
+            p.append(btn)
     on["class"] = ["on", "settings"]
     on.extract()
     soup.select_one(".result #live").insert_after(on)
@@ -256,8 +294,9 @@ def collapse(soup, cfg):
         body = s.decode_contents()
         sid = s.get("id")
         cls = " ".join(c for c in (s.get("class") or []) if c != "tight")
+        opened = " open" if sid == "class-sheet" else ""
         d = (
-            f'<details class="topic{(" " + cls) if cls else ""}"{f" id=\"{sid}\"" if sid else ""}>'
+            f'<details class="topic{(" " + cls) if cls else ""}"{f" id=\"{sid}\"" if sid else ""}{opened}>'
             f'<summary><h2{f" id=\"{hid}\"" if hid else ""}>{title}</h2>{icon("chev", "chev")}</summary>'
             f'<div class="topic-body">{body}</div></details>'
         )
@@ -277,6 +316,30 @@ def nav_from_home(docs: Path):
         seen.add(h)
         out.append((h, t))
     return out
+
+
+
+NAV_ESC = """<script>
+(function(){
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape' && e.key !== 'Esc') return;
+    var menu = document.querySelector('details.nav-menu');
+    if (!menu || !menu.open) return;
+    menu.open = false;
+    var s = menu.querySelector('summary');
+    if (s) s.focus();
+  });
+})();
+</script>"""
+
+
+def ensure_nav_escape(soup):
+    if not soup.body:
+        return
+    for sc in soup.find_all("script"):
+        if sc.string and "details.nav-menu" in sc.string and "Escape" in sc.string:
+            return
+    soup.body.append(frag(NAV_ESC))
 
 
 def apply_ux(docs: Path) -> int:
@@ -322,6 +385,8 @@ def apply_ux(docs: Path) -> int:
                 l["href"] = "styles.css"
         if soup.head and not soup.select_one('link[href="ux.css"]'):
             soup.head.append(frag('<link rel="stylesheet" href="ux.css">'))
+        ensure_noscript(soup)
+        ensure_nav_escape(soup)
         f.write_text(str(soup))
         n += 1
     css = (HERE / "ux.css").read_text()

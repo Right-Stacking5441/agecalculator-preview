@@ -36,9 +36,13 @@ The preview keeps `<meta name="robots" content="noindex,nofollow">` on every pag
 
 At launch, in a reviewed commit:
 
-- **Tool pages are indexable.** Remove the noindex/nofollow meta from the calculators (home, `/past`, `/difference`, `/days-between-dates`, `/chronological-age`, `/birthday-countdown`, `/how-old-will-i-be`, `/korean-age`, `/what-year-was-i-born`, `/dog-age`, `/cat-age`) and from `/privacy` if SEO Manager agrees it should be indexed. Open `robots.txt` to allow those URLs (the live root robots.txt is a later, approved change).
+- **Tool pages are indexable.** Remove the noindex/nofollow meta from the calculators (home, `/past`, `/difference`, `/days-between-dates`, `/chronological-age`, `/birthday-countdown`, `/how-old-will-i-be`, `/korean-age`, `/what-year-was-i-born`, `/dog-age`, `/cat-age`) and from `/privacy` and `/contact` if SEO Manager agrees they should be indexed. `/contact` is treated like `/privacy`: indexable at launch, and it belongs in the root sitemap (indexable root pages only). Open `robots.txt` to allow those URLs (the live root robots.txt is a later, approved change).
 - **`/widget` and `/embed` stay noindex**, with `noindex` only (not `nofollow`), so the credit link on those pages still counts. They are an iframe target and an instructions page, not landing pages.
 - Take the preview banner off every page, including `/widget` (it already has no banner, so it would not appear inside a third-party embed).
+
+## Sitemap (do not apply yet)
+
+The live root sitemap should list indexable root pages only: the tool pages above, plus `/privacy` and `/contact` once those are indexable. Do not include `/widget` or `/embed`.
 
 ## Launch-time privacy hosting sentence (do not apply yet)
 

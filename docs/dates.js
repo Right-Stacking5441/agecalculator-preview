@@ -182,6 +182,7 @@
      is 1926). yearMode 'nearest' picks the closer of this century and the last
      (target / future dates). A one-digit year is incomplete, not silently 2000. */
   var MONTH_RE = /^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)/;
+  var MONTH_NAMES = ['january','february','march','april','may','june','july','august','september','october','november','december'];
   function parseDate(text, opts) {
     opts = opts || {};
     var order = opts.order || 'DMY', pivot = opts.pivotYear || 2026;
@@ -197,12 +198,18 @@
       if (/^(1|2)\d{3}/.test(s8) && validate(s8.slice(6), s8.slice(4, 6), s8.slice(0, 4)).ok) tok = [s8.slice(0, 4), s8.slice(4, 6), s8.slice(6)];
       else tok = [s8.slice(0, 2), s8.slice(2, 4), s8.slice(4)];
     }
-    var month = null, nums = [], words = 0;
+    var month = null, nums = [], words = 0, monthPrefix = false;
     tok.forEach(function (w) {
       if (/^\d+$/.test(w)) nums.push(w);
-      else { var mm = w.match(MONTH_RE); if (mm && month === null) month = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'].indexOf(mm[1]) + 1; else words++; }
+      else {
+        var mm = w.match(MONTH_RE);
+        if (mm && month === null) month = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'].indexOf(mm[1]) + 1;
+        else if (MONTH_NAMES.some(function (name) { return name.indexOf(w) === 0; })) monthPrefix = true;
+        else words++;
+      }
     });
     if (words) return { ok: false, code: 'unreadable', message: 'Try a date like 15 March 1995 or 15/03/1995.' };
+    if (monthPrefix && month === null) return { ok: false, code: 'incomplete', message: '' };
     var d, m, y, ambiguous = false, alt = null;
     if (month !== null) {
       m = month;

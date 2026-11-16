@@ -8,10 +8,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-COPY = Path("/workspace/marketing/seo/agecalculator-copy")
-if not COPY.exists():
-    # allow running from a checkout that vendors the copy later
-    COPY = ROOT / ".." / "marketing" / "seo" / "agecalculator-copy"
+COPY = ROOT / "copy-approved"
 DOCS = ROOT / "docs"
 
 MAP = {
@@ -27,6 +24,7 @@ MAP = {
     "dog-age.md": "dog-age.html",
     "cat-age.md": "cat-age.html",
     "privacy.md": "privacy.html",
+    "contact.md": "contact.html",
     "embed.md": "embed.html",
     "widget.md": "widget.html",
 }
@@ -309,6 +307,18 @@ def main() -> int:
                 issues.append("PRIVACY GitHub Pages hosting sentence or docs link missing")
             if "noindex" not in html:
                 issues.append("PRIVACY missing noindex")
+
+        if html_name == "contact.html":
+            if "hello@agecalculator.com" not in html:
+                issues.append("CONTACT email hello@agecalculator.com missing")
+            if "mailto:hello@agecalculator.com" not in html:
+                issues.append("CONTACT mailto:hello@agecalculator.com missing")
+            if "noindex" not in html:
+                issues.append("CONTACT missing noindex")
+            if "href=\"contact\">Contact</a>" not in html and "href='contact'>Contact</a>" not in html:
+                # footer link may use href=contact without quotes? no
+                if 'href="contact"' not in html:
+                    issues.append("CONTACT footer (or page) missing contact href — expected on every page")
 
         if html_name == "embed.html":
             if "https://agecalculator.com/embed.js" not in html:

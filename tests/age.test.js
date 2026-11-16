@@ -284,6 +284,11 @@ test('natural-language date parsing', () => {
   assert.equal(P('1/1/0', { pivotYear: 2026 }), 'incomplete');
   assert.equal(P('15 March 5', { pivotYear: 2026 }), 'incomplete');
   assert.equal(P('15 march'), 'incomplete');
+  // Partial month names are unfinished, not invalid ("18 M", "18 Ma").
+  assert.equal(P('18 M'), 'incomplete');
+  assert.equal(P('18 Ma'), 'incomplete');
+  assert.equal(P('18 Mar'), 'incomplete');
+  assert.equal(P('18 xyz'), 'unreadable');
   assert.equal(P('15 3'), 'incomplete');
   assert.equal(P(''), 'empty');
   assert.equal(P('next tuesday'), 'unreadable');

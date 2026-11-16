@@ -17,7 +17,7 @@
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link as="font" crossorigin="" href="fonts/libre-franklin-var.woff2" rel="preload" type="font/woff2"/>
 <link href="styles.css" rel="stylesheet"/>
-<link href="ux.css" rel="stylesheet"/></head>
+<link href="ux.css" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg { display: none !important; }</style></noscript></head>
 <body data-page="embed">
 
 <a class="skip" href="#main">Skip to the calculator</a>
@@ -72,12 +72,23 @@
 </div></main>
 <footer class="foot"><div class="wrap">
 <div class="foot-index" id="all-tools"><h2>Every calculator on the site</h2><ul class="foot-tools"><li><a href="./">Age calculator</a></li><li><a href="difference">Age difference</a></li><li><a href="past">How old was I?</a></li><li><a href="how-old-will-i-be">How old will I be?</a></li><li><a href="days-between-dates">Days between dates</a></li><li><a href="chronological-age">Chronological age</a></li><li><a href="birthday-countdown">Birthday countdown</a></li><li><a href="korean-age">Korean age</a></li><li><a href="what-year-was-i-born">What year was I born?</a></li><li><a href="dog-age">Dog age</a></li><li><a href="cat-age">Cat age</a></li></ul></div>
-<div class="foot-small"><p><b>agecalculator.com</b>. Dates you type are worked out in your browser and aren’t sent anywhere. Free to use.</p><p><a href="embed">Put this calculator on your own site</a> · <a href="privacy">Privacy</a></p></div>
+<div class="foot-small"><p><b>agecalculator.com</b>. Dates you type are worked out in your browser and aren’t sent anywhere. Free to use.</p><p><a href="embed">Put this calculator on your own site</a> · <a href="privacy">Privacy</a> · <a href="contact">Contact</a></p></div>
 </div></footer>
 <script>
 document.querySelectorAll('[data-copy-snippet]').forEach(function (b) { b.addEventListener('click', function () {
   var t = document.querySelectorAll('.snippet code')[+b.getAttribute('data-copy-snippet')].textContent;
   navigator.clipboard && navigator.clipboard.writeText(t).then(function () { var o = b.textContent; b.textContent = 'Copied'; setTimeout(function () { b.textContent = o; }, 1600); });
 }); });
+</script><script>
+(function(){
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape' && e.key !== 'Esc') return;
+    var menu = document.querySelector('details.nav-menu');
+    if (!menu || !menu.open) return;
+    menu.open = false;
+    var s = menu.querySelector('summary');
+    if (s) s.focus();
+  });
+})();
 </script></body>
 </html>

@@ -16,6 +16,23 @@ header_val() {
 }
 
 
+
+# Fail if any built HTML or approved copy still has a placeholder.
+check_no_placeholders() {
+  local repo
+  repo="$(cd "$(dirname "$0")/.." && pwd)"
+  local hits
+  hits="$(grep -RInE '\[PLACEHOLDER|PLACEHOLDER:' "$repo/docs" --include='*.html' "$repo/copy-approved" --include='*.md' 2>/dev/null || true)"
+  if [ -n "$hits" ]; then
+    echo "FAIL  placeholders remain in built HTML or approved copy:"
+    printf '%s\n' "$hits" | sed 's/^/      /'
+    failed=$((failed + 1))
+    return 1
+  fi
+  echo "ok    no placeholders in docs/*.html or copy-approved/*.md"
+  passed=$((passed + 1))
+}
+
 ROOT="https://agecalculator.com"
 failed=0
 passed=0
@@ -265,6 +282,9 @@ check_asset_200 "/styles.css" "text/css"
 check_asset_200 "/fonts/libre-franklin-var.woff2" "font/woff2\|application/font\|octet-stream"
 check_asset_200 "/favicon.ico" "image/"
 check_asset_200 "/favicon.svg" "image/"
+
+echo "----  Placeholders (local files)"
+check_no_placeholders
 
 echo "-----------------------------------------------------------"
 echo "$passed passed, $failed failed"

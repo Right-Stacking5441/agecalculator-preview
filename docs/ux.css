@@ -14,7 +14,7 @@
 .brand .wm { display: inline; white-space: nowrap; }
 .brand .wm span { color: inherit; font-weight: inherit; } /* 8da54a4: one wordmark, same weight and ink (approved) */
 .nav-menu { position: relative; font-size: 15px; }
-.nav-menu summary { list-style: none; display: inline-flex; align-items: center; gap: var(--s2); padding: var(--s3) var(--s2); cursor: pointer; color: var(--ink); font-weight: 600; border-radius: 2px; }
+.nav-menu summary { list-style: none; display: inline-flex; align-items: center; gap: var(--s2); padding: var(--s3) var(--s2); cursor: pointer; color: var(--ink); font-weight: 600; border-radius: 2px; box-sizing: border-box; min-height: 44px; }
 .nav-menu summary::-webkit-details-marker { display: none; }
 .nav-menu summary:hover span { text-decoration: underline; text-underline-offset: 3px; }
 .nav-menu ul { position: absolute; right: 0; top: calc(100% + 4px); z-index: 4; list-style: none; margin: 0; padding: var(--s2) 0; min-width: 236px; background: var(--paper); border: 1.5px solid var(--ink); box-shadow: 4px 4px 0 -1.5px var(--paper), 4px 4px 0 0 var(--ink); }
@@ -29,7 +29,7 @@
     position: absolute; width: 1px; height: 1px; overflow: hidden;
     clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
   }
-  .nav-menu summary { padding-inline: 8px; gap: 0; }
+  .nav-menu summary { padding-inline: 8px; gap: 0; min-width: 44px; min-height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; }
 }
 
 /* ---------- Band: H1 and intro small; the input is the first big thing ---------- */
@@ -59,7 +59,7 @@
 .entry.multi .parts:not([hidden]) { display: grid; }
 .parts { margin-top: var(--s3); }
 .parts.two:not([hidden]) { display: grid; }
-.widget .parts:not([hidden]) { display: grid; }
+.widget .parts, .widget .parts:not([hidden]) { display: none !important; }
 
 /* Optional names: tucked away */
 .opt-field summary, .note-d summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-size: 14px; color: var(--ink-2); padding: var(--s1) 0; }
@@ -244,16 +244,12 @@ details.qa > summary h3 { font-size: 17px; font-weight: 600; margin: 0; }
 .opt-field.tz { margin-top: var(--s4); }
 .opt-field.tz .opt-body { display: block; }
 .opt-field.tz .ic { width: 18px; height: 18px; }
-/* Fixed-height readback row: filling it in never moves the result */
-.df-foot { min-height: 24px; }
-.df-foot .readback, .entry.multi .df-foot .readback, .prefill-on .entry.multi .df-foot .readback { min-height: 0 !important; margin: 0; line-height: 22px; }
-.df-foot .readback.ok { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Readback row can wrap, so a long date plus "Use one box" never clips. */
+.df-foot { min-height: 24px; height: auto; align-items: center; flex-wrap: wrap; }
+.df-foot .readback, .entry.multi .df-foot .readback, .prefill-on .entry.multi .df-foot .readback { min-height: 0 !important; margin: 0; line-height: 22px; height: auto; overflow: visible; white-space: normal; flex: 1 1 auto; }
+.df-foot .readback.ok { white-space: normal; overflow: visible; text-overflow: unset; }
 /* The countdown pad's stacked sheets: room for the deepest stack, always, so drawing it can't push the page */
 #leaf.leaf-stack { margin-bottom: 54px !important; }
-.df-foot { height: 26px; align-items: center; flex-wrap: nowrap; }
-.df-foot .readback { height: 22px; overflow: hidden; }
-.df-foot:has(.readback.err), .df-foot:has(.swap) { height: auto; flex-wrap: wrap; }
-.df-foot:has(.readback.err) .readback, .df-foot:has(.swap) .readback { height: auto; white-space: normal; }
 /* Widget */
 .widget .on.settings .zone { display: none; }
 .widget .more .ledger div:nth-child(n) { display: flex; }
@@ -318,9 +314,8 @@ body[data-page="days-between-dates"] .entry .check, body[data-page="days-between
 /* 3. less dead space inside filled cards */
 .leaf[data-state="result"] .nextb { margin-top: var(--s4); padding-top: var(--s3); }
 .leaf[data-state="result"] details.more { margin-top: var(--s3); }
-/* the readback wins its line: once a date reads back, the separate-boxes toggle steps aside (it returns on an error) */
+/* Once a date reads back, the separate-boxes toggle steps aside (it returns if the boxes are open or on an error). */
 .df-foot:has(.readback.ok) .parts-toggle[aria-expanded="false"] { display: none; }
-.df-foot .readback { overflow: visible; white-space: normal; }
 .leaf.obj-pair[data-state="result"] > :nth-child(1), .leaf.obj-span[data-state="result"] > :nth-child(1) { margin-top: var(--s3); }
 .on.settings .tzline { white-space: nowrap; }
 /* prefill: the settings line stays at the foot of the reserved column, so the card filling in moves nothing */
@@ -329,6 +324,14 @@ body[data-page="days-between-dates"] .entry .check, body[data-page="days-between
 .prefill body[data-page] .result > .on.settings { padding-top: var(--s4); }
 .obj-pair .pair-say .big { white-space: nowrap; }  /* fallback-font width never wraps the unit (CLS on font swap) */
 .leaf.obj-pair::before, .leaf.obj-pair > .ph-msg { grid-column: 1 / -1; align-self: start; }  /* the binding is its own full row in the pair grid, empty or filled */
+
+/* Widget stays compact: no More rows, no date/zone picker, no separate-boxes UI. */
+.widget details.more,
+.widget #on-toggle,
+.widget .parts-toggle,
+.widget .parts-shared { display: none !important; }
+.widget .parts, .widget .parts:not([hidden]) { display: none !important; }
+.zone-pick select { font-size: 16px; }
 /* Prefill reservations, measured by measure_h.py (UX pass). Max of 29 Feb and normal results. */
 body[data-page="home"] { --leaf-h: 459px; } body[data-page="past"] { --leaf-h: 456px; } body[data-page="difference"] { --leaf-h: 340px; } body[data-page="days-between-dates"] { --leaf-h: 487px; } body[data-page="chronological-age"] { --leaf-h: 564px; } body[data-page="korean-age"] { --leaf-h: 420px; } body[data-page="birthday-countdown"] { --leaf-h: 424px; } body[data-page="how-old-will-i-be"] { --leaf-h: 512px; }
 @media (max-width: 1080px) { body[data-page="home"] { --leaf-h: 428px; } body[data-page="past"] { --leaf-h: 424px; } body[data-page="difference"] { --leaf-h: 371px; } body[data-page="days-between-dates"] { --leaf-h: 442px; } body[data-page="chronological-age"] { --leaf-h: 515px; } body[data-page="korean-age"] { --leaf-h: 380px; } body[data-page="birthday-countdown"] { --leaf-h: 392px; } body[data-page="how-old-will-i-be"] { --leaf-h: 452px; } }

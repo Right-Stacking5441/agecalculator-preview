@@ -1,16 +1,23 @@
 #!/usr/bin/env python3
-"""Rebuild page copy from the approved markdown files. Text/structure only."""
+"""Rebuild page copy from the approved markdown files. Text/structure only.
+
+Runs from the repo alone, plus the approved copy snapshot at copy-approved/.
+No /tmp inputs, no outside Python environment, and no server on port 8777.
+"""
 from __future__ import annotations
 import html as htmllib
 import json
 import re
+import sys
 from pathlib import Path
 
-COPY = Path("/workspace/marketing/seo/agecalculator-copy")
-DOCS = Path("/workspace/agecalculator/docs")
-DIAGRAM = Path("/tmp/home-diagram.html").read_text()
-SHEET_INNER = Path("/tmp/class-sheet-inner.html").read_text()
-YEARS = Path("/tmp/birth-years.html").read_text()
+ROOT = Path(__file__).resolve().parents[1]
+COPY = ROOT / "copy-approved"
+DOCS = ROOT / "docs"
+FRAG = Path(__file__).resolve().parent / "fragments"
+DIAGRAM = (FRAG / "home-diagram.html").read_text()
+SHEET_INNER = (FRAG / "class-sheet-inner.html").read_text()
+YEARS = (FRAG / "birth-years.html").read_text()
 
 PAGE = {
     "home.md": "index.html",
@@ -25,6 +32,7 @@ PAGE = {
     "dog-age.md": "dog-age.html",
     "cat-age.md": "cat-age.html",
     "privacy.md": "privacy.html",
+    "contact.md": "contact.html",
     "embed.md": "embed.html",
 }
 
@@ -614,20 +622,77 @@ def restore_shells():
         print("restored shell", src.name)
 
 def apply_ux_pass():
-    import sys
     ux = Path(__file__).resolve().parent / "ux"
     if str(ux) not in sys.path:
         sys.path.insert(0, str(ux))
     from apply_ux import apply_ux
+    from prerender import prerender
     n = apply_ux(DOCS)
     print(f"applied UX structure to {n} pages")
-    import subprocess
-    prerender = Path(__file__).resolve().parent / "ux" / "prerender.py"
-    r = subprocess.run(
-        ["/workspace/.pwvenv/bin/python", str(prerender), str(DOCS)],
-        check=True,
-    )
+    prerender(DOCS)
     print("prerendered calculator pages")
+
+
+def ensure_footer_links(html: str) -> str:
+    if re.search(r'href=["\']contact["\']', html):
+        return html
+    html2, n = re.subn(
+        r'(<a href="privacy">Privacy</a>)',
+        r'\1 · <a href="contact">Contact</a>',
+        html,
+        count=1,
+    )
+    return html2 if n else html
+
+
+def fix_404_share(html: str) -> str:
+    """A 404 is served for any unknown path, so a specific og:url would mis-attribute a share."""
+    return re.sub(r'\n?<meta[^>]*property="og:url"[^>]*>\n?', "\n", html, count=1)
+
+
+def _attr(tag: str, name: str):
+    m = re.search(rf'{name}="([^"]+)"', tag or "")
+    return m.group(1) if m else None
+
+
+def _link_canonical(html: str):
+    m = re.search(r'<link[^>]*rel="canonical"[^>]*>', html)
+    return _attr(m.group(0) if m else "", "href")
+
+
+def _meta_og_url(html: str):
+    m = re.search(r'<meta[^>]*property="og:url"[^>]*>', html)
+    return _attr(m.group(0) if m else "", "content")
+
+
+def finish_pages():
+    for pth in sorted(DOCS.glob("*.html")):
+        t = pth.read_text()
+        if pth.name == "404.html":
+            t = fix_404_share(t)
+            if 'property="og:url"' in t:
+                raise SystemExit("404.html still has og:url")
+        t = ensure_footer_links(t)
+        pth.write_text(t)
+    # Every non-404 page should have matching canonical and og:url.
+    issues = []
+    for pth in sorted(DOCS.glob("*.html")):
+        t = pth.read_text()
+        can = _link_canonical(t)
+        og = _meta_og_url(t)
+        if pth.name == "404.html":
+            if can:
+                issues.append("404.html should not have a canonical")
+            if og:
+                issues.append("404.html should not have og:url")
+            continue
+        if not can or not og:
+            issues.append(f"{pth.name} missing canonical or og:url")
+        elif can != og:
+            issues.append(f"{pth.name} og:url {og} != canonical {can}")
+    if issues:
+        raise SystemExit("share/canonical mismatch:\n  " + "\n  ".join(issues))
+    print("canonical and og:url match on every page; 404 has neither")
 
 def main():
     restore_shells()
@@ -638,7 +703,7 @@ def main():
             raise SystemExit(f"no title in {md_name}")
         body_html = render_body(body, html_name)
         html = (DOCS / html_name).read_text()
-        if html_name == "privacy.html":
+        if html_name in ("privacy.html", "contact.html"):
             html = build_privacy(html, meta, body_html)
         elif html_name == "embed.html":
             html = build_embed(html, meta, body_html)
@@ -653,7 +718,7 @@ def main():
         html = replace_footer(html)
         if html_name == "chronological-age.html":
             html = ensure_chrono_rule_line(html)
-        if "noindex,nofollow" not in html and html_name in ("privacy.html", "embed.html", "widget.html"):
+        if "noindex,nofollow" not in html and html_name in ("privacy.html", "contact.html", "embed.html", "widget.html"):
             raise SystemExit(f"noindex missing on {html_name}")
         if html_name not in ("privacy.html", "embed.html") and "noindex,nofollow" not in html:
             raise SystemExit(f"preview noindex missing on {html_name}")
@@ -670,6 +735,7 @@ def main():
     patch_widget()
     patch_app_widget_hint()
     apply_ux_pass()
+    finish_pages()
 
     # confirm embed.js URL untouched in snippets
     emb = (DOCS / "embed.html").read_text()
