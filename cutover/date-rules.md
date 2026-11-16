@@ -12,8 +12,9 @@ A completed month lands on the same date next month. If that date does
 not exist, it rolls to the 1st of the next month. So 31 January plus one
 month is 1 March, in both leap years and common years, and a 29 February
 birthday in a common year is counted on 1 March. This site does not use
-the last day of February. Some other calculators do, so around month
-ends two sites can differ by a day or two.
+the last day of February. Common date libraries (for example date-fns,
+Python’s dateutil and Java’s LocalDate) use the last day of the month
+instead, so around month ends other tools can differ by a day or two.
 
 Age is completed years first, then the leftover completed months, then
 the leftover days. Totals in days, weeks and hours measure the same

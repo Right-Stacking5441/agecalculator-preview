@@ -25,7 +25,7 @@
   function cmp(a, b) { return dayNumber(a.y, a.m, a.d) - dayNumber(b.y, b.m, b.d); }
 
   /* Add n whole months. If that day doesn't exist in the target month, the anniversary is the 1st of the
-     following month. This is the usual UK/US civil convention for 29 February birthdays (you turn a year
+     following month. This matches the Scottish statutory rule for 29 February birthdays (Age of Legal Capacity (Scotland) Act 1991 s6(2)); England & Wales and NI statutes don't name a date (you turn a year
      older on 1 March in a common year), applied the same way to month-ends (31 Jan + 1 month = 1 Mar). */
   function addMonths(date, n) {
     var t = date.m - 1 + n;
