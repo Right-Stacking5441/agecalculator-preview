@@ -458,8 +458,8 @@ body.widget { background: var(--paper); padding: var(--s4); font-size: 16px; }
 
 /* Preview-only strip. Remove at launch with the noindex tags. */
 .preview-banner {
-  background: #202936;
-  color: #f2f3f5;
+  background: var(--ink);
+  color: var(--desk);
   font-size: 13px;
   font-weight: 600;
   line-height: 1.35;

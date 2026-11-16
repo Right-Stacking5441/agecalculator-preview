@@ -5,12 +5,12 @@ A static, no-build preview of a new site for the root domain agecalculator.com, 
 - Published (no custom domain): GitHub Pages from `main` `/docs`
 - Intended production host: **Cloudflare Pages** (free). See `cutover/` — not applied.
 - Pages are flat `docs/*.html` files so Cloudflare Pages can serve `/past` (no trailing slash). Canonicals and internal links have no trailing slash.
-- On this GitHub Pages preview, extensionless paths 404; use `/past.html` (and so on) until cutover. `/past?year=` works on Cloudflare Pages at `/past?year=`.
+- On this GitHub Pages preview, `past.html` is also served at `/past` (no trailing slash). `/past/` and other trailing-slash paths 404. `/past?year=` is the same page; the year only pre-fills the form.
 - Every page has `<meta name="robots" content="noindex,nofollow">`
 - `docs/robots.txt` disallows all crawlers (the live root robots.txt is a later, approved change)
 - Unique pre-rendered title, meta description, self-canonical (`https://agecalculator.com/…`) and JSON-LD in the first HTML
 - `/past/{year}` is not a set of pages; `past.html` reads `?year=` and pre-fills 1 January
-- Design: torn desk-calendar leaf, self-hosted Libre Franklin, reserved ad placeholders (no ad code). Shared date module is `docs/dates.js` (designer SPEC §8): a month ends on the same date next month; if that date does not exist (31 January, or 29 February in a common year) it rolls to the 1st of the next month. The rule is shown in a short line by the result and in the FAQ.
+- Design: torn desk-calendar leaf, self-hosted Libre Franklin, reserved ad placeholders (no ad code). Shared date module is `docs/dates.js` (designer SPEC §8). A completed month lands on the same date next month; if that date does not exist it rolls to the 1st of the next month, so 31 January plus one month is 1 March (in leap years and common years) and a 29 February birthday in a common year is counted on 1 March. This site does not use the last day of February. The rule is shown in a short line by the result and in the FAQ. Worked examples: `cutover/date-rules.md`.
 - `/past?year=` reads the year in JS to pre-fill the form. The static canonical and og:url stay `https://agecalculator.com/past` with no query string; no script rewrites them.
 - Unit tests (Node, no dependencies): `node --test tests/age.test.js`
 

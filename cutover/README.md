@@ -12,5 +12,6 @@ Prepared 16 November 2026, Europe/London, from SEO Manager’s redirect map (`/w
 | `conflicts.md` | CSV rows that conflict with the host, the build, or current DNS |
 | `verify.sh` | `curl -sSI` checks: one 301 hop to the mapped target |
 | `rollback.md` | How to undo the cutover |
+| `date-rules.md` | Date maths rules and worked examples from the test suite |
 
 The preview on GitHub Pages stays noindex. After approval, noindex and `robots.txt` `Disallow: /` must be removed in a separate, reviewed change before the apex is pointed at Pages.

@@ -9,7 +9,7 @@ The Free plan includes Pages (custom domain, 500 builds a month, HTTPS). The zon
 The preview is on GitHub Pages (`Right-Stacking5441/agecalculator-preview`, `main` `/docs`) and should stay there as a noindex preview. It is the wrong host for the live root:
 
 - A `docs/past/index.html` file is served as `/past/` with a trailing slash. The SEO map wants no trailing slash except `/`.
-- GitHub Pages does not give extensionless `/past` from `past.html` (the URL is `/past.html` unless you add a directory, which brings the slash back).
+- This preview does serve `past.html` at `/past`, but `/past/` 404s, and GitHub Pages will not give the 301 trailing-slash behaviour the map wants. Prefer Cloudflare Pages for the live root.
 - The zone already sits on Cloudflare. Putting the root on GitHub Pages would mean new DNS, a custom-domain setup, and a second place to hang 301s.
 
 ## How Cloudflare Pages gives clean, slashless URLs
@@ -20,7 +20,7 @@ Cloudflare Pages’ own serving rules (docs updated 11 November 2026):
 - `/past.html` is redirected to `/past`.
 - A folder `past/index.html` would be served at `/past/` (with a slash) — so this build does **not** use folders for HTML pages.
 
-The preview build was flattened to match that: `docs/past.html`, `docs/difference.html`, and so on. Canonicals are already `https://agecalculator.com/past` (no slash). Internal links use relative, extensionless, slashless hrefs (`past`, `difference`, `./` for home). `/past?year=1990` is the path `/past` plus a query string; Pages passes the query through, and `docs/js/site.js` reads `?year=` and pre-fills 1 January.
+The preview build was flattened to match that: `docs/past.html`, `docs/difference.html`, and so on. Canonicals are already `https://agecalculator.com/past` (no slash). Internal links use relative, extensionless, slashless hrefs (`past`, `difference`, `./` for home). `/past?year=1990` is the path `/past` plus a query string; Pages passes the query through, and `docs/app.js` reads `?year=` and pre-fills 1 January. The static canonical stays `https://agecalculator.com/past` with no query string.
 
 A `wrangler.toml` sits at the repo root with `pages_build_output_dir = "docs"`. Do not connect this project to the live apex until approval. `404.html` is present, so Pages will 404 unknown paths instead of falling back to the homepage (this matches the map’s “root 404s if no page”).
 
