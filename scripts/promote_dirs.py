@@ -339,6 +339,11 @@ def _year_unique_body(html: str, year: int) -> str:
     for sel in ("details.topic", "section.faq"):
         for el in soup.select(sel):
             el.decompose()
+    # Visible FAQ is gone; drop the cloned FAQPage JSON-LD too (it still asks
+    # "How old was I in 1990?" on every year page otherwise).
+    for script in soup.find_all("script", attrs={"type": "application/ld+json"}):
+        if script.string and "FAQPage" in script.string:
+            script.decompose()
     content = soup.select_one(".content")
     if content and not soup.select_one(".year-note-more"):
         leap = is_leap(year)
