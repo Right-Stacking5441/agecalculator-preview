@@ -4,7 +4,7 @@
     "index": {
       "intro": "This works out your exact age today from your date of birth, in years, months and days, and how long it is until your next birthday.",
       "howto": "What the result shows",
-      "faq": "Common questions",
+      "faq": "Leap birthdays and other awkward dates",
       "label": {
         "dob": "Enter your date of birth"
       }
@@ -19,7 +19,7 @@
       }
     },
     "difference": {
-      "intro": "Two dates of birth are all it needs to show who’s older and by how much, in years, months and days.",
+      "intro": "Put in two dates of birth to see who’s older and by how much, in years, months and days.",
       "howto": "Two dates, one gap",
       "faq": "Working out an age gap",
       "label": {
@@ -30,7 +30,7 @@
     "days-between-dates": {
       "intro": "From today to a deadline, or across a whole year: see how many days there are, how many are weekdays and how many fall at the weekend.",
       "howto": "Start day in, end day out",
-      "faq": "Questions",
+      "faq": "What gets counted",
       "label": {
         "start": "From",
         "end": "To"
@@ -82,7 +82,7 @@
       }
     },
     "what-year-was-i-born": {
-      "intro": "An age on its own fits two birth years, depending on whether this year’s birthday has been yet. Say which and you’ll get one year; if you’re not sure, you’ll get both.",
+      "intro": "An age on its own fits two birth years, depending on whether the birthday has passed this year. Say which and you’ll get one year; if you’re not sure, you’ll get both.",
       "howto": "From an age to a year",
       "faq": "Why you sometimes get two years",
       "label": {}

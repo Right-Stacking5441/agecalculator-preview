@@ -3,7 +3,7 @@
 - **Title:** Age difference calculator: Years, months and days
 - **Meta description:** Enter two dates of birth to see exactly how much older one person is, in years, months and days, plus the gap in days and weeks.
 - **H1:** Age difference calculator
-- **Line under the H1:** Two dates of birth are all it needs to show who’s older and by how much, in years, months and days.
+- **Line under the H1:** Put in two dates of birth to see who’s older and by how much, in years, months and days.
 - **Target keywords:** age difference calculator; age calculator difference
 
 ---

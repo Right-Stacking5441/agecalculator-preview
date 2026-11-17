@@ -80,8 +80,7 @@
   var MSG_UNREADABLE = 'That doesn’t look like a date. Try something like 18 May 1995.';
   var MSG_INCOMPLETE = 'That date isn’t finished. Try 15 March 1995.';
   var MSG_FUTURE_DOB = 'That date hasn’t happened yet. Check the year.';
-  var MSG_BEFORE_DOB = 'That’s before the date of birth.';
-  function isDobField(n) { return n === 'dob' || n === 'a' || n === 'b'; }
+  function isDobField(n) { return n === 'dob'; }
   function parseMessage(r) {
     return r.message || (r.code === 'incomplete' ? MSG_INCOMPLETE : MSG_UNREADABLE);
   }
@@ -163,7 +162,7 @@
       if (r.ok) {
         savedParts = null;
         parts.forEach(function (x) { x.setAttribute('aria-invalid', 'false'); });
-        setDate(r.date); quick.value = r.text; quickFromParts = true; invalid(false); show(rb(r.date), 'ok');
+        quick.value = r.text; quickFromParts = true; applyCompleteDate({ date: r.date, ambiguous: false, alt: null }, false);
       } else {
         parts.forEach(function (x) { x.setAttribute('aria-invalid', 'false'); });
         f.value = null; f.status = r.code; f.message = r.message;
@@ -232,11 +231,23 @@
       if (fillParts && d) { parts[0].value = String(d.d).padStart(2, '0'); parts[1].value = String(d.m).padStart(2, '0'); parts[2].value = d.y; }
     }
     function invalid(on) { quick.setAttribute('aria-invalid', String(!!on)); }
+    function applyCompleteDate(r, fillParts) {
+      if (isDobField(name) && A.cmp(r.date, today) > 0) {
+        setDate(r.date, fillParts);
+        f.status = 'future';
+        f.message = MSG_FUTURE_DOB;
+        invalid(true);
+        show(MSG_FUTURE_DOB, 'err');
+        return;
+      }
+      setDate(r.date, fillParts);
+      invalid(false);
+      show(rb(r.date), 'ok', r.ambiguous ? r.alt : null);
+    }
     quick.addEventListener('input', function () {
       var r = A.parseDate(quick.value, dateOpts());
       if (r.ok) {
-        setDate(r.date, true); invalid(false);
-        show(rb(r.date), 'ok', r.ambiguous ? r.alt : null);
+        applyCompleteDate(r, true);
       } else {
         f.value = null; f.status = r.code; f.message = r.message;
         invalid(false);
@@ -262,13 +273,8 @@
       if (!quick.value.trim()) { invalid(false); savedParts = null; clearParts(); return; }
       var r = A.parseDate(quick.value, dateOpts());
       if (r.ok) {
-        if (isDobField(name) && A.cmp(r.date, today) > 0) {
-          setDate(r.date, true); f.status = 'future'; f.message = MSG_FUTURE_DOB;
-          invalid(true); show(MSG_FUTURE_DOB, 'err'); go();
-        } else if (tool === 'past' && name === 'on' && fields.dob && fields.dob.value && A.cmp(r.date, fields.dob.value) < 0) {
-          setDate(r.date, true); f.status = 'before'; f.message = MSG_BEFORE_DOB;
-          invalid(true); show(MSG_BEFORE_DOB, 'err'); go();
-        }
+        applyCompleteDate(r, true);
+        go();
         return;
       }
       f.value = null; f.status = r.code; f.message = r.message;
@@ -486,6 +492,23 @@
   }
   function needs(f) { return !f || !f.value; }
   function errOf(f, label) { return f && f.el.querySelector('.readback.err') ? notice('Check the ' + label, f.el.querySelector('.readback.err').textContent.replace(/I meant.*/, '')) : null; }
+  function isFutureDob(f) { return f && f.status === 'future'; }
+  /* Empty leaf, nothing announced. Used when a future date of birth is the only thing wrong. */
+  function noResult(emptyOut) {
+    emptyOut = emptyOut || { state: 'empty', html: '' };
+    return { state: 'empty', say: '', html: emptyOut.html || '', cls: emptyOut.cls };
+  }
+  /* Error wins: future DOB is silent; any other field error blocks the result. */
+  function blockOnErrors(pairs, emptyOut) {
+    var i, err;
+    for (i = 0; i < pairs.length; i++) if (isFutureDob(pairs[i][0])) return noResult(emptyOut);
+    for (i = 0; i < pairs.length; i++) {
+      err = errOf(pairs[i][0], pairs[i][1]);
+      if (err) return err;
+    }
+    for (i = 0; i < pairs.length; i++) if (needs(pairs[i][0])) return emptyOut;
+    return null;
+  }
 
   /* ---------- per-tool objects (see SPEC.md "Polish v3") ---------- */
   var MON3 = M.map(function (x) { return x.slice(0, 3); });
@@ -497,20 +520,20 @@
   var TOOLS = {
     age: function () {
       var b = fields.dob;
-      if (needs(b)) return errOf(b, 'date') || invalidOn() || emptyToday(document.body.classList.contains('widget') ? 'Type a date of birth to see your age in years, months and days.' : 'Type a date of birth, like 15 March 1995.');
-      return invalidOn() || ageCore(b.value, onDate());
+      var empty = emptyToday(document.body.classList.contains('widget') ? 'Type a date of birth to see your age in years, months and days.' : 'Type a date of birth, like 15 March 1995.');
+      if (isFutureDob(b)) return noResult(empty);
+      return errOf(b, 'date') || invalidOn() || (needs(b) ? empty : ageCore(b.value, onDate()));
     },
     /* An old leaf: aged paper, brown binding, the date rubber-stamped, that day ringed in its month. */
     past: function () {
-      var b = fields.dob, at = onDate(), onErr = invalidOn();
-      if (onErr) return withCls(onErr, 'leaf-old');
-      if (needs(b)) return errOf(b, 'date') || withCls(emptyToday('Add both dates to see how old you were then.'), 'leaf-old');
+      var b = fields.dob, at = onDate();
+      var empty = withCls(emptyToday('Add both dates to see how old you were then.'), 'leaf-old');
+      if (isFutureDob(b)) return noResult(empty);
+      var blocked = errOf(b, 'date') || invalidOn();
+      if (blocked) return withCls(blocked, 'leaf-old');
+      if (needs(b)) return empty;
       var r = A.age(b.value, at);
-      if (!r.ok) {
-        if (fields.on && fields.on.markError) fields.on.markError(MSG_BEFORE_DOB);
-        return withCls(notice('Not born yet', MSG_BEFORE_DOB), 'leaf-old');
-      }
-      if (fields.on && fields.on.clearSemanticError && fields.on.message === MSG_BEFORE_DOB) fields.on.clearSemanticError();
+      if (!r.ok) return withCls(notice('Not born yet', long(b.value) + ' is after ' + long(at) + '.'), 'leaf-old');
       var bounds = A.birthdayBounds(b.value, at);
       var lead = big(r.years, r.years === 1 ? 'year old' : 'years old') + '<p class="rest">' + plural(r.months, 'month') + ' and ' + plural(r.days, 'day') + (bounds.bornDay ? '. The day you were born.' : '') + '</p>';
       var prev = bounds.last, nx = bounds.next;
@@ -532,7 +555,10 @@
     /* A countdown is a tear-off pad: one sheet per day still to go (drawn up to a point). */
     countdown: function () {
       var b = fields.dob;
-      if (needs(b)) return errOf(b, 'date') || withCls(emptyToday('Whose birthday? Type the date of birth to start counting.'), 'leaf-stack');
+      var empty = withCls(emptyToday('Whose birthday? Type the date of birth to start counting.'), 'leaf-stack');
+      if (isFutureDob(b)) return noResult(empty);
+      if (errOf(b, 'date')) return errOf(b, 'date');
+      if (needs(b)) return empty;
       var r = A.age(b.value, today);
       if (!r.ok) return notice('Not born yet', 'That date is after today.');
       var bounds = A.birthdayBounds(b.value, today);
@@ -552,8 +578,11 @@
     },
     future: function () {
       var b = fields.dob, yr = +$v('in-year');
-      if (needs(b)) return errOf(b, 'date') || invalidOn() || { state: 'empty', cls: 'obj obj-planner', html: ph('', 'Type your date of birth to see your age in ' + ((yr && String(yr).length === 4) ? yr : 'that year') + '.') };
+      var empty = { state: 'empty', cls: 'obj obj-planner', html: ph('', 'Type your date of birth to see your age in ' + ((yr && String(yr).length === 4) ? yr : 'that year') + '.') };
+      if (isFutureDob(b)) return noResult(empty);
+      if (errOf(b, 'date')) return errOf(b, 'date');
       if (invalidOn()) return invalidOn();
+      if (needs(b)) return empty;
       if (on && on.value) return ageCore(b.value, on.value);
       if (!yr || String(yr).length !== 4 || yr < A.MIN_YEAR || yr > A.MAX_YEAR) return notice('Which year?', 'Type a year between ' + A.MIN_YEAR + ' and ' + A.MAX_YEAR + ', like 2050, or pick an exact date.');
       if (yr < b.value.y) return notice('Before you were born', yr + ' is before ' + b.value.y + '.');
@@ -577,7 +606,10 @@
     /* Two leaves side by side, the gap between them measured like a drawing dimension. */
     difference: function () {
       var a = fields.a, b = fields.b, na = $v('name-a') || 'Person A', nb = $v('name-b') || 'Person B';
-      if (needs(a) || needs(b)) return errOf(a, 'first date') || errOf(b, 'second date') || { state: 'empty', cls: 'obj obj-pair', html: ph('', 'Two dates of birth, and the gap shows up here.') };
+      var empty = { state: 'empty', cls: 'obj obj-pair', html: ph('', 'Two dates of birth, and the gap shows up here.') };
+      if (errOf(a, 'first date')) return errOf(a, 'first date');
+      if (errOf(b, 'second date')) return errOf(b, 'second date');
+      if (needs(a) || needs(b)) return empty;
       var r = A.between(a.value, b.value);
       if (r.totalDays === 0) return notice('Same day', esc(na) + ' and ' + esc(nb) + ' were born on the same day.');
       var first = r.sign > 0 ? [a.value, na] : [b.value, nb], second = r.sign > 0 ? [b.value, nb] : [a.value, na];
@@ -592,7 +624,10 @@
     /* Two leaves joined by a ruler, the span bracketed and labelled. */
     between: function () {
       var a = fields.start, b = fields.end, inc = document.getElementById('inc-end').checked;
-      if (needs(a) || needs(b)) return errOf(a, 'start date') || errOf(b, 'end date') || { state: 'empty', cls: 'obj obj-span', html: ph('', 'Pick a start and an end date to count the days.') };
+      var empty = { state: 'empty', cls: 'obj obj-span', html: ph('', 'Pick a start and an end date to count the days.') };
+      if (errOf(a, 'start date')) return errOf(a, 'start date');
+      if (errOf(b, 'end date')) return errOf(b, 'end date');
+      if (needs(a) || needs(b)) return empty;
       var r = A.between(a.value, b.value), days = r.totalDays + (inc ? 1 : 0);
       var lo = r.sign > 0 ? a.value : b.value, hi = r.sign > 0 ? b.value : a.value;
       var weeksMarked = Math.min(Math.floor(days / 7), 52);
@@ -616,7 +651,11 @@
           '<tr class="ans"><th scope="row">Age</th>' + (r ? '<td>' + r.years + '</td><td>' + r.months + '</td><td>' + r.days + '</td>' : '<td class="blank"></td><td class="blank"></td><td class="blank"></td>') + '</tr></tbody></table>';
       }
       var who = '<p class="slip-name"><span>Name</span> ' + (nm ? esc(nm) : '<i class="muted">not given</i>') + '</p>';
-      if (needs(b) || needs(t)) return errOf(b, 'date of birth') || errOf(t, 'test date') || { state: 'empty', cls: 'obj obj-slip', html: ph('', 'Add the date of birth and test date for the y;m;d.') };
+      var empty = { state: 'empty', cls: 'obj obj-slip', html: ph('', 'Add the date of birth and test date for the y;m;d.') };
+      if (isFutureDob(b)) return noResult(empty);
+      if (errOf(b, 'date of birth')) return errOf(b, 'date of birth');
+      if (errOf(t, 'test date')) return errOf(t, 'test date');
+      if (needs(b) || needs(t)) return empty;
       var r = A.age(b.value, t.value);
       if (!r.ok) return notice('Check the dates', 'The test date is before the date of birth.');
       var code = r.years + ';' + r.months + ';' + r.days, rounded = r.totalMonths + (r.days >= 15 ? 1 : 0);
@@ -633,7 +672,10 @@
     korean: function () {
       var b = fields.dob, at = onDate(), onErr = invalidOn();
       if (onErr) return withCls(onErr, 'leaf-lunar');
-      if (needs(b)) return errOf(b, 'date') || withCls(emptyToday('Type a date of birth to see all three ages.'), 'leaf-lunar');
+      var empty = withCls(emptyToday('Type a date of birth to see all three ages.'), 'leaf-lunar');
+      if (isFutureDob(b)) return noResult(empty);
+      if (errOf(b, 'date')) return withCls(errOf(b, 'date'), 'leaf-lunar');
+      if (needs(b)) return empty;
       var k = A.koreanAges(b.value, at);
       if (!k.ok) return withCls(notice('Not born yet', 'That date is after ' + long(at) + '.'), 'leaf-lunar');
       var jan = function (d) { return '<b>1 January ' + d.y + '</b>'; };
@@ -718,7 +760,12 @@
     refreshOnLabel();
     var out = (TOOLS[tool] || TOOLS.age)();
     if (!out) return;
-    if (out.html === lastHtml) return;
+    if (out.html === lastHtml) {
+      clearTimeout(liveTimer);
+      if (!out.say) live.textContent = '';
+      else if (out.state === 'notice') live.textContent = out.say || '';
+      return;
+    }
     var drew = out.state === 'result' && leaf.getAttribute('data-state') !== 'result';
     lastHtml = out.html;
     leaf.innerHTML = out.html;
@@ -731,7 +778,8 @@
     leaf.setAttribute('data-state', out.state);
     if (drew) { var ring = leaf.querySelector('.ring'); if (ring) ring.classList.add('draw'); }
     clearTimeout(liveTimer);
-    if (out.state === 'notice') live.textContent = out.say || '';
+    if (!out.say) live.textContent = '';
+    else if (out.state === 'notice') live.textContent = out.say || '';
     else liveTimer = setTimeout(function () { live.textContent = out.say || ''; }, 700);
     tick();
     if (document.body.classList.contains('widget') && window.parent !== window) window.parent.postMessage({ agecalcHeight: document.documentElement.scrollHeight }, '*');

@@ -41,7 +41,7 @@ Pick the size by the weight your dog is, or will be, as an adult. As a rough gui
 
 ## A 7-year-old Labrador
 
-The ways of converting dog years don’t agree, and one dog is enough to show how far apart they are. (The DNA-clock formula is explained further down the page.)
+The chart figure comes from the size chart in the next section, and the DNA-clock formula is explained further down the page.
 
 A 7-year-old Labrador weighing 30 kg is a large dog on the chart, so the calculator shows **50** human years. The DNA-clock formula gives 16 × ln(7) + 31, which is 16 × 1.946 + 31, or about **62**. Times seven gives 49. The two modern methods disagree by 12 years at this age, which is a fair picture of how rough any dog-to-human conversion is.
 

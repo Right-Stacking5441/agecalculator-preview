@@ -3,7 +3,7 @@
 - **Title:** What year was I born? Birth year from your age
 - **Meta description:** Type your age and whether you've had your birthday this year to get your birth year. Not sure? You get the two possible years. Works for past years too.
 - **H1:** What year was I born?
-- **Line under the H1:** An age on its own fits two birth years, depending on whether this year’s birthday has been yet. Say which and you’ll get one year; if you’re not sure, you’ll get both.
+- **Line under the H1:** An age on its own fits two birth years, depending on whether the birthday has passed this year. Say which and you’ll get one year; if you’re not sure, you’ll get both.
 - **Target keyword:** what year was i born
 
 ---

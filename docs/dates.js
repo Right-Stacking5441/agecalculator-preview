@@ -46,8 +46,9 @@
     if (s[2].length < 4) return { ok: false, code: 'incomplete', field: 'year', message: s[2].length ? 'Year should be four digits, like 1988.' : '' };
     if (mn < 1 || mn > 12) return { ok: false, code: 'month', field: 'month', message: 'Month should be a number from 1 to 12.' };
     if (yn < MIN_YEAR || yn > MAX_YEAR) return { ok: false, code: 'year', field: 'year', message: 'Use a year between ' + MIN_YEAR + ' and ' + MAX_YEAR + '.' };
+    if (dn < 1) return { ok: false, code: 'day', field: 'day', message: 'There’s no day 0. Check the day.' };
     var dim = daysInMonth(yn, mn);
-    if (dn < 1 || dn > dim) {
+    if (dn > dim) {
       var msg = (mn === 2 && dn === 29)
         ? yn + ' wasn’t a leap year, so it had no 29 February.'
         : MONTHS[mn - 1] + ' only has ' + dim + ' days.';

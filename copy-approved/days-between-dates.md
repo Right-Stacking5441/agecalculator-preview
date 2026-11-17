@@ -46,7 +46,7 @@ This page measures a period of time: a notice period, a contract, a pregnancy so
 
 ---
 
-## Questions
+## What gets counted
 ### Does the count include the end date?
 Not unless you tick "Count the end day too". Without it, the start day counts and the end day doesn't, so the 1st to the 2nd of a month is 1 day.
 

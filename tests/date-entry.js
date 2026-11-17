@@ -564,6 +564,107 @@ async function run() {
     assert(/Type day, month and year separately/i.test(info.label), 'toggle label still said the boxes were open', info);
   });
 
+  const TODAY_Q = '?today=16%20November%202026';
+
+  await check('Future date of birth: field error, no result, nothing announced', async () => {
+    const MSG = 'That date hasn’t happened yet. Check the year.';
+    for (const path of ['/', '/how-old-will-i-be/', '/past/']) {
+      await page.goto(server.url + path + TODAY_Q, { waitUntil: 'domcontentloaded' });
+      await typeQuick(page, 'dob', '1 January 2030');
+      await blurQuick(page, 'dob');
+      await page.waitForTimeout(800);
+      const st = await fieldState(page, 'dob');
+      assert(!st.partsOpen, 'boxes opened for a future DOB on ' + path, st);
+      assert(st.quickValue === '1 January 2030', 'future DOB text was changed on ' + path, st);
+      assert(st.ariaInvalid === 'true', 'future DOB was not marked invalid on ' + path, st);
+      assert(st.readback === MSG, 'wrong future DOB error on ' + path + ': ' + st.readback, st);
+      const leaf = await page.evaluate(() => {
+        const el = document.getElementById('leaf');
+        const live = document.getElementById('live');
+        return {
+          state: el ? el.getAttribute('data-state') : null,
+          text: el ? el.innerText.replace(/\s+/g, ' ').trim() : '',
+          live: live ? live.textContent.trim() : '',
+        };
+      });
+      assert(leaf.state !== 'result', 'a future DOB still produced a result on ' + path, leaf);
+      assert(!/\d+\s+years?\s+old/i.test(leaf.text) && !/\b\d+\s+years\b/i.test(leaf.text + ' ' + leaf.live),
+        'a future DOB still showed an age on ' + path, leaf);
+      assert(!leaf.live, 'a future DOB was announced on ' + path + ': "' + leaf.live + '"', leaf);
+    }
+  });
+
+  await check('Future date on /difference is allowed and shows a result', async () => {
+    await page.goto(server.url + '/difference/' + TODAY_Q, { waitUntil: 'domcontentloaded' });
+    await typeQuick(page, 'a', '1 January 2030');
+    await blurQuick(page, 'a');
+    await typeQuick(page, 'b', '2 June 1990');
+    await blurQuick(page, 'b');
+    await page.waitForTimeout(80);
+    const a = await fieldState(page, 'a');
+    const b = await fieldState(page, 'b');
+    assert(a.ariaInvalid !== 'true' && !a.readbackErr, 'future date on /difference was flagged as an error', a);
+    assert(b.ariaInvalid !== 'true' && !b.readbackErr, 'the second date was flagged as an error', b);
+    const leaf = await page.evaluate(() => {
+      const el = document.getElementById('leaf');
+      return {
+        state: el ? el.getAttribute('data-state') : null,
+        text: el ? el.innerText.replace(/\s+/g, ' ').trim() : '',
+      };
+    });
+    assert(leaf.state === 'result', 'future dates on /difference did not produce a result', leaf);
+    assert(/elder/i.test(leaf.text) || /\d+\s+years/i.test(leaf.text), 'expected an age-gap result on /difference', leaf);
+  });
+
+  await check('Typing a DOB character by character on /past and /past/1999/ still gives a result', async () => {
+    async function typeDobSlowly(page, text) {
+      const loc = page.locator('[data-datefield="dob"] .quick');
+      await loc.click();
+      await loc.fill('');
+      await loc.type(text, { delay: 40 });
+      await blurQuick(page, 'dob');
+      await page.waitForTimeout(80);
+    }
+    // Year page: age-on is pre-filled to 1 January 1999.
+    await page.goto(server.url + '/past/1999/' + TODAY_Q, { waitUntil: 'domcontentloaded' });
+    await typeDobSlowly(page, '18 May 1990');
+    let dob = await fieldState(page, 'dob');
+    let on = await fieldState(page, 'on');
+    assert(/18 May 1990/i.test(dob.quickValue), 'DOB was not kept on /past/1999/', dob);
+    assert(dob.ariaInvalid !== 'true' && !dob.readbackErr, 'valid DOB marked invalid on /past/1999/', dob);
+    assert(!on || (on.ariaInvalid !== 'true' && !on.readbackErr), 'age-on was marked invalid after typing a earlier DOB on /past/1999/', on);
+    let leaf = await page.evaluate(() => {
+      const el = document.getElementById('leaf');
+      return { state: el ? el.getAttribute('data-state') : null, text: el ? el.innerText.replace(/\s+/g, ' ').trim() : '' };
+    });
+    assert(leaf.state === 'result', 'no age shown on /past/1999/ after typing the DOB', leaf);
+    assert(/years?/i.test(leaf.text), 'expected an age result on /past/1999/', leaf);
+
+    // /past with age-on set first, then a character-by-character DOB before that date.
+    await page.goto(server.url + '/past/' + TODAY_Q, { waitUntil: 'domcontentloaded' });
+    const onToggle = page.locator('#on-toggle, [data-datefield="on"] .quick').first();
+    // Reveal the on field if needed, then type the age-on date.
+    const onVisible = await page.locator('[data-datefield="on"] .quick').isVisible();
+    if (!onVisible) {
+      const btn = page.locator('#on-toggle');
+      if (await btn.count()) await btn.click();
+    }
+    await typeQuick(page, 'on', '1 January 2010');
+    await blurQuick(page, 'on');
+    await typeDobSlowly(page, '18 May 1999');
+    dob = await fieldState(page, 'dob');
+    on = await fieldState(page, 'on');
+    assert(/18 May 1999/i.test(dob.quickValue), 'DOB was not kept on /past/', dob);
+    assert(dob.ariaInvalid !== 'true' && !dob.readbackErr, 'valid DOB marked invalid on /past/', dob);
+    assert(on.ariaInvalid !== 'true' && !on.readbackErr, 'age-on was marked invalid after typing a earlier DOB on /past/', on);
+    leaf = await page.evaluate(() => {
+      const el = document.getElementById('leaf');
+      return { state: el ? el.getAttribute('data-state') : null, text: el ? el.innerText.replace(/\s+/g, ' ').trim() : '' };
+    });
+    assert(leaf.state === 'result', 'no age shown on /past/ after typing the DOB', leaf);
+    assert(/years?/i.test(leaf.text), 'expected an age result on /past/', leaf);
+  });
+
   await ctx.close();
   await ctx.close();
 

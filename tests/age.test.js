@@ -148,7 +148,8 @@ test('validation', () => {
   assert.equal(A.validate('30', '2', '2000').message, 'February only has 29 days.');
   assert.equal(A.validate('29', '2', '2000').ok, true);
   assert.equal(A.validate('0', '5', '1990').field, 'day');
-  assert.equal(A.validate('0', '5', '1995').message, 'May only has 31 days.');
+  assert.equal(A.validate('0', '5', '1995').message, 'There’s no day 0. Check the day.');
+  assert.equal(A.validate('0', '5', '1999').message, 'There’s no day 0. Check the day.');
   assert.equal(A.validate('35', '5', '1995').message, 'May only has 31 days.');
   assert.equal(A.validate('5', '13', '1990').field, 'month');
   assert.equal(A.validate('5', '0', '1990').field, 'month');
