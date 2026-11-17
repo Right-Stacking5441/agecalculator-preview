@@ -308,7 +308,11 @@ def collapse(soup, cfg):
     for s in list(cont.select(":scope > section")):
         if "faq" in (s.get("class") or []):
             qs = s.select(".qa")
-            out = f'<section class="faq" aria-labelledby="faq-h"><h2 id="faq-h">{cfg["faq"]}</h2>'
+            heading = cfg.get("faq")
+            if not heading or not qs:
+                s.decompose()
+                continue
+            out = f'<section class="faq" aria-labelledby="faq-h"><h2 id="faq-h">{heading}</h2>'
             for q in qs:
                 dd = q.dd.decode_contents() if q.dd else ""
                 dt = q.dt.decode_contents() if q.dt else ""
@@ -398,7 +402,8 @@ NAV_MENU = """<script>
     if (!debug || !logEl) return;
     logLines.push(stamp() + ' ' + type + ' ' + targetName(target) + ' open=' + open);
     if (logLines.length > 15) logLines = logLines.slice(-15);
-    logEl.textContent = logLines.join('\n');
+    // Use fromCharCode so a \\n escape cannot be turned into a raw newline by the HTML pipeline.
+    logEl.textContent = logLines.join(String.fromCharCode(10));
   }
   function related(t) {
     if (!t || !t.tagName) return false;
@@ -454,6 +459,14 @@ NAV_MENU = """<script>
     btn.focus({ preventScroll: true });
   });
 
+  menu.addEventListener('focusout', function (e) {
+    if (!isOpen()) return;
+    var next = e.relatedTarget;
+    if (!next) return;
+    if (menu.contains(next)) return;
+    setOpen(false);
+  });
+
   window.addEventListener('pageshow', function (e) {
     if (e.persisted) setOpen(false);
   });
@@ -474,6 +487,40 @@ NAV_MENU = """<script>
   window.addEventListener('hashchange', openHash);
 })();
 </script>"""
+
+
+
+# No backslash escapes in this snippet, so the HTML pipeline cannot mangle it.
+JS_FLAG_SRC = "document.documentElement.classList.add('js')"
+JS_FLAG = "<script>document.documentElement.classList.add('js');</script>"
+
+
+def ensure_js_flag(soup):
+    """Add a tiny head script, before any stylesheet, so first paint can hide the no-JS list."""
+    if not soup.head:
+        return
+    for sc in list(soup.head.find_all("script")):
+        src = sc.string or ""
+        if JS_FLAG_SRC in src and "prefill" not in src:
+            sc.decompose()
+    node = frag(JS_FLAG)
+    insert_before = None
+    for child in soup.head.children:
+        name = getattr(child, "name", None)
+        if name in ("link", "style"):
+            insert_before = child
+            break
+        if name == "script":
+            insert_before = child
+            break
+    if insert_before is not None:
+        insert_before.insert_before(node)
+    else:
+        metas = soup.head.find_all("meta")
+        if metas:
+            metas[-1].insert_after(node)
+        else:
+            soup.head.append(node)
 
 
 def ensure_nav_menu(soup):
@@ -543,6 +590,7 @@ def apply_ux(docs: Path, launch: bool = False) -> int:
                 l["href"] = "styles.css"
         if soup.head and not soup.select_one('link[href="ux.css"]'):
             soup.head.append(frag('<link rel="stylesheet" href="ux.css">'))
+        ensure_js_flag(soup)
         ensure_noscript(soup)
         ensure_nav_menu(soup)
         f.write_text(str(soup))

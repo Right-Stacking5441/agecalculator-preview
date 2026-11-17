@@ -7,7 +7,6 @@
 - **Target keyword:** what year was i born
 
 ---
-
 ## Body
 
 ## From an age to a year
@@ -24,13 +23,13 @@ The sum is short. Take the current year and subtract the age. If the birthday ha
 
 ## Someone who says they're 31
 
-On 16 November 2026, someone who said they were 31 was born in 1995 or 1994:
+For example, someone who said they were 31 on 16 November 2026 was born in 1995 or 1994:
 
 - 2026 minus 31 is 1995.
 - If they'd had their birthday that year, they were born in 1995.
 - If their birthday was still to come (some time between 17 November and 31 December), they were born in 1994.
 
-So "I'm 31" in mid-November 2026 meant 1995 for most people, and 1994 only for someone with a birthday in the last six weeks of the year. Choose "Not sure" and the page shows 1994 or 1995.
+So saying "I'm 31" on 16 November 2026 meant 1995 for most people, and 1994 only for someone with a birthday in the last six weeks of the year. Choose "Not sure" and the page shows 1994 or 1995.
 
 ## Working from an age in a past year
 
@@ -50,15 +49,4 @@ The tool deals in whole years only. For exact months and days between two dates,
 
 ---
 
-## Why you sometimes get two years
-### What year was I born if I'm 31?
-Take 31 from the current year, then take one more off if your birthday is still to come this year. On 16 November 2026, for example, a 31-year-old was born in 1995 if they'd had their birthday that year, or 1994 if not.
-
-### How do I work out my birth year from my age?
-Subtract your age from the current year. If your birthday hasn't happened yet this year, take one more off.
-
-### Why does the calculator give two years?
-Because you chose "Not sure". Without knowing whether the birthday has passed, an age fits two birth years. Answer Yes or Not yet to get one.
-
-### Can I work out a birth year from an age in the past?
-Yes. Press Change, enter the date the age applied to, and the calculator works from that year instead of this one.
+<!-- No accordion: every previous item is already covered in the body. -->

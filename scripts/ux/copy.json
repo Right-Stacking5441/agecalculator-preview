@@ -12,7 +12,6 @@
     "past": {
       "intro": "Exam results, a wedding photo, a form asking your age \"at the date of the incident\": give both dates and see how old you were then, down to the day.",
       "howto": "Looking back",
-      "faq": "Ages on past dates",
       "label": {
         "dob": "Your date of birth",
         "on": "The date to look back to"
@@ -21,7 +20,7 @@
     "difference": {
       "intro": "Put in two dates of birth to see who’s older and by how much, in years, months and days.",
       "howto": "Two dates, one gap",
-      "faq": "Working out an age gap",
+      "faq": "Groups and privacy",
       "label": {
         "a": "First date of birth",
         "b": "Second date of birth"
@@ -30,7 +29,6 @@
     "days-between-dates": {
       "intro": "From today to a deadline, or across a whole year: see how many days there are, how many are weekdays and how many fall at the weekend.",
       "howto": "Start day in, end day out",
-      "faq": "What gets counted",
       "label": {
         "start": "From",
         "end": "To"
@@ -48,19 +46,17 @@
     "dog-age": {
       "intro": "Big dogs age faster than small ones, so times seven gets it wrong. Pick your dog’s adult size and the human years come straight off the AAHA-published chart.",
       "howto": "Reading the result",
-      "faq": "About dog years",
       "label": {}
     },
     "cat-age": {
       "intro": "Your cat’s age in human years, and the life stage vets use for it. There’s no size to pick for a cat, so all it needs is years and months.",
       "howto": "What you get",
-      "faq": "Senior cats and the times-seven rule",
+      "faq": "Compared with other conversions",
       "label": {}
     },
     "korean-age": {
       "intro": "Korean age counts you as 1 at birth and adds a year every 1 January, so it can run two ahead of your international age. Here you get both, with year age in between.",
       "howto": "One birthday, three numbers",
-      "faq": "Why Korean age runs ahead",
       "label": {
         "dob": "Enter your date of birth"
       }
@@ -68,7 +64,6 @@
     "birthday-countdown": {
       "intro": "For cards, parties and plain impatience: the days left until the next birthday, and the day of the week it lands on.",
       "howto": "What the countdown shows",
-      "faq": "More about the countdown",
       "label": {
         "dob": "Enter the date of birth"
       }
@@ -76,7 +71,6 @@
     "how-old-will-i-be": {
       "intro": "Pick a future year and give your date of birth to see the age you’ll turn that year, and the exact day it happens.",
       "howto": "Picking a year",
-      "faq": "Planning years ahead",
       "label": {
         "dob": "Enter your date of birth"
       }
@@ -84,7 +78,6 @@
     "what-year-was-i-born": {
       "intro": "An age on its own fits two birth years, depending on whether the birthday has passed this year. Say which and you’ll get one year; if you’re not sure, you’ll get both.",
       "howto": "From an age to a year",
-      "faq": "Why you sometimes get two years",
       "label": {}
     }
   },

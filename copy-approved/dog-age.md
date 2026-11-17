@@ -7,7 +7,6 @@
 - **Target keyword:** dog age calculator
 
 ---
-
 ## Body
 
 ## Reading the result
@@ -55,21 +54,10 @@ where ln is the natural logarithm. By this measure a one-year-old dog is about 3
 
 ## When is a dog a senior?
 
-Larger dogs reach their senior years sooner. The [AVMA's senior pets guidance](https://www.avma.org/resources/pet-owners/petcare/senior-pets) gives these rough ages: small breeds 8 to 11 years, medium 8 to 10, large 8 to 9, and giant breeds 6 to 7. It recommends senior pets see a vet at least twice a year.
+Larger dogs have shorter average lifespans and reach their senior years sooner, which is why the chart climbs faster for them after age two. The [AVMA's senior pets guidance](https://www.avma.org/resources/pet-owners/petcare/senior-pets) gives these rough ages: small breeds 8 to 11 years, medium 8 to 10, large 8 to 9, and giant breeds 6 to 7. It recommends senior pets see a vet at least twice a year.
 
 For cats, the curve is different and size matters much less. The [cat age calculator](/cat-age) covers it.
 
 ---
 
-## About dog years
-### How old is a 10-year-old dog in human years?
-On the AAHA-published chart, about 56 for a small dog, 60 for a medium dog, 66 for a large dog and 78 for a giant breed. The DNA-clock formula gives about 68 regardless of size.
-
-### Is one dog year really seven human years?
-No. Dogs age much faster in their first two years and more slowly after that, and the rate depends on size. The AVMA says the seven-year rule is not correct.
-
-### Which size should I choose for a crossbreed?
-Go by the weight your dog is, or is expected to be, as an adult. On the chart, up to 9.07 kg (20 lb) is small, 9.52 to 22.7 kg medium, 23.1 to 40.8 kg large, and over 40.8 kg giant.
-
-### Why do big dogs age faster?
-Large and giant breeds have shorter average lifespans and reach their senior years sooner, which is why the chart climbs faster for them after age two.
+<!-- No accordion: every previous item is already covered in the body. -->

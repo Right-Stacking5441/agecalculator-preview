@@ -7,7 +7,6 @@
 - **Target keyword:** birthday countdown
 
 ---
-
 ## Body
 
 ## What the countdown shows
@@ -24,7 +23,7 @@ The "until midnight tonight" line ticks down the rest of today in your time zone
 
 ## From 16 November to 15 March
 
-On Monday 16 November 2026, someone born on 15 March 1995 had 119 days to go until their next birthday. Counted out:
+For example, someone born on 15 March 1995 would have 119 days to go until their next birthday on Monday 16 November 2026. Counted out:
 
 - Days left in November after the 16th: 14.
 - December: 31. January: 31. February 2027: 28, because 2027 isn't a leap year.
@@ -34,7 +33,7 @@ On Monday 16 November 2026, someone born on 15 March 1995 had 119 days to go unt
 
 ## Born on 29 February
 
-Born on 29 February? In years without one, the countdown runs to 1 March, and a note on the result says so ([here's why](/#born-on-29-february)). On 16 November 2026, someone born on 29 February 2008 had 105 days to go, to Monday 1 March 2027, when they turn 19. In 2028 the countdown runs to 29 February itself. This is the same rule the main [age calculator](/) uses, so the two pages always agree on the date.
+Born on 29 February? In years without one, the countdown runs to 1 March, and a note on the result says so ([here's why](/#born-on-29-february)). On 16 November 2026, someone born on 29 February 2008 would have 105 days to go, to Monday 1 March 2027, when they turn 19. In 2028 the countdown runs to 29 February itself. This is the same rule the main [age calculator](/) uses, so the two pages always agree on the date.
 
 ## Counting down for someone else
 
@@ -48,15 +47,4 @@ To count down to something that isn't a birthday, such as a wedding, a due date 
 
 ---
 
-## More about the countdown
-### How many days until my birthday?
-Type your date of birth above and the big number is the answer, counted from today in your time zone. On the day before your birthday it shows 1.
-
-### What day of the week is my birthday this year?
-The result names the weekday for your next birthday, and the line "Weekend birthday?", under More, says whether it falls on a Saturday or Sunday.
-
-### What if my birthday is 29 February?
-This calculator counts a 29 February birthday as 1 March in years without one, so the countdown runs to 1 March. In leap years it runs to the 29th.
-
-### Does the countdown change with time zones?
-Yes. It counts calendar days in your time zone, so someone on the other side of the world may reach their birthday a day earlier or later than the page shows for you.
+<!-- No accordion: every previous item is already covered in the body. -->

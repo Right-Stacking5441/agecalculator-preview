@@ -7,7 +7,6 @@
 - **Target keywords:** days between dates; date difference calculator; days between dates calculator
 
 ---
-
 ## Body
 
 ## Start day in, end day out
@@ -46,15 +45,4 @@ This page measures a period of time: a notice period, a contract, a pregnancy so
 
 ---
 
-## What gets counted
-### Does the count include the end date?
-Not unless you tick "Count the end day too". Without it, the start day counts and the end day doesn't, so the 1st to the 2nd of a month is 1 day.
-
-### How many days is it from today to Christmas?
-On 16 November 2026 there were 39 days to go until 25 December 2026. Type today's date and 25 December to check from any day.
-
-### Does the calculator account for leap years?
-Yes. Dates are counted on the real calendar, so a span that includes 29 February 2028 is a day longer than the same span in 2026 or 2027.
-
-### Can it count working days?
-It counts weekdays, Monday to Friday. It doesn't remove bank holidays, so subtract those yourself.
+<!-- No accordion: every previous item is already covered in the body. -->

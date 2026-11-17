@@ -166,6 +166,66 @@ async function tapEveryLink(page, base, useTouch, label) {
   }
 }
 
+async function assertHeadingCentreDismisses(page, url, useTouch, label) {
+  await page.goto(url, { waitUntil: 'domcontentloaded' });
+  const btn = page.locator('.nav-menu button');
+  await tapLocator(page, btn, useTouch);
+  await expectOpen(page, true, label + ' open for heading centre');
+  const hit = await page.evaluate(() => {
+    const h1 = document.querySelector('h1');
+    if (!h1) return { missing: true };
+    const r = h1.getBoundingClientRect();
+    const x = r.left + r.width / 2;
+    const y = r.top + Math.min(r.height / 2, 24);
+    const el = document.elementFromPoint(x, y);
+    return {
+      x, y,
+      tag: el && el.tagName,
+      cls: el && (el.className && el.className.toString ? el.className.toString() : String(el.className || '')),
+      isLink: !!(el && el.closest && el.closest('.nav-menu a, .nav-menu ul')),
+      isBack: !!(el && el.classList && el.classList.contains('nav-menu-back')),
+    };
+  });
+  assert(!hit.missing, label + ': no h1 on the page', hit);
+  assert(hit.isBack && !hit.isLink, label + ': heading centre is still a menu link', hit);
+  if (useTouch) await page.touchscreen.tap(hit.x, hit.y);
+  else await page.mouse.click(hit.x, hit.y);
+  await expectOpen(page, false, label + ' heading-centre tap should close the menu');
+}
+
+async function assertBackdropIsDimmed(page, useTouch, label) {
+  const btn = page.locator('.nav-menu button');
+  await tapLocator(page, btn, useTouch);
+  await expectOpen(page, true, label + ' open for dim check');
+  const bg = await page.evaluate(() => {
+    const el = document.querySelector('.nav-menu-back');
+    const c = getComputedStyle(el).backgroundColor;
+    const m = c && c.match(/rgba?\(([^)]+)\)/i);
+    const parts = m ? m[1].split(',').map((s) => parseFloat(s.trim())) : [];
+    const a = parts.length === 4 ? parts[3] : (parts.length === 3 ? 1 : 0);
+    return { c, a };
+  });
+  assert(bg.a >= 0.12 && bg.a <= 0.45, label + ': backdrop is not a light visible dim', bg);
+  await tapLocator(page, btn, useTouch);
+  await expectOpen(page, false, label + ' close after dim check');
+}
+
+async function assertFocusOutCloses(page, base) {
+  await page.goto(base + '/', { waitUntil: 'domcontentloaded' });
+  const btn = page.locator('.nav-menu button');
+  await btn.focus();
+  await page.keyboard.press('Enter');
+  await expectOpen(page, true, 'keyboard open before focusout');
+  // Tab from the button through the 11 links and out of the nav.
+  for (let i = 0; i < 12; i++) await page.keyboard.press('Tab');
+  await expectOpen(page, false, 'focus leaving the nav should close the menu');
+  const inMenu = await page.evaluate(() => {
+    const a = document.activeElement;
+    return !!(a && a.closest && a.closest('.nav-menu'));
+  });
+  assert(!inMenu, 'focus is still inside the nav after tabbing out');
+}
+
 async function desktopKeyboard(page, base) {
   await page.goto(base + '/', { waitUntil: 'domcontentloaded' });
   const summary = page.locator('.nav-menu button');
@@ -377,6 +437,11 @@ async function run() {
       await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
       await assertBackdropTapCloses(page, true, phone.name);
     });
+    await check('WebKit ' + phone.name + ' heading centre is a dismiss target, and the backdrop is dimmed', async () => {
+      await assertHeadingCentreDismisses(page, server.url + '/difference/', true, phone.name);
+      await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+      await assertBackdropIsDimmed(page, true, phone.name);
+    });
     await ctx.close();
   }
   // embed page, one phone
@@ -419,6 +484,9 @@ async function run() {
     });
     await check('Chromium desktop keyboard', async () => {
       await desktopKeyboard(page, server.url);
+    });
+    await check('Chromium desktop focus leaving the nav closes the menu', async () => {
+      await assertFocusOutCloses(page, server.url);
     });
     await ctx.close();
   }
@@ -469,6 +537,21 @@ async function run() {
     });
     await ctx.close();
   }
+  {
+    const ctx = await wk.newContext({ viewport: { width: 320, height: 568 }, hasTouch: true, javaScriptEnabled: false });
+    const page = await ctx.newPage();
+    await check('WebKit JS-off at 320px: the inline list does not overflow', async () => {
+      for (const path of MENU_PAGES) {
+        await page.goto(server.url + path, { waitUntil: 'domcontentloaded' });
+        const ov = await page.evaluate(() => ({
+          sw: document.documentElement.scrollWidth,
+          cw: document.documentElement.clientWidth,
+        }));
+        assert(ov.sw <= ov.cw, path + ' overflows horizontally at 320px: ' + ov.sw + ' > ' + ov.cw, ov);
+      }
+    });
+    await ctx.close();
+  }
 
   await check('debug=1 is inert unless requested, and logs when present', async () => {
     const ctx = await wk.newContext({ ...devices['iPhone 13'], hasTouch: true });
@@ -508,6 +591,51 @@ async function run() {
       }
     });
     await ctx.close();
+    await check('Chromium first paint does not shift the header (throttled CLS)', async () => {
+      const paths = ['/', '/difference/', '/korean-age/', '/past/', '/contact/', '/chronological-age/'];
+      for (const path of paths) {
+        const c = await chrome.newContext({ viewport: { width: 1280, height: 800 } });
+        const pg = await c.newPage();
+        const client = await c.newCDPSession(pg);
+        await client.send('Emulation.setCPUThrottlingRate', { rate: 6 });
+        await client.send('Network.emulateNetworkConditions', {
+          offline: false,
+          latency: 562.5,
+          downloadThroughput: Math.floor(1.600_000 / 8),
+          uploadThroughput: Math.floor(750000 / 8),
+        });
+        await pg.addInitScript(() => {
+          window.__cls = 0;
+          window.__mastH = [];
+          try {
+            new PerformanceObserver((list) => {
+              for (const e of list.getEntries()) {
+                if (!e.hadRecentInput) window.__cls += e.value;
+              }
+            }).observe({ type: 'layout-shift', buffered: true });
+          } catch (err) {}
+          const rec = () => {
+            const m = document.querySelector('.mast');
+            if (m) window.__mastH.push(Math.round(m.getBoundingClientRect().height));
+          };
+          requestAnimationFrame(() => { rec(); requestAnimationFrame(rec); });
+        });
+        await pg.goto(server.url + path, { waitUntil: 'load' });
+        await pg.waitForTimeout(1200);
+        const info = await pg.evaluate(() => ({
+          cls: window.__cls,
+          first: (window.__mastH || [])[0],
+          last: document.querySelector('.mast') ? Math.round(document.querySelector('.mast').getBoundingClientRect().height) : 0,
+          samples: window.__mastH || [],
+          hasJs: document.documentElement.classList.contains('js'),
+        }));
+        assert(info.hasJs, path + ': html.js class missing at load', info);
+        assert(info.cls < 0.05, path + ': CLS ' + info.cls + ' is not about 0', info);
+        assert(info.first && info.first <= 80, path + ': first-paint header is still the tall no-JS list', info);
+        assert(Math.abs((info.last || 0) - (info.first || 0)) <= 8, path + ': header height changed after first paint', info);
+        await c.close();
+      }
+    });
   }
 
   // Android / Chrome touch (Pixel 7).
@@ -545,6 +673,11 @@ async function run() {
     await check('Chromium Pixel 7 backdrop tap closes the menu', async () => {
       await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
       await assertBackdropTapCloses(page, true, 'Pixel 7');
+    });
+    await check('Chromium Pixel 7 heading centre is a dismiss target, and the backdrop is dimmed', async () => {
+      await assertHeadingCentreDismisses(page, server.url + '/difference/', true, 'Pixel 7');
+      await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+      await assertBackdropIsDimmed(page, true, 'Pixel 7');
     });
     await check('Chromium Pixel 7 every menu link', async () => {
       await tapEveryLink(page, server.url, true, 'Pixel 7');

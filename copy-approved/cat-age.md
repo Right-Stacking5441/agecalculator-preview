@@ -7,7 +7,6 @@
 - **Target keyword:** cat age calculator
 
 ---
-
 ## Body
 
 ## What you get
@@ -72,15 +71,9 @@ Where your cat lives and what they eat may change how long they live, but the ch
 
 ---
 
-## Senior cats and the times-seven rule
-### How old is a 15-year-old cat in human years?
-About 76: 24 for the first two years, then 4 for each of the next 13.
+## Compared with other conversions
+### Cat years and dog years
+For small dogs the chart figures are the same as for cats at every age. Medium, large and giant dogs age faster after their second year.
 
-### When is a cat considered a senior?
-Over 10 years old, under the 2021 AAHA/AAFP Feline Life Stage Guidelines. Mature adulthood runs from 7 to 10.
-
-### Is a cat year the same as a dog year?
-Not quite. For small dogs the chart figures are the same as for cats, but medium, large and giant dogs age faster after their second year.
-
-### Is the times-seven rule right for cats?
-No. It undercounts young cats (a one-year-old is about 15, not 7) and overcounts older ones.
+### The times-seven rule for cats
+It undercounts young cats and overcounts older ones. A one-year-old cat is about 15 in human years rather than 7, and a 10-year-old about 56 rather than 70.

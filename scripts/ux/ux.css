@@ -10,24 +10,33 @@
 /* ---------- Masthead: wordmark + one menu. No dateline, no red strip ---------- */
 .mast { border-top: 0; background: var(--paper); border-bottom: 1px solid var(--rule); }
 .mast .wrap { min-height: 56px; justify-content: space-between; }
+/* When JS will run, never paint the inline list; reserve the compact header. */
+html.js .mast .wrap { min-height: 57px; }
+html.js .nav-menu:not(.is-enhanced) #nav-menu-list { display: none !important; }
 .brand { align-items: center; }
 .brand .wm { display: inline; white-space: nowrap; }
 .brand .wm span { color: inherit; font-weight: inherit; } /* 8da54a4: one wordmark, same weight and ink (approved) */
 /* Undo leftover .mast nav { display: none } rules in styles.css; this is the live menu. */
-.mast nav.nav-menu { display: block; margin-left: auto; }
-.nav-menu { position: relative; font-size: 15px; }
-/* No-JS: the list stays visible, inline, so the links remain usable. */
+.mast nav.nav-menu { display: block; margin-left: auto; min-width: 0; max-width: 100%; }
+.nav-menu { position: relative; font-size: 15px; min-width: 0; }
+/* No-JS: the list stays visible, compact and wrapping, so the links remain usable. */
 .nav-menu ul {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 2px 14px;
+  gap: 0 10px;
   justify-content: flex-end;
-  max-width: min(100%, 22rem);
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
-.nav-menu li a { display: block; padding: 6px 0; color: var(--ink); text-decoration: none; }
+.nav-menu li { min-width: 0; }
+.nav-menu li a { display: block; padding: 4px 0; color: var(--ink); text-decoration: none; }
+html:not(.js) .mast .wrap { flex-wrap: wrap; gap: var(--s3); }
+html:not(.js) .mast nav.nav-menu { flex: 1 1 100%; margin-left: 0; max-width: 100%; }
+html:not(.js) .nav-menu ul { justify-content: flex-start; }
 @media (hover: hover) {
   .nav-menu li a:hover { text-decoration: underline; text-underline-offset: 3px; }
 }
@@ -43,17 +52,41 @@
   right: 0;
   top: calc(100% + 4px);
   z-index: 5;
-  padding: var(--s2) 0;
+  padding: var(--s1) 0 22px;
   width: 200px;
-  max-width: calc(100vw - 48px);
+  max-width: min(200px, calc(50vw - 24px), calc(100vw - 48px));
   max-height: min(52vh, 360px);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   background: var(--paper);
   border: 1.5px solid var(--ink);
   box-shadow: 4px 4px 0 -1.5px var(--paper), 4px 4px 0 0 var(--ink);
+  box-sizing: border-box;
+  /* Bottom fade as a cue when the list scrolls. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 22px), transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 22px), transparent 100%);
 }
-.nav-menu.is-enhanced li a { padding: 8px 14px; }
+.nav-menu.is-enhanced li a {
+  padding: 6px 10px;
+  min-height: 44px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+@media (min-width: 700px) {
+  /* Two columns once the panel can sit wholly to the right of the heading centre. */
+  .nav-menu.is-enhanced ul {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 280px;
+    max-width: min(280px, calc(50vw - 24px));
+    max-height: none;
+    overflow: visible;
+    padding-bottom: var(--s1);
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
 @media (hover: hover) {
   .nav-menu.is-enhanced li a:hover { background: var(--desk); text-decoration: none; }
 }
@@ -98,7 +131,7 @@
   margin: 0;
   padding: 0;
   border: 0;
-  background: transparent;
+  background: rgba(28, 28, 26, 0.2);
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;

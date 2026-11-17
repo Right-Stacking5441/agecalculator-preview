@@ -396,17 +396,8 @@ def faq_html(faqs, heading=""):
     return "".join(parts)
 
 def faq_jsonld(faqs) -> str:
-    if not faqs:
-        return ""
-    ents = []
-    for q, a in faqs:
-        ents.append({
-            "@type": "Question",
-            "name": plain_text(q),
-            "acceptedAnswer": {"@type": "Answer", "text": plain_text_with_urls(a)},
-        })
-    obj = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": ents}
-    return '<script type="application/ld+json">\n' + json.dumps(obj, ensure_ascii=False, indent=1) + "\n</script>\n"
+    """Statement headings are not a FAQ, so never emit FAQPage JSON-LD."""
+    return ""
 
 def update_head(html: str, meta: dict, faqs) -> str:
     title, desc = meta["title"], meta["meta"]
@@ -902,10 +893,28 @@ def apply_robots(docs: Path, launch: bool) -> None:
 
 
 
+_HOLD_BLOCKS = re.compile(
+    r"<(script|style|pre|code|textarea)\b[^>]*>.*?</\1>",
+    re.I | re.S,
+)
+
+
 def typograph_html(html: str) -> str:
-    """Typograph visible text nodes. Skip script, style, code, pre, and similar."""
+    """Typograph visible text nodes. Skip script, style, code, pre, and similar.
+
+    Script and style bodies are lifted out of the raw HTML first. BeautifulSoup
+    can otherwise turn a JavaScript string such as join('\\n') into a raw
+    newline when it parses and reserialises the page.
+    """
     from bs4 import BeautifulSoup, NavigableString, Comment
-    soup = BeautifulSoup(html, "html.parser")
+    held: list[str] = []
+
+    def stash(m: re.Match) -> str:
+        held.append(m.group(0))
+        return f"<!--TYPOGRAPH-HOLD-{len(held) - 1}-->"
+
+    html_held = _HOLD_BLOCKS.sub(stash, html)
+    soup = BeautifulSoup(html_held, "html.parser")
     skip = {"script", "style", "code", "pre", "textarea", "kbd", "samp"}
     for node in list(soup.descendants):
         if not isinstance(node, NavigableString) or isinstance(node, Comment):
@@ -916,10 +925,16 @@ def typograph_html(html: str) -> str:
         text = str(node)
         if not text or text.isspace():
             continue
-        new = typograph(text)
-        if new != text:
-            node.replace_with(new)
-    return str(soup)
+        new_text = typograph(text)
+        if new_text != text:
+            node.replace_with(new_text)
+    out = str(soup)
+    for i, block in enumerate(held):
+        token = f"<!--TYPOGRAPH-HOLD-{i}-->"
+        if token not in out:
+            raise SystemExit(f"typograph lost held block {i}")
+        out = out.replace(token, block, 1)
+    return out
 
 
 def typograph_docs_html():

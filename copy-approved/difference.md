@@ -7,7 +7,6 @@
 - **Target keywords:** age difference calculator; age calculator difference
 
 ---
-
 ## Body
 
 ## Two dates, one gap
@@ -50,15 +49,9 @@ Couples comparing ages, siblings settling an argument, and anyone filling in a f
 
 ---
 
-## Working out an age gap
-### Is the age difference the same every year?
-In days, yes. In whole years it changes by one for part of each year, in the weeks between the older person's birthday and the younger person's.
-
-### How do I work out an age difference by hand?
-Subtract the earlier date of birth from the later one: count whole years, then whole months, then the remaining days. 2 June 1990 to 20 September 1993 is 3 years, 3 months and 18 days.
-
-### Can I compare more than two people?
-Not on one screen. Work out each pair, or compare everyone with the eldest.
+## Groups and privacy
+### Comparing more than two people
+The calculator compares two people at a time. Work out each pair, or compare everyone with the eldest.
 
 ### Are the names I type saved?
 No. The calculation runs in your browser, and the names are only used to label the result on your screen.

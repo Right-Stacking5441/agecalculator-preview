@@ -7,7 +7,6 @@
 - **Target keyword:** chronological age calculator
 
 ---
-
 ## Body
 
 ## Filling in the score sheet
@@ -54,18 +53,6 @@ A child born on 29 February has their birthday counted on 1 March in common year
 
 ---
 
-## If you’re scoring a test
-### What is chronological age on a test?
-The child's exact age on the day of testing, written as years, months and days, for example 8;4;12. Standardised tests use it to pick the right row in the norms tables.
-
-### How do you calculate chronological age by hand?
-Write the test date above the date of birth as year, month, day and subtract each column from the right. If the days are short, borrow a month and add 30 days; if the months are short, borrow a year and add 12 months.
-
-### Does it match the 30-day method in test manuals?
-Years and months match. Days can differ by up to two whenever the test day is earlier in the month than the birth day, because this calculator uses real month lengths and the manual method assumes 30 days. [Pearson's WIAT-III guidance](https://web.archive.org/web/20240915162537/https://pearsonassessmentsupport.com/support/index.php?View=entry&EntryID=3798), for example, says "all months are assumed to have 30 days."
-
-### Should I round up the days?
-Only if your test manual says to. Pearson's WIAT-III guidance says ages are not rounded up. Some other manuals round 15 or more days up to the next month; the result shows that figure separately so you can use it if needed.
-
-### Are the names I type stored?
-No. They stay in your browser tab and disappear when you close it.
+## If you're scoring a test
+### Pearson's WIAT-III guidance
+[Pearson's WIAT-III guidance](https://web.archive.org/web/20240915162537/https://pearsonassessmentsupport.com/support/index.php?View=entry&EntryID=3798) says "all months are assumed to have 30 days", so for that test the days figure can differ from this calculator's by up to two. The same guidance says ages are not rounded up. Some other manuals round 15 or more days up to the next month, which is why the result shows that figure separately.

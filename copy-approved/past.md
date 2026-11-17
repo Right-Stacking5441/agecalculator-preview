@@ -7,14 +7,13 @@
 - **Target keyword:** how old was i
 
 ---
-
 ## Body
 
 ## Looking back
 
 Type your date of birth and the date you want to look back to. The big number is your age in completed years on that day, and under it are the months and days since the birthday before it. The result also shows the birthday that came next after that date, how many days you had lived by then, and how long ago the date was.
 
-It works for any date from your birth onwards. If the date you type is before you were born, the page tells you how many days early it is rather than showing a negative age.
+It works for any date from 1000 to 2999, as long as it isn't before your date of birth. If the date you type is before you were born, the page tells you how many days early it is rather than showing a negative age.
 
 ## When people need their age on a past date
 
@@ -48,15 +47,4 @@ You don't have to look back. Leave the date as today and this page works like th
 
 ---
 
-## Ages on past dates
-### How old was I in 1990?
-It depends on whether your birthday had come yet. Before your birthday in 1990 you were 1990 minus your birth year, minus one. From your birthday on, you were one older. Type your date of birth and a date in 1990 to see the exact figure.
-
-### How do I work out my age on a specific date by hand?
-Subtract your birth year from the year of the date. If your birthday hadn't happened yet that year, take one off. Then count the whole months and days since your last birthday.
-
-### What age do I put on a form that asks for age at a past date?
-Usually the completed years on that day, the big number here. Use months as well only if the form asks for them.
-
-### How far back can I go?
-As far as the year 1000. Any date from 1000 to 2999 works, as long as it is on or after the date of birth.
+<!-- No accordion: every previous item is already covered in the body. -->

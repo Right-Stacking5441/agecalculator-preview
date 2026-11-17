@@ -7,7 +7,6 @@
 - **Target keyword:** how old will i be
 
 ---
-
 ## Body
 
 ## Picking a year
@@ -28,7 +27,7 @@ Someone born on 15 March 1995 asks how old they will be in 2050.
 - Their birthday in 2050 is Tuesday 15 March.
 - Before that, from 1 January to 14 March 2050, they are still 54.
 
-So they are 54 at the start of 2050 and 55 from 15 March onwards, and they finish the year at 55. Counted from 16 November 2026, that birthday was 8,520 days away.
+So they are 54 at the start of 2050 and 55 from 15 March onwards, and they finish the year at 55. Counted from 16 November 2026, that birthday is 8,520 days away.
 
 For an exact date, the same person is 44 years, 9 months and 17 days old on 1 January 2040: 44 from their birthday in March 2039, then nine months to 15 December, then 17 days.
 
@@ -46,15 +45,4 @@ If the year you type is before you were born, the page says so instead of giving
 
 ---
 
-## Planning years ahead
-### How old will I be in 2050?
-Subtract your birth year from 2050. That's the age you reach on your birthday in 2050; before that day you'll be one younger. Born in 1995, you turn 55 in 2050 and are 54 until your birthday.
-
-### How do I work out my age on a future date?
-Subtract your birth year from the year of the date, then take one off if your birthday in that year falls after the date. For months and days as well, use the exact date option.
-
-### What if I was born on 29 February?
-This calculator counts your birthday as 1 March in years without a 29 February, and the 29th itself in leap years.
-
-### Can I check my age on a specific future day?
-Yes. Press Change next to "Or use an exact date" and type the date. The result then gives years, months and days on that day.
+<!-- No accordion: every previous item is already covered in the body. -->

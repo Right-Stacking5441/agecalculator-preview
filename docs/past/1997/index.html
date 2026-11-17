@@ -7,7 +7,7 @@
 <meta content="noindex,nofollow" name="robots"/>
 <title>Age in 1997</title>
 <meta content="Find your exact age on a past date: an exam, a wedding, or the day a form asks about. Years, months and days, with leap-day birthdays handled." name="description"/>
-<link href="https://agecalculator.com/past/" rel="canonical"/>
+<script>document.documentElement.classList.add('js');</script><link href="https://agecalculator.com/past/" rel="canonical"/>
 <meta content="How old was I? Age on any past date" property="og:title"/>
 <meta content="Find your exact age on a past date: an exam, a wedding, or the day a form asks about. Years, months and days, with leap-day birthdays handled." property="og:description"/>
 <meta content="https://agecalculator.com/past/" property="og:url"/>
@@ -35,7 +35,7 @@
 }
 </script>
 <script>var q=location.search;if(/[?&](dob|a|b|start|end|test|on|year)=/.test(q))document.documentElement.classList.add('prefill');if(/[?&]year=/.test(q))document.documentElement.classList.add('prefill-year');if(/[?&](on|year)=/.test(q))document.documentElement.classList.add('prefill-on')</script>
-<link href="../../ux.css?v=50341ee145" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript></head>
+<link href="../../ux.css?v=b6ef7da8b8" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript></head>
 <body data-page="past">
 <aside aria-label="Preview notice" class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</aside>
 <a class="skip" href="#tool">Skip to the calculator</a>
@@ -128,7 +128,8 @@
     if (!debug || !logEl) return;
     logLines.push(stamp() + ' ' + type + ' ' + targetName(target) + ' open=' + open);
     if (logLines.length > 15) logLines = logLines.slice(-15);
-    logEl.textContent = logLines.join('\n');
+    // Use fromCharCode so a \n escape cannot be turned into a raw newline by the HTML pipeline.
+    logEl.textContent = logLines.join(String.fromCharCode(10));
   }
   function related(t) {
     if (!t || !t.tagName) return false;
@@ -182,6 +183,14 @@
     if (!isOpen()) return;
     setOpen(false);
     btn.focus({ preventScroll: true });
+  });
+
+  menu.addEventListener('focusout', function (e) {
+    if (!isOpen()) return;
+    var next = e.relatedTarget;
+    if (!next) return;
+    if (menu.contains(next)) return;
+    setOpen(false);
   });
 
   window.addEventListener('pageshow', function (e) {

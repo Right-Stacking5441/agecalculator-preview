@@ -350,17 +350,8 @@ def main() -> int:
                     if a[1] != b[1]:
                         issues.append(f"FAQ A{i+1} md={a[1]!r} vis={b[1]!r}")
         ld = jsonld_faqs(html)
-        if ld != vis:
-            if vis or ld:
-                issues.append(f"JSON-LD FAQs != visible FAQs (ld={len(ld)} vis={len(vis)})")
-                for i, (a, b) in enumerate(zip(vis, ld)):
-                    if a != b:
-                        if a[0] != b[0]:
-                            issues.append(f"JSON-LD Q{i+1} vis={a[0]!r} ld={b[0]!r}")
-                        if a[1] != b[1]:
-                            issues.append(f"JSON-LD A{i+1} vis={a[1]!r} ld={b[1]!r}")
-                if len(ld) != len(vis):
-                    issues.append(f"JSON-LD count mismatch extra vis={vis[len(ld):]} extra ld={ld[len(vis):]}")
+        if ld:
+            issues.append(f"FAQPage JSON-LD should have been dropped (ld={len(ld)})")
 
         for stale in STALE:
             if stale in html:

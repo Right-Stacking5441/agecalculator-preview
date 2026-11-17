@@ -7,7 +7,7 @@
 <meta content="noindex,nofollow" name="robots"/>
 <title>Put the age calculator on your website</title>
 <meta content="Free embed code for the agecalculator.com age calculator. Paste an iframe or a self-sizing script; no adverts inside, no cookies." name="description"/>
-<link href="https://agecalculator.com/embed/" rel="canonical"/>
+<script>document.documentElement.classList.add('js');</script><link href="https://agecalculator.com/embed/" rel="canonical"/>
 <meta content="Put the age calculator on your website" property="og:title"/>
 <meta content="Free embed code for the agecalculator.com age calculator. Paste an iframe or a self-sizing script; no adverts inside, no cookies." property="og:description"/>
 <meta content="https://agecalculator.com/embed/" property="og:url"/>
@@ -17,7 +17,7 @@
 <link href="../favicon.svg" rel="icon" type="image/svg+xml"/>
 <link as="font" crossorigin="" href="../fonts/libre-franklin-var.woff2" rel="preload" type="font/woff2"/>
 <link href="../styles.css?v=f99126d883" rel="stylesheet"/>
-<link href="../ux.css?v=50341ee145" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript></head>
+<link href="../ux.css?v=b6ef7da8b8" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript></head>
 <body data-page="embed">
 <aside aria-label="Preview notice" class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</aside>
 <a class="skip" href="#main">Skip to content</a>
@@ -128,7 +128,8 @@ document.querySelectorAll('[data-copy-snippet]').forEach(function (b) { b.addEve
     if (!debug || !logEl) return;
     logLines.push(stamp() + ' ' + type + ' ' + targetName(target) + ' open=' + open);
     if (logLines.length > 15) logLines = logLines.slice(-15);
-    logEl.textContent = logLines.join('\n');
+    // Use fromCharCode so a \n escape cannot be turned into a raw newline by the HTML pipeline.
+    logEl.textContent = logLines.join(String.fromCharCode(10));
   }
   function related(t) {
     if (!t || !t.tagName) return false;
@@ -182,6 +183,14 @@ document.querySelectorAll('[data-copy-snippet]').forEach(function (b) { b.addEve
     if (!isOpen()) return;
     setOpen(false);
     btn.focus({ preventScroll: true });
+  });
+
+  menu.addEventListener('focusout', function (e) {
+    if (!isOpen()) return;
+    var next = e.relatedTarget;
+    if (!next) return;
+    if (menu.contains(next)) return;
+    setOpen(false);
   });
 
   window.addEventListener('pageshow', function (e) {

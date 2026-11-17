@@ -7,7 +7,6 @@
 - **Target keywords:** age calculator; how old am i; date of birth calculator
 
 ---
-
 ## Body
 
 ## What the result shows
@@ -24,7 +23,7 @@ The single-unit figures don't add on to your age. 380 months and 1,652 weeks are
 
 ## Working it out by hand: 15 March 1995
 
-On 16 November 2026, someone born on 15 March 1995 was 31 years, 8 months and 1 day old. On paper:
+For example, someone born on 15 March 1995 would be 31 years, 8 months and 1 day old on 16 November 2026. On paper:
 
 - 2026 minus 1995 is 31, and their birthday on 15 March 2026 had already passed, so 31 completed years.
 - 15 March to 15 November is 8 whole months.
@@ -38,7 +37,7 @@ That was 11,569 days in total. They were born on a Wednesday, and their 32nd bir
 
 A 29 February birthday only exists in leap years, such as 2024, 2028 and 2032. In the other three years, this calculator counts a 29 February birthday as falling on 1 March, the day after 28 February, and every tool on this site uses that rule. It is the rule written into Scottish law by the [Age of Legal Capacity (Scotland) Act 1991, section 6(2)](https://www.legislation.gov.uk/ukpga/1991/50/section/6). The law in England, Wales and Northern Ireland does not name a date, so if a particular contract or document says something else, go by its wording.
 
-Take someone born on 29 February 2000. There was no 29 February in 2026, so their 26th birthday counted on 1 March 2026. On 16 November 2026, they were 26 years, 8 months and 18 days old. The whole months are counted on the 29th, the day they were born, so the eighth one after the 26th birthday ends on 29 October 2026, and from 29 October to 16 November is 18 days. Their 27th birthday counts on Monday 1 March 2027. In 2028 it is back on the 29th.
+Take someone born on 29 February 2000. There was no 29 February in 2026, so their 26th birthday counted on 1 March 2026. On 16 November 2026 they would be 26 years, 8 months and 18 days old. The whole months are counted on the 29th, the day they were born, so the eighth one after the 26th birthday ends on 29 October 2026, and from 29 October to 16 November is 18 days. Their 27th birthday counts on Monday 1 March 2027. In 2028 it is back on the 29th.
 
 The same rule covers month ends. There is no 31 February, so a month after 31 January is 1 March here. Plenty of people born on a leap day celebrate on 28 February, and that's fine for a party. The calculator just doesn't treat it as the day the age changes.
 
@@ -64,17 +63,8 @@ Schools, speech and language therapists and psychologists usually want a child's
 ---
 
 ## More on how it works
-### How old am I if I was born on 15 March 1995?
-On 16 November 2026, someone born on 15 March 1995 was 31 years, 8 months and 1 day old, with their 32nd birthday still to come on Monday 15 March 2027. Type the date of birth above for today's figure, or press Change for any other day.
+### Ages on past or future dates
+Any date works, earlier or later than today: press Change and type it. There's also a separate page for [how old you will be](/how-old-will-i-be) in a future year, which gives the date you turn that age as well.
 
-### If I was born on 29 February, when do I turn a year older?
-This calculator counts it as 1 March in years with no 29 February, and the 29th itself in leap years. That matches Scottish law; the law in England, Wales and Northern Ireland does not name a date.
-
-### Does this use Korean age or international age?
-International age: you start at 0 and add a year on each birthday. Open More under your result to see your Korean age beside it.
-
-### Can I see my age on a date in the past or the future?
-Yes. Press Change and type any date. There are also separate pages for how old you were on a past date and [how old you will be](/how-old-will-i-be) in a future year.
-
-### Why is my age in months and days sometimes surprising at the end of a month?
-Months aren't all the same length. If you were born on 31 January, there is no 31 February, so your first whole month is counted on 1 March, the same rule used for 29 February. On 28 February the result shows 0 months and 28 days; on 1 March it shows exactly 1 month. Some other calculators treat that month as ending on 28 February instead, so they can be a day out around month ends.
+### Ages at the end of a month
+Someone born on 31 January shows as 0 months and 28 days old on 28 February, and exactly 1 month old on 1 March, because there is no 31 February. Some other calculators end that month on 28 February instead, so they can be a day out around month ends.
