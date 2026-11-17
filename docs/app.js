@@ -232,32 +232,58 @@
       read.className = cls;
       var sb = read.querySelector('.swap');
       if (sb) {
-        var press = null;
+        var press = null, fieldWasFocused = false, touchAt = 0;
         var keepFocus = function (e) {
           if (e.button != null && e.button !== 0) return;
           /* On touch, a compatibility mousedown is often fired just before click,
              which would wipe the real press time and make a long press look like a tap. */
-          if (e.type !== 'mousedown' || !press) press = { t: Date.now(), x: e.clientX, y: e.clientY };
+          if (e.type === 'mousedown' && (press || touchAt)) {
+            if (e.pointerType && e.pointerType !== 'touch') e.preventDefault();
+            return;
+          }
+          fieldWasFocused = document.activeElement === quick;
+          if (e.pointerType === 'touch') touchAt = Date.now();
+          else touchAt = 0;
+          press = {
+            t: Date.now(),
+            x: e.clientX,
+            y: e.clientY,
+            pointerType: e.pointerType || ''
+          };
           /* Don't preventDefault on touch: that blocks scrolling. Mouse/pen only,
              so a click can land without pulling focus out of the field. */
-          if (e.pointerType !== 'touch') e.preventDefault();
+          if (e.pointerType && e.pointerType !== 'touch') e.preventDefault();
         };
+        var dropPress = function () { press = null; };
         sb.addEventListener('pointerdown', keepFocus);
         sb.addEventListener('mousedown', keepFocus);
+        /* Clear press so a later keyboard / AT click is not judged against a
+           stale point. Do not swallow that later click. */
+        sb.addEventListener('pointercancel', dropPress);
+        sb.addEventListener('lostpointercapture', dropPress);
+        sb.addEventListener('pointerleave', dropPress);
+        sb.addEventListener('pointerup', function (e) {
+          var r = sb.getBoundingClientRect();
+          if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) press = null;
+        });
         sb.addEventListener('click', function (e) {
           if (e.button != null && e.button !== 0) return;
-          if (press) {
-            var held = Date.now() - press.t;
-            var moved = Math.abs((e.clientX || 0) - press.x) > 10 || Math.abs((e.clientY || 0) - press.y) > 10;
-            press = null;
-            if (held > 500 || moved) return;
-          }
+          var fromKeyboard = e.detail === 0;
+          var wasFocused = fieldWasFocused;
+          var heldTouch = !fromKeyboard && touchAt && (Date.now() - touchAt > 500);
+          var moved = !fromKeyboard && press && (Math.abs((e.clientX || 0) - press.x) > 10 || Math.abs((e.clientY || 0) - press.y) > 10);
+          press = null;
+          touchAt = 0;
+          fieldWasFocused = false;
+          if (heldTouch || moved) return;
           setDate(swap, true);
           quick.value = plain(swap);
           f.alt = null;
           show(rb(swap), 'ok');
           go();
-          quick.focus({ preventScroll: true });
+          /* Don't steal focus (and open the phone keyboard) on a tap that
+             started with the field unfocused. Keyboard / AT clicks use detail 0. */
+          if (fromKeyboard || wasFocused) quick.focus({ preventScroll: true });
         });
       }
     }
@@ -830,6 +856,8 @@
     refreshOnLabel();
     var out = (TOOLS[tool] || TOOLS.age)();
     if (!out) return;
+    var yb = document.getElementById('in-year');
+    if (yb) yb.setAttribute('aria-invalid', (out.state === 'notice' && /Which year\?/.test((out.html || '') + ' ' + (out.say || ''))) ? 'true' : 'false');
     var holdNotice = out.state === 'notice' && anyUnstableYear();
     var say = holdNotice ? '' : (out.say || '');
     if (out.html === lastHtml) {
@@ -862,6 +890,11 @@
     if (document.body.classList.contains('widget') && window.parent !== window) window.parent.postMessage({ agecalcHeight: document.documentElement.scrollHeight }, '*');
   }
   document.querySelectorAll('[data-calc] input:not(.quick):not(.p-d):not(.p-m):not(.p-y), [data-calc] select:not(#zone)').forEach(function (i) { i.addEventListener(i.type === 'checkbox' || i.type === 'radio' ? 'change' : 'input', go); });
+  var yearBox = document.getElementById('in-year');
+  if (yearBox) {
+    yearBox.addEventListener('blur', go);
+    yearBox.addEventListener('change', go);
+  }
   root.querySelectorAll('form').forEach(function (f) { f.addEventListener('submit', function (e) { e.preventDefault(); go(); }); });
 
   /* Refresh "today" if a tab is left open past midnight in the chosen zone.

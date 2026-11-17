@@ -818,6 +818,60 @@ async function run() {
     assert(results.length === 1, 'the 2060 result was not announced once', { writes });
   });
 
+  await check('An incomplete year is announced once on blur, and the year box is aria-invalid', async () => {
+    await page.goto(server.url + '/how-old-will-i-be/' + TODAY_Q, { waitUntil: 'domcontentloaded' });
+    await typeQuick(page, 'dob', '18 May 1990');
+    await blurQuick(page, 'dob');
+    await page.waitForTimeout(1000);
+    await watchLive(page);
+    const year = page.locator('#in-year');
+    await year.click();
+    await year.fill('');
+    await year.type('20', { delay: 40 });
+    await page.waitForTimeout(200);
+    let writes = (await nonEmptyLiveWrites(page)).filter((s) => /Which year/i.test(s));
+    assert(writes.length === 0, 'Which year? was announced while the incomplete year box still had focus', { writes });
+    const mid = await page.evaluate(() => {
+      const y = document.getElementById('in-year');
+      const leaf = document.getElementById('leaf');
+      return {
+        aria: y ? y.getAttribute('aria-invalid') : null,
+        text: leaf ? leaf.innerText.replace(/\s+/g, ' ').trim() : '',
+        live: (document.getElementById('live') || {}).textContent || '',
+      };
+    });
+    assert(/Which year/i.test(mid.text), 'Which year? was not on screen while typing an incomplete year', mid);
+    assert(mid.aria === 'true', 'year box was not aria-invalid while Which year? was showing', mid);
+    assert(!/Which year/i.test(mid.live), 'Which year? was already in the live region before blur', mid);
+    await year.evaluate((el) => el.blur());
+    await page.waitForTimeout(200);
+    writes = (await nonEmptyLiveWrites(page)).filter((s) => /Which year/i.test(s));
+    assert(writes.length === 1, 'Which year? was announced ' + writes.length + ' times after leaving an incomplete year', { writes });
+    const after = await page.evaluate(() => {
+      const y = document.getElementById('in-year');
+      return {
+        aria: y ? y.getAttribute('aria-invalid') : null,
+        live: (document.getElementById('live') || {}).textContent || '',
+      };
+    });
+    assert(after.aria === 'true', 'year box lost aria-invalid after blur of an incomplete year', after);
+    assert(/Which year/i.test(after.live), 'Which year? was not in the live region after blur', after);
+    await year.click();
+    await year.fill('');
+    await year.type('2060', { delay: 40 });
+    await page.waitForTimeout(200);
+    const done = await page.evaluate(() => {
+      const y = document.getElementById('in-year');
+      const leaf = document.getElementById('leaf');
+      return {
+        aria: y ? y.getAttribute('aria-invalid') : null,
+        state: leaf ? leaf.getAttribute('data-state') : null,
+      };
+    });
+    assert(done.state === 'result', 'a complete year did not show a result', done);
+    assert(done.aria === 'false', 'year box stayed aria-invalid after a complete year', done);
+  });
+
   async function assertAnnouncedResult(page, label) {
     await page.waitForTimeout(1000);
     const info = await page.evaluate(() => {
@@ -952,8 +1006,8 @@ async function run() {
     await assertStillOffered(page, offer.before, 'middle-click');
   });
 
-  await check('A long press or drag-off on I meant does not swap the date', async () => {
-    let offer = await offerIMeant(page, { blurFirst: true });
+  await check('A long mouse hold on I meant still swaps the date', async () => {
+    const offer = await offerIMeant(page, { blurFirst: true });
     const box = await offer.swap.boundingBox();
     assert(box, 'I meant button has no box');
     const cx = box.x + box.width / 2, cy = box.y + box.height / 2;
@@ -962,17 +1016,29 @@ async function run() {
     await page.waitForTimeout(900);
     await page.mouse.up();
     await page.waitForTimeout(80);
-    await assertStillOffered(page, offer.before, 'long press');
+    const st = await fieldState(page, 'dob');
+    assert(st.quickValue !== offer.before, 'a long mouse hold on I meant did not swap the date: still "' + st.quickValue + '"', st);
+    assert(!/I meant/i.test(st.readback), 'I meant was still offered after a long mouse hold', st);
+    assert(!st.focusIsQuick, 'a mouse click on unfocused I meant focused the field', st);
+  });
 
-    offer = await offerIMeant(page, { blurFirst: true });
-    const box2 = await offer.swap.boundingBox();
-    const x = box2.x + box2.width / 2, y = box2.y + box2.height / 2;
+  await check('A mouse drag-off on I meant does not swap, and the next Enter still does', async () => {
+    const offer = await offerIMeant(page, { blurFirst: true });
+    const box = await offer.swap.boundingBox();
+    const x = box.x + box.width / 2, y = box.y + box.height / 2;
     await page.mouse.move(x, y);
     await page.mouse.down();
     await page.mouse.move(x, y + 160, { steps: 12 });
     await page.mouse.up();
     await page.waitForTimeout(80);
     await assertStillOffered(page, offer.before, 'drag-off');
+    await offer.swap.focus();
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(120);
+    const st = await fieldState(page, 'dob');
+    assert(st.quickValue !== offer.before, 'Enter after a mouse drag-off did not swap the date: still "' + st.quickValue + '"', st);
+    assert(!/I meant/i.test(st.readback), 'I meant was still offered after Enter following a drag-off', st);
+    assert(st.focusIsQuick, 'focus did not return to the field after Enter following a drag-off', st);
   });
 
   await check('Enter and Space on I meant swap the date and return focus to the field', async () => {
@@ -1006,7 +1072,34 @@ async function run() {
     assert(ids.boxes.every((id) => id === ids.readId), 'date boxes do not point aria-describedby at the readback', ids);
   });
 
-  await ctx.close();
+  await check('I meant does not shift the layout at 180x400', async () => {
+    const paths = ['/', '/korean-age/', '/how-old-will-i-be/', '/birthday-countdown/'];
+    await page.setViewportSize({ width: 180, height: 400 });
+    for (const path of paths) {
+      await page.goto(server.url + path + TODAY_Q, { waitUntil: 'domcontentloaded' });
+      const empty = await fieldAreaProbes(page);
+      const reserved = await page.evaluate(() => {
+        const read = document.querySelector('[data-datefield="dob"] .readback');
+        return read ? parseFloat(getComputedStyle(read).minHeight) : 0;
+      });
+      assert(reserved >= 50, 'readback min-height was ' + reserved + 'px at 180x400 on ' + path + ', expected at least 50', { reserved, empty });
+      await typeQuick(page, 'dob', '05/06/1999');
+      await blurQuick(page, 'dob');
+      await page.waitForTimeout(80);
+      const st = await fieldState(page, 'dob');
+      assert(/I meant/i.test(st.readback), 'no I meant offer at 180x400 on ' + path + ': ' + st.readback, st);
+      const after = await fieldAreaProbes(page);
+      assert(Math.abs(after.footHeight - empty.footHeight) <= 2,
+        'field footer jumped ' + (after.footHeight - empty.footHeight) + 'px at 180x400 on ' + path, { empty, after });
+      assert(Math.abs(after.fieldHeight - empty.fieldHeight) <= 2,
+        'field height jumped ' + (after.fieldHeight - empty.fieldHeight) + 'px at 180x400 on ' + path, { empty, after });
+      if (empty.leafTop != null && after.leafTop != null) {
+        const gap0 = empty.leafTop - empty.fieldBottom, gap1 = after.leafTop - after.fieldBottom;
+        assert(Math.abs(gap1 - gap0) <= 2, 'content below the field jumped ' + (gap1 - gap0) + 'px at 180x400 on ' + path, { empty, after });
+      }
+    }
+    await page.setViewportSize({ width: 1280, height: 800 });
+  });
   await ctx.close();
 
 
@@ -1159,6 +1252,13 @@ async function run() {
       await assertStillOffered(ppage, offer.before, 'swipe starting on I meant');
       const afterY = await ppage.evaluate(() => window.scrollY);
       assert(afterY > beforeY + 20, 'a swipe starting on I meant did not scroll the page (scrollY ' + beforeY + ' → ' + afterY + ')');
+      await offer.swap.focus();
+      await ppage.keyboard.press('Enter');
+      await ppage.waitForTimeout(120);
+      const st = await fieldState(ppage, 'dob');
+      assert(st.quickValue !== offer.before, 'Enter after a cancelled swipe did not swap the date: still "' + st.quickValue + '"', st);
+      assert(!/I meant/i.test(st.readback), 'I meant was still offered after Enter following a swipe', st);
+      assert(st.focusIsQuick, 'focus did not return to the field after Enter following a swipe', st);
     });
     await check('A long press or drag-off on I meant does not swap (Pixel 7)', async () => {
       let offer = await offerIMeant(ppage, { blurFirst: true });
