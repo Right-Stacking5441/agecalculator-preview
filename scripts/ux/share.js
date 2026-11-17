@@ -192,6 +192,14 @@
     leaf.querySelectorAll('.kcol .k-n, .yt-year, .gm-label').forEach(function (e) { figure(e, txt(e), txt(e)); });
     var ab = acts.querySelector('[data-act="age"]'); if (ab) { var vis = ((ab.querySelector('.l-a') || {}).textContent || 'Copy age').trim(); ab.setAttribute('aria-label', vis + ': ' + headline()); }
   }
+  /* ---- the row under the card ---- */
+  acts.querySelectorAll('[data-act]').forEach(function (b) {
+    var k = b.getAttribute('data-act'), l = b.querySelector('.act-l').textContent;
+    if (k === 'link' && canShare) { b.classList.add('native'); l = 'Share'; }
+    if (k !== 'print') setLabel(b, l, k === 'link' ? 'Link copied' : 'Copied');
+  });
+  var hint = acts.querySelector('.acts-hint'); if (hint && touch) hint.textContent = 'Tap a number to copy it';
+
   new MutationObserver(decorate).observe(leaf, { childList: true });
   decorate();
   leaf.addEventListener('click', function (e) {
@@ -200,13 +208,6 @@
     write(v).then(function () { tag(b); announce('Copied ' + v); });
   });
 
-  /* ---- the row under the card ---- */
-  acts.querySelectorAll('[data-act]').forEach(function (b) {
-    var k = b.getAttribute('data-act'), l = b.querySelector('.act-l').textContent;
-    if (k === 'link' && canShare) { b.classList.add('native'); l = 'Share'; }
-    if (k !== 'print') setLabel(b, l, k === 'link' ? 'Link copied' : 'Copied');
-  });
-  var hint = acts.querySelector('.acts-hint'); if (hint && touch) hint.textContent = 'Tap a number to copy it';
   /* "Share" only where the share sheet opens (navigator.share); everywhere else the button copies, so it stays "Copy link" / "Link copied" */
   acts.addEventListener('click', function (e) {
     var b = e.target.closest('[data-act]'); if (!b || leaf.getAttribute('data-state') !== 'result') return;

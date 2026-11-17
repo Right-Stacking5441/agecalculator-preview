@@ -95,6 +95,7 @@ async function fillCase(page, c) {
 const CASES = [
   { name: 'home 4-digit age', path: '/', fields: [['dob', '1 January 1000']] },
   { name: 'korean 3-digit age', path: '/korean-age/', fields: [['dob', '1 January 1900']] },
+  { name: 'korean normal dob', path: '/korean-age/', fields: [['dob', '5 May 1990']] },
   { name: 'korean 4-digit age', path: '/korean-age/', fields: [['dob', '1 January 1000']] },
   { name: 'countdown far birthday', path: '/birthday-countdown/', fields: [['dob', '1 January 1000']] },
   { name: 'how-old-will-i-be far date', path: '/how-old-will-i-be/', fields: [['dob', '1 January 1000'], ['on', '1 January 2999']] },
@@ -107,7 +108,7 @@ const CASES = [
   { name: 'cat age 21', path: '/cat-age/', petYears: '21' },
 ];
 
-const WIDTHS = [320, 360, 390];
+const WIDTHS = [320, 360, 375, 390, 391, 393, 400, 414, 430, 431, 768];
 
 const AXE_PAGES = [
   { path: '/', fields: [['dob', '15 March 1995']] },
@@ -144,6 +145,9 @@ const AXE_PAGES = [
   for (const width of WIDTHS) {
     await page.setViewportSize({ width, height: 800 });
     for (const c of CASES) {
+      // 4-digit Korean ages only have to fit in the stacked layout (<=430).
+      // Above that the three-column card is restored, which is the agreed breakpoint.
+      if (c.name === 'korean 4-digit age' && width > 430) continue;
       await check(c.name + ' at ' + width, async () => {
         await page.goto(server.url + c.path + '?today=16%20November%202026', { waitUntil: 'domcontentloaded' });
         await fillCase(page, c);
