@@ -183,6 +183,100 @@ async function desktopKeyboard(page, base) {
   assert(tag === 'A' && inMenu, 'Tab from the toggle did not land on a menu link', { tag, inMenu });
 }
 
+
+async function assertButtonAbovePanel(page, useTouch, label) {
+  const summary = page.locator('details.nav-menu summary');
+  await tapLocator(page, summary, useTouch);
+  await expectOpen(page, true, label + ' open for hit-test');
+  const hit = await page.evaluate(() => {
+    const btn = document.querySelector('details.nav-menu summary');
+    const list = document.querySelector('details.nav-menu ul');
+    const r = btn.getBoundingClientRect();
+    const el = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    return {
+      tag: el ? el.tagName : null,
+      className: el ? el.className : null,
+      isSummary: !!(el && (el === btn || btn.contains(el))),
+      isList: !!(el && list && (el === list || list.contains(el))),
+      bodyPos: getComputedStyle(document.body).position,
+      summaryZ: getComputedStyle(btn).zIndex,
+      listZ: list ? getComputedStyle(list).zIndex : null,
+    };
+  });
+  assert(hit.isSummary && !hit.isList, label + ': a tap on the button hit the panel, not the button', hit);
+  assert(parseInt(hit.summaryZ, 10) > parseInt(hit.listZ, 10), label + ': button z-index is not above the panel', hit);
+  assert(hit.bodyPos !== 'fixed', label + ': body was position:fixed while the menu was open (scroll lock)', hit);
+  await tapLocator(page, summary, useTouch);
+  await expectOpen(page, false, label + ' closed by a second tap after hit-test');
+}
+
+async function assertNativeToggleDoesNotReopen(page, label) {
+  const summary = page.locator('details.nav-menu summary');
+  await tapLocator(page, summary, true);
+  await expectOpen(page, true, label + ' open before native-toggle sim');
+  const open = await page.evaluate(() => {
+    const menu = document.querySelector('details.nav-menu');
+    const btn = menu.querySelector('summary');
+    btn.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true, pointerType: 'touch' }));
+    menu.open = false;
+    btn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }));
+    return menu.open;
+  });
+  assert(!open, label + ': a native close followed by click reopened the menu');
+}
+
+async function assertOutsideThenButtonClickStaysClosed(page, label) {
+  const summary = page.locator('details.nav-menu summary');
+  await tapLocator(page, summary, true);
+  await expectOpen(page, true, label + ' open before outside-then-click');
+  const open = await page.evaluate(() => {
+    const menu = document.querySelector('details.nav-menu');
+    const btn = menu.querySelector('summary');
+    const lede = document.querySelector('h1, .lede, main, #main');
+    lede.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true, pointerType: 'touch' }));
+    btn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }));
+    return menu.open;
+  });
+  assert(!open, label + ': an outside pointerdown plus the button click left the menu open');
+}
+
+async function assertOutsideOrdinaryText(page, useTouch, label) {
+  const summary = page.locator('details.nav-menu summary');
+  await tapLocator(page, summary, useTouch);
+  await expectOpen(page, true, label + ' open before ordinary-text tap');
+  const pt = await page.evaluate(() => {
+    const list = document.querySelector('details.nav-menu ul');
+    const lr = list ? list.getBoundingClientRect() : { left: 9999, top: 0, bottom: 0, right: 0 };
+    const nodes = [...document.querySelectorAll('h1, .lede, p, main')];
+    for (const el of nodes) {
+      const r = el.getBoundingClientRect();
+      if (r.width < 20 || r.height < 10) continue;
+      const x = r.left + Math.min(24, r.width / 2);
+      const y = r.top + Math.min(16, r.height / 2);
+      if (x >= lr.left && x <= lr.right && y >= lr.top && y <= lr.bottom) continue;
+      const hit = document.elementFromPoint(x, y);
+      if (hit && hit.closest && hit.closest('a, button, summary, input, details.nav-menu')) continue;
+      return { x, y };
+    }
+    const mast = document.querySelector('header.mast');
+    return { x: 24, y: (mast ? mast.getBoundingClientRect().bottom : 56) + 80 };
+  });
+  if (useTouch) await page.touchscreen.tap(pt.x, pt.y);
+  else await page.mouse.click(pt.x, pt.y);
+  await expectOpen(page, false, label + ' a tap on ordinary text should close the menu');
+}
+
+async function assertCurrentPageLinkCloses(page, useTouch, label) {
+  const summary = page.locator('details.nav-menu summary');
+  await tapLocator(page, summary, useTouch);
+  await expectOpen(page, true, label + ' open before current-page link');
+  const loc = page.locator('details.nav-menu ul a[aria-current]').first();
+  await loc.waitFor({ state: 'visible' });
+  await tapLocator(page, loc, useTouch);
+  await page.waitForTimeout(80);
+  await expectOpen(page, false, label + ' a tap on the current-page link should close the menu');
+}
+
 async function run() {
   const { webkit, chromium, devices } = loadPlaywright();
   const server = await bootServer();
@@ -220,6 +314,26 @@ async function run() {
     });
     await check('WebKit ' + phone.name + ' every menu link', async () => {
       await tapEveryLink(page, server.url, true, phone.name);
+    });
+    await check('WebKit ' + phone.name + ' button stays above the panel and a second tap closes', async () => {
+      await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+      await assertButtonAbovePanel(page, true, phone.name);
+    });
+    await check('WebKit ' + phone.name + ' native details close is not flipped back by click', async () => {
+      await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+      await assertNativeToggleDoesNotReopen(page, phone.name);
+    });
+    await check('WebKit ' + phone.name + ' outside pointerdown then button click stays closed', async () => {
+      await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+      await assertOutsideThenButtonClickStaysClosed(page, phone.name);
+    });
+    await check('WebKit ' + phone.name + ' tap on ordinary text closes the menu', async () => {
+      await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+      await assertOutsideOrdinaryText(page, true, phone.name);
+    });
+    await check('WebKit ' + phone.name + ' current-page link closes the menu', async () => {
+      await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+      await assertCurrentPageLinkCloses(page, true, phone.name);
     });
     await ctx.close();
   }
@@ -317,6 +431,18 @@ async function run() {
       await expectOpen(page, false, 'Pixel 7 after outside');
       const url = page.url();
       assert(url.replace(/\/+$/, '') === (server.url + '/').replace(/\/+$/, '') || url.endsWith('/'), 'outside tap navigated', { url });
+    });
+    await check('Chromium Pixel 7 button stays above the panel and a second tap closes', async () => {
+      await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+      await assertButtonAbovePanel(page, true, 'Pixel 7');
+    });
+    await check('Chromium Pixel 7 tap on ordinary text closes the menu', async () => {
+      await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+      await assertOutsideOrdinaryText(page, true, 'Pixel 7');
+    });
+    await check('Chromium Pixel 7 current-page link closes the menu', async () => {
+      await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+      await assertCurrentPageLinkCloses(page, true, 'Pixel 7');
     });
     await check('Chromium Pixel 7 every menu link', async () => {
       await tapEveryLink(page, server.url, true, 'Pixel 7');

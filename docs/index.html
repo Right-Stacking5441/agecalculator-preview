@@ -16,7 +16,7 @@
 <link href="favicon.ico" rel="icon" sizes="32x32"/>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <link as="font" crossorigin="" href="fonts/libre-franklin-var.woff2" rel="preload" type="font/woff2"/>
-<link href="styles.css" rel="stylesheet"/>
+<link href="styles.css?v=f99126d883" rel="stylesheet"/>
 <script type="application/ld+json">
 {
  "@context": "https://schema.org",
@@ -83,7 +83,7 @@
 }
 </script>
 <script>var q=location.search;if(/[?&](dob|a|b|start|end|test|on|year)=/.test(q))document.documentElement.classList.add('prefill');if(/[?&]year=/.test(q))document.documentElement.classList.add('prefill-year');if(/[?&](on|year)=/.test(q))document.documentElement.classList.add('prefill-on')</script>
-<link href="ux.css" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript></head>
+<link href="ux.css?v=f59e6c9fd0" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript></head>
 <body data-page="home">
 <aside aria-label="Preview notice" class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</aside>
 <a class="skip" href="#tool">Skip to the calculator</a>
@@ -199,8 +199,8 @@
 <div class="foot-index" id="all-tools"><h2>Every calculator on the site</h2><ul class="foot-tools"><li><a href="difference/">Age difference</a></li><li><a href="past/">How old was I?</a></li><li><a href="how-old-will-i-be/">How old will I be?</a></li><li><a href="days-between-dates/">Days between dates</a></li><li><a href="chronological-age/">Chronological age</a></li><li><a href="birthday-countdown/">Birthday countdown</a></li><li><a href="korean-age/">Korean age</a></li><li><a href="what-year-was-i-born/">What year was I born?</a></li><li><a href="dog-age/">Dog age</a></li><li><a href="cat-age/">Cat age</a></li></ul></div>
 <div class="foot-small"><p><b>agecalculator.com</b>. Dates you type are worked out in your browser and aren’t sent anywhere. Free to use.</p><p><a href="embed/">Put this calculator on your own site</a> · <a href="privacy/">Privacy</a> · <a href="contact/">Contact</a></p></div>
 </div></footer>
-<script defer="" src="dates.js"></script>
-<script defer="" src="app.js"></script>
+<script defer="" src="dates.js?v=b4e78af13e"></script>
+<script defer="" src="app.js?v=53f820a449"></script>
 <script>
 (function(){
   var menu = document.querySelector('details.nav-menu');
@@ -221,30 +221,43 @@
   menu.addEventListener('toggle', sync);
   sync();
 
-  /* Own the toggle. On iOS Safari a second tap on <summary> often fails to
-     close a native <details>, especially when the summary holds an SVG, and
-     later taps can miss menu links. preventDefault stops the native toggle
-     so it cannot fight this handler or an outside-click listener. */
+  /* Remember the open state when the press starts. On iOS Safari the native
+     details toggle often runs before click, so preventDefault on click is
+     too late; if the state already changed, do not flip it back. This
+     listener does not toggle. */
+  var openAtDown = false;
+  var closedByOutside = false;
+  summary.addEventListener('pointerdown', function () {
+    openAtDown = menu.open;
+    closedByOutside = false;
+  });
+
+  /* One click handler on the button only. */
   summary.addEventListener('click', function (e) {
     e.preventDefault();
+    e.stopPropagation();
+    if (closedByOutside) { closedByOutside = false; return; }
+    if (e.detail !== 0 && menu.open !== openAtDown) { sync(); return; }
     setOpen(!menu.open);
   });
 
-  /* pointerdown (capture) so a tap on ordinary text still closes the menu.
-     iOS Safari often does not fire click on non-interactive elements.
-     Ignore events inside the menu so this cannot re-toggle the summary. */
-  function onOutside(e) {
-    if (!menu.open) return;
-    if (menu.contains(e.target)) return;
-    setOpen(false);
+  function insideMenu(el) {
+    return !!(el && (el === menu || menu.contains(el) || el === summary || summary.contains(el)));
   }
-  document.addEventListener('pointerdown', onOutside, true);
-  document.addEventListener('click', onOutside);
+  /* Outside: pointerdown on document. Do not also listen for click, or a
+     mis-targeted close can be followed by the button click reopening it. */
+  document.addEventListener('pointerdown', function (e) {
+    if (!menu.open) return;
+    if (insideMenu(e.target)) return;
+    setOpen(false);
+    closedByOutside = true;
+  }, true);
 
-  menu.addEventListener('click', function (e) {
+  function closeIfLink(e) {
     var a = e.target && e.target.closest ? e.target.closest('a') : null;
     if (a && menu.contains(a)) setOpen(false);
-  });
+  }
+  menu.addEventListener('click', closeIfLink);
 
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Escape' && e.key !== 'Esc') return;
@@ -256,6 +269,7 @@
   window.addEventListener('pageshow', function (e) {
     if (e.persisted) setOpen(false);
   });
+  window.addEventListener('popstate', function () { setOpen(false); });
 })();
 
 (function(){

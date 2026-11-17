@@ -368,30 +368,43 @@ NAV_MENU = """<script>
   menu.addEventListener('toggle', sync);
   sync();
 
-  /* Own the toggle. On iOS Safari a second tap on <summary> often fails to
-     close a native <details>, especially when the summary holds an SVG, and
-     later taps can miss menu links. preventDefault stops the native toggle
-     so it cannot fight this handler or an outside-click listener. */
+  /* Remember the open state when the press starts. On iOS Safari the native
+     details toggle often runs before click, so preventDefault on click is
+     too late; if the state already changed, do not flip it back. This
+     listener does not toggle. */
+  var openAtDown = false;
+  var closedByOutside = false;
+  summary.addEventListener('pointerdown', function () {
+    openAtDown = menu.open;
+    closedByOutside = false;
+  });
+
+  /* One click handler on the button only. */
   summary.addEventListener('click', function (e) {
     e.preventDefault();
+    e.stopPropagation();
+    if (closedByOutside) { closedByOutside = false; return; }
+    if (e.detail !== 0 && menu.open !== openAtDown) { sync(); return; }
     setOpen(!menu.open);
   });
 
-  /* pointerdown (capture) so a tap on ordinary text still closes the menu.
-     iOS Safari often does not fire click on non-interactive elements.
-     Ignore events inside the menu so this cannot re-toggle the summary. */
-  function onOutside(e) {
-    if (!menu.open) return;
-    if (menu.contains(e.target)) return;
-    setOpen(false);
+  function insideMenu(el) {
+    return !!(el && (el === menu || menu.contains(el) || el === summary || summary.contains(el)));
   }
-  document.addEventListener('pointerdown', onOutside, true);
-  document.addEventListener('click', onOutside);
+  /* Outside: pointerdown on document. Do not also listen for click, or a
+     mis-targeted close can be followed by the button click reopening it. */
+  document.addEventListener('pointerdown', function (e) {
+    if (!menu.open) return;
+    if (insideMenu(e.target)) return;
+    setOpen(false);
+    closedByOutside = true;
+  }, true);
 
-  menu.addEventListener('click', function (e) {
+  function closeIfLink(e) {
     var a = e.target && e.target.closest ? e.target.closest('a') : null;
     if (a && menu.contains(a)) setOpen(false);
-  });
+  }
+  menu.addEventListener('click', closeIfLink);
 
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Escape' && e.key !== 'Esc') return;
@@ -403,6 +416,7 @@ NAV_MENU = """<script>
   window.addEventListener('pageshow', function (e) {
     if (e.persisted) setOpen(false);
   });
+  window.addEventListener('popstate', function () { setOpen(false); });
 })();
 
 (function(){

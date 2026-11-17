@@ -985,6 +985,41 @@ def patch_app_js_copy():
     print("patched typographed empty states into app.js")
 
 
+
+def cache_bust_assets(docs: Path) -> None:
+    """Append ?v=<content hash> to every local JS/CSS reference so Safari cannot keep a stale file."""
+    import hashlib
+    names = ("styles.css", "ux.css", "app.js", "dates.js", "sheet.js", "embed.js")
+    hashes = {}
+    for name in names:
+        fp = docs / name
+        if fp.is_file():
+            hashes[name] = hashlib.sha256(fp.read_bytes()).hexdigest()[:10]
+    if not hashes:
+        return
+    pat = re.compile(
+        r"""((?:href|src)=["'])([^"']*?)(styles\.css|ux\.css|app\.js|dates\.js|sheet\.js|embed\.js)(?:\?[^"']*)?(["'])"""
+    )
+
+    def repl(m, _hashes=hashes):
+        left, prefix, name, right = m.group(1), m.group(2), m.group(3), m.group(4)
+        full = (prefix or "") + name
+        if full.startswith("http://") or full.startswith("https://") or full.startswith("//"):
+            return m.group(0)
+        if name not in _hashes:
+            return m.group(0)
+        return f"{left}{prefix}{name}?v={_hashes[name]}{right}"
+
+    n = 0
+    for html in sorted(docs.rglob("*.html")):
+        text = html.read_text(encoding="utf-8")
+        new, k = pat.subn(repl, text)
+        if k:
+            html.write_text(new, encoding="utf-8")
+            n += k
+    print(f"cache-busted {n} JS/CSS references with content hashes")
+
+
 def main():
     clean_promoted()
     restore_shells()
@@ -1033,6 +1068,7 @@ def main():
     apply_robots(DOCS, launch=LAUNCH)
     patch_app_js_copy()
     typograph_docs_html()
+    cache_bust_assets(DOCS)
 
     # confirm embed.js URL untouched in snippets
     emb = (DOCS / "embed" / "index.html").read_text()

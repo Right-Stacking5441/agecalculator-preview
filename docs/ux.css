@@ -14,7 +14,7 @@
 .brand .wm { display: inline; white-space: nowrap; }
 .brand .wm span { color: inherit; font-weight: inherit; } /* 8da54a4: one wordmark, same weight and ink (approved) */
 .nav-menu { position: relative; font-size: 15px; }
-.nav-menu summary { list-style: none; display: inline-flex; align-items: center; gap: var(--s2); padding: var(--s3) var(--s2); cursor: pointer; color: var(--ink); font-weight: 600; border-radius: 2px; box-sizing: border-box; min-height: 44px; }
+.nav-menu summary { list-style: none; display: inline-flex; align-items: center; gap: var(--s2); padding: var(--s3) var(--s2); cursor: pointer; color: var(--ink); font-weight: 600; border-radius: 2px; box-sizing: border-box; min-height: 44px; position: relative; z-index: 5; }
 .nav-menu summary::-webkit-details-marker { display: none; }
 /* Taps must hit the summary itself. On iOS Safari, an SVG or label inside
    <summary> can swallow the second tap, leaving the menu stuck open. */
