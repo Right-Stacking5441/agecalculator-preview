@@ -86,6 +86,29 @@ async function layoutProbes(page) {
   });
 }
 
+
+async function fieldAreaProbes(page) {
+  return page.evaluate(() => {
+    const box = (sel) => {
+      const el = document.querySelector(sel);
+      if (!el) return null;
+      const b = el.getBoundingClientRect();
+      return { top: b.top, height: b.height, bottom: b.bottom };
+    };
+    const field = box('[data-datefield="dob"]');
+    const foot = box('[data-datefield="dob"] .df-foot');
+    const leaf = box('#leaf, .result');
+    const yearIn = box('.year-in');
+    return {
+      fieldHeight: field ? field.height : null,
+      fieldBottom: field ? field.bottom : null,
+      footHeight: foot ? foot.height : null,
+      yearInTop: yearIn ? yearIn.top : null,
+      leafTop: leaf ? leaf.top : null,
+    };
+  });
+}
+
 async function clearByBackspace(page, loc) {
   await loc.click();
   await loc.press('End');
@@ -375,6 +398,36 @@ async function run() {
       assert(!st.partsOpen, 'boxes opened after clicking away from "' + text + '"', st);
       assert(st.quickValue === text, 'text was changed after leaving "' + text + '"', st);
     }
+  });
+
+
+  await check('Field area height stays stable at 360, 393, 412 and 1280', async () => {
+    const widths = [360, 393, 412, 1280];
+    const paths = ['/', '/korean-age/', '/how-old-will-i-be/', '/birthday-countdown/'];
+    const longError = 'abc';
+    const longMessage = INVALID_ERRORS[longError];
+    const valid = '15 March 1995';
+    for (const width of widths) {
+      await page.setViewportSize({ width, height: 800 });
+      for (const path of paths) {
+        await page.goto(server.url + path, { waitUntil: 'domcontentloaded' });
+        const empty = await fieldAreaProbes(page);
+        await typeQuick(page, 'dob', longError);
+        await blurQuick(page, 'dob');
+        await page.waitForTimeout(80);
+        let st = await fieldState(page, 'dob');
+        assert(st.readback === longMessage, 'wrong long error on ' + path + ' at ' + width + ': ' + st.readback, st);
+        assert(st.readbackErr, 'long error was not marked as an error on ' + path + ' at ' + width, st);
+        assertNoJump(empty, await fieldAreaProbes(page), 'long error on ' + path + ' at ' + width + 'px');
+        await typeQuick(page, 'dob', valid);
+        await blurQuick(page, 'dob');
+        await page.waitForTimeout(80);
+        st = await fieldState(page, 'dob');
+        assert(/Reading this as/.test(st.readback) && !st.readbackErr, 'expected a readback on ' + path + ' at ' + width + ': ' + st.readback, st);
+        assertNoJump(empty, await fieldAreaProbes(page), 'readback on ' + path + ' at ' + width + 'px');
+      }
+    }
+    await page.setViewportSize({ width: 1280, height: 800 });
   });
 
   await check('Partial box input (18//1999) survives close and reopen', async () => {

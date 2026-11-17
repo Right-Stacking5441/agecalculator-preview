@@ -75,7 +75,9 @@
 .df-foot { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s2) var(--s4); flex-wrap: wrap; margin-top: var(--s2); min-height: 44px; }
 .df-foot .readback { margin: 0; min-height: 44px; flex: 1 1 auto; line-height: 22px; }
 .readback .ic-tick { width: 16px; height: 16px; margin-left: var(--s2); color: var(--ink-2); vertical-align: -2px; stroke-width: 2; }
-/* Keep the toggle on the same row when an error appears, so the page does not jump. */
+/* Single-field pages: the toggle has its own row under the input, and the
+   message has a reserved full-width row below, so a long error or the
+   readback cannot wrap the toggle and jump the page. See the later rules. */
 .parts-toggle { display: inline-flex; align-items: center; gap: 5px; margin: 0; font-size: 14px; color: var(--ink-2); text-decoration: none; white-space: nowrap; }
 .parts-toggle span { text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 3px; }
 .parts-toggle .ic { width: 18px; height: 18px; }
@@ -274,6 +276,26 @@ details.qa > summary h3 { font-size: 17px; font-weight: 600; margin: 0; }
 .df-foot { min-height: 44px; height: auto; align-items: flex-start; flex-wrap: wrap; }
 .df-foot .readback, .entry.multi .df-foot .readback, .prefill-on .entry.multi .df-foot .readback { min-height: 44px !important; margin: 0; line-height: 22px; height: auto; overflow: visible; white-space: normal; flex: 1 1 auto; }
 .df-foot .readback.ok { white-space: normal; overflow: visible; text-overflow: unset; }
+
+/* Single-field: toggle on a fixed row under the input; message on a reserved row below. */
+.entry:not(.multi) .df-foot {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: var(--s2);
+}
+.entry:not(.multi) .df-foot .parts-toggle {
+  order: -1;
+  margin: 0;
+  flex: none;
+}
+.entry:not(.multi) .df-foot .readback {
+  flex: none;
+  width: 100%;
+  min-height: 44px;
+}
+
 /* The countdown pad's stacked sheets: room for the deepest stack, always, so drawing it can't push the page */
 #leaf.leaf-stack { margin-bottom: 54px !important; }
 /* Widget */
