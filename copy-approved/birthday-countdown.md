@@ -23,7 +23,7 @@ The "until midnight tonight" line ticks down the rest of today in your time zone
 
 ## From 16 November to 15 March
 
-For example, someone born on 15 March 1995 would have 119 days to go until their next birthday on Monday 16 November 2026. Counted out:
+For example, on Monday 16 November 2026, someone born on 15 March 1995 would have 119 days to go until their next birthday. Counted out:
 
 - Days left in November after the 16th: 14.
 - December: 31. January: 31. February 2027: 28, because 2027 isn't a leap year.
