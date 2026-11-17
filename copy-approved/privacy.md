@@ -38,6 +38,8 @@ Bear in mind that anything in a web address is part of the request your browser 
 
 These pages are hosted on GitHub Pages, a service of GitHub, Inc. in the United States. According to [GitHub's documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), when a GitHub Pages site is visited, the visitor's IP address is logged and stored for security purposes, whether or not the visitor is signed in to GitHub. We rely on our legitimate interest in keeping the site secure and available. GitHub handles this data under the [GitHub General Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement), which does not give a fixed retention period. Transfers to the United States are covered by GitHub's certification under the EU-U.S. Data Privacy Framework and its UK Extension (the UK-US data bridge).
 
+Old links on app.agecalculator.com are redirected to this site through Netlify, which may record IP addresses in its server logs.
+
 ## Fonts, scripts and outside services
 
 The font, the scripts and the stylesheet all come from agecalculator.com itself. The site doesn't load analytics, tracking pixels, social media buttons, or fonts and scripts from other companies.

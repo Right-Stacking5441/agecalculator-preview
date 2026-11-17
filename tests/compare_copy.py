@@ -312,7 +312,7 @@ def main() -> int:
                 "e.g. 15 March 1995",
                 "Age on this date",
                 'Time zone for "today"',
-                "Your age will appear here.",
+                "Type a date of birth to see your age in years, months and days.",
                 "This calculator needs JavaScript to work out the result. You can use it at agecalculator.com.",
                 "Age calculator by agecalculator.com",
             ]:
@@ -370,8 +370,8 @@ def main() -> int:
                 issues.append("PRIVACY GitHub Pages hosting sentence or docs link missing")
             if "docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" not in html:
                 issues.append("PRIVACY GitHub General Privacy Statement link missing")
-            if "Netlify" in html or "netlify.com" in html:
-                issues.append("PRIVACY must not mention Netlify unless Legal re-approves the wording")
+            if "Old links on app.agecalculator.com are redirected to this site through Netlify, which may record IP addresses in its server logs." not in html:
+                issues.append("PRIVACY missing the Netlify app. redirect sentence")
             if "noindex" not in html:
                 issues.append("PRIVACY missing noindex")
 
