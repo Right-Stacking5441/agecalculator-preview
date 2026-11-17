@@ -1,9 +1,9 @@
 # Page copy: /chronological-age
 
-- **Title:** Chronological Age Calculator for Tests (Y;M;D)
+- **Title:** Chronological age calculator for tests (Y;M;D)
 - **Meta description:** Enter a date of birth and a test date to get chronological age as years;months;days, like 8;4;12. Copy it, print a slip, or do a whole class.
 - **H1:** Chronological age calculator
-- **Line under the H1:** 8;4;12 is how score sheets want it, and that's what the chronological age calculator gives: a child's age on the test date, ready to copy or print for the file.
+- **Line under the H1:** 8;4;12 is how score sheets want it, and that’s what you get here: a child’s age on the test date, ready to copy or print for the file.
 - **Target keyword:** chronological age calculator
 
 ---
@@ -54,8 +54,7 @@ A child born on 29 February has their birthday counted on 1 March in common year
 
 ---
 
-## Questions people ask
-
+## Test manuals, rounding and doing it by hand
 ### What is chronological age on a test?
 The child's exact age on the day of testing, written as years, months and days, for example 8;4;12. Standardised tests use it to pick the right row in the norms tables.
 

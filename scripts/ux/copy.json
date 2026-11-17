@@ -4,7 +4,7 @@
     "index": {
       "intro": "How old am I, exactly? Put in your date of birth for your age today in years, months and days, and how long you have to wait for the next birthday.",
       "howto": "What the result shows",
-      "faq": "Questions people ask",
+      "faq": "Leap days, month ends and Korean age",
       "label": {
         "dob": "Enter your date of birth"
       }
@@ -12,63 +12,63 @@
     "past": {
       "intro": "Exam results, a wedding photo, a form asking your age \"at the date of the incident\": give both dates and see how old you were then, down to the day.",
       "howto": "Looking back",
-      "faq": "Questions people ask",
+      "faq": "Forms, whole years and doing it by hand",
       "label": {
         "dob": "Your date of birth",
         "on": "The date to look back to"
       }
     },
     "difference": {
-      "intro": "Siblings arguing over who's older, and by how much? Put both dates of birth into this age difference calculator and it's settled to the day.",
+      "intro": "Siblings arguing over who’s older, and by how much? Type in both dates of birth and it’s settled to the day.",
       "howto": "Two dates, one gap",
-      "faq": "Questions people ask",
+      "faq": "Age gaps by hand and in groups",
       "label": {
         "a": "First date of birth",
         "b": "Second date of birth"
       }
     },
     "days-between-dates": {
-      "intro": "From today to a deadline, or across a whole year: count the days between dates, and see how many are weekdays and how many fall at the weekend.",
+      "intro": "From today to a deadline, or across a whole year: see how many days there are, how many are weekdays and how many fall at the weekend.",
       "howto": "Start day in, end day out",
-      "faq": "Questions people ask",
+      "faq": "End dates, working days and Christmas",
       "label": {
         "start": "From",
         "end": "To"
       }
     },
     "chronological-age": {
-      "intro": "8;4;12 is how score sheets want it, and that's what the chronological age calculator gives: a child's age on the test date, ready to copy or print for the file.",
+      "intro": "8;4;12 is how score sheets want it, and that’s what you get here: a child’s age on the test date, ready to copy or print for the file.",
       "howto": "Filling in the score sheet",
-      "faq": "Questions people ask",
+      "faq": "Test manuals, rounding and doing it by hand",
       "label": {
         "dob": "Date of birth",
         "test": "Test date"
       }
     },
     "dog-age": {
-      "intro": "Big dogs age faster than small ones, so times seven gets it wrong. This dog age calculator reads human years off the AAHA-published chart for your dog's adult size.",
+      "intro": "Big dogs age faster than small ones, so times seven gets it wrong. Pick your dog’s adult size and the human years come straight off the AAHA-published chart.",
       "howto": "Reading the result",
-      "faq": "Questions people ask",
+      "faq": "Times seven, crossbreeds and big dogs",
       "label": {}
     },
     "cat-age": {
-      "intro": "Your cat's age in human years, and the life stage vets use for it. There's no size to pick, because a cat age calculator only needs years and months.",
+      "intro": "Your cat’s age in human years, and the life stage vets use for it. There’s no size to pick for a cat, so all it needs is years and months.",
       "howto": "What you get",
-      "faq": "Questions people ask",
+      "faq": "Senior cats and the times-seven rule",
       "label": {}
     },
     "korean-age": {
-      "intro": "Born late in the year? Your Korean age can be two more than your international age. The Korean age calculator shows both, with year age in between.",
+      "intro": "Born late in the year? Your Korean age can be two more than your international age. You’ll see both here, with year age in between.",
       "howto": "One birthday, three numbers",
-      "faq": "Questions people ask",
+      "faq": "Why Korean age runs ahead",
       "label": {
         "dob": "Enter your date of birth"
       }
     },
     "birthday-countdown": {
-      "intro": "A birthday countdown for cards, parties and plain impatience: the days left until the next one, and the day of the week it lands on.",
+      "intro": "For cards, parties and plain impatience: the days left until the next birthday, and the day of the week it lands on.",
       "howto": "What the countdown shows",
-      "faq": "Questions people ask",
+      "faq": "Weekdays, leap days and time zones",
       "label": {
         "dob": "Enter the date of birth"
       }
@@ -76,7 +76,7 @@
     "how-old-will-i-be": {
       "intro": "Planning for 2050, or for the year the mortgage ends? Pick the year to see how old you will be in it, and the exact day you reach that age.",
       "howto": "Picking a year",
-      "faq": "Questions people ask",
+      "faq": "Future years, exact days and leap birthdays",
       "label": {
         "dob": "Enter your date of birth"
       }
@@ -84,7 +84,7 @@
     "what-year-was-i-born": {
       "intro": "Someone says they're 42. What year were they born? Give the age and whether the birthday has been yet this year, and you'll get the year, or both if you're not sure.",
       "howto": "From an age to a year",
-      "faq": "Questions people ask",
+      "faq": "Why you sometimes get two years",
       "label": {}
     }
   },
@@ -114,7 +114,7 @@
       "between": "Pick a start and an end date to count the days.",
       "chrono": "Add the date of birth and test date for the y;m;d.",
       "dog": "Type your dog's age and pick their adult size.",
-      "cat": "Your cat's age in years and months, please.",
+      "cat": "Type your cat’s age in years and months.",
       "birthyear": "Type an age, then say if the birthday's been yet."
     },
     "pet_source": "From the AAHA-published chart",

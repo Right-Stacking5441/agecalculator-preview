@@ -1,6 +1,6 @@
 # Page copy: /what-year-was-i-born
 
-- **Title:** What Year Was I Born? Birth Year From Your Age
+- **Title:** What year was I born? Birth year from your age
 - **Meta description:** Type your age and whether you've had your birthday this year to get your birth year. Not sure? You get the two possible years. Works for past years too.
 - **H1:** What year was I born?
 - **Line under the H1:** Someone says they're 42. What year were they born? Give the age and whether the birthday has been yet this year, and you'll get the year, or both if you're not sure.
@@ -50,8 +50,7 @@ The tool deals in whole years only. For exact months and days between two dates,
 
 ---
 
-## Questions people ask
-
+## Why you sometimes get two years
 ### What year was I born if I'm 31?
 Take 31 from the current year, then take one more off if your birthday is still to come this year. On 16 November 2026, for example, a 31-year-old was born in 1995 if they'd had their birthday that year, or 1994 if not.
 

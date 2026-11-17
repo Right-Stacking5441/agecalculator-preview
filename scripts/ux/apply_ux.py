@@ -18,6 +18,32 @@ from icons import icon
 
 COPY = json.loads((HERE / "copy.json").read_text())
 P, UI = COPY["pages"], COPY["ui"]
+_COPY_TYPOGRAPHED = False
+
+
+def typograph_loaded_copy():
+    """Run typograph() over every copy.json string (intros, FAQ headings, UI, empty states)."""
+    global P, UI, _COPY_TYPOGRAPHED
+    if _COPY_TYPOGRAPHED:
+        return
+    if str(HERE.parent) not in sys.path:
+        sys.path.insert(0, str(HERE.parent))
+    from build_copy import typograph
+    def walk(o):
+        if isinstance(o, str):
+            return typograph(o)
+        if isinstance(o, dict):
+            for k, v in o.items():
+                o[k] = walk(v)
+            return o
+        if isinstance(o, list):
+            for i, v in enumerate(o):
+                o[i] = walk(v)
+            return o
+        return o
+    walk(COPY)
+    P, UI = COPY["pages"], COPY["ui"]
+    _COPY_TYPOGRAPHED = True
 
 
 def frag(html):
@@ -418,6 +444,7 @@ def fix_skip(soup, slug):
 
 
 def apply_ux(docs: Path, launch: bool = False) -> int:
+    typograph_loaded_copy()
     docs = Path(docs)
     nav = nav_from_home(docs)
     n = 0

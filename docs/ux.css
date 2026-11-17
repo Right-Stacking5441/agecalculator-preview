@@ -53,17 +53,25 @@
 /* ---------- One date box. Boxes on request ---------- */
 .entry { gap: var(--s5); }
 .df-label { font-size: 18px; font-weight: 700; margin-bottom: var(--s2); }
+.datefield { container-type: inline-size; container-name: datefield; }
 .quick {
   box-sizing: border-box;
   height: auto;
   min-height: 60px;
-  font-size: clamp(16px, 6.4vw, 24px);
+  font-size: clamp(15px, 8cqi, 24px);
   line-height: 1.2;
   padding-top: 0.55em;
   padding-bottom: 0.55em;
+  padding-left: 0.55em;
+  padding-right: 0.55em;
   overflow-x: auto;
+  min-width: 0;
+  max-width: 100%;
 }
-.df-small .quick { min-height: 50px; height: auto; font-size: clamp(15px, 5.4vw, 20px); }
+.df-small .quick { min-height: 50px; height: auto; font-size: clamp(15px, 8cqi, 20px); }
+@container datefield (max-width: 220px) {
+  .quick, .df-small .quick { font-size: 15px; padding-left: 8px; padding-right: 8px; }
+}
 .df-foot { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s2) var(--s4); flex-wrap: wrap; margin-top: var(--s2); min-height: 24px; }
 .df-foot .readback { margin: 0; min-height: 0; flex: 1 1 auto; }
 .readback .ic-tick { width: 16px; height: 16px; margin-left: var(--s2); color: var(--ink-2); vertical-align: -2px; stroke-width: 2; }
@@ -163,7 +171,7 @@ details.more[open] > summary .ic { transform: rotate(180deg); }
 
 .rec-result { margin: var(--s2) 0 var(--s4); }
 .rec-result .big .num { font-size: 120px; }
-.rec-result .rest { font-size: 15px; color: var(--ink-3); }
+.rec-result .rest { font-size: 15px; color: var(--ink-2); }
 .rec-lines { font-size: 15px; }
 .leaf.obj-record .rec-title { font-size: 13px; margin-top: var(--s4); }
 .leaf.obj-record { padding-top: 30px; }
@@ -187,7 +195,9 @@ details.topic > summary::-webkit-details-marker, details.qa > summary::-webkit-d
 details.topic > summary h2 { font-size: 20px; margin: 0; border: 0; padding: 0; }
 details.topic > summary .chev, details.qa > summary .chev { width: 22px; height: 22px; color: var(--ink-2); transition: transform .18s var(--ease-out); }
 details.topic[open] > summary .chev, details.qa[open] > summary .chev { transform: rotate(180deg); }
-details.topic > summary:hover h2, details.qa > summary:hover h3 { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+@media (hover: hover) {
+  details.topic > summary:hover h2, details.qa > summary:hover h3 { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+}
 .topic-body { padding: 0 0 var(--s5); }
 .topic-body > :first-child { margin-top: 0; }
 section.faq { margin-top: var(--s7); }
@@ -211,7 +221,7 @@ details.qa > summary h3 { font-size: 17px; font-weight: 600; margin: 0; }
   .intro h1 { font-size: 19px; }
   .intro .lede { font-size: 14px; }
   .df-label { font-size: 17px; }
-  .quick, .entry.multi .quick { min-height: 54px; height: auto; font-size: clamp(16px, 6vw, 21px); }
+  .quick, .entry.multi .quick { min-height: 54px; height: auto; font-size: clamp(15px, 8cqi, 21px); }
   .entry, .entry.multi { gap: var(--s4); }
   .big .num, .pair-say .big .num, .span-say .big .num, .rec-result .big .num, .planner-say .big .num { font-size: 92px; }
   .big .num.long { font-size: 64px; }
@@ -278,8 +288,11 @@ details.qa > summary h3 { font-size: 17px; font-weight: 600; margin: 0; }
 .on-primary .datefield + .year-note, .on-primary #year-note:not([hidden]) { margin-top: var(--s3); }
 .on-primary #on-box { margin-top: 0; padding: 0; background: none; border: 0; }
 .on-primary .df-small .df-label { font-size: 18px; }
-.on-primary .df-small .quick { height: 60px; font-size: 24px; }
-@media (max-width: 760px) { .on-primary .df-small .df-label { font-size: 17px; } .on-primary .df-small .quick { height: 54px; font-size: 21px; } }
+.on-primary .df-small .quick { height: auto; min-height: 60px; font-size: clamp(15px, 8cqi, 24px); }
+@media (max-width: 760px) { .on-primary .df-small .df-label { font-size: 17px; } .on-primary .df-small .quick { min-height: 54px; height: auto; font-size: clamp(15px, 8cqi, 21px); } }
+@container datefield (max-width: 220px) {
+  .on-primary .df-small .quick { font-size: 15px; }
+}
 /* Phones only: the first screen is the tool; "More calculators" starts at the fold.
    Desktop (16.8): the band is as tall as the tool, so the related row and topic headings show on the first screen. */
 @media (max-width: 760px) { body[data-page] .band { min-height: calc(100vh - 57px); min-height: calc(100svh - 57px); } }

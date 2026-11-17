@@ -39,9 +39,9 @@
   function validate(d, m, y) {
     var s = [d, m, y].map(function (v) { return String(v == null ? '' : v).trim(); });
     if (!s[0] && !s[1] && !s[2]) return { ok: false, code: 'empty', field: null, message: '' };
-    if (!/^\d{1,2}$/.test(s[0])) return { ok: false, code: s[0] ? 'day' : 'incomplete', field: 'day', message: s[0] ? 'Day should be a number from 1 to 31.' : '' };
-    if (!/^\d{1,2}$/.test(s[1])) return { ok: false, code: s[1] ? 'month' : 'incomplete', field: 'month', message: s[1] ? 'Month should be a number from 1 to 12.' : '' };
-    if (!/^\d{1,4}$/.test(s[2])) return { ok: false, code: s[2] ? 'year' : 'incomplete', field: 'year', message: s[2] ? 'Year should be four digits, like 1988.' : '' };
+    if (!/^\d{1,2}$/.test(s[0])) return { ok: false, code: s[0] ? 'day' : 'incomplete', field: 'day', message: s[0] ? 'Day should be a number from 1 to 31.' : 'Add the day.' };
+    if (!/^\d{1,2}$/.test(s[1])) return { ok: false, code: s[1] ? 'month' : 'incomplete', field: 'month', message: s[1] ? 'Month should be a number from 1 to 12.' : 'Add the month.' };
+    if (!/^\d{1,4}$/.test(s[2])) return { ok: false, code: s[2] ? 'year' : 'incomplete', field: 'year', message: s[2] ? 'Year should be four digits, like 1988.' : 'Add the year.' };
     var dn = +s[0], mn = +s[1], yn = +s[2];
     if (s[2].length < 4) return { ok: false, code: 'incomplete', field: 'year', message: s[2].length ? 'Year should be four digits, like 1988.' : '' };
     if (mn < 1 || mn > 12) return { ok: false, code: 'month', field: 'month', message: 'Month should be a number from 1 to 12.' };
@@ -217,7 +217,7 @@
       if (nums.length > 2) return { ok: false, code: 'unreadable', message: 'Try a date like 15 March 1995.' };
       if (nums[0].length > 2) { y = nums[0]; d = nums[1]; } else { d = nums[0]; y = nums[1]; }
     } else {
-      if (nums.length < 3) return { ok: false, code: 'incomplete', message: '' };
+      if (nums.length < 3) return { ok: false, code: 'incomplete', message: nums.length === 2 ? (nums[1].length >= 3 ? 'Add the month.' : 'Add the year.') : '' };
       if (nums.length > 3) return { ok: false, code: 'unreadable', message: 'Try a date like 15/03/1995.' };
       if (nums[0].length > 2) { y = nums[0]; m = nums[1]; d = nums[2]; }
       else {

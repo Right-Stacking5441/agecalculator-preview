@@ -44,8 +44,11 @@ body {
   font-variant-numeric: lining-nums;
 }
 a { color: var(--link); text-underline-offset: 2px; text-decoration-thickness: 1px; }
-a:hover { text-decoration-thickness: 2px; }
+@media (hover: hover) {
+  a:hover { text-decoration-thickness: 2px; }
+}
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.embed-preview iframe:focus, .embed-preview iframe:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 h1, h2, h3 { font-weight: 700; line-height: 1.2; margin: 0; text-wrap: balance; }
 p { margin: 0 0 var(--s4); text-wrap: pretty; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -63,7 +66,10 @@ p { margin: 0 0 var(--s4); text-wrap: pretty; }
 .mast nav { margin-left: auto; }
 .mast nav ul { list-style: none; display: flex; gap: var(--s5); margin: 0; padding: 0; font-size: 15px; }
 .mast nav a { color: var(--ink-2); text-decoration: none; padding: var(--s3) 0; }
-.mast nav a:hover, .mast nav a[aria-current] { color: var(--ink); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+.mast nav a[aria-current] { color: var(--ink); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+@media (hover: hover) {
+  .mast nav a:hover { color: var(--ink); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+}
 .mast .tools-link { display: none; margin-left: auto; font-size: 15px; }
 
 /* ---------- Calculator band ---------- */
@@ -99,7 +105,9 @@ p { margin: 0 0 var(--s4); text-wrap: pretty; }
 .on p { margin: 0; }
 .on strong { color: var(--ink); font-weight: 600; }
 .textbtn { font: inherit; color: var(--link); background: none; border: 0; padding: var(--s1) 0; margin-left: var(--s2); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
-.textbtn:hover { text-decoration-thickness: 2px; }
+@media (hover: hover) {
+  .textbtn:hover { text-decoration-thickness: 2px; }
+}
 .on fieldset { margin-top: var(--s4); }
 .on .fields input { height: 46px; font-size: 20px; border-width: 1.5px; }
 .on legend { font-size: 15px; font-weight: 600; color: var(--ink); }
@@ -217,7 +225,9 @@ p { margin: 0 0 var(--s4); text-wrap: pretty; }
 .side li { padding: 7px 0; border-bottom: 1px solid var(--rule-soft); }
 .side li:first-child { border-top: 1.5px solid var(--ink); }
 .side a { text-decoration: none; }
-.side a:hover { text-decoration: underline; }
+@media (hover: hover) {
+  .side a:hover { text-decoration: underline; }
+}
 
 /* Footer */
 .foot { border-top: 1.5px solid var(--ink); font-size: 15px; color: var(--ink-2); }
@@ -338,9 +348,13 @@ p { margin: 0 0 var(--s4); text-wrap: pretty; }
 .opts.row .opt { border: 0; padding: var(--s1) 0; }
 
 .btn { font: 600 16px/1 "Libre Franklin", "LF Fallback", Arial, sans-serif; color: #fff; background: var(--ink); border: 2px solid var(--ink); border-radius: 2px; padding: 0 var(--s4); height: 44px; cursor: pointer; }
-.btn:hover { background: #000; }
+@media (hover: hover) {
+  .btn:hover { background: #000; }
+}
 .btn-quiet { color: var(--ink); background: var(--paper); }
-.btn-quiet:hover { background: var(--desk); }
+@media (hover: hover) {
+  .btn-quiet:hover { background: var(--desk); }
+}
 .slip-actions { display: flex; flex-direction: column; gap: var(--s2); min-width: 170px; }
 .big .num.code { font-size: 88px; letter-spacing: -.01em; }
 .bday-text strong.mid { display: block; font-size: 40px; font-weight: 800; line-height: 1; margin-top: 2px; }
@@ -356,7 +370,9 @@ p { margin: 0 0 var(--s4); text-wrap: pretty; }
 .sheet-table th { text-align: left; font-size: 14px; border-bottom: 1.5px solid var(--ink); padding: var(--s2) var(--s2) var(--s2) 0; }
 .sheet-table td { padding: var(--s1) var(--s2) var(--s1) 0; border-bottom: 1px solid var(--rule-soft); }
 .sheet-table td input { border-color: transparent; margin: 0; padding: 0 3px; }
-.sheet-table td input:hover { border-color: var(--rule); }
+@media (hover: hover) {
+  .sheet-table td input:hover { border-color: var(--rule); }
+}
 .sheet-table td.out { font-weight: 700; white-space: nowrap; width: 18%; }
 .sheet-table td.m { font-weight: 400; width: 10%; }
 .sheet-actions { display: flex; gap: var(--s3); margin-top: var(--s4); flex-wrap: wrap; }

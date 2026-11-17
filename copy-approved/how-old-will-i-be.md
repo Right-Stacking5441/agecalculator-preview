@@ -1,6 +1,6 @@
 # Page copy: /how-old-will-i-be
 
-- **Title:** How Old Will I Be? Your Age in Any Future Year
+- **Title:** How old will I be? Your age in any future year
 - **Meta description:** Find out how old you'll be in 2030, 2050 or any year, and the date you turn that age. Or choose an exact future date for years, months and days.
 - **H1:** How old will I be?
 - **Line under the H1:** Planning for 2050, or for the year the mortgage ends? Pick the year to see how old you will be in it, and the exact day you reach that age.
@@ -38,7 +38,7 @@ Leap-day birthdays count on 1 March in years without a 29 February ([the rule, a
 
 ## Mortgages, school leavers and milestone years
 
-Mostly for planning. How old will I be when the mortgage is paid off, when the children leave school, when a pension can be drawn, or when a passport or driving licence next needs renewing. If the plan hangs on a specific day, use the exact date option, because "the year I turn 60" covers two different ages.
+Mostly it’s for planning: how old will I be when the mortgage is paid off, when the children leave school, when a pension can be drawn, or when a passport or driving licence next needs renewing. If the plan hangs on a specific day, use the exact date option, because "the year I turn 60" covers two different ages.
 
 People also ask it for fun about milestone years like 2030, 2050 or 2100. The year box takes any year from 1000 to 2999.
 
@@ -46,8 +46,7 @@ If the year you type is before you were born, the page says so instead of giving
 
 ---
 
-## Questions people ask
-
+## Future years, exact days and leap birthdays
 ### How old will I be in 2050?
 Subtract your birth year from 2050. That's the age you reach on your birthday in 2050; before that day you'll be one younger. Born in 1995, you turn 55 in 2050 and are 54 until your birthday.
 

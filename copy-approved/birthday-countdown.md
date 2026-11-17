@@ -1,9 +1,9 @@
 # Page copy: /birthday-countdown
 
-- **Title:** Birthday Countdown: Days Until Your Next Birthday
+- **Title:** Birthday countdown: Days until your next birthday
 - **Meta description:** Type a date of birth to see how many days until the next birthday, the weekday it falls on, the age it brings, and a clock to midnight tonight.
 - **H1:** Birthday countdown
-- **Line under the H1:** A birthday countdown for cards, parties and plain impatience: the days left until the next one, and the day of the week it lands on.
+- **Line under the H1:** For cards, parties and plain impatience: the days left until the next birthday, and the day of the week it lands on.
 - **Target keyword:** birthday countdown
 
 ---
@@ -48,8 +48,7 @@ To count down to something that isn't a birthday, such as a wedding, a due date 
 
 ---
 
-## Questions people ask
-
+## Weekdays, leap days and time zones
 ### How many days until my birthday?
 Type your date of birth above and the big number is the answer, counted from today in your time zone. On the day before your birthday it shows 1.
 

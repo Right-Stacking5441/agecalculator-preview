@@ -1,9 +1,9 @@
 # Page copy: /dog-age
 
-- **Title:** Dog Age Calculator: Dog Years by Size
+- **Title:** Dog age calculator: Dog years by size
 - **Meta description:** Convert your dog's age to human years by adult size, using the AAHA-published chart, with the 2020 DNA-clock estimate alongside. No times seven.
 - **H1:** Dog age calculator
-- **Line under the H1:** Big dogs age faster than small ones, so times seven gets it wrong. This dog age calculator reads human years off the AAHA-published chart for your dog's adult size.
+- **Line under the H1:** Big dogs age faster than small ones, so times seven gets it wrong. Pick your dog’s adult size and the human years come straight off the AAHA-published chart.
 - **Target keyword:** dog age calculator
 
 ---
@@ -59,8 +59,7 @@ For cats, the curve is different and size matters much less. The [cat age calcul
 
 ---
 
-## Questions people ask
-
+## Times seven, crossbreeds and big dogs
 ### How old is a 10-year-old dog in human years?
 On the AAHA-published chart, about 56 for a small dog, 60 for a medium dog, 66 for a large dog and 78 for a giant breed. The DNA-clock formula gives about 68 regardless of size.
 

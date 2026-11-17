@@ -222,24 +222,26 @@ def parse_md(text: str):
         body, faq_chunk = parts[1], parts[2]
     else:
         body, faq_chunk = (parts[-1] if parts else text), ""
-    def _split_faq(chunk: str):
-        """Split at the FAQ heading: legacy 'Questions people ask' or '… FAQs'."""
-        m = re.search(r"^##[^\n]*(?:Questions people ask|\bFAQs)\s*$", chunk, re.M)
-        if not m:
-            return chunk, ""
-        return chunk[:m.start()], chunk[m.end():]
-    body, faq_from_body = _split_faq(body)
-    _rest, faq_from_chunk = _split_faq(faq_chunk)
-    faq_raw = faq_from_chunk or faq_from_body
+    # The FAQ is the block after the second ---. Its first ## is the heading,
+    # whatever the wording (do not key off "Questions people ask" or "FAQs").
+    faq_heading = ""
+    faq_raw = ""
+    if faq_chunk.strip():
+        m = re.search(r"^##[ \t]+(.+?)\s*$", faq_chunk, re.M)
+        if m:
+            faq_heading = typograph(m.group(1).strip())
+            faq_raw = faq_chunk[m.end():]
+        else:
+            faq_raw = faq_chunk
     body = re.sub(r"<!--.*?-->", "", body, flags=re.S)
     body = re.sub(r"^## Body\s*\n+", "", body.strip() + "\n")
     faqs = []
     blob = faq_raw.strip() + "\n"
     for m in re.finditer(r"###\s+(.+?)\n(.*?)(?=\n### |\Z)", blob, re.S):
         q = typograph(m.group(1).strip())
-        a = " ".join(line.strip() for line in m.group(2).strip().splitlines() if line.strip())
+        a = typograph(" ".join(line.strip() for line in m.group(2).strip().splitlines() if line.strip()))
         faqs.append((q, a))
-    return meta, body.strip(), faqs
+    return meta, body.strip(), faqs, faq_heading
 
 def render_body(md: str, page: str) -> str:
     lines = md.splitlines()
@@ -382,11 +384,13 @@ def render_body(md: str, page: str) -> str:
     # If years table ended up after a later section, move it (handled below in post)
     return html
 
-def faq_html(faqs):
+def faq_html(faqs, heading=""):
     if not faqs:
         return ""
-    parts = ['<section class="faq" aria-labelledby="faq-h"><h2 id="faq-h">Questions people ask</h2><dl class="qa-list">']
+    heading = typograph(heading or "Questions people ask")
+    parts = [f'<section class="faq" aria-labelledby="faq-h"><h2 id="faq-h">{heading}</h2><dl class="qa-list">']
     for q, a in faqs:
+        # q and a are already typographed in parse_md; inline() typographs again (idempotent).
         parts.append(f'<div class="qa"><dt>{q}</dt><dd><p>{inline(a)}</p></dd></div>')
     parts.append("</dl></section>")
     return "".join(parts)
@@ -442,7 +446,7 @@ def update_head(html: str, meta: dict, faqs) -> str:
         html = html.replace("</head>", new_faq + "</head>", 1)
     return html
 
-def replace_tool_page_content(html: str, body_html: str, faqs, page: str) -> str:
+def replace_tool_page_content(html: str, body_html: str, faqs, page: str, faq_heading: str = "") -> str:
     start_tag = '<div class="wrap page"><div class="content">'
     start = html.find(start_tag)
     if start < 0:
@@ -457,7 +461,7 @@ def replace_tool_page_content(html: str, body_html: str, faqs, page: str) -> str
     if page == "privacy.html":
         # h1 and lede live in the content, not a tool intro
         pass
-    new_inner = "\n" + body_html + "\n" + faq_html(faqs) + "\n"
+    new_inner = "\n" + body_html + "\n" + faq_html(faqs, faq_heading) + "\n"
     return html[:inner_start] + new_inner + html[inner_end:]
 
 def build_privacy(html: str, meta: dict, body_html: str) -> str:
@@ -829,7 +833,7 @@ def finalize_404(docs: Path, launch: bool) -> None:
 
     html = _404_ATTR.sub(repl, html)
     if launch:
-        html = re.sub(r'\n?<div class="preview-banner">.*?</div>\n?', "\n", html, flags=re.S)
+        html = re.sub(r'\n?<(div|aside) class="preview-banner"[^>]*>.*?</\1>\n?', "\n", html, flags=re.S)
     pth.write_text(html)
     print(f"finalized 404.html ({'launch' if launch else 'preview'} root paths)")
 
@@ -852,7 +856,7 @@ def _strip_robots(html: str) -> str:
 
 
 def _strip_banner(html: str) -> str:
-    return re.sub(r'\n?<div class="preview-banner">.*?</div>\n?', "\n", html, flags=re.S)
+    return re.sub(r'\n?<(div|aside) class="preview-banner"[^>]*>.*?</\1>\n?', "\n", html, flags=re.S)
 
 
 STUB_RELS = {
@@ -897,12 +901,96 @@ def apply_robots(docs: Path, launch: bool) -> None:
     print(f"applied {mode} robots.txt and robots meta")
 
 
+
+def typograph_html(html: str) -> str:
+    """Typograph visible text nodes. Skip script, style, code, pre, and similar."""
+    from bs4 import BeautifulSoup, NavigableString, Comment
+    soup = BeautifulSoup(html, "html.parser")
+    skip = {"script", "style", "code", "pre", "textarea", "kbd", "samp"}
+    for node in list(soup.descendants):
+        if not isinstance(node, NavigableString) or isinstance(node, Comment):
+            continue
+        parent = node.parent
+        if parent is None or parent.name in skip:
+            continue
+        text = str(node)
+        if not text or text.isspace():
+            continue
+        new = typograph(text)
+        if new != text:
+            node.replace_with(new)
+    return str(soup)
+
+
+def typograph_docs_html():
+    """Run typograph() over every built page's visible copy, including 404."""
+    n = 0
+    for pth in sorted(DOCS.rglob("*.html")):
+        html = pth.read_text(encoding="utf-8")
+        new = typograph_html(html)
+        if new != html:
+            pth.write_text(new, encoding="utf-8")
+            n += 1
+    print(f"typographed visible text on {n} HTML files")
+
+
+def typograph_strings(obj):
+    if isinstance(obj, str):
+        return typograph(obj)
+    if isinstance(obj, dict):
+        return {k: typograph_strings(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [typograph_strings(v) for v in obj]
+    return obj
+
+
+def patch_app_js_copy():
+    """Write typographed copy.json empty states into app.js."""
+    copy_path = Path(__file__).resolve().parent / "ux" / "copy.json"
+    empty = typograph_strings(json.loads(copy_path.read_text())["ui"]["empty"])
+    js_path = DOCS / "app.js"
+    js = js_path.read_text(encoding="utf-8")
+    replacements = [
+        ("Type a date of birth, like 15 March 1995.", empty["age"]),
+        ("Add both dates to see how old you were then.", empty["past"]),
+        ("Whose birthday? Type the date of birth to start counting.", empty["countdown"]),
+        ("Type a date of birth to see all three ages.", empty["korean"]),
+        ("Two dates of birth, and the gap shows up here.", empty["difference"]),
+        ("Pick a start and an end date to count the days.", empty["between"]),
+        ("Add the date of birth and test date for the y;m;d.", empty["chrono"]),
+        ("Type your dog's age and pick their adult size.", empty["dog"]),
+        ("Type your dog’s age and pick their adult size.", empty["dog"]),
+        ("Your cat's age in years and months, please.", empty["cat"]),
+        ("Your cat’s age in years and months, please.", empty["cat"]),
+        ("Type your cat's age in years and months.", empty["cat"]),
+        ("Type your cat’s age in years and months.", empty["cat"]),
+        ("Type an age, then say if the birthday's been yet.", empty["birthyear"]),
+        ("Type an age, then say if the birthday’s been yet.", empty["birthyear"]),
+    ]
+    for old, new in replacements:
+        if old in js:
+            js = js.replace(old, new)
+        else:
+            old_esc = old.replace("'", "\\'")
+            if old_esc in js:
+                js = js.replace(old_esc, new)
+    # future empty uses a typographed prefix + year + '.'
+    future = empty["future"]  # "Type your date of birth to see your age in {year}."
+    if "{year}" in future:
+        prefix, _, suffix = future.partition("{year}")
+        # leave the existing concatenation; typograph the literal prefix if still straight
+        if "Type your date of birth to see your age in " in js and prefix != "Type your date of birth to see your age in ":
+            js = js.replace("Type your date of birth to see your age in ", prefix)
+    js_path.write_text(js, encoding="utf-8")
+    print("patched typographed empty states into app.js")
+
+
 def main():
     clean_promoted()
     restore_shells()
     for md_name, html_name in PAGE.items():
         raw = (COPY / md_name).read_text()
-        meta, body, faqs = parse_md(raw)
+        meta, body, faqs, faq_heading = parse_md(raw)
         if not meta["title"]:
             raise SystemExit(f"no title in {md_name}")
         body_html = render_body(body, html_name)
@@ -913,7 +1001,7 @@ def main():
             html = build_embed(html, meta, body_html)
         else:
             html = update_head(html, meta, faqs)
-            html = replace_tool_page_content(html, body_html, faqs, html_name)
+            html = replace_tool_page_content(html, body_html, faqs, html_name, faq_heading)
             if html_name == "chronological-age.html":
                 html = fix_sheet_labels(html)
             if html_name == "what-year-was-i-born.html":
@@ -943,6 +1031,8 @@ def main():
     promote_run(DOCS)
     finalize_404(DOCS, launch=LAUNCH)
     apply_robots(DOCS, launch=LAUNCH)
+    patch_app_js_copy()
+    typograph_docs_html()
 
     # confirm embed.js URL untouched in snippets
     emb = (DOCS / "embed" / "index.html").read_text()

@@ -90,6 +90,22 @@ def check_tree(docs: Path, launch: bool) -> list[str]:
     privacy = docs / "privacy" / "index.html"
     if privacy.is_file() and "[PLACEHOLDER: date this policy is published]" not in privacy.read_text():
         issues.append("privacy Last updated placeholder is missing; the LAUNCH gate would not catch it")
+
+    html_404 = (docs / "404.html").read_text(encoding="utf-8")
+    if 'property="og:url"' in html_404 or "property='og:url'" in html_404:
+        issues.append("404.html should not have og:url (it was pointing at /privacy)")
+    title_m = re.search(r"<title>([^<]*)</title>", html_404)
+    title = title_m.group(1) if title_m else ""
+    if launch and re.search(r"preview", title, re.I):
+        issues.append(f"LAUNCH 404 title should not mention preview, got {title!r}")
+    if not launch and saw_banner:
+        # The preview banner must live in a landmark (aside).
+        if "<aside" not in html_404 or "preview-banner" not in html_404:
+            issues.append("preview 404 banner is not inside a landmark")
+        # Spot-check the homepage too.
+        home = (docs / "index.html").read_text(encoding="utf-8")
+        if "<aside" not in home or 'class="preview-banner"' not in home:
+            issues.append("preview homepage banner is not inside a landmark")
     return issues
 
 

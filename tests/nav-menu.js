@@ -327,15 +327,45 @@ async function run() {
   const chromeBf = await chromium.launch({
     headless: true,
     ignoreDefaultArgs: ['--disable-back-forward-cache'],
+    args: ['--enable-features=BackForwardCache'],
   });
   {
     const ctx = await chromeBf.newContext({
       viewport: { width: 1280, height: 800 },
     });
     const page = await ctx.newPage();
-    await check('Chromium bfcache closes the menu on pageshow', async () => {
-      await page.goto(server.url + '/difference/', { waitUntil: 'domcontentloaded' });
-      await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+    await check('pageshow closes the menu only when event.persisted is true', async () => {
+      await page.goto(server.url + '/', { waitUntil: 'load' });
+      const summary = page.locator('details.nav-menu summary');
+      await tapLocator(page, summary, false);
+      await expectOpen(page, true, 'menu open before pageshow');
+      // A regular pageshow (reload / first load) must not close the menu.
+      const stayed = await page.evaluate(() => {
+        const ev = new PageTransitionEvent('pageshow', { persisted: false, bubbles: true });
+        window.dispatchEvent(ev);
+        const menu = document.querySelector('details.nav-menu');
+        return !!(menu && menu.open);
+      });
+      assert(stayed, 'pageshow with persisted=false closed the menu');
+      await expectOpen(page, true, 'menu still open after persisted=false');
+      // A bfcache restore is a pageshow with event.persisted === true.
+      const closed = await page.evaluate(() => {
+        const ev = new PageTransitionEvent('pageshow', { persisted: true, bubbles: true });
+        window.dispatchEvent(ev);
+        const menu = document.querySelector('details.nav-menu');
+        return !!(menu && !menu.open);
+      });
+      assert(closed, 'pageshow with persisted=true left the menu open');
+      await expectOpen(page, false, 'menu closed after persisted=true');
+      await tapLocator(page, summary, false);
+      await expectOpen(page, true, 'menu can reopen after a persisted pageshow');
+      await tapLocator(page, summary, false);
+      await expectOpen(page, false, 'menu can reclose');
+    });
+
+    await check('Chromium back/forward: close the menu if a real bfcache restore happens', async () => {
+      await page.goto(server.url + '/difference/', { waitUntil: 'load' });
+      await page.goto(server.url + '/', { waitUntil: 'load' });
       await page.evaluate(() => {
         window.__ps = null;
         window.addEventListener('pageshow', function (e) { window.__ps = e.persisted; });
@@ -344,13 +374,23 @@ async function run() {
       await tapLocator(page, summary, false);
       await expectOpen(page, true, 'bfcache menu open before leaving');
       await page.goBack();
-      await page.waitForTimeout(50);
+      await page.waitForTimeout(200);
       await page.goForward();
-      await page.waitForTimeout(50);
-      const persisted = await page.evaluate(() => window.__ps);
-      // If the browser actually used bfcache, the menu must be closed.
-      // If it did a full reload, the menu starts closed anyway.
-      await expectOpen(page, false, 'bfcache menu after back/forward (persisted=' + persisted + ')');
+      await page.waitForTimeout(400);
+      const info = await page.evaluate(() => {
+        const n = performance.getEntriesByType('navigation')[0];
+        let reasons = null;
+        try { reasons = n && n.notRestoredReasons ? n.notRestoredReasons : null; } catch (e) { reasons = String(e); }
+        return { persisted: window.__ps, navType: n && n.type, reasons: reasons && (reasons.toJSON ? reasons.toJSON() : reasons) };
+      });
+      if (info.persisted === true) {
+        await expectOpen(page, false, 'bfcache menu after real restore (persisted=true)');
+      } else {
+        // Playwright's Chromium still blocks a genuine restore here (often
+        // notRestoredReasons: masked). The pageshow handler is covered above.
+        console.log('  note  no genuine bfcache restore in this environment', JSON.stringify(info));
+        await expectOpen(page, false, 'menu after back/forward (persisted=' + info.persisted + ')');
+      }
       await tapLocator(page, page.locator('details.nav-menu summary'), false);
       await expectOpen(page, true, 'bfcache can reopen');
       await tapLocator(page, page.locator('details.nav-menu summary'), false);

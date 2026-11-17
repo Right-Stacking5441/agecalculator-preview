@@ -1,9 +1,9 @@
 # Page copy: /days-between-dates
 
-- **Title:** Days Between Dates Calculator, With Weekdays
+- **Title:** Days between dates calculator, with weekdays
 - **Meta description:** Count the days between two dates, with or without the end day. Also shows weeks, Monday to Friday weekdays, weekend days, and months.
 - **H1:** Days between dates
-- **Line under the H1:** From today to a deadline, or across a whole year: count the days between dates, and see how many are weekdays and how many fall at the weekend.
+- **Line under the H1:** From today to a deadline, or across a whole year: see how many days there are, how many are weekdays and how many fall at the weekend.
 - **Target keywords:** days between dates; date difference calculator; days between dates calculator
 
 ---
@@ -46,8 +46,7 @@ This page measures a period of time: a notice period, a contract, a pregnancy so
 
 ---
 
-## Questions people ask
-
+## End dates, working days and Christmas
 ### Does the count include the end date?
 Not unless you tick "Count the end day too". Without it, the start day counts and the end day doesn't, so the 1st to the 2nd of a month is 1 day.
 

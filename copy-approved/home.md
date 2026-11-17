@@ -1,6 +1,6 @@
 # Page copy: / (homepage)
 
-- **Title:** Age Calculator: How Old Am I?
+- **Title:** Age calculator: How old am I?
 - **Meta description:** Type a date of birth, like 15 March 1995 or 15/03/1995, and get your exact age in years, months and days, today or on any date. Leap days included.
 - **H1:** Age calculator
 - **Line under the H1:** How old am I, exactly? Put in your date of birth for your age today in years, months and days, and how long you have to wait for the next birthday.
@@ -63,8 +63,7 @@ Schools, speech and language therapists and psychologists usually want a child's
 
 ---
 
-## Questions people ask
-
+## Leap days, month ends and Korean age
 ### How old am I if I was born on 15 March 1995?
 On 16 November 2026, someone born on 15 March 1995 was 31 years, 8 months and 1 day old, with their 32nd birthday still to come on Monday 15 March 2027. Type the date of birth above for today's figure, or press Change for any other day.
 

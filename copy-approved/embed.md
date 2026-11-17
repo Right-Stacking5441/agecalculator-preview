@@ -1,6 +1,6 @@
 # Page copy: /embed
 
-- **Title:** Put the Age Calculator on Your Website
+- **Title:** Put the age calculator on your website
 - **Meta description:** Free embed code for the agecalculator.com age calculator. Paste an iframe or a self-sizing script; no adverts inside, no cookies.
 - **H1:** Put this age calculator on your site
 - **Indexing:** noindex (instructions page, per SEO spec section 4.1)

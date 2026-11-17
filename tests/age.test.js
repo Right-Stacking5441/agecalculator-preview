@@ -445,7 +445,7 @@ test('validate: a 1–3 digit year box is incomplete, with a message once digits
   const emptyYear = A.validate('15', '3', '');
   assert.equal(emptyYear.ok, false);
   assert.equal(emptyYear.code, 'incomplete');
-  assert.equal(emptyYear.message, '');
+  assert.equal(emptyYear.message, 'Add the year.');
   const ok = A.validate('15', '3', '1995');
   assert.equal(ok.ok, true);
 });

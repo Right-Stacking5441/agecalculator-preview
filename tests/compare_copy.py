@@ -158,15 +158,12 @@ def parse_md(text: str):
         body, faq_chunk = parts[1], parts[2]
     else:
         body, faq_chunk = (parts[-1] if parts else text), ""
-    def _split_faq(chunk: str):
-        """Split at the FAQ heading: legacy 'Questions people ask' or '… FAQs'."""
-        m = re.search(r"^##[^\n]*(?:Questions people ask|\bFAQs)\s*$", chunk, re.M)
-        if not m:
-            return chunk, ""
-        return chunk[:m.start()], chunk[m.end():]
-    body, faq_from_body = _split_faq(body)
-    _rest, faq_from_chunk = _split_faq(faq_chunk)
-    faq_raw = faq_from_chunk or faq_from_body
+    # The FAQ is the block after the second ---. Its first ## is the heading,
+    # whatever the wording (do not key off "Questions people ask" or "FAQs").
+    faq_raw = ""
+    if faq_chunk.strip():
+        m = re.search(r"^##[ \t]+.+?\s*$", faq_chunk, re.M)
+        faq_raw = faq_chunk[m.end():] if m else faq_chunk
     body = re.sub(r"<!--.*?-->", "", body, flags=re.S)
     body = re.sub(r"^## Body\s*\n+", "", body.strip() + "\n")
     faqs = []

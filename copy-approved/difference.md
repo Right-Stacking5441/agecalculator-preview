@@ -1,9 +1,9 @@
 # Page copy: /difference
 
-- **Title:** Age Difference Calculator: Years, Months and Days
+- **Title:** Age difference calculator: Years, months and days
 - **Meta description:** Enter two dates of birth to see exactly how much older one person is, in years, months and days, plus the gap in days and weeks.
 - **H1:** Age difference calculator
-- **Line under the H1:** Siblings arguing over who's older, and by how much? Put both dates of birth into this age difference calculator and it's settled to the day.
+- **Line under the H1:** Siblings arguing over who’s older, and by how much? Type in both dates of birth and it’s settled to the day.
 - **Target keywords:** age difference calculator; age calculator difference
 
 ---
@@ -50,8 +50,7 @@ Couples comparing ages, siblings settling an argument, and anyone filling in a f
 
 ---
 
-## Questions people ask
-
+## Age gaps by hand and in groups
 ### Is the age difference the same every year?
 In days, yes. In whole years it changes by one for part of each year, in the weeks between the older person's birthday and the younger person's.
 

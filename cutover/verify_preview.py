@@ -15,7 +15,9 @@ Legacy stubs (/rodent-age-calculator.html, /how-old-am-i, /date-of-birth) are 20
 from __future__ import annotations
 
 import argparse
+import re
 import sys
+from urllib.parse import urljoin
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -171,6 +173,43 @@ def main() -> int:
         else:
             print(f"FAIL  {unknown}  expected 404, got {status} {location or ''}")
             failed += 1
+
+    # The /embed/ demo iframe must point at a slash widget URL that returns 200.
+    try:
+        opener = urllib.request.build_opener(NoRedirect)
+        req = urllib.request.Request(
+            join(base, "/embed/"),
+            method="GET",
+            headers={"User-Agent": "agecalculator-preview-verify"},
+        )
+        with opener.open(req, timeout=20) as r:
+            estatus, ehtml = r.status, r.read().decode("utf-8", "replace")
+        if estatus != 200:
+            print(f"FAIL  /embed/  expected 200 for iframe check, got {estatus}")
+            failed += 1
+        else:
+            m = re.search(r'<iframe[^>]*\ssrc="([^"]+)"', ehtml)
+            if not m:
+                print("FAIL  /embed/  missing demo iframe")
+                failed += 1
+            else:
+                src = m.group(1)
+                bad = "widget.html" in src or re.search(r"/widget(\?|$)", src)
+                if bad or "/widget/" not in src:
+                    print(f"FAIL  /embed/  iframe src should be a slash widget URL, got {src}")
+                    failed += 1
+                else:
+                    widget_url = src if src.startswith("http") else urljoin(join(base, "/embed/"), src)
+                    wstatus, _loc, _body = open_no_follow(widget_url)
+                    if wstatus != 200:
+                        print(f"FAIL  embed iframe {widget_url}  expected 200, got {wstatus}")
+                        failed += 1
+                    else:
+                        print(f"ok    embed iframe {src}  200")
+                        passed += 1
+    except Exception as e:
+        print(f"FAIL  /embed/ iframe check  error: {e}")
+        failed += 1
 
     print(f"{passed} passed, {failed} failed")
     if httpd is not None:

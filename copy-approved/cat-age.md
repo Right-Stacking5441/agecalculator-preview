@@ -1,9 +1,9 @@
 # Page copy: /cat-age
 
-- **Title:** Cat Age Calculator: Cat Years and Life Stage
+- **Title:** Cat age calculator: Cat years and life stage
 - **Meta description:** Convert your cat's age to human years and see their life stage (kitten, young adult, mature or senior) under the AAHA/AAFP feline guidelines.
 - **H1:** Cat age calculator
-- **Line under the H1:** Your cat's age in human years, and the life stage vets use for it. There's no size to pick, because a cat age calculator only needs years and months.
+- **Line under the H1:** Your cat’s age in human years, and the life stage vets use for it. There’s no size to pick for a cat, so all it needs is years and months.
 - **Target keyword:** cat age calculator
 
 ---
@@ -70,8 +70,7 @@ Where your cat lives and what they eat may change how long they live, but the ch
 
 ---
 
-## Questions people ask
-
+## Senior cats and the times-seven rule
 ### How old is a 15-year-old cat in human years?
 About 76: 24 for the first two years, then 4 for each of the next 13.
 

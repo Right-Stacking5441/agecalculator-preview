@@ -83,7 +83,7 @@
     var read = el.querySelector('.readback');
     var f = { el: el, value: null, status: 'empty', message: '', alt: null };
     var pt = el.querySelector('.parts-toggle'), pbox = el.querySelector('.parts');
-    var autoOpen = false, ptLab = pt && pt.querySelector('span');
+    var ptLab = pt && pt.querySelector('span');
     function labelToggles(o) {
       if (pt) pt.setAttribute('aria-expanded', String(o));
       if (ptLab) ptLab.textContent = o ? 'Use one box' : 'Type day, month and year separately';
@@ -94,7 +94,15 @@
         if (shLab) shLab.textContent = o ? 'Use one box' : 'Type day, month and year separately';
       }
     }
+    function clearParts() {
+      parts[0].value = '';
+      parts[1].value = '';
+      parts[2].value = '';
+    }
     function fillPartsFromQuick() {
+      /* Always start from a blank slate so leftover values cannot linger
+         when the text is empty or unparseable (High 1, stale boxes). */
+      clearParts();
       var r = A.parseDate(quick.value, dateOpts());
       if (r.ok) setDate(r.date, true);
       else if (r.parts && (r.parts.d || r.parts.m || r.parts.y)) {
@@ -103,7 +111,7 @@
         if (r.parts.y != null && String(r.parts.y) !== '') parts[2].value = String(r.parts.y);
       }
     }
-    function writeQuickFromParts() {
+    function writeQuickFromParts(asClose) {
       var r = A.textFromParts(parts[0].value, parts[1].value, parts[2].value);
       var hasParts = !!(parts[0].value || parts[1].value || parts[2].value);
       if (r.ok) {
@@ -121,17 +129,20 @@
             if (q.ok) { setDate(q.date, true); invalid(false); show(rb(q.date), 'ok'); }
             else { invalid(!!(q.message || q.code !== 'empty')); show(q.message || (q.code === 'incomplete' ? 'That date isn’t finished. Try 15 March 1995.' : 'Try a date like 15 March 1995 or 15/03/1995.'), q.message || q.code !== 'empty' ? 'err' : ''); }
           }
-        } else if (r.message && r.code !== 'incomplete') {
+        } else if (r.message && (r.code !== 'incomplete' || asClose)) {
+          /* Show a missing-field message as soon as the boxes close, not only on blur. */
           invalid(true); show(r.message, 'err');
+        } else if (r.message) {
+          invalid(false); show(r.message, '');
         } else {
-          invalid(false); show(r.message && r.code === 'incomplete' ? r.message : '', '');
+          invalid(false); show('', '');
         }
       }
     }
     function partsOpen(o) {
       if (!pbox) return;
       if (o) fillPartsFromQuick();
-      else writeQuickFromParts();
+      else writeQuickFromParts(true);
       pbox.hidden = !o;
       if (o) el.classList.add('boxes-open');
       else el.classList.remove('boxes-open');
@@ -152,11 +163,6 @@
     function show(text, kind, swap) {
       read.innerHTML = text + (swap ? ' <button type="button" class="textbtn swap">I meant ' + plain(swap) + '</button>' : '');
       read.className = 'readback' + (kind ? ' ' + kind : '');
-      if (kind === 'ok' && autoOpen) {
-        autoOpen = false;
-        partsOpen(false);
-        if (quick && typeof quick.focus === 'function') quick.focus({ preventScroll: true });
-      }
       var sb = read.querySelector('.swap');
       if (sb) sb.addEventListener('click', function () { setDate(swap, true); quick.value = plain(swap); f.alt = null; show(rb(swap), 'ok'); go(); });
     }
@@ -173,6 +179,13 @@
       } else {
         f.value = null; f.status = r.code; f.message = r.message;
         invalid(false);
+        if (r.code === 'empty' || !(r.parts && (r.parts.d || r.parts.m || r.parts.y))) clearParts();
+        else {
+          /* Keep the boxes in step with whatever we could extract, after a clear. */
+          parts[0].value = r.parts.d != null && String(r.parts.d) !== '' ? String(r.parts.d) : '';
+          parts[1].value = r.parts.m != null && String(r.parts.m) !== '' ? String(r.parts.m) : '';
+          parts[2].value = r.parts.y != null && String(r.parts.y) !== '' ? String(r.parts.y) : '';
+        }
         if (r.code === 'empty') show('', '');
         else if (r.code === 'incomplete') show(r.message || '', '');
         else show('', '');
@@ -180,14 +193,14 @@
       go();
     });
     quick.addEventListener('blur', function () {
-      if (!quick.value.trim()) { invalid(false); return; }
+      if (!quick.value.trim()) { invalid(false); clearParts(); return; }
       var r = A.parseDate(quick.value, dateOpts());
       if (r.ok) return;
       f.value = null; f.status = r.code; f.message = r.message;
       invalid(true);
       show(r.message || (r.code === 'incomplete' ? 'That date isn’t finished. Try 15 March 1995.' : 'Try a date like 15 March 1995 or 15/03/1995.'), 'err');
       go();
-      if (pbox && pbox.hidden && !document.body.classList.contains('widget')) { autoOpen = true; partsOpen(true); }
+      if (pbox && pbox.hidden && !document.body.classList.contains('widget')) { partsOpen(true); }
     });
     parts.forEach(function (p, i) {
       p.addEventListener('input', function () {
@@ -212,6 +225,20 @@
           invalid(true); show(f.message, 'err'); go();
         }
       });
+    });
+    /* Close the boxes only on an explicit toggle or when focus leaves the
+       field group. A valid mid-keystroke must not auto-close them. */
+    el.addEventListener('focusout', function () {
+      setTimeout(function () {
+        if (!pbox || pbox.hidden) return;
+        var a = document.activeElement;
+        if (a && (el.contains(a) || (a.closest && a.closest('.parts-toggle')))) return;
+        partsOpen(false);
+        if (!a || a === document.body) {
+          if (quick && typeof quick.focus === 'function') quick.focus({ preventScroll: true });
+        }
+        go();
+      }, 0);
     });
     f.set = function (d) { setDate(d, true); if (d) { quick.value = plain(d); show(rb(d), 'ok'); } };
     f.clearToToday = function () { f.set(today); };
@@ -453,7 +480,7 @@
       var slipHead = '<div class="slip-head"><b>Chronological age</b><span>Record slip</span></div>';
       function grid(tv, bv, r) {
         var c = function (v, n) { return v == null ? '<td class="blank"></td>' : '<td>' + String(v).padStart(n, '0') + '</td>'; };
-        return '<table class="slip-sum"><thead><tr><th></th><th scope="col">Year</th><th scope="col">Month</th><th scope="col">Day</th></tr></thead><tbody>' +
+        return '<table class="slip-sum"><thead><tr><th scope="col"><span class="sr-only">Item</span></th><th scope="col">Year</th><th scope="col">Month</th><th scope="col">Day</th></tr></thead><tbody>' +
           '<tr><th scope="row">Test date</th>' + c(tv && tv.y, 4) + c(tv && tv.m, 2) + c(tv && tv.d, 2) + '</tr>' +
           '<tr><th scope="row">Date of birth</th>' + c(bv && bv.y, 4) + c(bv && bv.m, 2) + c(bv && bv.d, 2) + '</tr>' +
           '<tr class="ans"><th scope="row">Age</th>' + (r ? '<td>' + r.years + '</td><td>' + r.months + '</td><td>' + r.days + '</td>' : '<td class="blank"></td><td class="blank"></td><td class="blank"></td>') + '</tr></tbody></table>';
@@ -494,7 +521,7 @@
     birthyear: function () {
       var a = $v('age-now'), had = checked('had'), at = onDate(), onErr = invalidOn();
       if (onErr) return onErr;
-      if (!a) return { state: 'empty', cls: 'obj obj-tabs', html: ph('', 'Type an age, then say if the birthday\'s been yet.') };
+      if (!a) return { state: 'empty', cls: 'obj obj-tabs', html: ph('', 'Type an age, then say if the birthday’s been yet.') };
       if (!/^\d{1,3}$/.test(a) || +a > 130) return notice('Check the age', 'Type an age in whole years, from 0 to 130.');
       var r = A.birthYear(+a, at, had === 'yes' ? true : had === 'no' ? false : null);
       var caps = r.years.length > 1 ? ['if your birthday is still to come in ' + at.y, 'if you’ve had it already'] : [had === 'yes' ? 'you’ve had your birthday this year' : 'your birthday is still to come'];
@@ -537,7 +564,7 @@
       var ages = [1, 2, 3, 5, 7, 10, 12, 15], t;
       if (kind === 'dog') t = '<tr><th scope="col">Age</th><th scope="col">Small</th><th scope="col">Medium</th><th scope="col">Large</th><th scope="col">Giant</th></tr>' + ages.map(function (x) { return '<tr><td>' + x + '</td>' + ['small', 'medium', 'large', 'giant'].map(function (z) { var r = A.dogAge(x, z); return '<td>' + (r.ok ? fmt(r.human) : 'n/a') + '</td>'; }).join('') + '</tr>'; }).join('');
       else t = '<tr><th scope="col">Age</th><th scope="col">Human</th><th scope="col">Stage</th></tr>' + ages.map(function (x) { var r = A.catAge(x); return '<tr><td>' + x + '</td><td>' + (r.ok ? fmt(r.human) : 'n/a') + '</td><td>' + A.catStage(x) + '</td></tr>'; }).join('');
-      return { state: 'empty', cls: 'obj obj-record', html: '<div class="record">' + ph('', kind === 'dog' ? 'Type your dog\'s age and pick their adult size.' : 'Your cat\'s age in years and months, please.') + more('<table class="chart"><caption class="sr-only">Human years by age, from the AAHA-published chart</caption>' + t + '</table><p class="rest">From the <a href="' + CHART_SRC + '">AAHA-published pet age chart</a>.</p>', (kind === 'dog' ? 'Dog' : 'Cat') + ' age chart') + '</div>' };
+      return { state: 'empty', cls: 'obj obj-record', html: '<div class="record">' + ph('', kind === 'dog' ? 'Type your dog’s age and pick their adult size.' : 'Type your cat’s age in years and months.') + more('<table class="chart"><caption class="sr-only">Human years by age, from the AAHA-published chart</caption>' + t + '</table><p class="rest">From the <a href="' + CHART_SRC + '">AAHA-published pet age chart</a>.</p>', (kind === 'dog' ? 'Dog' : 'Cat') + ' age chart') + '</div>' };
     }
     if (!parsed.ok) return notice('Check the age', parsed.message);
     var y = parsed.years, mo = parsed.months, age = parsed.age;
