@@ -166,7 +166,7 @@ body[data-page="home"] { --rh: 559px; } body[data-page="past"] { --rh: 590px; } 
 .prefill .df-foot .parts-toggle[aria-expanded="false"] { display: none; }
 
 /* One input mode at a time (preview fd4f2b2): with the day, month and year boxes open, the single box and its label are hidden; the toggle reads "Use one box" */
-.datefield.boxes-open > .df-label, .datefield.boxes-open > .quick { display: none; }
+.datefield.boxes-open > .quick { display: none; } /* keep .df-label visible; .parts-cap is unused */
 .datefield.boxes-open .parts { margin-top: 0; }
 .datefield.boxes-open .parts-toggle { display: inline-flex !important; }
 .parts .parts-cap { grid-column: 1 / -1; margin: 0 0 4px; font-weight: 600; font-size: inherit; color: var(--ink, #1d1c1a); }
@@ -319,4 +319,18 @@ body[data-page="home"] { --rh: 559px; } body[data-page="past"] { --rh: 590px; } 
 /* Hold the foot at the empty-state height so a two-line error does not shrink it. */
 .entry:not(.multi) .df-foot {
   min-height: 94px;
+}
+
+/* At very narrow widths, the "I meant …" offer wraps to an extra line.
+   Reserve that line in the empty foot so the field doesn't jump. */
+@media (max-width: 240px) {
+  .df-foot .readback,
+  .df-foot .readback.ok,
+  .df-foot .readback.err,
+  .entry:not(.multi) .df-foot .readback {
+    min-height: 72px !important;
+  }
+  .entry:not(.multi) .df-foot {
+    min-height: 116px;
+  }
 }

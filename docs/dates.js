@@ -120,10 +120,10 @@
      chart ages we interpolate linearly. Ages below the first chart point, above the
      last, or on a dash (giant dogs after 16) are refused, not invented. */
   var DOG_SIZES = {
-    small:  { label: 'small',  lbs: '20 lb',        kg: 'up to 9 kg',       band: 'up to 9 kg (20 lb)' },
-    medium: { label: 'medium', lbs: '21 to 50 lb',  kg: '9.5 to 22.7 kg',   band: '9.5 to 22.7 kg (21 to 50 lb)' },
-    large:  { label: 'large',  lbs: '51 to 90 lb',  kg: '23.1 to 40.8 kg',  band: '23.1 to 40.8 kg (51 to 90 lb)' },
-    giant:  { label: 'giant',  lbs: '90 lb',        kg: 'over 40.8 kg',     band: 'over 40.8 kg (90 lb)' }
+    small:  { label: 'small',  lbs: '20 lb',        kg: 'up to 9.5 kg',      band: 'up to 9.5 kg (20 lb)' },
+    medium: { label: 'medium', lbs: '21 to 50 lb',  kg: '9.5 to 23.1 kg',    band: '9.5 to 23.1 kg (21 to 50 lb)' },
+    large:  { label: 'large',  lbs: '51 to 90 lb',  kg: '23.1 to 40.8 kg',   band: '23.1 to 40.8 kg (51 to 90 lb)' },
+    giant:  { label: 'giant',  lbs: 'over 90 lb',   kg: 'over 40.8 kg',      band: 'over 40.8 kg (over 90 lb)' }
   };
   var DOG_CHART = {
     small:  [[1,15],[2,24],[3,28],[4,32],[5,36],[6,40],[7,44],[8,48],[9,52],[10,56],[11,60],[12,64],[13,68],[14,72],[15,76],[16,80],[17,84],[18,88],[19,92],[20,96]],

@@ -12,7 +12,7 @@
   var canon = (document.querySelector('link[rel=canonical]') || {}).href || location.href.split('?')[0];
   var say = document.getElementById('copy-live');
   var touch = window.matchMedia && matchMedia('(pointer: coarse)').matches;
-  var canShare = typeof navigator.share === 'function';
+  var canShare = touch && typeof navigator.share === 'function';
   var qs = new URLSearchParams(location.search);
   var COPY = '<svg class="ic ic-copy" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false"><path d="M8.7 8.4l10.4.1-.1 12H8.6zM15.3 8.3V4.2L4.9 4.3l-.1 12.1h3.7"/></svg>';
   var TICK = '<svg class="ic ic-tick" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false"><path d="M4.6 12.8c1.5 1.3 2.9 2.7 4.1 4.3 3.1-4.2 6.5-8 10.6-11.2"/></svg>';
@@ -190,7 +190,7 @@
     var cnt = leaf.querySelector('.nextb .count'); if (cnt) figure(cnt, txt(cnt), 'days to next birthday, ' + txt(cnt));
     var nbd = leaf.querySelector('.nextb b'); if (nbd) figure(nbd, txt(nbd), 'birthday, ' + txt(nbd));
     leaf.querySelectorAll('.kcol .k-n, .yt-year, .gm-label').forEach(function (e) { figure(e, txt(e), txt(e)); });
-    var ab = acts.querySelector('[data-act="age"]'); if (ab) ab.setAttribute('aria-label', 'Copy ' + headline());
+    var ab = acts.querySelector('[data-act="age"]'); if (ab) { var vis = (ab.querySelector('.act-l') || {}).textContent || 'Copy age'; ab.setAttribute('aria-label', vis + ': ' + headline()); }
   }
   new MutationObserver(decorate).observe(leaf, { childList: true });
   decorate();

@@ -1,0 +1,81 @@
+/* iPhone Safari pass, from Apple's HIG (apple-hig-skill, apple-design-skill). Clarity and touch only: the calendar look stays. */
+
+/* Touch: every control is at least 44 x 44 pt (HIG › Foundations › Accessibility, Controls: iOS default 44 x 44) */
+.textbtn, .parts-toggle, details.more > summary, .faq summary, .topic > summary, .act, .opt-field summary, .pair summary, nav.related a, .foot a, .mast .brand, .nav-menu > summary {
+  min-height: 44px; display: inline-flex; align-items: center; }
+.topic > summary, .faq summary { display: flex; }
+.act { min-width: 44px; }
+.acts { min-height: 44px; }
+label.opt { min-height: 44px; display: flex; align-items: center; }
+nav.related ul { row-gap: 0; }
+.nav-menu > summary { min-width: 44px; justify-content: center; }
+/* small inline links inside a figure's note keep their size in the text but get a taller hit area */
+#leaf dd small a { position: relative; }
+#leaf dd small a::after { content: ""; position: absolute; left: -6px; right: -6px; top: -14px; bottom: -14px; }
+
+/* Inputs: placeholder hints readable (was #8f8e86 on white, 3.3:1; now 5.0:1) */
+.quick::placeholder, input::placeholder { color: #706f68; }
+
+/* Safe areas: content clears the rounded corners and the notch in landscape */
+.wrap { padding-left: max(var(--s4), env(safe-area-inset-left)); padding-right: max(var(--s4), env(safe-area-inset-right)); }
+@media (min-width: 761px) { .wrap { padding-left: max(var(--s5), env(safe-area-inset-left)); padding-right: max(var(--s5), env(safe-area-inset-right)); } }
+.foot { padding-bottom: env(safe-area-inset-bottom); }
+
+/* Text at 200% (Safari page zoom on a 390pt phone gives a 195px-wide layout): nothing runs off the side */
+@media (max-width: 300px) {
+  .mast .wrap { flex-wrap: wrap; row-gap: 4px; }
+  .mast .brand { white-space: nowrap; font-size: 15px; min-width: 0; }
+  .mast .brand .wm { white-space: nowrap; font-size: 15px; }
+  #leaf .ledger div, #leaf .more-body .ledger div { flex-wrap: wrap; }
+  #leaf .ledger dd { max-width: 100%; text-align: left; }
+  #leaf .big { flex-wrap: wrap; }
+  #leaf .ledger.ess { grid-auto-flow: row; grid-template-columns: 1fr; row-gap: 8px; }
+  .acts { gap: 0 12px; }
+  #leaf .nextb p { min-width: 0; }
+  #leaf .ytabs { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 8px; }
+  #leaf .ytab { flex: none; width: 100%; margin-top: 30px; }
+  #leaf .yt-year { font-size: 44px; }
+  #leaf .slip { padding-left: 12px; background-image: none; }
+  #leaf .slip::before { display: none; }
+  #leaf .slip-sum th { padding-right: 6px; }
+  #leaf .slip-sum td { font-size: 15px; width: auto; padding: 0 1px; min-width: 0; display: flex; align-items: center; justify-content: center; }
+  #leaf .slip-sum, #leaf .slip-sum thead, #leaf .slip-sum tbody { display: block; width: 100%; }
+  #leaf .slip-sum tr { display: grid; grid-template-columns: 1.6fr 1fr 1fr; }
+  #leaf .slip-sum thead th { font-size: 12px; }
+  #leaf .slip-sum thead th:first-child { display: none; }
+  #leaf .slip-sum tbody th { grid-column: 1 / -1; padding: 6px 0 2px; }
+  #leaf .slip-head { flex-wrap: wrap; }
+  #leaf .nextb .count, #leaf .nextb b, #leaf .same-l dd { white-space: normal; }
+}
+
+/* Footer and related lists: each link is a full 44pt row */
+.foot li a, nav.related li a { min-height: 44px !important; display: inline-flex !important; align-items: center; }
+/* Tap-to-copy figures keep their size in the card; the hit area grows to 44pt tall without moving anything */
+#leaf .fig { position: relative; }
+#leaf .fig::after { content: ""; position: absolute; left: -4px; right: -4px; top: -12px; bottom: -12px; }
+
+@media (max-width: 300px) {
+  .parts-toggle, .textbtn { white-space: normal; text-align: left; }
+  #leaf .kcols { grid-template-columns: 1fr !important; display: grid; }
+  #leaf .big .num.code { font-size: 44px; }
+  #leaf .slip-sum, .content table.chart, #leaf table.chart { display: block; overflow-x: auto; max-width: 100%; }
+  .content table { display: block; overflow-x: auto; max-width: 100%; }
+}
+.nav-menu li a { min-height: 44px; display: flex; align-items: center; }
+@media (max-width: 300px) { #leaf .slip { overflow-x: auto; max-width: 100%; } #leaf .slip-sum td { width: auto; font-size: 18px; } }
+#leaf .fig::after { left: -8px; right: -8px; }
+.name.inline input, .opt-field select, .pair .name input, input#name-a, input#name-b, .opt-field input { min-height: 44px; }
+@media (max-width: 300px) { #leaf .pair-leaves, #leaf .span-row { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px; } #leaf .pair-leaves .gap-measure, #leaf .span-row .gap-measure { display: none; } }
+/* 200% text on a 390 phone (195px CSS width): the circled birthday ring and the figure copy mark ran 12px past the edge; the chronological slip scrolls inside the card instead of the page */
+@media (max-width: 300px) {
+  #leaf .fig .fig-ic { display: none; }
+  .result, #leaf { max-width: 100%; overflow-x: clip; }
+  #leaf.obj-slip { overflow-x: auto; }
+  details.topic summary, details.qa summary, .content summary { min-height: 44px; }
+}
+summary { min-height: 44px; box-sizing: border-box; }
+.sheet-foot, .content p, .print-meta { overflow-wrap: anywhere; }
+#leaf .fig::after { left: min(-8px, calc((100% - 44px) / 2)); right: min(-8px, calc((100% - 44px) / 2)); }
+
+/* Keep [hidden] hidden: .textbtn { display: inline-flex } would otherwise un-hide "Use today" on /past. */
+[hidden] { display: none !important; }

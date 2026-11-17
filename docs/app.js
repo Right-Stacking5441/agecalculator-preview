@@ -43,7 +43,7 @@
   var rb = function (d) { return '<span class="sr-only">Reading this as </span><b>' + short(d) + '</b>' + IC.tick; };
   function more(inner, title) { if (document.body.classList.contains('widget')) return ''; return '<details class="more"><summary>' + (title || 'More') + IC.chev + '</summary><div class="more-body">' + inner + '</div></details>'; }
   function nextb(html) { return '<div class="nextb">' + IC.cake + '<p>' + html + '</p></div>'; }
-  function ph(unit, msg) { return '<p class="ph-msg">' + msg + '</p>'; }
+  function ph(unit, msg) { var t = document.getElementById('empty-tpl'); return t ? t.innerHTML : '<p class="ph-msg es-say">' + msg + '</p>'; }
   /* ---- Option C: adaptive headline and one plain sentence ---- */
   function wk(n) { var w = Math.floor(n / 7), d = n % 7; return (w ? plural(w, 'week') : '') + (w && d ? ' and ' : '') + (d ? plural(d, 'day') : ''); }
   function cn(s) { return '<span class="cn">' + s + '</span>'; }
@@ -67,9 +67,16 @@
     return t + cw(wk(r.totalDays)) + ' or ' + cw(plural(r.totalDays, 'day')) + tail;
   }
   function ess(rows) { return '<dl class="ledger ess">' + rows.filter(Boolean).map(function (x) { return '<div><dt>' + x[0] + '</dt><dd>' + x[1] + '</dd></div>'; }).join('') + '</dl>'; }
+  function sameAs(title, rows, join, note) { return '<div class="same' + (join ? ' join-' + join : '') + '"><p class="same-h">' + title + '</p><dl class="ledger same-l">' + rows.filter(Boolean).map(function (x) { return '<div><dt class="sr-only">' + x[0] + '</dt><dd>' + x[1] + '</dd></div>'; }).join('') + '</dl>' + (note ? '<p class="same-note">' + note + '</p>' : '') + '</div>'; }
+  function agePhrase(r) {
+    if (r.years === 0 && r.months === 0) return plural(r.totalDays, 'day');
+    if (r.years === 0) return plural(r.totalMonths, 'month') + (r.days ? ' and ' + plural(r.days, 'day') : '');
+    var rest = A.partsWords(0, r.months, r.days);
+    return plural(r.years, 'year') + (rest ? ', ' + rest : '');
+  }
   function monthGrid(y, m, hitDay, label) {
     var first = A.weekday(y, m, 1), dim = A.daysInMonth(y, m);
-    var h = '<div class="month"><p class="month-name">' + M[m - 1] + ' <span>' + y + '</span></p><table><caption class="sr-only">' + esc(label) + '</caption><thead><tr>';
+    var h = '<div class="month">' + (label ? '<p class="month-cap">' + esc(label) + '</p>' : '') + '<p class="month-name">' + M[m - 1] + ' <span>' + y + '</span></p><table><caption class="sr-only">' + esc(label) + '</caption><thead><tr>';
     ['M', 'T', 'W', 'T', 'F', 'S', 'S'].forEach(function (c, i) { h += '<th scope="col" abbr="' + W[i] + '">' + c + '</th>'; });
     h += '</tr></thead><tbody><tr>';
     for (var i = 0; i < first; i++) h += '<td></td>';
@@ -185,7 +192,7 @@
       if (r.ok) {
         savedParts = null;
         parts.forEach(function (x) { x.setAttribute('aria-invalid', 'false'); });
-        quick.value = r.text; quickFromParts = true; applyCompleteDate({ date: r.date, ambiguous: false, alt: null }, false);
+        quick.value = r.text; quickFromParts = true; applyCompleteDate({ date: r.date, ambiguous: false, alt: null }, false, asClose);
       } else {
         markPartValidity((r.message && (r.code !== 'incomplete' || asClose)) ? r : { ok: false });
         f.value = null; f.status = r.code; f.message = r.message;
@@ -320,14 +327,19 @@
       if (fillParts && d) { parts[0].value = String(d.d).padStart(2, '0'); parts[1].value = String(d.m).padStart(2, '0'); parts[2].value = d.y; }
     }
     function invalid(on) { quick.setAttribute('aria-invalid', String(!!on)); }
-    function applyCompleteDate(r, fillParts) {
+    function applyCompleteDate(r, fillParts, showErr) {
       if (isDobField(name) && A.cmp(r.date, today) > 0) {
-        setDate(r.date, fillParts);
         f.status = 'future';
         f.message = MSG_FUTURE_DOB;
         invalid(true);
         markPartValidity({ ok: false, field: 'year' });
-        show(MSG_FUTURE_DOB, 'err');
+        if (showErr) {
+          setDate(r.date, fillParts);
+          show(MSG_FUTURE_DOB, 'err');
+        } else {
+          f.value = null;
+          show('', '');
+        }
         return;
       }
       setDate(r.date, fillParts);
@@ -367,7 +379,7 @@
         /* Blur must not rebuild unchanged UI. Filling hidden boxes here can
            fire input on some engines and rewrite the text, which drops "I meant". */
         var sameDate = f.value && A.cmp(f.value, r.date) === 0;
-        if (!sameDate) applyCompleteDate(r, !!(pbox && !pbox.hidden));
+        if (!sameDate) applyCompleteDate(r, !!(pbox && !pbox.hidden), true);
         go();
         return;
       }
@@ -557,22 +569,22 @@
     var bline, gridLabel = 'Next birthday';
     if (bounds.bornDay) {
       nx = bounds.next;
-      bline = 'The day you were born. Next birthday: <b>' + short(nx) + '</b> <span class="dot">·</span> ' + plural(nx.daysUntil, 'day') + ' <span class="dot">·</span> turning 1';
+      bline = 'The day you were born. Next birthday: <b>' + short(nx) + '</b>, in ' + plural(nx.daysUntil, 'day') + ', turning 1';
     } else if (nx.isToday) {
       gridLabel = 'Birthday';
       bline = '<b>Birthday today.</b> Happy ' + ordinal(nx.turning) + ' birthday.';
     } else {
-      bline = 'Next birthday: <b>' + short(nx) + '</b> <span class="dot">·</span> <span class="count">' + plural(nx.daysUntil, 'day') + '</span> <span class="dot">·</span> turning ' + nx.turning;
+      bline = 'Next birthday: <b>' + short(nx) + '</b>, in <span class="count">' + plural(nx.daysUntil, 'day') + '</span>, turning ' + nx.turning;
     }
     var note = nx.shifted ? '<p class="bday-note">No 29 February in ' + nx.y + ', so the birthday counts on 1 March.</p>' : '';
     var kor = opts.korean === false ? null : A.koreanAges(b, at);
     var extra = [
       ['Same age in hours', fmt(r.hours) + small('days × 24, from midnight')],
-      opts.chrono !== false ? ['Chronological age', r.years + ';' + r.months + ';' + r.days + small('<a href="chronological-age/">the form tests use</a>')] : null,
+      opts.chrono !== false ? ['Chronological age', r.years + ';' + r.months + ';' + r.days + small('years;months;days, <a href="chronological-age/">the form tests use</a>')] : null,
       ['Born on a', W[r.bornWeekday]],
-      kor ? ['Korean age', kor.counting + small('year age ' + kor.yearAge + ', <a href="korean-age/">why</a>')] : null
+      kor ? ['Korean age', kor.counting + small('Year age ' + kor.yearAge + '. <a href="korean-age/">Why they differ</a>')] : null
     ];
-    var say = 'On ' + long(at) + ' you ' + verb + ' ' + ymdWords(r) + ' old.';
+    var say = 'On ' + long(at) + ' you ' + verb + ' ' + agePhrase(r) + '.';
     if (bounds.bornDay) say += ' The day you were born. Next birthday ' + long(nx) + ', turning 1, in ' + plural(nx.daysUntil, 'day') + '.';
     else if (nx.isToday) say += ' Today. Happy ' + ordinal(nx.turning) + ' birthday.';
     else say += ' Next birthday ' + long(nx) + ', in ' + plural(nx.daysUntil, 'day') + '.';
@@ -639,11 +651,11 @@
         ago = agoMain ? agoMain + small('(' + agoDays + ' in all)') : agoDays;
       }
       var verb = same(at, today) ? 'are' : (A.cmp(at, today) > 0 ? 'will be' : 'were');
-      var bl = bounds.nextLabel + ' <b>' + short(nx) + '</b> <span class="dot">·</span> turning ' + nx.turning;
+      var bl = 'Next birthday: <b>' + short(nx) + '</b> (' + nx.turning + ')';
       var html = '<div class="leaf-head">' + bornSpan(b.value) + ' <span class="on-at">On ' + stamp(at) + '</span></div>' + body(lead) + nextb(bl) +
         ess([['How long ago', ago]]) +
         more(ledger([[bounds.lastLabel, plain(prev)], ['That day was a', W[A.weekday(at.y, at.m, at.d)]]]) + monthGrid(at.y, at.m, at.d, 'The date you chose'));
-      return { state: 'result', cls: 'leaf-old', say: 'On ' + long(at) + ' you ' + verb + ' ' + ymdWords(r) + ' old.', html: html };
+      return { state: 'result', cls: 'leaf-old', say: 'On ' + long(at) + ' you ' + verb + ' ' + agePhrase(r) + '.', html: html };
     },
     /* A countdown is a tear-off pad: one sheet per day still to go (drawn up to a point). */
     countdown: function () {
@@ -731,7 +743,7 @@
         '<div class="span-row">' + miniLeaf(lo, r.sign > 0 ? 'Start' : 'End') +
         '<div class="gap-measure"><span class="gm-label">' + plural(days, 'day') + '</span><span class="gm-line" aria-hidden="true"></span></div>' +
         miniLeaf(hi, r.sign > 0 ? 'End' : 'Start') + '</div>' +
-        ess([['Weekdays', fmt(r.weekdays + (inc && A.weekday(hi.y, hi.m, hi.d) < 5 ? 1 : 0)) + small('Weekdays are Monday to Friday. Bank holidays count as weekdays.')], ['Weekend days', fmt(r.weekendDays + (inc && A.weekday(hi.y, hi.m, hi.d) >= 5 ? 1 : 0))], r.sign < 0 ? ['Order', 'End is before start; counted backwards'] : null]);
+        sameAs('Made up of', [['Weekdays', plural(r.weekdays + (inc && A.weekday(hi.y, hi.m, hi.d) < 5 ? 1 : 0), 'weekday')], ['Weekend days', plural(r.weekendDays + (inc && A.weekday(hi.y, hi.m, hi.d) >= 5 ? 1 : 0), 'weekend day')]], 'and', 'Weekdays are Monday to Friday. Bank holidays count as weekdays.') + ess([ r.sign < 0 ? ['Order', 'End is before start; counted backwards'] : null]);
       return { state: 'result', cls: 'obj obj-span', say: plural(days, 'day') + ' between ' + plain(lo) + ' and ' + plain(hi) + '.', html: html };
     },
     /* A school record slip: the subtraction written the way it is on score forms. */
@@ -749,7 +761,7 @@
       var empty = { state: 'empty', cls: 'obj obj-slip', html: ph('', 'Add the date of birth and test date for the y;m;d.') };
       if (errOf(b, 'date of birth')) return errOf(b, 'date of birth');
       if (errOf(t, 'test date')) return errOf(t, 'test date');
-      if (needs(b) || needs(t)) return { state: 'empty', cls: 'obj obj-slip', html: who + '<div class="slip">' + slipHead + grid(t && t.value, b && b.value, null) + '</div>' };
+      if (needs(b) || needs(t)) return { state: 'empty', cls: 'obj obj-slip', html: ph('', 'Add the date of birth and test date for the y;m;d.') + who + '<div class="slip">' + slipHead + grid(t && t.value, b && b.value, null) + '</div>' };
       var r = A.age(b.value, t.value);
       if (!r.ok) return notice('Check the dates', 'The test date is before the date of birth.');
       var code = r.years + ';' + r.months + ';' + r.days, rounded = r.totalMonths + (r.days >= 15 ? 1 : 0);
@@ -826,10 +838,10 @@
   function pet(kind) {
     var parsed = A.parsePetAge($v('pet-y'), $v('pet-m')), size = checked('size') || 'medium';
     if (parsed.code === 'empty') {
-      var ages = [1, 2, 3, 5, 7, 10, 12, 15], t;
+      var ages = [1, 2, 3, 5, 7, 8, 10, 12, 15], t;
       if (kind === 'dog') t = '<tr><th scope="col">Age</th><th scope="col">Small</th><th scope="col">Medium</th><th scope="col">Large</th><th scope="col">Giant</th></tr>' + ages.map(function (x) { return '<tr><td>' + x + '</td>' + ['small', 'medium', 'large', 'giant'].map(function (z) { var r = A.dogAge(x, z); return '<td>' + (r.ok ? fmt(r.human) : 'n/a') + '</td>'; }).join('') + '</tr>'; }).join('');
       else t = '<tr><th scope="col">Age</th><th scope="col">Human</th><th scope="col">Stage</th></tr>' + ages.map(function (x) { var r = A.catAge(x); return '<tr><td>' + x + '</td><td>' + (r.ok ? fmt(r.human) : 'n/a') + '</td><td>' + A.catStage(x) + '</td></tr>'; }).join('');
-      return { state: 'empty', cls: 'obj obj-record', html: '<div class="record">' + ph('', kind === 'dog' ? 'Type your dog’s age and pick their adult size.' : 'Type your cat’s age in years and months.') + more('<table class="chart"><caption class="sr-only">Human years by age, from the AAHA-published chart</caption>' + t + '</table><p class="rest">From the <a href="' + CHART_SRC + '">AAHA-published pet age chart</a>.</p>', (kind === 'dog' ? 'Dog' : 'Cat') + ' age chart') + '</div>' };
+      return { state: 'empty', cls: 'obj obj-record', html: '<div class="record">' + ph('', kind === 'dog' ? 'Type your dog’s age and pick their adult size.' : 'Your cat’s age in years and months, please.') + more('<table class="chart"><caption class="sr-only">Human years by age, from the AAHA-published chart</caption>' + t + '</table><p class="rest">From the <a href="' + CHART_SRC + '">AAHA-published pet age chart</a>.</p>', (kind === 'dog' ? 'Dog' : 'Cat') + ' age chart') + '</div>' };
     }
     if (!parsed.ok) return notice('Check the age', parsed.message);
     var y = parsed.years, mo = parsed.months, age = parsed.age;
@@ -840,7 +852,7 @@
     var rows = kind === 'dog'
       ? [['DNA-clock estimate', age >= 1 ? fmt(A.dogAgeEpigenetic(age)) + small('16 × ln(age) + 31, Wang et al. 2020') : '<span class="muted">not for under-ones</span>'], ['The old “× 7” rule', fmt(age * 7)]]
       : [['The old “× 7” rule', fmt(age * 7)]];
-    var html = '<div class="record"><div class="rec-result"><p class="big"><span class="num">' + fmt(r.human) + '</span><span class="unit">in human years</span></p><p class="rest">' + (r.interpolated ? 'Between the chart\'s figures for ages ' + r.from + ' and ' + r.to + ' <span class="dot">·</span> ' : '') + (kind === 'cat' ? 'Life stage: ' + A.catStage(age) + ' <span class="dot">·</span> ' : '') + 'From the ' + src + '</p></div>' + more(ledger(rows)) + '</div>';
+    var html = '<div class="record"><div class="rec-result"><p class="big"><span class="num">' + fmt(r.human) + '</span><span class="unit">in human years</span></p><p class="rest">' + (r.interpolated ? 'Between the chart’s figures for ages ' + r.from + ' and ' + r.to + '. ' : '') + (kind === 'cat' ? 'Life stage: ' + A.catStage(age) + '. ' : '') + 'From the ' + src + '</p></div>' + more(ledger(rows)) + '</div>';
     return { state: 'result', cls: 'obj obj-record', say: 'About ' + fmt(r.human) + ' in human years.', html: html };
   }
 
@@ -957,8 +969,9 @@
     }
     if (c) {
       var hh = Math.floor(s / 3600), mm = Math.floor((s % 3600) / 60), ss = s % 60;
-      c.textContent = hh + ' h ' + String(mm).padStart(2, '0') + ' m ' + String(ss).padStart(2, '0') + ' s';
-      clockTimer = setTimeout(tick, 1000);
+      var dd = +c.getAttribute('data-days') || 0;
+      if (dd) { var hrs = Math.floor((s + (dd - 1) * 86400) / 3600); c.textContent = fmt(hrs) + (hrs === 1 ? ' hour' : ' hours'); clockTimer = setTimeout(tick, (s % 3600 || 3600) * 1000); }
+      else { c.textContent = hh + ' h ' + String(mm).padStart(2, '0') + ' m ' + String(ss).padStart(2, '0') + ' s'; clockTimer = setTimeout(tick, 1000); }
     } else {
       clockTimer = setTimeout(tick, Math.min(Math.max(s, 1) * 1000, 2147483647));
     }

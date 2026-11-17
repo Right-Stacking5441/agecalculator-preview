@@ -1,7 +1,7 @@
 # Page copy: /birthday-countdown
 
 - **Title:** Birthday countdown: Days until your next birthday
-- **Meta description:** Type a date of birth to see how many days until the next birthday, the weekday it falls on, the age it brings, and a clock to midnight tonight.
+- **Meta description:** Type a date of birth to see how many days until the next birthday, the weekday it falls on, the age it brings, and how many hours are left.
 - **H1:** Birthday countdown
 - **Line under the H1:** For cards, parties and plain impatience: the days left until the next birthday, and the day of the week it lands on.
 - **Target keyword:** birthday countdown
@@ -21,7 +21,7 @@ On Monday 16 November 2026, for example, someone born on 15 March 1995 has 119 d
 
 ## What the countdown shows
 
-The big number is the days left until the next birthday, with the date, the weekday and the age it brings underneath. Under that you'll find the same wait in weeks and days, and a clock counting down to midnight tonight. Open More to see whether the birthday lands on a weekend and how many birthdays have gone by so far. The clock is the only part of the page that moves.
+The big number is the days left until the next birthday, with the date, the weekday and the age it brings underneath. Under that you'll find the same wait in weeks and days, and how many hours are left until the birthday. Open More to see whether the birthday lands on a weekend and how many birthdays have gone by so far. The hours figure is the only part of the page that updates as time passes.
 
 If the birthday is today, the page says so and wishes a happy birthday, instead of counting to next year.
 
@@ -29,7 +29,7 @@ If the birthday is today, the page says so and wishes a happy birthday, instead 
 
 The big number is whole calendar days from today to the birthday. On the day before, it says 1. Today's date comes from your time zone, so if you're in London and the birthday person is in Sydney, their birthday will start nine to eleven hours before yours does, depending on the time of year, and this page won't show it until it's the day where you are.
 
-The "until midnight tonight" line ticks down the rest of today in your time zone. On the day before a birthday, the big number says 1 and the clock shows exactly how long is left.
+The hours line is the time left until the birthday, in whole hours, in your time zone. On the day before a birthday, the big number says 1 and the hours left run down through that last day.
 
 ## Born on 29 February
 

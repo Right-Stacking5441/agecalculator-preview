@@ -17,13 +17,14 @@ A 7-year-old Labrador weighing 30 kg is a large dog on the chart, so the calcula
 
 ## The size chart
 
-The figures come from the [pet age chart published on the American Animal Hospital Association website](https://www.aaha.org/wp-content/uploads/globalassets/02-guidelines/canine-life-stage-2019/canine_and_feline_age_chart_poster.pdf). The chart is a Zoetis poster, and its dog figures are adapted from the Dog Owner's Home Veterinary Handbook. Every dog counts as 15 at one year old and 24 at two. After that the sizes split. The weight bands below are the poster's own, which prints both pounds and kilograms:
+The figures come from the [pet age chart published on the American Animal Hospital Association website](https://www.aaha.org/wp-content/uploads/globalassets/02-guidelines/canine-life-stage-2019/canine_and_feline_age_chart_poster.pdf). The chart is a Zoetis poster, and its dog figures are adapted from the Dog Owner's Home Veterinary Handbook. Every dog counts as 15 at one year old and 24 at two. After that the sizes split. The weight bands below follow the poster's pounds and kilograms, with the joins closed so every adult weight sits in a band:
 
-| Dog's age | Small, up to 9.07 kg (20 lb) | Medium, 9.52 to 22.7 kg (21 to 50 lb) | Large, 23.1 to 40.8 kg (51 to 90 lb) | Giant, over 40.8 kg (90 lb) |
+| Dog's age | Small, up to 9.5 kg (20 lb) | Medium, 9.5 to 23.1 kg (21 to 50 lb) | Large, 23.1 to 40.8 kg (51 to 90 lb) | Giant, over 40.8 kg (over 90 lb) |
 |---:|---:|---:|---:|---:|
 | 3 | 28 | 28 | 30 | 32 |
 | 5 | 36 | 37 | 40 | 42 |
 | 7 | 44 | 47 | 50 | 56 |
+| 8 | 48 | 51 | 55 | 64 |
 | 10 | 56 | 60 | 66 | 78 |
 | 12 | 64 | 69 | 77 | 93 |
 | 15 | 76 | 83 | 93 | 115 |
@@ -32,7 +33,7 @@ Small dogs add 4 human years for each year after two. Medium dogs add 4 or 5 a y
 
 The calculator gives the chart figure for whole years and reads in a straight line between two printed ages for anything in between. The chart prints whole years only. Reading in a straight line between them is this site's own method, not the chart's. So a large dog of 7 years and 6 months comes out at about 53 (52.5 rounded), between 50 at 7 and 55 at 8. Dogs under 1 year aren't shown, because the chart starts at 1. Giant dogs stop at 16 years and the other sizes stop at 20, because that is where the chart ends. The calculator doesn't make up figures beyond it.
 
-Pick the size by the weight your dog is, or will be, as an adult. As a rough guide, a Border Collie is medium or large (14 to 25 kg, or 30 to 55 lb, according to the [American Kennel Club](https://www.akc.org/dog-breeds/border-collie/)), a Labrador large and a Great Dane giant. Crossbreeds go by adult weight. The calculator asks you to choose a size rather than type a weight. If your dog falls between two bands, say 9.3 kg (20.5 lb), the chart doesn't cover it, so pick the nearer size.
+Pick the size by the weight your dog is, or will be, as an adult. As a rough guide, a Border Collie is medium or large (14 to 25 kg, or 30 to 55 lb, according to the [American Kennel Club](https://www.akc.org/dog-breeds/border-collie/)), a Labrador large and a Great Dane giant. Crossbreeds go by adult weight. The calculator asks you to choose a size rather than type a weight. If your dog's adult weight sits on a join, for example 9.5 kg, pick either neighbouring size; the poster's own printed bands had a small gap there.
 
 ## Reading the result
 

@@ -1,0 +1,31 @@
+/* unslop polish pass (unslop by Damir Sokolovsky, @heydamir, CC BY 4.0), applied after the card redesign.
+   Polish mode: the site is mostly designed, so the palette, Libre Franklin, the layout and the drawings stay.
+   Direction: exact, unhurried, a little warm; a wall calendar and almanac; the big figure and the ringed date are the moments. */
+
+/* 1. Spacing: the token scale moves onto the 4px grid (was 3, 6, 10, 14, 20, 28, 40, 56, 80) */
+:root { --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 28px; --s7: 40px; --s8: 56px; --s9: 80px; }
+#leaf .big { gap: 8px; }
+#leaf .month td { height: 24px; }
+.quick { padding-left: 12px; padding-right: 12px; }
+.parts input, .name input { padding-left: 12px; padding-right: 12px; }
+
+/* 3. Icons: one size (18px) and one stroke for the interface set; the 14px copy glyph and the tick inside the "Copied" stamp are the two in-text exceptions */
+.ic, .readback .ic-tick, .parts-toggle .ic, .opt-field .ic, .on.settings > p .ic, details.more > summary .ic, .act .ic, #leaf .nextb .ic { width: 18px; height: 18px; stroke-width: 1.7; }
+.readback .ic-tick { color: var(--ink-3); vertical-align: -3px; }
+.mast .brand svg { width: 22px; height: 22px; }   /* the logo mark is not an interface icon */
+
+/* 5. Type: hierarchy from size and colour; 600 is the heaviest weight outside the calendar figures */
+.intro h1 { font-weight: 600; letter-spacing: 0; }
+.brand, .brand span { letter-spacing: 0; }
+.df-label, .entry legend, .name, label.name.inline { letter-spacing: 0; font-weight: 600; }
+#leaf .big .unit, #leaf .ledger dd, #leaf .ledger.ess dd, #leaf .nextb b, #leaf .nextb .count, #leaf .bday-text strong, nav.related a, .mast a { font-weight: 600; }
+/* Sentence case, normal tracking, for the labels that were uppercase and tracked */
+.ml-name, .yt-tab, .rec-title, .pl-m, .side h2, .slip-head b, .slip-sum thead th { text-transform: none; letter-spacing: 0; font-weight: 600; }
+.ml-name, .yt-tab { font-size: 13px; }
+.pl-m { font-size: 12px; }
+/* No italic: "not given" on the record slip is muted instead */
+i.muted, .muted { font-style: normal; }
+/* The big figures stay at 800 with display tracking: they are the calendar's printed numerals, the page's one bright element */
+
+/* 7. Details: tabular figures for every number on the card */
+#leaf, #leaf * { font-variant-numeric: tabular-nums; }

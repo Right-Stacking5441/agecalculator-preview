@@ -48,7 +48,7 @@ Some pages link to outside sources, such as the American Animal Hospital Associa
 
 ## Copy and print buttons
 
-The Copy buttons on the chronological age page put the result on your clipboard only when you press them. Print uses your browser's own print dialog. Neither sends anything to us.
+The Copy, Copy details, Copy link and Print buttons on the calculators put the result on your clipboard, or open your browser's own print dialog, only when you press them. Neither sends anything to us.
 
 ## The calculator on other websites
 

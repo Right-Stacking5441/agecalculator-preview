@@ -691,6 +691,8 @@ def apply_ux_pass():
     print(f"applied UX structure to {n} pages")
     prerender(DOCS)
     print("prerendered calculator pages")
+    from apply_ux import inject_empty_examples
+    inject_empty_examples(DOCS)
 
 
 def ensure_footer_links(html: str) -> str:
@@ -761,7 +763,7 @@ DIR_LINK_SLUGS = {
     "what-year-was-i-born", "dog-age", "cat-age", "embed", "privacy",
     "contact", "widget",
 }
-ASSET_NAMES = {"favicon.ico", "favicon.svg", "styles.css", "ux.css", "card.css", "share.css", "app.js", "dates.js", "sheet.js", "embed.js", "share.js"}
+ASSET_NAMES = {"favicon.ico", "favicon.svg", "apple-touch-icon.png", "og-image.png", "styles.css", "ux.css", "card.css", "share.css", "unslop.css", "apple.css", "app.js", "dates.js", "sheet.js", "embed.js", "share.js"}
 _404_ATTR = re.compile(r"""\b((?:href|src)\s*=\s*)(["'])([^"']+)\2""", re.I)
 
 
@@ -1004,7 +1006,7 @@ def patch_app_js_copy():
 def cache_bust_assets(docs: Path) -> None:
     """Append ?v=<content hash> to every local JS/CSS reference so Safari cannot keep a stale file."""
     import hashlib
-    names = ("styles.css", "ux.css", "card.css", "share.css", "app.js", "dates.js", "sheet.js", "embed.js", "share.js")
+    names = ("styles.css", "ux.css", "card.css", "share.css", "unslop.css", "apple.css", "app.js", "dates.js", "sheet.js", "embed.js", "share.js")
     hashes = {}
     for name in names:
         fp = docs / name
@@ -1013,7 +1015,7 @@ def cache_bust_assets(docs: Path) -> None:
     if not hashes:
         return
     pat = re.compile(
-        r"""((?:href|src)=["'])([^"']*?)(styles\.css|ux\.css|card\.css|share\.css|app\.js|dates\.js|sheet\.js|embed\.js|share\.js)(?:\?[^"']*)?(["'])"""
+        r"""((?:href|src)=["'])([^"']*?)(styles\.css|ux\.css|card\.css|share\.css|unslop\.css|apple\.css|app\.js|dates\.js|sheet\.js|embed\.js|share\.js)(?:\?[^"']*)?(["'])"""
     )
 
     def repl(m, _hashes=hashes):
@@ -1033,6 +1035,46 @@ def cache_bust_assets(docs: Path) -> None:
             html.write_text(new, encoding="utf-8")
             n += k
     print(f"cache-busted {n} JS/CSS references with content hashes")
+
+
+
+def verify_local_refs(docs: Path) -> None:
+    """Fail the build if any local href/src in a built page does not resolve to a file."""
+    attr = re.compile(r"""\b(?:href|src)\s*=\s*(["'])([^"']+)\1""", re.I)
+    issues: list[str] = []
+    for html_path in sorted(docs.rglob("*.html")):
+        text = html_path.read_text(encoding="utf-8")
+        rel_page = html_path.relative_to(docs).as_posix()
+        for quote, url in attr.findall(text):
+            raw = (url or "").strip()
+            if not raw or raw.startswith(("#", "mailto:", "tel:", "data:", "javascript:", "http://", "https://", "//")):
+                continue
+            path = raw.split("#", 1)[0]
+            if "?" in path:
+                path = path.split("?", 1)[0]
+            if path.startswith(PREVIEW_PREFIX + "/"):
+                path = path[len(PREVIEW_PREFIX):]
+            elif path == PREVIEW_PREFIX:
+                path = "/"
+            if path.startswith("/"):
+                target = docs / path.lstrip("/")
+            else:
+                target = (html_path.parent / path).resolve()
+                try:
+                    target.relative_to(docs.resolve())
+                except ValueError:
+                    issues.append(f"{rel_page}: {url} escapes the site root")
+                    continue
+            if target.is_dir():
+                target = target / "index.html"
+            elif not target.exists() and not path.endswith("/") and target.suffix == "":
+                if (Path(str(target) + "/index.html")).is_file():
+                    target = Path(str(target) + "/index.html")
+            if not target.is_file():
+                issues.append(f"{rel_page}: {url} -> missing {target.relative_to(docs) if docs in target.parents or target == docs else target}")
+    if issues:
+        raise SystemExit("local href/src do not resolve:\n  " + "\n  ".join(issues))
+    print(f"ok    every local href/src in {docs} resolves to a file")
 
 
 def main():
@@ -1084,6 +1126,7 @@ def main():
     patch_app_js_copy()
     typograph_docs_html()
     cache_bust_assets(DOCS)
+    verify_local_refs(DOCS)
 
     # confirm embed.js URL untouched in snippets
     emb = (DOCS / "embed" / "index.html").read_text()

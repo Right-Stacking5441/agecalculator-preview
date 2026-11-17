@@ -246,7 +246,11 @@ def seo_and_pets(soup):
     if py:
         py["placeholder"] = UI["pet_years_placeholder"]
     if pm:
-        pm["placeholder"] = UI["pet_months_placeholder"]
+        pm.attrs.pop("placeholder", None)
+        lab = pm.find_parent("label")
+        cap = lab.find("span") if lab else None
+        if cap is not None:
+            cap.string = "Months (optional)"
     oq = soup.select_one("#on-q")
     if oq and soup.body and soup.body.get("data-page") == "past":
         oq["placeholder"] = "e.g. 1 June 2010"
@@ -592,12 +596,23 @@ def acts_block(soup, slug):
     if soup.select_one(".acts"):
         return
     label = COPY_ACT.get(slug, "Copy age")
+    # Chronological age already has Copy/Print on the slip; the mock row is details + link only.
+    if slug == "chronological-age":
+        buttons = (
+            '<button class="act" data-act="all" type="button">' + icon("copy") + '<span class="act-l">Copy details</span></button>'
+            '<button class="act" data-act="link" type="button">' + icon("copy") + '<span class="act-l">Copy link</span></button>'
+        )
+    else:
+        buttons = (
+            '<button class="act" data-act="age" type="button">' + icon("copy") + '<span class="act-l">' + label + "</span></button>"
+            '<button class="act" data-act="all" type="button">' + icon("copy") + '<span class="act-l">Copy details</span></button>'
+            '<button class="act" data-act="link" type="button">' + icon("copy") + '<span class="act-l">Copy link</span></button>'
+            '<button class="act act-print" data-act="print" type="button">' + icon("printer") + '<span class="act-l">Print</span></button>'
+        )
     html = (
         '<div aria-label="Copy or share this result" class="acts" role="group">'
-        '<button class="act" data-act="age" type="button">' + icon("copy") + '<span class="act-l">' + label + "</span></button>"
-        '<button class="act" data-act="all" type="button">' + icon("copy") + '<span class="act-l">Copy details</span></button>'
-        '<button class="act" data-act="link" type="button">' + icon("copy") + '<span class="act-l">Copy link</span></button>'
-        '<button class="act act-print" data-act="print" type="button">' + icon("printer") + '<span class="act-l">Print</span></button></div>'
+        + buttons +
+        '</div>'
         '<p aria-live="polite" class="sr-only" id="copy-live"></p>'
     )
     node = frag(html)
@@ -629,6 +644,22 @@ def ensure_viewport(soup):
         soup.head.append(frag('<meta name="viewport" content="' + content + '">'))
 
 
+def ensure_share_head(soup):
+    """color-scheme, twitter:card, og:image and the apple-touch-icon, on every page."""
+    if not soup.head:
+        return
+    if not soup.find("meta", attrs={"name": "color-scheme"}):
+        soup.head.append(frag('<meta name="color-scheme" content="light">'))
+    if not soup.find("meta", attrs={"name": "twitter:card"}):
+        soup.head.append(frag('<meta name="twitter:card" content="summary">'))
+    if not soup.find("meta", attrs={"property": "og:image"}):
+        soup.head.append(frag('<meta property="og:image" content="https://agecalculator.com/og-image.png">'))
+    if not soup.find("meta", attrs={"name": "twitter:image"}):
+        soup.head.append(frag('<meta name="twitter:image" content="https://agecalculator.com/og-image.png">'))
+    if not soup.select_one('link[rel="apple-touch-icon"]'):
+        soup.head.append(frag('<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">'))
+
+
 def rewrite_dog_tiles(soup, slug):
     if slug != "dog-age":
         return
@@ -638,13 +669,13 @@ def rewrite_dog_tiles(soup, slug):
     tiles = frag(
         '<fieldset class="opts"><legend>Adult size</legend>'
         '<label class="opt"><input type="radio" name="size" value="small"/>'
-        '<span class="opt-t"><b>Small<span class="opt-c">:</span></b> <span class="opt-r"><span class="nw opt-kg">up to 9 kg</span> <span class="nw opt-lb">(20 lb)</span></span></span></label>'
+        '<span class="opt-t"><b>Small<span class="opt-c">:</span></b> <span class="opt-r"><span class="nw opt-kg">up to 9.5 kg</span> <span class="nw opt-lb">(20 lb)</span></span></span></label>'
         '<label class="opt"><input checked="checked" type="radio" name="size" value="medium"/>'
-        '<span class="opt-t"><b>Medium<span class="opt-c">:</span></b> <span class="opt-r"><span class="nw opt-kg">9.5 to 22.7 kg</span> <span class="nw opt-lb">(21 to 50 lb)</span></span></span></label>'
+        '<span class="opt-t"><b>Medium<span class="opt-c">:</span></b> <span class="opt-r"><span class="nw opt-kg">9.5 to 23.1 kg</span> <span class="nw opt-lb">(21 to 50 lb)</span></span></span></label>'
         '<label class="opt"><input type="radio" name="size" value="large"/>'
         '<span class="opt-t"><b>Large<span class="opt-c">:</span></b> <span class="opt-r"><span class="nw opt-kg">23.1 to 40.8 kg</span> <span class="nw opt-lb">(51 to 90 lb)</span></span></span></label>'
         '<label class="opt"><input type="radio" name="size" value="giant"/>'
-        '<span class="opt-t"><b>Giant<span class="opt-c">:</span></b> <span class="opt-r"><span class="nw opt-kg">over 40.8 kg</span> <span class="nw opt-lb">(90 lb)</span></span></span></label></fieldset>'
+        '<span class="opt-t"><b>Giant<span class="opt-c">:</span></b> <span class="opt-r"><span class="nw opt-kg">over 40.8 kg</span> <span class="nw opt-lb">(over 90 lb)</span></span></span></label></fieldset>'
     )
     fs = tiles if getattr(tiles, "name", None) == "fieldset" else tiles.find("fieldset")
     if fs:
@@ -680,6 +711,7 @@ def apply_ux(docs: Path, launch: bool = False) -> int:
             acts_block(soup, slug)
             rewrite_dog_tiles(soup, slug)
         ensure_viewport(soup)
+        ensure_share_head(soup)
         if cfg:
             rule_line(soup)
             intro_into_calc(soup, cfg["intro"])
@@ -703,6 +735,10 @@ def apply_ux(docs: Path, launch: bool = False) -> int:
             soup.head.append(frag('<link rel="stylesheet" href="share.css">'))
         if soup.head and not soup.select_one('link[href="card.css"]'):
             soup.head.append(frag('<link rel="stylesheet" href="card.css">'))
+        if soup.head and not soup.select_one('link[href="unslop.css"]'):
+            soup.head.append(frag('<link rel="stylesheet" href="unslop.css">'))
+        if soup.head and not soup.select_one('link[href="apple.css"]'):
+            soup.head.append(frag('<link rel="stylesheet" href="apple.css">'))
         app = soup.select_one('script[src^="app.js"], script[src="app.js"]')
         if app and not soup.select_one('script[src^="share.js"], script[src="share.js"]'):
             app.insert_after(frag('<script src="share.js" defer></script>'))
@@ -718,11 +754,103 @@ def apply_ux(docs: Path, launch: bool = False) -> int:
     if leafh.exists():
         css += leafh.read_text()
     (docs / "ux.css").write_text(css)
-    for name in ("card.css", "share.css", "share.js"):
+    for name in ("card.css", "share.css", "share.js", "unslop.css", "apple.css"):
         src = HERE / name
         if src.is_file():
             shutil.copyfile(src, docs / name)
+    brand = HERE.parent / "brand"
+    for name in ("og-image.png", "apple-touch-icon.png"):
+        src = brand / name
+        if src.is_file():
+            shutil.copyfile(src, docs / name)
     return n
+
+WORKED_EXAMPLES = {
+    "index": "Born on 14 March 1988, you were 37 years, 9 months and 18 days old on New Year's Day 2026.",
+    "past": "At the London 2012 opening ceremony, on Friday 27 July 2012, someone born on 3 May 1990 was 22 years, 2 months and 24 days old.",
+    "difference": "Sam, born 2 June 1990, is 3 years, 3 months and 18 days older than Alex, born 20 September 1993. That's 1,206 days.",
+    "days-between-dates": "Bonfire Night to Christmas Day 2026 is 50 days. 36 of them are weekdays.",
+    "chronological-age": "Born 4 July 2018 and tested on 16 November 2026, the child goes on the form as 8;4;12.",
+    "dog-age": "At 10, a small dog is 56 on the chart and a giant breed is 78.",
+    "cat-age": "A 12-year-old cat is 64 in human years, and counts as a senior.",
+    "korean-age": "A baby born on 31 December 2025 was Korean age 2 the next morning, and still 0 in international age.",
+    "birthday-countdown": "On Christmas Day 2026, a 14 February birthday was 51 days away. It fell on a Sunday.",
+    "how-old-will-i-be": "Born on 9 October 1980? You're 69 at the start of 2050 and turn 70 on Sunday 9 October.",
+    "what-year-was-i-born": "A newspaper in June 1990 calls someone 42. They were born in 1947 or 1948, depending on whether their birthday had come yet.",
+}
+
+
+def inject_empty_examples(docs: Path) -> None:
+    """Add the approved worked-example line to each empty card, and an #empty-tpl for app.js."""
+    typograph_loaded_copy()
+    if str(HERE.parent) not in sys.path:
+        sys.path.insert(0, str(HERE.parent))
+    from build_copy import typograph
+    docs = Path(docs)
+    n = 0
+    for slug, text in WORKED_EXAMPLES.items():
+        path = docs / "index.html" if slug == "index" else docs / slug / "index.html"
+        if not path.is_file():
+            # Flat shells, before promotion.
+            path = docs / f"{slug if slug != 'index' else 'index'}.html"
+        if not path.is_file():
+            continue
+        soup = BeautifulSoup(path.read_text(encoding="utf-8"), "html.parser")
+        leaf = soup.select_one("#leaf")
+        if leaf is None:
+            continue
+        example = typograph(text)
+        say = leaf.select_one(".es-say") or leaf.select_one(".ph-msg")
+        empty_key = {
+            "index": "age", "past": "past", "difference": "difference",
+            "days-between-dates": "between", "chronological-age": "chrono",
+            "dog-age": "dog", "cat-age": "cat", "korean-age": "korean",
+            "birthday-countdown": "countdown", "what-year-was-i-born": "birthyear",
+        }.get(slug)
+        empty_msg = UI.get("empty", {}).get(empty_key) if empty_key else None
+        if say is None and empty_msg:
+            node = frag('<p class="ph-msg es-say"></p>').p
+            node.append(empty_msg)
+            # Keep existing first-paint chrome (e.g. the chronological slip); put the prompt first.
+            if leaf.contents:
+                leaf.contents[0].insert_before(node)
+            else:
+                leaf.append(node)
+            say = node
+        if say is not None:
+            if empty_msg:
+                say.clear()
+                say.append(empty_msg)
+            if say.has_attr("class") and "es-say" not in say.get("class", []):
+                say["class"] = list(say.get("class", [])) + ["es-say"]
+            elif not say.has_attr("class"):
+                say["class"] = ["es-say"]
+            eg = say.find_next_sibling("p", class_="es-eg")
+            if eg is None:
+                # insert immediately after the say/ph-msg paragraph
+                node = frag(f'<p class="es-eg">{example}</p>').p
+                say.insert_after(node)
+            else:
+                eg.clear()
+                eg.append(example)
+        # Template used by ph() so a later empty render keeps the example.
+        tpl = soup.select_one("#empty-tpl")
+        say_html = str(say) if say is not None else ""
+        eg_el = leaf.select_one(".es-eg")
+        eg_html = str(eg_el) if eg_el is not None else f'<p class="es-eg">{example}</p>'
+        inner = say_html + eg_html
+        if tpl is None and soup.body:
+            soup.body.append(frag(f'<template id="empty-tpl">{inner}</template>'))
+        elif tpl is not None:
+            tpl.clear()
+            # frag of inner children
+            piece = frag(inner)
+            for child in list(piece.contents):
+                tpl.append(child)
+        path.write_text(str(soup), encoding="utf-8")
+        n += 1
+    print(f"injected worked examples on {n} empty cards")
+
 
 
 if __name__ == "__main__":
