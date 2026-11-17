@@ -32,6 +32,11 @@ def main() -> None:
         ("/rodent-age-calculator.html", f"{ROOT_URL}/"),
         ("/how-old-am-i", f"{ROOT_URL}/"),
         ("/date-of-birth", f"{ROOT_URL}/"),
+        # CSV row 73 (Wayback): must sit above the catch-alls. Netlify also
+        # matches a no-slash rule to the slashed path, but both are listed so
+        # the intent is obvious in the file.
+        ("/privacy-policy", f"{ROOT_URL}/privacy/"),
+        ("/privacy-policy/", f"{ROOT_URL}/privacy/"),
     ]
     for scheme in ("https", "http"):
         origin = f"{scheme}://app.agecalculator.com"
@@ -61,10 +66,11 @@ def main() -> None:
             lines.append(rule(f"{origin}/{slug}.html", dest))
     lines.append("")
 
+    # /* already matches / (empty splat -> https://agecalculator.com/), so
+    # a separate exact-/ rule would never fire.
     for scheme in ("https", "http"):
         origin = f"{scheme}://app.agecalculator.com"
         lines.append(rule(f"{origin}/*", f"{ROOT_URL}/:splat"))
-        lines.append(rule(f"{origin}/", f"{ROOT_URL}/"))
     lines.append("")
 
     lines.append("# Path-only copies, used if the request is already on this site without a host match.")
@@ -79,7 +85,6 @@ def main() -> None:
         lines.append(rule(f"/{slug}", dest))
         lines.append(rule(f"/{slug}.html", dest))
     lines.append(rule("/*", f"{ROOT_URL}/:splat"))
-    lines.append(rule("/", f"{ROOT_URL}/"))
     lines.append("")
 
     DEST.write_text("\n".join(lines))

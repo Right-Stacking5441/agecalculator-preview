@@ -7,9 +7,13 @@
 https://app.agecalculator.com/rodent-age-calculator.html  https://agecalculator.com/  301!
 https://app.agecalculator.com/how-old-am-i  https://agecalculator.com/  301!
 https://app.agecalculator.com/date-of-birth  https://agecalculator.com/  301!
+https://app.agecalculator.com/privacy-policy  https://agecalculator.com/privacy/  301!
+https://app.agecalculator.com/privacy-policy/  https://agecalculator.com/privacy/  301!
 http://app.agecalculator.com/rodent-age-calculator.html  https://agecalculator.com/  301!
 http://app.agecalculator.com/how-old-am-i  https://agecalculator.com/  301!
 http://app.agecalculator.com/date-of-birth  https://agecalculator.com/  301!
+http://app.agecalculator.com/privacy-policy  https://agecalculator.com/privacy/  301!
+http://app.agecalculator.com/privacy-policy/  https://agecalculator.com/privacy/  301!
 
 https://app.agecalculator.com/past/1960  https://agecalculator.com/past/1960/  301!
 http://app.agecalculator.com/past/1960  https://agecalculator.com/past/1960/  301!
@@ -205,14 +209,14 @@ http://app.agecalculator.com/widget  https://agecalculator.com/widget/  301!
 http://app.agecalculator.com/widget.html  https://agecalculator.com/widget/  301!
 
 https://app.agecalculator.com/*  https://agecalculator.com/:splat  301!
-https://app.agecalculator.com/  https://agecalculator.com/  301!
 http://app.agecalculator.com/*  https://agecalculator.com/:splat  301!
-http://app.agecalculator.com/  https://agecalculator.com/  301!
 
 # Path-only copies, used if the request is already on this site without a host match.
 /rodent-age-calculator.html  https://agecalculator.com/  301!
 /how-old-am-i  https://agecalculator.com/  301!
 /date-of-birth  https://agecalculator.com/  301!
+/privacy-policy  https://agecalculator.com/privacy/  301!
+/privacy-policy/  https://agecalculator.com/privacy/  301!
 /past/1960  https://agecalculator.com/past/1960/  301!
 /past/1961  https://agecalculator.com/past/1961/  301!
 /past/1962  https://agecalculator.com/past/1962/  301!
@@ -309,4 +313,3 @@ http://app.agecalculator.com/  https://agecalculator.com/  301!
 /widget  https://agecalculator.com/widget/  301!
 /widget.html  https://agecalculator.com/widget/  301!
 /*  https://agecalculator.com/:splat  301!
-/  https://agecalculator.com/  301!
