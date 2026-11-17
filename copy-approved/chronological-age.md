@@ -13,7 +13,7 @@
 
 Put in the date of birth and the test date, and the child's age on that day comes out in the years;months;days form score sheets use, for example 8;4;12. It is meant for teachers, SENCOs, educational psychologists, and speech and language therapists filling in standardised test forms. The result also shows the age in total months, a months figure with 15 or more days rounded up, and buttons to copy the code or print a one-line slip for the file.
 
-This chronological age calculator is a date-difference helper. It isn't an official tool from any test publisher. If your test manual has its own rule for days or rounding, the manual decides.
+This chronological age calculator counts the time between two dates. It isn't an official tool from any test publisher. If your test manual has its own rule for days or rounding, the manual decides.
 
 ## Reading a chronological age result
 
@@ -21,7 +21,7 @@ This chronological age calculator is a date-difference helper. It isn't an offic
 
 ## A child born on 4 July 2018
 
-A child born on 4 July 2018 is tested on 16 November 2026. Set out the way test manuals do it, test date on top:
+On 16 November 2026, for example, a child born on 4 July 2018 is tested. Set out the way test manuals do it, test date on top:
 
 | | Year | Month | Day |
 |---|---:|---:|---:|
@@ -41,7 +41,7 @@ This calculator counts on the real calendar instead. 15 January 2026 is the 7th 
 
 ## Why not just subtract the years?
 
-At young ages, norms tables move every few months. Two children born on 14 and 19 November 2020 and both tested on 16 November 2026 are 6;0;2 and 5;11;28, and they may well be scored on different rows. Subtracting the birth year from the test year makes them both 6. Months and days matter.
+At young ages, norms tables move every few months. Two children born on 14 and 19 November 2020 and both tested on 16 November 2026 are 6;0;2 and 5;11;28, and they may well be scored on different rows. Subtracting the birth year from the test year makes them both 6, which would put them on the same row.
 
 ## Testing a whole class
 

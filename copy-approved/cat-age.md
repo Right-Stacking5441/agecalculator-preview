@@ -13,11 +13,11 @@
 
 Cats only need an age, in years and months. The result is an estimate in human years, plus the life stage vets use for a cat of that age. Before you type an age, the result card has a short chart of common ages under "Cat age chart".
 
-Like any cat age calculator, this one gives estimates, not measurements. Cats age at different rates depending on genetics, health and how they live, and no conversion can tell you how a particular cat is doing. For questions about your cat's health, ask your vet.
+These are estimates, not measurements. Cats age at different rates depending on genetics, health and how they live, and no conversion can tell you how a particular cat is doing. For questions about your cat's health, ask your vet.
 
 ## How cat years are counted
 
-The calculator looks your cat's age up on the [pet age chart published on the American Animal Hospital Association website](https://www.aaha.org/wp-content/uploads/globalassets/02-guidelines/canine-life-stage-2019/canine_and_feline_age_chart_poster.pdf), a Zoetis poster whose cat column is adapted from the 2010 AAFP-AAHA Feline Life Stage Guidelines. On that chart a cat is 10 at six months, 15 at one year and 24 at two, and every year after that adds 4.
+This cat age calculator looks your cat's age up on the [pet age chart published on the American Animal Hospital Association website](https://www.aaha.org/wp-content/uploads/globalassets/02-guidelines/canine-life-stage-2019/canine_and_feline_age_chart_poster.pdf), a Zoetis poster whose cat column is adapted from the 2010 AAFP-AAHA Feline Life Stage Guidelines. On that chart a cat is 10 at six months, 15 at one year and 24 at two, and every year after that adds 4.
 
 Cats under 6 months aren't shown, because the chart starts there. It stops at 21 years, so the calculator does too rather than make up figures past the end.
 
@@ -34,7 +34,7 @@ Cats under 6 months aren't shown, because the chart starts there. It stops at 21
 | 20 | 96 |
 | 21 | 100 |
 
-Months count too. Between two printed ages the calculator reads in a straight line, so a cat of 4 years and 6 months is halfway between the chart's 32 at four and 36 at five, which is 34. That straight-line reading is this site's method, not the chart's.
+Months are counted as well. Between two printed ages the calculator reads in a straight line, so a cat of 4 years and 6 months is halfway between the chart's 32 at four and 36 at five, which is 34. That straight-line reading is this site's method, not the chart's.
 
 ## Why cats don't need a size setting
 
@@ -67,7 +67,7 @@ A cat that is exactly 10 years old:
 
 ## Indoor, outdoor and very old cats
 
-Where your cat lives and what they eat may change how long they live, but the chart doesn't adjust for it, and neither does this calculator. It converts age and nothing more. On the chart an 18-year-old cat is 88 in human years, and a 21-year-old, the last age printed, is 100.
+Where your cat lives and what they eat may change how long they live, but the chart doesn't adjust for it, and neither does this calculator. On the chart an 18-year-old cat is 88 in human years, and a 21-year-old, the last age printed, is 100.
 
 ---
 

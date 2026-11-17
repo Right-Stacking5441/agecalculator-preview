@@ -19,7 +19,7 @@
     },
     "difference": {
       "intro": "Put in two dates of birth to see who’s older and by how much, in years, months and days.",
-      "howto": "Two dates, one gap",
+      "howto": "How the gap is shown",
       "faq": "Groups and privacy",
       "label": {
         "a": "First date of birth",
@@ -56,7 +56,7 @@
     },
     "korean-age": {
       "intro": "Korean age counts you as 1 at birth and adds a year every 1 January, so it can run two ahead of your international age. Here you get both, with year age in between.",
-      "howto": "One birthday, three numbers",
+      "howto": "The three ages in the result",
       "label": {
         "dob": "Enter your date of birth"
       }

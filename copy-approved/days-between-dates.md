@@ -17,7 +17,7 @@ By default the start day is counted and the end day isn't. That matches how most
 
 ## From 16 November to Christmas Day
 
-From Monday 16 November 2026 to Friday 25 December 2026:
+For example, from Monday 16 November 2026 to Friday 25 December 2026:
 
 - The rest of November, 16th to 30th, is 15 days (the 16th itself counts, the 25th of December doesn't).
 - December 1st to 24th is 24 days.

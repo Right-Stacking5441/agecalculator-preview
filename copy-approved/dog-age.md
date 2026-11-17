@@ -17,7 +17,7 @@ Every figure here is an estimate. Breed, genetics and health all change how a pa
 
 ## Why not just multiply by seven?
 
-Dogs grow up far faster than people at the start and then slow down, and large dogs age faster than small ones later in life, which is why this dog age calculator asks for their size. On the size chart below, a one-year-old dog of any size already counts as 15 in human years, not 7. The American Veterinary Medical Association puts it plainly: [dogs do not age at a rate of 7 human years per dog year](https://www.avma.org/resources/pet-owners/petcare/senior-pets).
+Dogs grow up far faster than people at the start and then slow down, and large dogs age faster than small ones later in life, which is why this dog age calculator asks for their size. On the size chart below, a one-year-old dog of any size already counts as 15 in human years, not 7. The American Veterinary Medical Association says that [dogs do not age at a rate of 7 human years per dog year](https://www.avma.org/resources/pet-owners/petcare/senior-pets).
 
 ## The size chart
 
@@ -42,7 +42,7 @@ Pick the size by the weight your dog is, or will be, as an adult. As a rough gui
 
 The chart figure comes from the size chart on this page, and the DNA-clock formula has its own section.
 
-A 7-year-old Labrador weighing 30 kg is a large dog on the chart, so the calculator shows **50** human years. The DNA-clock formula gives 16 × ln(7) + 31, which is 16 × 1.946 + 31, or about **62**. Times seven gives 49. The two modern methods disagree by 12 years at this age, which is a fair picture of how rough any dog-to-human conversion is.
+A 7-year-old Labrador weighing 30 kg is a large dog on the chart, so the calculator shows **50** human years. The DNA-clock formula gives 16 × ln(7) + 31, which is 16 × 1.946 + 31, or about **62**. Times seven gives 49. The two modern methods disagree by 12 years at this age, so treat any dog-to-human figure as a rough guide.
 
 ## The DNA-clock estimate (Wang et al. 2020)
 

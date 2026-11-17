@@ -9,9 +9,9 @@
 ---
 ## Body
 
-## One birthday, three numbers
+## The three ages in the result
 
-Put one date of birth into the Korean age calculator and you get three numbers. The big one is international age, the default in Korean law since 28 June 2023. Beside it are traditional Korean age (세는 나이), still heard in everyday life, and year age (연 나이), which a few rules, such as buying alcohol and tobacco and military service, used when the change came in. The date is today in your time zone, and you can change it to see any of the three on another day, such as a past New Year's Day.
+Put in one date of birth and this Korean age calculator gives three numbers. The big one is international age, the default in Korean law since 28 June 2023. Beside it are traditional Korean age (세는 나이), still heard in everyday life, and year age (연 나이), which a few rules, such as buying alcohol and tobacco and military service, used when the change came in. The date is today in your time zone, and you can change it to see any of the three on another day, such as a past New Year's Day.
 
 ## Three ways of counting
 
@@ -25,13 +25,13 @@ The simple rule of thumb: Korean age is international age plus one if your birth
 
 ## Born on 20 December 1995
 
-Take someone born on 20 December 1995. On 16 November 2026 they would have three different ages:
+On 16 November 2026, for example, someone born on 20 December 1995 has three different ages:
 
-- International age: their 2026 birthday would still be a month away, so they would be 30.
+- International age: their 2026 birthday is still a month away, so they are 30.
 - Korean age: 2026 minus 1995 is 31, plus 1 for being counted as 1 at birth, so 32.
 - Year age: 2026 minus 1995, so 31.
 
-Their international age would go up to 31 on 20 December 2026, and the other two would stay where they are. On 1 January 2027 Korean age would go up to 33 and year age to 32, while international age would stay at 31 until 20 December 2027.
+Their international age goes up to 31 on 20 December 2026, and the other two stay where they are. On 1 January 2027 Korean age goes up to 33 and year age to 32, while international age stays at 31 until 20 December 2027.
 
 ## What changed in June 2023
 

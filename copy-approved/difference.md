@@ -9,7 +9,7 @@
 ---
 ## Body
 
-## Two dates, one gap
+## How the gap is shown
 
 This age difference calculator shows the gap the way you'd say an age: whole years first, then months, then days. It also says who is older and by how many days, and under More gives the same gap in weeks and months. Names are optional: open Add names to type them. They only label the result, so "Sam is older by 1,206 days" reads better than "Person A".
 
@@ -29,7 +29,7 @@ So Sam is 3 years, 3 months and 18 days older than Alex. Counted in days, that i
 
 ## Why their ages don't always differ by the same number
 
-The 1,206 days never change. The difference you'd say out loud does. Between 2 June and 19 September each year, the older person has had their birthday and the younger one hasn't, so their ages are 4 apart. On 1 August 2026, for example, they were 36 and 32, which is 4 apart. By 16 November 2026 the younger one had turned 33, so they were 3 apart again.
+The gap in days stays at 1,206 all year, but the difference between their ages in whole years changes. Between 2 June and 19 September each year, the older person has had their birthday and the younger one hasn't, so their ages are 4 apart. On 1 August 2026, for example, they are 36 and 32. On 16 November 2026 the younger one has turned 33, so they are 3 apart.
 
 Both answers are right, which is why the result has a line saying the ages differ by "3 or 4, depending on the time of year". If you only subtract one age from another, you get whichever of the two happens to apply today. The years, months and days figure is the one that stays put.
 
