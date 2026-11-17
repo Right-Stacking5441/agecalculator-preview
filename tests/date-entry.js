@@ -145,6 +145,25 @@ const INVALID_ERRORS = {
   'abc': 'That doesn’t look like a date. Try something like 18 May 1995.',
 };
 
+
+async function watchLive(page) {
+  await page.evaluate(() => {
+    const live = document.getElementById('live');
+    window.__liveWrites = [];
+    if (window.__liveObs) { window.__liveObs.disconnect(); window.__liveObs = null; }
+    if (!live) return;
+    const rec = () => { window.__liveWrites.push(live.textContent || ''); };
+    const obs = new MutationObserver(rec);
+    obs.observe(live, { characterData: true, childList: true, subtree: true });
+    window.__liveObs = obs;
+  });
+}
+
+async function nonEmptyLiveWrites(page) {
+  const all = await page.evaluate(() => (window.__liveWrites || []).slice());
+  return all.filter((s) => String(s).trim().length > 0);
+}
+
 function assertNoJump(before, after, label) {
   for (const key of Object.keys(before)) {
     if (before[key] == null || after[key] == null) continue;
@@ -637,9 +656,10 @@ async function run() {
     const MSG = 'That date hasn’t happened yet. Check the year.';
     for (const path of ['/', '/how-old-will-i-be/', '/past/', '/korean-age/', '/birthday-countdown/']) {
       await page.goto(server.url + path + TODAY_Q, { waitUntil: 'domcontentloaded' });
+      await watchLive(page);
       await typeQuick(page, 'dob', '1 January 2030');
       await blurQuick(page, 'dob');
-      await page.waitForTimeout(800);
+      await page.waitForTimeout(200);
       const st = await fieldState(page, 'dob');
       assert(!st.partsOpen, 'boxes opened for a future DOB on ' + path, st);
       assert(st.quickValue === '1 January 2030', 'future DOB text was changed on ' + path, st);
@@ -658,8 +678,11 @@ async function run() {
       assert(!/\d+\s+years?\s+old/i.test(leaf.text) && !/\b\d+\s+years\b/i.test(leaf.text),
         'a future DOB still showed an age on ' + path, leaf);
       assert(!/Type (your|a) date of birth/i.test(leaf.text), 'the empty prompt was still showing for a future DOB on ' + path, leaf);
-      assert(/hasn.t happened yet/i.test(leaf.live) && /Check the (date|year)/i.test(leaf.live),
-        'the future DOB error was not announced on ' + path + ': "' + leaf.live + '"', leaf);
+      assert(leaf.live === MSG, 'the future DOB error was not announced as the field message on ' + path + ': "' + leaf.live + '"', leaf);
+      assert(!/^Check the date/i.test(leaf.live), 'future DOB announcement still had a "Check the date." prefix on ' + path, leaf);
+      const writes = await nonEmptyLiveWrites(page);
+      assert(writes.length === 1, 'future DOB error was announced ' + writes.length + ' times on ' + path, { writes, leaf });
+      assert(writes[0] === MSG, 'wrong future DOB announcement on ' + path, { writes });
     }
   });
 
@@ -756,6 +779,43 @@ async function run() {
     });
     assert(leaf.state === 'result', 'no age shown after finishing the DOB on /past/1999/', leaf);
     assert(!/Not born yet/i.test(leaf.live), 'Not born yet stayed in the live region after a valid earlier DOB', leaf);
+  });
+
+  await check('A real Not born yet notice is announced only once, including after blur', async () => {
+    await page.goto(server.url + '/past/1999/' + TODAY_Q, { waitUntil: 'domcontentloaded' });
+    await watchLive(page);
+    const loc = page.locator('[data-datefield="dob"] .quick');
+    await loc.click();
+    await loc.fill('');
+    await loc.type('18 May 2000', { delay: 30 });
+    await page.waitForTimeout(200);
+    await blurQuick(page, 'dob');
+    await page.waitForTimeout(200);
+    const writes = (await nonEmptyLiveWrites(page)).filter((s) => /Not born yet/i.test(s));
+    assert(writes.length === 1, 'Not born yet was announced ' + writes.length + ' times', { writes });
+  });
+
+  await check('The year box does not repeat Which year? while typing', async () => {
+    await page.goto(server.url + '/how-old-will-i-be/' + TODAY_Q, { waitUntil: 'domcontentloaded' });
+    await typeQuick(page, 'dob', '18 May 1990');
+    await blurQuick(page, 'dob');
+    await page.waitForTimeout(1000);
+    await watchLive(page);
+    const year = page.locator('#in-year');
+    await year.click();
+    await year.fill('');
+    await year.type('2060', { delay: 40 });
+    await page.waitForTimeout(200);
+    let writes = await nonEmptyLiveWrites(page);
+    const which = writes.filter((s) => /Which year/i.test(s));
+    assert(which.length <= 1, 'Which year? was announced ' + which.length + ' times while typing', { writes });
+    await year.evaluate((el) => el.blur());
+    await page.waitForTimeout(1000);
+    writes = await nonEmptyLiveWrites(page);
+    const whichAfter = writes.filter((s) => /Which year/i.test(s));
+    assert(whichAfter.length <= 1, 'Which year? was announced ' + whichAfter.length + ' times after blur', { writes });
+    const results = writes.filter((s) => /2060/i.test(s) || /turn 70/i.test(s));
+    assert(results.length === 1, 'the 2060 result was not announced once', { writes });
   });
 
   async function assertAnnouncedResult(page, label) {
@@ -881,9 +941,103 @@ async function run() {
     assert(/year|old|birthday/i.test(info.live), 'unexpected announcement after changing the time zone: "' + info.live + '"', info);
   });
 
+  await check('Right-click and middle-click on I meant do not swap the date', async () => {
+    let offer = await offerIMeant(page, { blurFirst: true });
+    await offer.swap.click({ button: 'right' });
+    await page.waitForTimeout(80);
+    await assertStillOffered(page, offer.before, 'right-click');
+    offer = await offerIMeant(page, { blurFirst: true });
+    await offer.swap.click({ button: 'middle' });
+    await page.waitForTimeout(80);
+    await assertStillOffered(page, offer.before, 'middle-click');
+  });
+
+  await check('A long press or drag-off on I meant does not swap the date', async () => {
+    let offer = await offerIMeant(page, { blurFirst: true });
+    const box = await offer.swap.boundingBox();
+    assert(box, 'I meant button has no box');
+    const cx = box.x + box.width / 2, cy = box.y + box.height / 2;
+    await page.mouse.move(cx, cy);
+    await page.mouse.down();
+    await page.waitForTimeout(900);
+    await page.mouse.up();
+    await page.waitForTimeout(80);
+    await assertStillOffered(page, offer.before, 'long press');
+
+    offer = await offerIMeant(page, { blurFirst: true });
+    const box2 = await offer.swap.boundingBox();
+    const x = box2.x + box2.width / 2, y = box2.y + box2.height / 2;
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    await page.mouse.move(x, y + 160, { steps: 12 });
+    await page.mouse.up();
+    await page.waitForTimeout(80);
+    await assertStillOffered(page, offer.before, 'drag-off');
+  });
+
+  await check('Enter and Space on I meant swap the date and return focus to the field', async () => {
+    for (const key of ['Enter', 'Space']) {
+      const offer = await offerIMeant(page);
+      await offer.swap.focus();
+      await page.keyboard.press(key);
+      await page.waitForTimeout(120);
+      const st = await fieldState(page, 'dob');
+      assert(st.quickValue !== offer.before, key + ' on I meant did not change the date: "' + st.quickValue + '"', st);
+      assert(!/I meant/i.test(st.readback), 'I meant was still offered after ' + key, st);
+      assert(st.focusIsQuick, 'focus did not return to the field after ' + key + ' on I meant', st);
+    }
+  });
+
+  await check('Date boxes point aria-describedby at the readback', async () => {
+    await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+    await clickToggle(page, 'dob');
+    const ids = await page.evaluate(() => {
+      const field = document.querySelector('[data-datefield="dob"]');
+      const read = field.querySelector('.readback');
+      return {
+        readId: read && read.id,
+        boxes: ['p-d', 'p-m', 'p-y'].map((c) => {
+          const el = field.querySelector('.' + c);
+          return el ? el.getAttribute('aria-describedby') : null;
+        }),
+      };
+    });
+    assert(ids.readId, 'readback has no id', ids);
+    assert(ids.boxes.every((id) => id === ids.readId), 'date boxes do not point aria-describedby at the readback', ids);
+  });
+
   await ctx.close();
   await ctx.close();
 
+
+
+  async function offerIMeant(page, opts) {
+    opts = opts || {};
+    await page.goto(server.url + '/' + TODAY_Q, { waitUntil: 'domcontentloaded' });
+    const loc = page.locator('[data-datefield="dob"] .quick');
+    await loc.click();
+    await loc.fill('');
+    await loc.type('05/06/1999', { delay: 15 });
+    if (opts.blurFirst) {
+      await loc.evaluate((el) => el.blur());
+      await page.waitForTimeout(80);
+    }
+    const swap = page.locator('.readback .swap');
+    await swap.waitFor({ state: 'visible' });
+    return {
+      loc,
+      swap,
+      before: await loc.inputValue(),
+      meant: (await swap.innerText()).replace(/^I meant\s+/i, '').trim(),
+    };
+  }
+
+  async function assertStillOffered(page, before, label) {
+    const st = await fieldState(page, 'dob');
+    assert(st.quickValue === before, 'I meant swapped the date on ' + label + ': now "' + st.quickValue + '"', st);
+    assert(/I meant/i.test(st.readback), 'I meant disappeared after ' + label, st);
+    return st;
+  }
 
   async function tapIMeantWhileFocused(page, label) {
     await page.goto(server.url + '/' + TODAY_Q, { waitUntil: 'domcontentloaded' });
@@ -981,6 +1135,57 @@ async function run() {
     });
     await check('A single tap on I meant while the field is focused (Pixel 7)', async () => {
       await tapIMeantWhileFocused(ppage, 'Pixel 7');
+    });
+    await check('A swipe that starts on I meant scrolls and does not swap (Pixel 7)', async () => {
+      const offer = await offerIMeant(ppage, { blurFirst: true });
+      const box = await offer.swap.boundingBox();
+      assert(box, 'I meant button has no box');
+      const x = box.x + box.width / 2, y = box.y + box.height / 2;
+      const beforeY = await ppage.evaluate(() => window.scrollY);
+      const cdp = await ppage.context().newCDPSession(ppage);
+      const steps = 16;
+      const dy = -280;
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y, id: 1 }] });
+      await ppage.waitForTimeout(20);
+      for (let i = 1; i <= steps; i++) {
+        await cdp.send('Input.dispatchTouchEvent', {
+          type: 'touchMove',
+          touchPoints: [{ x, y: y + dy * i / steps, id: 1 }],
+        });
+      }
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+      await cdp.detach();
+      await ppage.waitForTimeout(200);
+      await assertStillOffered(ppage, offer.before, 'swipe starting on I meant');
+      const afterY = await ppage.evaluate(() => window.scrollY);
+      assert(afterY > beforeY + 20, 'a swipe starting on I meant did not scroll the page (scrollY ' + beforeY + ' → ' + afterY + ')');
+    });
+    await check('A long press or drag-off on I meant does not swap (Pixel 7)', async () => {
+      let offer = await offerIMeant(ppage, { blurFirst: true });
+      const box = await offer.swap.boundingBox();
+      const x = box.x + box.width / 2, y = box.y + box.height / 2;
+      const cdp = await ppage.context().newCDPSession(ppage);
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y, id: 1 }] });
+      await ppage.waitForTimeout(900);
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+      await ppage.waitForTimeout(80);
+      await assertStillOffered(ppage, offer.before, 'Pixel 7 long press');
+
+      offer = await offerIMeant(ppage, { blurFirst: true });
+      const box2 = await offer.swap.boundingBox();
+      const x2 = box2.x + box2.width / 2, y2 = box2.y + box2.height / 2;
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: x2, y: y2, id: 1 }] });
+      await ppage.waitForTimeout(20);
+      for (let i = 1; i <= 12; i++) {
+        await cdp.send('Input.dispatchTouchEvent', {
+          type: 'touchMove',
+          touchPoints: [{ x: x2, y: y2 + 16 * i, id: 1 }],
+        });
+      }
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+      await cdp.detach();
+      await ppage.waitForTimeout(80);
+      await assertStillOffered(ppage, offer.before, 'Pixel 7 drag-off');
     });
     await pctx.close();
   }

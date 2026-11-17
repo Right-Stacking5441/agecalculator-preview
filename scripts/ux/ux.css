@@ -296,6 +296,13 @@ details.qa > summary h3 { font-size: 17px; font-weight: 600; margin: 0; }
   min-height: 44px;
 }
 
+/* At very narrow field widths (a 360px phone at 200% zoom) the "I meant" line
+   is a little taller than 22px, so reserve 50px and avoid a 6px jump. */
+@container datefield (max-width: 200px) {
+  .entry:not(.multi) .df-foot .readback { min-height: 50px; }
+}
+
+
 /* The countdown pad's stacked sheets: room for the deepest stack, always, so drawing it can't push the page */
 #leaf.leaf-stack { margin-bottom: 54px !important; }
 /* Widget */

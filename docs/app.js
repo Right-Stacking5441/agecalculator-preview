@@ -110,6 +110,7 @@
     var name = el.getAttribute('data-datefield');
     var quick = el.querySelector('.quick'), parts = [el.querySelector('.p-d'), el.querySelector('.p-m'), el.querySelector('.p-y')];
     var read = el.querySelector('.readback');
+    if (read && read.id) parts.forEach(function (box) { if (box) box.setAttribute('aria-describedby', read.id); });
     var f = { el: el, value: null, status: 'empty', message: '', alt: null };
     var pt = el.querySelector('.parts-toggle'), pbox = el.querySelector('.parts');
     var ptLab = pt && pt.querySelector('span');
@@ -231,21 +232,33 @@
       read.className = cls;
       var sb = read.querySelector('.swap');
       if (sb) {
-        var applied = false;
-        var run = function (e) {
-          if (e && e.type !== 'click') e.preventDefault();
-          if (applied) return;
-          applied = true;
+        var press = null;
+        var keepFocus = function (e) {
+          if (e.button != null && e.button !== 0) return;
+          /* On touch, a compatibility mousedown is often fired just before click,
+             which would wipe the real press time and make a long press look like a tap. */
+          if (e.type !== 'mousedown' || !press) press = { t: Date.now(), x: e.clientX, y: e.clientY };
+          /* Don't preventDefault on touch: that blocks scrolling. Mouse/pen only,
+             so a click can land without pulling focus out of the field. */
+          if (e.pointerType !== 'touch') e.preventDefault();
+        };
+        sb.addEventListener('pointerdown', keepFocus);
+        sb.addEventListener('mousedown', keepFocus);
+        sb.addEventListener('click', function (e) {
+          if (e.button != null && e.button !== 0) return;
+          if (press) {
+            var held = Date.now() - press.t;
+            var moved = Math.abs((e.clientX || 0) - press.x) > 10 || Math.abs((e.clientY || 0) - press.y) > 10;
+            press = null;
+            if (held > 500 || moved) return;
+          }
           setDate(swap, true);
           quick.value = plain(swap);
           f.alt = null;
           show(rb(swap), 'ok');
           go();
-        };
-        sb.addEventListener('touchstart', run, { passive: false });
-        sb.addEventListener('pointerdown', run);
-        sb.addEventListener('mousedown', run);
-        sb.addEventListener('click', run);
+          quick.focus({ preventScroll: true });
+        });
       }
     }
     function markPartValidity(r) {
@@ -524,7 +537,14 @@
     return { state: 'empty', html: body(ph('', msg)) };
   }
   function needs(f) { return !f || !f.value; }
-  function errOf(f, label) { return f && f.el.querySelector('.readback.err') ? notice('Check the ' + label, f.el.querySelector('.readback.err').textContent.replace(/I meant.*/, '')) : null; }
+  function errOf(f, label) {
+    var el = f && f.el.querySelector('.readback.err');
+    if (!el) return null;
+    var msg = el.textContent.replace(/I meant.*/, '').trim();
+    var n = notice('Check the ' + label, msg);
+    if (f.status === 'future' || msg === MSG_FUTURE_DOB) n.say = MSG_FUTURE_DOB;
+    return n;
+  }
   /* Error wins, no result: any field error, including a future date of birth, blocks the result. */
   function blockOnErrors(pairs, emptyOut) {
     var i, err;
@@ -784,15 +804,25 @@
     return nums[nums.length - 1].length >= 4;
   }
   function anyUnstableYear() {
-    var n, f;
+    var n, f, yb, digits;
     for (n in fields) {
       if (!Object.prototype.hasOwnProperty.call(fields, n)) continue;
       f = fields[n];
       if (f && f.el && f.el.contains(document.activeElement) && !yearIsStable(f)) return true;
     }
+    yb = document.getElementById('in-year');
+    if (yb && document.activeElement === yb) {
+      digits = String(yb.value || '').replace(/\D/g, '');
+      if (digits.length < 4) return true;
+    }
     return false;
   }
   var lastHtml = '', liveTimer, moreOpen = false;
+  function setLive(text) {
+    var next = text || '';
+    if (live.textContent === next) return;
+    live.textContent = next;
+  }
   leaf.addEventListener('toggle', function (e) { if (e.target.classList && e.target.classList.contains('more')) moreOpen = e.target.open;
     if (document.body.classList.contains('widget') && window.parent !== window) window.parent.postMessage({ agecalcHeight: document.documentElement.scrollHeight }, '*'); }, true);
   function go() {
@@ -805,8 +835,8 @@
     if (out.html === lastHtml) {
       /* Same leaf: don't rebuild DOM, and don't cancel a pending result announcement. */
       if (out.state === 'result' && out.say) return;
-      if (out.state === 'notice' && say) { if (!liveTimer) live.textContent = say; return; }
-      if (!say && !liveTimer) live.textContent = '';
+      if (out.state === 'notice' && say) { if (!liveTimer) setLive(say); return; }
+      if (!say && !liveTimer) setLive('');
       return;
     }
     var drew = out.state === 'result' && leaf.getAttribute('data-state') !== 'result';
@@ -822,11 +852,11 @@
     if (drew) { var ring = leaf.querySelector('.ring'); if (ring) ring.classList.add('draw'); }
     clearTimeout(liveTimer);
     liveTimer = null;
-    if (!say) live.textContent = '';
-    else if (out.state === 'notice') live.textContent = say;
+    if (!say) setLive('');
+    else if (out.state === 'notice') setLive(say);
     else {
-      if (live.textContent) live.textContent = '';
-      liveTimer = setTimeout(function () { live.textContent = out.say || ''; liveTimer = null; }, 700);
+      if (live.textContent) setLive('');
+      liveTimer = setTimeout(function () { setLive(out.say || ''); liveTimer = null; }, 700);
     }
     tick();
     if (document.body.classList.contains('widget') && window.parent !== window) window.parent.postMessage({ agecalcHeight: document.documentElement.scrollHeight }, '*');
