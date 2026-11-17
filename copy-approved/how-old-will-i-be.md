@@ -27,7 +27,7 @@ Someone born on 15 March 1995 asks how old they will be in 2050.
 - Their birthday in 2050 is Tuesday 15 March.
 - Before that, from 1 January to 14 March 2050, they are still 54.
 
-So they are 54 at the start of 2050 and 55 from 15 March onwards, and they finish the year at 55. Counted from 16 November 2026, that birthday is 8,520 days away.
+So they are 54 at the start of 2050 and 55 from 15 March onwards, and they finish the year at 55. Counted from 16 November 2026, that birthday would be 8,520 days away.
 
 For an exact date, the same person is 44 years, 9 months and 17 days old on 1 January 2040: 44 from their birthday in March 2039, then nine months to 15 December, then 17 days.
 

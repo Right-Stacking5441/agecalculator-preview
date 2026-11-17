@@ -27,11 +27,11 @@ The simple rule of thumb: Korean age is international age plus one if your birth
 
 Take someone born on 20 December 1995. On 16 November 2026 they would have three different ages:
 
-- International age: their 2026 birthday was still a month away, so they would be 30.
+- International age: their 2026 birthday would still be a month away, so they would be 30.
 - Korean age: 2026 minus 1995 is 31, plus 1 for being counted as 1 at birth, so 32.
 - Year age: 2026 minus 1995, so 31.
 
-Their international age goes up to 31 on 20 December 2026, and the other two stay where they are. On 1 January 2027 Korean age goes up to 33 and year age to 32, while international age stays at 31 until 20 December 2027.
+Their international age would go up to 31 on 20 December 2026, and the other two would stay where they are. On 1 January 2027 Korean age would go up to 33 and year age to 32, while international age would stay at 31 until 20 December 2027.
 
 ## What changed in June 2023
 

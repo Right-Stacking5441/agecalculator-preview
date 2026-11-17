@@ -29,7 +29,7 @@ For example, someone born on 15 March 1995 would be 31 years, 8 months and 1 day
 - 15 March to 15 November is 8 whole months.
 - 15 November to 16 November is 1 day.
 
-That was 11,569 days in total. They were born on a Wednesday, and their 32nd birthday, on Monday 15 March 2027, was 119 days away. If the birthday in the year you're checking hasn't come yet, take one off the years and count the months from the birthday the year before.
+That would be 11,569 days in total. They were born on a Wednesday, and their 32nd birthday, on Monday 15 March 2027, would be 119 days away. If the birthday in the year you're checking hasn't come yet, take one off the years and count the months from the birthday the year before.
 
 ## Born on 29 February
 
@@ -37,7 +37,7 @@ That was 11,569 days in total. They were born on a Wednesday, and their 32nd bir
 
 A 29 February birthday only exists in leap years, such as 2024, 2028 and 2032. In the other three years, this calculator counts a 29 February birthday as falling on 1 March, the day after 28 February, and every tool on this site uses that rule. It is the rule written into Scottish law by the [Age of Legal Capacity (Scotland) Act 1991, section 6(2)](https://www.legislation.gov.uk/ukpga/1991/50/section/6). The law in England, Wales and Northern Ireland does not name a date, so if a particular contract or document says something else, go by its wording.
 
-Take someone born on 29 February 2000. There was no 29 February in 2026, so their 26th birthday counted on 1 March 2026. On 16 November 2026 they would be 26 years, 8 months and 18 days old. The whole months are counted on the 29th, the day they were born, so the eighth one after the 26th birthday ends on 29 October 2026, and from 29 October to 16 November is 18 days. Their 27th birthday counts on Monday 1 March 2027. In 2028 it is back on the 29th.
+Take someone born on 29 February 2000. There was no 29 February in 2026, so their 26th birthday would have counted on 1 March 2026. On 16 November 2026 they would be 26 years, 8 months and 18 days old. The whole months are counted on the 29th, the day they were born, so the eighth one after the 26th birthday ends on 29 October 2026, and from 29 October to 16 November is 18 days. Their 27th birthday would count on Monday 1 March 2027. In 2028 it is back on the 29th.
 
 The same rule covers month ends. There is no 31 February, so a month after 31 January is 1 March here. Plenty of people born on a leap day celebrate on 28 February, and that's fine for a party. The calculator just doesn't treat it as the day the age changes.
 

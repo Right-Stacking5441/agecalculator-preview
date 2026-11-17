@@ -170,13 +170,22 @@ async function assertHeadingCentreDismisses(page, url, useTouch, label) {
   await page.goto(url, { waitUntil: 'domcontentloaded' });
   const btn = page.locator('.nav-menu button');
   await tapLocator(page, btn, useTouch);
-  await expectOpen(page, true, label + ' open for heading centre');
+  await expectOpen(page, true, label + ' open for heading dismiss');
   const hit = await page.evaluate(() => {
     const h1 = document.querySelector('h1');
     if (!h1) return { missing: true };
     const r = h1.getBoundingClientRect();
-    const x = r.left + r.width / 2;
+    const panel = document.getElementById('nav-menu-list');
+    const pr = panel ? panel.getBoundingClientRect() : { left: window.innerWidth };
+    const midX = r.left + r.width / 2;
     const y = r.top + Math.min(r.height / 2, 24);
+    // A wider panel may cover the heading centre. Tap the heading (or the
+    // dimmed band) in the real outside area to the left of the panel.
+    let x = midX;
+    if (x >= pr.left - 2) {
+      if (r.left < pr.left - 16) x = Math.min(midX, pr.left - 12);
+      else x = Math.max(12, pr.left - 24);
+    }
     const el = document.elementFromPoint(x, y);
     return {
       x, y,
@@ -184,13 +193,14 @@ async function assertHeadingCentreDismisses(page, url, useTouch, label) {
       cls: el && (el.className && el.className.toString ? el.className.toString() : String(el.className || '')),
       isLink: !!(el && el.closest && el.closest('.nav-menu a, .nav-menu ul')),
       isBack: !!(el && el.classList && el.classList.contains('nav-menu-back')),
+      panelLeft: pr.left,
     };
   });
   assert(!hit.missing, label + ': no h1 on the page', hit);
-  assert(hit.isBack && !hit.isLink, label + ': heading centre is still a menu link', hit);
+  assert(hit.isBack && !hit.isLink, label + ': dismiss target left of the panel is still a menu link', hit);
   if (useTouch) await page.touchscreen.tap(hit.x, hit.y);
   else await page.mouse.click(hit.x, hit.y);
-  await expectOpen(page, false, label + ' heading-centre tap should close the menu');
+  await expectOpen(page, false, label + ' heading dismiss tap should close the menu');
 }
 
 async function assertBackdropIsDimmed(page, useTouch, label) {
@@ -577,6 +587,119 @@ async function run() {
     assert(/open=false/.test(text2), 'debug log did not record open=false: ' + text2);
     const lines = text2.trim().split('\n');
     assert(lines.length <= 15, 'debug log grew past 15 lines', { n: lines.length });
+    await ctx.close();
+  });
+
+  await check('menu labels do not wrap at 375, 390 or 700, and the phone border stays visible', async () => {
+    const cases = [
+      { width: 375, height: 667, allowWrap: 0 },
+      { width: 390, height: 844, allowWrap: 0 },
+      { width: 700, height: 800, allowWrap: 0 },
+      { width: 320, height: 568, allowWrap: 0 },
+    ];
+    for (const c of cases) {
+      const ctx = await wk.newContext({ viewport: { width: c.width, height: c.height }, hasTouch: true });
+      const page = await ctx.newPage();
+      await page.goto(server.url + '/difference/', { waitUntil: 'domcontentloaded' });
+      await tapLocator(page, page.locator('.nav-menu button'), true);
+      await expectOpen(page, true, 'wrap ' + c.width + ' open');
+      const info = await page.evaluate(() => {
+        const ul = document.getElementById('nav-menu-list');
+        const ur = ul.getBoundingClientRect();
+        const wraps = [...ul.querySelectorAll('a')].filter((a) => a.getBoundingClientRect().height > 50).map((a) => a.textContent.trim());
+        const cs = getComputedStyle(ul);
+        const mask = (cs.webkitMaskImage || cs.maskImage || 'none');
+        return {
+          wraps,
+          left: ur.left,
+          width: ur.width,
+          mask,
+          borderBottom: cs.borderBottomWidth,
+          borderColor: cs.borderBottomColor,
+          spaceLeft: ur.left,
+        };
+      });
+      assert(info.wraps.length <= c.allowWrap, 'wraps at ' + c.width + 'px: ' + info.wraps.join(', '), info);
+      assert(info.spaceLeft >= 96, 'no outside tap area left of the panel at ' + c.width, info);
+      if (c.width <= 390) {
+        const maskOff = !info.mask || info.mask === 'none' || info.mask === 'none, none';
+        assert(maskOff, 'phone fade still uses a mask that hides the border at ' + c.width, info);
+        const bw = parseFloat(info.borderBottom);
+        assert(bw >= 1, 'panel bottom border missing at ' + c.width, info);
+      }
+      await ctx.close();
+    }
+  });
+
+  await check('if the menu enhancer is blocked, the links stay visible', async () => {
+    const ctx = await wk.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true });
+    const page = await ctx.newPage();
+    await page.route('**/*', async (route) => {
+      const req = route.request();
+      if (req.resourceType() !== 'document') return route.continue();
+      const res = await route.fetch();
+      let body = await res.text();
+      body = body.replace('menu.classList.add(\x27is-enhanced\x27);', 'return;');
+      body = body.replace("menu.classList.add('is-enhanced');", 'return;');
+      return route.fulfill({ response: res, body });
+    });
+    await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(3500);
+    const info = await page.evaluate(() => {
+      const list = document.getElementById('nav-menu-list');
+      const cs = list ? getComputedStyle(list) : null;
+      const links = list ? [...list.querySelectorAll('a')].filter((a) => {
+        const r = a.getBoundingClientRect();
+        return r.width > 0 && r.height > 0;
+      }) : [];
+      return {
+        ready: document.querySelector('.nav-menu') && document.querySelector('.nav-menu').getAttribute('data-menu-ready'),
+        hidden: !!(list && list.hasAttribute('hidden')),
+        display: cs && cs.display,
+        visibility: cs && cs.visibility,
+        visibleLinks: links.length,
+        hasButton: !!document.querySelector('.nav-menu button[aria-controls]'),
+        hasJs: document.documentElement.classList.contains('js'),
+      };
+    });
+    assert(info.visibleLinks >= 10, 'blocked enhancer hid the menu links', info);
+    assert(!info.hidden && info.display !== 'none' && info.visibility !== 'hidden', 'blocked enhancer left the list hidden', info);
+    await ctx.close();
+  });
+
+  await check('if the menu enhancer throws, the links stay visible', async () => {
+    const ctx = await wk.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true });
+    const page = await ctx.newPage();
+    await page.route('**/*', async (route) => {
+      const req = route.request();
+      if (req.resourceType() !== 'document') return route.continue();
+      const res = await route.fetch();
+      let body = await res.text();
+      const boom = "menu.classList.add('is-enhanced'); throw new Error('menu enhancer failed');";
+      body = body.replace("menu.classList.add('is-enhanced');", boom);
+      return route.fulfill({ response: res, body });
+    });
+    await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(200);
+    const info = await page.evaluate(() => {
+      const list = document.getElementById('nav-menu-list');
+      const cs = list ? getComputedStyle(list) : null;
+      const links = list ? [...list.querySelectorAll('a')].filter((a) => {
+        const r = a.getBoundingClientRect();
+        return r.width > 0 && r.height > 0;
+      }) : [];
+      return {
+        ready: document.querySelector('.nav-menu') && document.querySelector('.nav-menu').getAttribute('data-menu-ready'),
+        hidden: !!(list && list.hasAttribute('hidden')),
+        display: cs && cs.display,
+        visibility: cs && cs.visibility,
+        visibleLinks: links.length,
+        hasButton: !!document.querySelector('.nav-menu button[aria-controls]'),
+        hasJs: document.documentElement.classList.contains('js'),
+      };
+    });
+    assert(info.visibleLinks >= 10, 'thrown enhancer hid the menu links', info);
+    assert(!info.hidden && info.display !== 'none' && info.visibility !== 'hidden', 'thrown enhancer left the list hidden', info);
     await ctx.close();
   });
 

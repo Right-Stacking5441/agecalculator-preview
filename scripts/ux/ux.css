@@ -54,17 +54,17 @@ html:not(.js) .nav-menu ul { justify-content: flex-start; }
   z-index: 5;
   padding: var(--s1) 0 22px;
   width: 200px;
-  max-width: min(200px, calc(50vw - 24px), calc(100vw - 48px));
+  /* 200px fits every label on one line. 100vw-120px keeps a real
+     outside tap strip to the left of the panel on a 320px phone. */
+  max-width: min(200px, calc(100vw - 120px));
   max-height: min(52vh, 360px);
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   background: var(--paper);
   border: 1.5px solid var(--ink);
-  box-shadow: 4px 4px 0 -1.5px var(--paper), 4px 4px 0 0 var(--ink);
+  /* Inset fade sits inside the scroll box so the bottom border stays visible. */
+  box-shadow: 4px 4px 0 -1.5px var(--paper), 4px 4px 0 0 var(--ink), inset 0 -22px 16px -6px var(--paper);
   box-sizing: border-box;
-  /* Bottom fade as a cue when the list scrolls. */
-  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 22px), transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 22px), transparent 100%);
 }
 .nav-menu.is-enhanced li a {
   padding: 6px 10px;
@@ -74,17 +74,17 @@ html:not(.js) .nav-menu ul { justify-content: flex-start; }
   align-items: center;
 }
 @media (min-width: 700px) {
-  /* Two columns once the panel can sit wholly to the right of the heading centre. */
+  /* Two wider columns so no label wraps and the rows stay even. */
   .nav-menu.is-enhanced ul {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    width: 280px;
-    max-width: min(280px, calc(50vw - 24px));
+    column-gap: 8px;
+    width: 380px;
+    max-width: min(380px, calc(100vw - 120px));
     max-height: none;
     overflow: visible;
     padding-bottom: var(--s1);
-    -webkit-mask-image: none;
-    mask-image: none;
+    box-shadow: 4px 4px 0 -1.5px var(--paper), 4px 4px 0 0 var(--ink);
   }
 }
 @media (hover: hover) {

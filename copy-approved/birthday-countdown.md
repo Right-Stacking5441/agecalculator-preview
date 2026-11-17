@@ -29,11 +29,11 @@ For example, on Monday 16 November 2026, someone born on 15 March 1995 would hav
 - December: 31. January: 31. February 2027: 28, because 2027 isn't a leap year.
 - Days in March up to the 15th: 15.
 
-14 + 31 + 31 + 28 + 15 = 119 days, which is exactly 17 weeks. That birthday falls on Monday 15 March 2027, when they turn 32, so it isn't a weekend birthday.
+14 + 31 + 31 + 28 + 15 = 119 days, which is exactly 17 weeks. That birthday would fall on Monday 15 March 2027, when they would turn 32, so it wouldn't be a weekend birthday.
 
 ## Born on 29 February
 
-Born on 29 February? In years without one, the countdown runs to 1 March, and a note on the result says so ([here's why](/#born-on-29-february)). On 16 November 2026, someone born on 29 February 2008 would have 105 days to go, to Monday 1 March 2027, when they turn 19. In 2028 the countdown runs to 29 February itself. This is the same rule the main [age calculator](/) uses, so the two pages always agree on the date.
+Born on 29 February? In years without one, the countdown runs to 1 March, and a note on the result says so ([here's why](/#born-on-29-february)). On 16 November 2026, someone born on 29 February 2008 would have 105 days to go, to Monday 1 March 2027, when they would turn 19. In 2028 the countdown runs to 29 February itself. This is the same rule the main [age calculator](/) uses, so the two pages always agree on the date.
 
 ## Counting down for someone else
 

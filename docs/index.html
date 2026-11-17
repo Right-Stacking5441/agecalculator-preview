@@ -7,7 +7,28 @@
 <meta content="noindex,nofollow" name="robots"/>
 <title>Age calculator: How old am I?</title>
 <meta content="Type a date of birth, like 15 March 1995 or 15/03/1995, and get your exact age in years, months and days, today or on any date. Leap days included." name="description"/>
-<script>document.documentElement.classList.add('js');</script><link href="https://agecalculator.com/" rel="canonical"/>
+<script>document.documentElement.classList.add('js');
+(function () {
+  function failsafe() {
+    var menu = document.querySelector('.nav-menu');
+    if (!menu) return;
+    if (menu.getAttribute('data-menu-ready') === '1') return;
+    document.documentElement.classList.remove('js');
+    menu.classList.remove('is-enhanced');
+    var list = document.getElementById('nav-menu-list');
+    if (list) list.removeAttribute('hidden');
+    var btn = menu.querySelector('button[aria-controls]');
+    if (btn && btn.parentNode) btn.parentNode.removeChild(btn);
+    var back = document.querySelector('.nav-menu-back');
+    if (back && back.parentNode) back.parentNode.removeChild(back);
+  }
+  function start() { setTimeout(failsafe, 3000); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+  window.addEventListener('load', start);
+  window.agecalcMenuFailsafe = failsafe;
+})();
+</script><link href="https://agecalculator.com/" rel="canonical"/>
 <meta content="Age calculator: How old am I?" property="og:title"/>
 <meta content="Type a date of birth, like 15 March 1995 or 15/03/1995, and get your exact age in years, months and days, today or on any date. Leap days included." property="og:description"/>
 <meta content="https://agecalculator.com/" property="og:url"/>
@@ -35,7 +56,7 @@
 }
 </script>
 <script>var q=location.search;if(/[?&](dob|a|b|start|end|test|on|year)=/.test(q))document.documentElement.classList.add('prefill');if(/[?&]year=/.test(q))document.documentElement.classList.add('prefill-year');if(/[?&](on|year)=/.test(q))document.documentElement.classList.add('prefill-on')</script>
-<link href="ux.css?v=b6ef7da8b8" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript></head>
+<link href="ux.css?v=7b6608425e" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript></head>
 <body data-page="home">
 <aside aria-label="Preview notice" class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</aside>
 <a class="skip" href="#tool">Skip to the calculator</a>
@@ -95,11 +116,11 @@
 <details class="topic"><summary><h2>Working it out by hand: 15 March 1995</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>For example, someone born on 15 March 1995 would be 31 years, 8 months and 1 day old on 16 November 2026. On paper:</p>
 <ul><li>2026 minus 1995 is 31, and their birthday on 15 March 2026 had already passed, so 31 completed years.</li><li>15 March to 15 November is 8 whole months.</li><li>15 November to 16 November is 1 day.</li></ul>
-<p>That was 11,569 days in total. They were born on a Wednesday, and their 32nd birthday, on Monday 15 March 2027, was 119 days away. If the birthday in the year you’re checking hasn’t come yet, take one off the years and count the months from the birthday the year before.</p>
+<p>That would be 11,569 days in total. They were born on a Wednesday, and their 32nd birthday, on Monday 15 March 2027, would be 119 days away. If the birthday in the year you’re checking hasn’t come yet, take one off the years and count the months from the birthday the year before.</p>
 </div></details>
 <details class="topic" id="born-on-29-february"><summary><h2>Born on 29 February</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>A 29 February birthday only exists in leap years, such as 2024, 2028 and 2032. In the other three years, this calculator counts a 29 February birthday as falling on 1 March, the day after 28 February, and every tool on this site uses that rule. It is the rule written into Scottish law by the <a href="https://www.legislation.gov.uk/ukpga/1991/50/section/6">Age of Legal Capacity (Scotland) Act 1991, section 6(2)</a>. The law in England, Wales and Northern Ireland does not name a date, so if a particular contract or document says something else, go by its wording.</p>
-<p>Take someone born on 29 February 2000. There was no 29 February in 2026, so their 26th birthday counted on 1 March 2026. On 16 November 2026 they would be 26 years, 8 months and 18 days old. The whole months are counted on the 29th, the day they were born, so the eighth one after the 26th birthday ends on 29 October 2026, and from 29 October to 16 November is 18 days. Their 27th birthday counts on Monday 1 March 2027. In 2028 it is back on the 29th.</p>
+<p>Take someone born on 29 February 2000. There was no 29 February in 2026, so their 26th birthday would have counted on 1 March 2026. On 16 November 2026 they would be 26 years, 8 months and 18 days old. The whole months are counted on the 29th, the day they were born, so the eighth one after the 26th birthday ends on 29 October 2026, and from 29 October to 16 November is 18 days. Their 27th birthday would count on Monday 1 March 2027. In 2028 it is back on the 29th.</p>
 <p>The same rule covers month ends. There is no 31 February, so a month after 31 January is 1 March here. Plenty of people born on a leap day celebrate on 28 February, and that’s fine for a party. The calculator just doesn’t treat it as the day the age changes.</p>
 <figure class="diagram"><svg aria-labelledby="leap-t" role="img" viewbox="0 0 640 170"><title id="leap-t">In 2026 the 29 February birthday counts on 1 March; in 2028 it falls on 29 February.</title>
 <style>.lbl{font:700 17px "Libre Franklin",Arial,sans-serif;fill:#1c1c1a}.cell{fill:#fff;stroke:#1c1c1a;stroke-width:1.5}.d{font:700 18px "Libre Franklin",Arial,sans-serif;text-anchor:middle;fill:#1c1c1a}.m{font:500 11px "Libre Franklin",Arial,sans-serif;text-anchor:middle;fill:#66655e;letter-spacing:.05em}.perf{stroke:#9b9a92;stroke-width:1.5;stroke-dasharray:3 3}.ringp{fill:none;stroke:#b4231b;stroke-width:1.8;stroke-linecap:round}.note{font:700 15px "Libre Franklin",Arial,sans-serif;fill:#b4231b}.note2{font:400 14px "Libre Franklin",Arial,sans-serif;fill:#45443f}</style>
@@ -155,6 +176,7 @@
 <script defer="" src="app.js?v=53f820a449"></script>
 <script>
 (function(){
+  try {
   var menu = document.querySelector('.nav-menu');
   if (!menu) return;
   var list = menu.querySelector('ul');
@@ -272,6 +294,10 @@
     if (e.persisted) setOpen(false);
   });
   window.addEventListener('popstate', function () { setOpen(false); });
+  menu.setAttribute('data-menu-ready', '1');
+  } catch (err) {
+    if (typeof window.agecalcMenuFailsafe === 'function') window.agecalcMenuFailsafe();
+  }
 })();
 
 (function(){

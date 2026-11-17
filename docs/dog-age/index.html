@@ -7,7 +7,28 @@
 <meta content="noindex,nofollow" name="robots"/>
 <title>Dog age calculator: Dog years by size</title>
 <meta content="Convert your dog’s age to human years by adult size, using the AAHA-published chart, with the 2020 DNA-clock estimate alongside. No times seven." name="description"/>
-<script>document.documentElement.classList.add('js');</script><link href="https://agecalculator.com/dog-age/" rel="canonical"/>
+<script>document.documentElement.classList.add('js');
+(function () {
+  function failsafe() {
+    var menu = document.querySelector('.nav-menu');
+    if (!menu) return;
+    if (menu.getAttribute('data-menu-ready') === '1') return;
+    document.documentElement.classList.remove('js');
+    menu.classList.remove('is-enhanced');
+    var list = document.getElementById('nav-menu-list');
+    if (list) list.removeAttribute('hidden');
+    var btn = menu.querySelector('button[aria-controls]');
+    if (btn && btn.parentNode) btn.parentNode.removeChild(btn);
+    var back = document.querySelector('.nav-menu-back');
+    if (back && back.parentNode) back.parentNode.removeChild(back);
+  }
+  function start() { setTimeout(failsafe, 3000); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+  window.addEventListener('load', start);
+  window.agecalcMenuFailsafe = failsafe;
+})();
+</script><link href="https://agecalculator.com/dog-age/" rel="canonical"/>
 <meta content="Dog age calculator: Dog years by size" property="og:title"/>
 <meta content="Convert your dog’s age to human years by adult size, using the AAHA-published chart, with the 2020 DNA-clock estimate alongside. No times seven." property="og:description"/>
 <meta content="https://agecalculator.com/dog-age/" property="og:url"/>
@@ -35,7 +56,7 @@
 }
 </script>
 <script>var q=location.search;if(/[?&](dob|a|b|start|end|test|on|year)=/.test(q))document.documentElement.classList.add('prefill');if(/[?&]year=/.test(q))document.documentElement.classList.add('prefill-year');if(/[?&](on|year)=/.test(q))document.documentElement.classList.add('prefill-on')</script>
-<link href="../ux.css?v=b6ef7da8b8" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript></head>
+<link href="../ux.css?v=7b6608425e" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript></head>
 <body data-page="dog-age">
 <aside aria-label="Preview notice" class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</aside>
 <a class="skip" href="#tool">Skip to the calculator</a>
@@ -61,7 +82,7 @@
 <p>The figures come from the <a href="https://www.aaha.org/wp-content/uploads/globalassets/02-guidelines/canine-life-stage-2019/canine_and_feline_age_chart_poster.pdf">pet age chart published on the American Animal Hospital Association website</a>. The chart is a Zoetis poster, and its dog figures are adapted from the Dog Owner’s Home Veterinary Handbook. Every dog counts as 15 at one year old and 24 at two. After that the sizes split. The weight bands below are the poster’s own, which prints both pounds and kilograms:</p>
 <table class="chart"><thead><tr><th>Dog’s age</th><th>Small, up to 9.07 kg (20 lb)</th><th>Medium, 9.52 to 22.7 kg (21 to 50 lb)</th><th>Large, 23.1 to 40.8 kg (51 to 90 lb)</th><th>Giant, over 40.8 kg (90 lb)</th></tr></thead><tbody><tr><td>3</td><td>28</td><td>28</td><td>30</td><td>32</td></tr><tr><td>5</td><td>36</td><td>37</td><td>40</td><td>42</td></tr><tr><td>7</td><td>44</td><td>47</td><td>50</td><td>56</td></tr><tr><td>10</td><td>56</td><td>60</td><td>66</td><td>78</td></tr><tr><td>12</td><td>64</td><td>69</td><td>77</td><td>93</td></tr><tr><td>15</td><td>76</td><td>83</td><td>93</td><td>115</td></tr></tbody></table>
 <p>Small dogs add 4 human years for each year after two. Medium dogs add 4 or 5 a year, and large dogs 5 or 6. Giant breeds add 7 or 8 a year from about age six.</p>
-<p>The calculator gives the chart figure for whole years and reads in a straight line between two printed ages for anything in between. The chart prints whole years only. Reading in a straight line between them is this site’s own method, not the chart’s. So a large dog of 7 years and 6 months comes out at 53 (halfway between 50 and 55, rounded to the nearest year). Dogs under 1 year aren’t shown, because the chart starts at 1. Giant dogs stop at 16 years and the other sizes stop at 20, because that is where the chart ends. The calculator doesn’t make up figures beyond it.</p>
+<p>The calculator gives the chart figure for whole years and reads in a straight line between two printed ages for anything in between. The chart prints whole years only. Reading in a straight line between them is this site’s own method, not the chart’s. So a large dog of 7 years and 6 months comes out at 53 (halfway between 50 at 7 years and 55 at 8, rounded to the nearest year). The table above skips some of the chart years, so the next printed row after 7 is 10, at 66 for a large dog. Dogs under 1 year aren’t shown, because the chart starts at 1. Giant dogs stop at 16 years and the other sizes stop at 20, because that is where the chart ends. The calculator doesn’t make up figures beyond it.</p>
 <p>Pick the size by the weight your dog is, or will be, as an adult. As a rough guide, a Border Collie is medium or large (14 to 25 kg, or 30 to 55 lb, according to the <a href="https://www.akc.org/dog-breeds/border-collie/">American Kennel Club</a>), a Labrador large and a Great Dane giant. Crossbreeds go by adult weight. The calculator asks you to choose a size rather than type a weight. If your dog falls between two bands, say 9.3 kg (20.5 lb), the chart doesn’t cover it, so pick the nearer size.</p>
 </div></details>
 <details class="topic"><summary><h2>A 7-year-old Labrador</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
@@ -87,6 +108,7 @@
 <script defer="" src="../app.js?v=53f820a449"></script>
 <script>
 (function(){
+  try {
   var menu = document.querySelector('.nav-menu');
   if (!menu) return;
   var list = menu.querySelector('ul');
@@ -204,6 +226,10 @@
     if (e.persisted) setOpen(false);
   });
   window.addEventListener('popstate', function () { setOpen(false); });
+  menu.setAttribute('data-menu-ready', '1');
+  } catch (err) {
+    if (typeof window.agecalcMenuFailsafe === 'function') window.agecalcMenuFailsafe();
+  }
 })();
 
 (function(){

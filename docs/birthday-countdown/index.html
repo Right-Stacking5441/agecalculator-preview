@@ -7,7 +7,28 @@
 <meta content="noindex,nofollow" name="robots"/>
 <title>Birthday countdown: Days until your next birthday</title>
 <meta content="Type a date of birth to see how many days until the next birthday, the weekday it falls on, the age it brings, and a clock to midnight tonight." name="description"/>
-<script>document.documentElement.classList.add('js');</script><link href="https://agecalculator.com/birthday-countdown/" rel="canonical"/>
+<script>document.documentElement.classList.add('js');
+(function () {
+  function failsafe() {
+    var menu = document.querySelector('.nav-menu');
+    if (!menu) return;
+    if (menu.getAttribute('data-menu-ready') === '1') return;
+    document.documentElement.classList.remove('js');
+    menu.classList.remove('is-enhanced');
+    var list = document.getElementById('nav-menu-list');
+    if (list) list.removeAttribute('hidden');
+    var btn = menu.querySelector('button[aria-controls]');
+    if (btn && btn.parentNode) btn.parentNode.removeChild(btn);
+    var back = document.querySelector('.nav-menu-back');
+    if (back && back.parentNode) back.parentNode.removeChild(back);
+  }
+  function start() { setTimeout(failsafe, 3000); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+  window.addEventListener('load', start);
+  window.agecalcMenuFailsafe = failsafe;
+})();
+</script><link href="https://agecalculator.com/birthday-countdown/" rel="canonical"/>
 <meta content="Birthday countdown: Days until your next birthday" property="og:title"/>
 <meta content="Type a date of birth to see how many days until the next birthday, the weekday it falls on, the age it brings, and a clock to midnight tonight." property="og:description"/>
 <meta content="https://agecalculator.com/birthday-countdown/" property="og:url"/>
@@ -35,7 +56,7 @@
 }
 </script>
 <script>var q=location.search;if(/[?&](dob|a|b|start|end|test|on|year)=/.test(q))document.documentElement.classList.add('prefill');if(/[?&]year=/.test(q))document.documentElement.classList.add('prefill-year');if(/[?&](on|year)=/.test(q))document.documentElement.classList.add('prefill-on')</script>
-<link href="../ux.css?v=b6ef7da8b8" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript></head>
+<link href="../ux.css?v=7b6608425e" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript></head>
 <body data-page="birthday-countdown">
 <aside aria-label="Preview notice" class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</aside>
 <a class="skip" href="#tool">Skip to the calculator</a>
@@ -69,10 +90,10 @@
 <details class="topic"><summary><h2>From 16 November to 15 March</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>For example, on Monday 16 November 2026, someone born on 15 March 1995 would have 119 days to go until their next birthday. Counted out:</p>
 <ul><li>Days left in November after the 16th: 14.</li><li>December: 31. January: 31. February 2027: 28, because 2027 isn’t a leap year.</li><li>Days in March up to the 15th: 15.</li></ul>
-<p>14 + 31 + 31 + 28 + 15 = 119 days, which is exactly 17 weeks. That birthday falls on Monday 15 March 2027, when they turn 32, so it isn’t a weekend birthday.</p>
+<p>14 + 31 + 31 + 28 + 15 = 119 days, which is exactly 17 weeks. That birthday would fall on Monday 15 March 2027, when they would turn 32, so it wouldn’t be a weekend birthday.</p>
 </div></details>
 <details class="topic"><summary><h2>Born on 29 February</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
-<p>Born on 29 February? In years without one, the countdown runs to 1 March, and a note on the result says so (<a href="../#born-on-29-february">here’s why</a>). On 16 November 2026, someone born on 29 February 2008 would have 105 days to go, to Monday 1 March 2027, when they turn 19. In 2028 the countdown runs to 29 February itself. This is the same rule the main <a href="../">age calculator</a> uses, so the two pages always agree on the date.</p>
+<p>Born on 29 February? In years without one, the countdown runs to 1 March, and a note on the result says so (<a href="../#born-on-29-february">here’s why</a>). On 16 November 2026, someone born on 29 February 2008 would have 105 days to go, to Monday 1 March 2027, when they would turn 19. In 2028 the countdown runs to 29 February itself. This is the same rule the main <a href="../">age calculator</a> uses, so the two pages always agree on the date.</p>
 </div></details>
 <details class="topic"><summary><h2>Counting down for someone else</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>Type their date of birth instead of yours. The result shows the age they’re turning, which is handy for the number on the card or the candles, and the weekday, which helps when you’re planning a party around it. If you want the gap between your age and theirs rather than a countdown, the <a href="../difference/">age difference calculator</a> does that.</p>
@@ -91,6 +112,7 @@
 <script defer="" src="../app.js?v=53f820a449"></script>
 <script>
 (function(){
+  try {
   var menu = document.querySelector('.nav-menu');
   if (!menu) return;
   var list = menu.querySelector('ul');
@@ -208,6 +230,10 @@
     if (e.persisted) setOpen(false);
   });
   window.addEventListener('popstate', function () { setOpen(false); });
+  menu.setAttribute('data-menu-ready', '1');
+  } catch (err) {
+    if (typeof window.agecalcMenuFailsafe === 'function') window.agecalcMenuFailsafe();
+  }
 })();
 
 (function(){

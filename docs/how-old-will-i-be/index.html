@@ -7,7 +7,28 @@
 <meta content="noindex,nofollow" name="robots"/>
 <title>How old will I be? Your age in any future year</title>
 <meta content="Find out how old you’ll be in 2030, 2050 or any year, and the date you turn that age. Or choose an exact future date for years, months and days." name="description"/>
-<script>document.documentElement.classList.add('js');</script><link href="https://agecalculator.com/how-old-will-i-be/" rel="canonical"/>
+<script>document.documentElement.classList.add('js');
+(function () {
+  function failsafe() {
+    var menu = document.querySelector('.nav-menu');
+    if (!menu) return;
+    if (menu.getAttribute('data-menu-ready') === '1') return;
+    document.documentElement.classList.remove('js');
+    menu.classList.remove('is-enhanced');
+    var list = document.getElementById('nav-menu-list');
+    if (list) list.removeAttribute('hidden');
+    var btn = menu.querySelector('button[aria-controls]');
+    if (btn && btn.parentNode) btn.parentNode.removeChild(btn);
+    var back = document.querySelector('.nav-menu-back');
+    if (back && back.parentNode) back.parentNode.removeChild(back);
+  }
+  function start() { setTimeout(failsafe, 3000); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+  window.addEventListener('load', start);
+  window.agecalcMenuFailsafe = failsafe;
+})();
+</script><link href="https://agecalculator.com/how-old-will-i-be/" rel="canonical"/>
 <meta content="How old will I be? Your age in any future year" property="og:title"/>
 <meta content="Find out how old you’ll be in 2030, 2050 or any year, and the date you turn that age. Or choose an exact future date for years, months and days." property="og:description"/>
 <meta content="https://agecalculator.com/how-old-will-i-be/" property="og:url"/>
@@ -35,7 +56,7 @@
 }
 </script>
 <script>var q=location.search;if(/[?&](dob|a|b|start|end|test|on|year)=/.test(q))document.documentElement.classList.add('prefill');if(/[?&]year=/.test(q))document.documentElement.classList.add('prefill-year');if(/[?&](on|year)=/.test(q))document.documentElement.classList.add('prefill-on')</script>
-<link href="../ux.css?v=b6ef7da8b8" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript></head>
+<link href="../ux.css?v=7b6608425e" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript></head>
 <body data-page="how-old-will-i-be">
 <aside aria-label="Preview notice" class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</aside>
 <a class="skip" href="#tool">Skip to the calculator</a>
@@ -82,7 +103,7 @@
 <details class="topic"><summary><h2>Born in 1995, looking at 2050</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>Someone born on 15 March 1995 asks how old they will be in 2050.</p>
 <ul><li>2050 minus 1995 is 55. That is the age they reach on their birthday that year.</li><li>Their birthday in 2050 is Tuesday 15 March.</li><li>Before that, from 1 January to 14 March 2050, they are still 54.</li></ul>
-<p>So they are 54 at the start of 2050 and 55 from 15 March onwards, and they finish the year at 55. Counted from 16 November 2026, that birthday is 8,520 days away.</p>
+<p>So they are 54 at the start of 2050 and 55 from 15 March onwards, and they finish the year at 55. Counted from 16 November 2026, that birthday would be 8,520 days away.</p>
 <p>For an exact date, the same person is 44 years, 9 months and 17 days old on 1 January 2040: 44 from their birthday in March 2039, then nine months to 15 December, then 17 days.</p>
 </div></details>
 <details class="topic"><summary><h2>Born on 29 February</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
@@ -103,6 +124,7 @@
 <script defer="" src="../app.js?v=53f820a449"></script>
 <script>
 (function(){
+  try {
   var menu = document.querySelector('.nav-menu');
   if (!menu) return;
   var list = menu.querySelector('ul');
@@ -220,6 +242,10 @@
     if (e.persisted) setOpen(false);
   });
   window.addEventListener('popstate', function () { setOpen(false); });
+  menu.setAttribute('data-menu-ready', '1');
+  } catch (err) {
+    if (typeof window.agecalcMenuFailsafe === 'function') window.agecalcMenuFailsafe();
+  }
 })();
 
 (function(){

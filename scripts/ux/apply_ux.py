@@ -354,6 +354,7 @@ def nav_from_home(docs: Path):
 
 NAV_MENU = """<script>
 (function(){
+  try {
   var menu = document.querySelector('.nav-menu');
   if (!menu) return;
   var list = menu.querySelector('ul');
@@ -471,6 +472,10 @@ NAV_MENU = """<script>
     if (e.persisted) setOpen(false);
   });
   window.addEventListener('popstate', function () { setOpen(false); });
+  menu.setAttribute('data-menu-ready', '1');
+  } catch (err) {
+    if (typeof window.agecalcMenuFailsafe === 'function') window.agecalcMenuFailsafe();
+  }
 })();
 
 (function(){
@@ -492,7 +497,31 @@ NAV_MENU = """<script>
 
 # No backslash escapes in this snippet, so the HTML pipeline cannot mangle it.
 JS_FLAG_SRC = "document.documentElement.classList.add('js')"
-JS_FLAG = "<script>document.documentElement.classList.add('js');</script>"
+# Fail-safe lives in the head, separate from the footer enhancer: if the
+# enhancer is blocked or throws, this still runs and shows the inline list.
+# No backslash escapes, so the HTML pipeline cannot mangle it.
+JS_FLAG = """<script>document.documentElement.classList.add('js');
+(function () {
+  function failsafe() {
+    var menu = document.querySelector('.nav-menu');
+    if (!menu) return;
+    if (menu.getAttribute('data-menu-ready') === '1') return;
+    document.documentElement.classList.remove('js');
+    menu.classList.remove('is-enhanced');
+    var list = document.getElementById('nav-menu-list');
+    if (list) list.removeAttribute('hidden');
+    var btn = menu.querySelector('button[aria-controls]');
+    if (btn && btn.parentNode) btn.parentNode.removeChild(btn);
+    var back = document.querySelector('.nav-menu-back');
+    if (back && back.parentNode) back.parentNode.removeChild(back);
+  }
+  function start() { setTimeout(failsafe, 3000); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+  window.addEventListener('load', start);
+  window.agecalcMenuFailsafe = failsafe;
+})();
+</script>"""
 
 
 def ensure_js_flag(soup):
@@ -526,8 +555,13 @@ def ensure_js_flag(soup):
 def ensure_nav_menu(soup):
     if not soup.body:
         return
-    for sc in list(soup.find_all("script")):
-        if sc.string and ("is-enhanced" in sc.string and "nav-menu-list" in sc.string or "details.nav-menu" in sc.string):
+    # Only remove a previous enhancer (it adds is-enhanced). The head fail-safe
+    # also mentions is-enhanced and nav-menu-list, but never adds the class.
+    for sc in list((soup.body or soup).find_all("script")):
+        if sc.string and (
+            "classList.add('is-enhanced')" in sc.string and "nav-menu-list" in sc.string
+            or "details.nav-menu" in sc.string
+        ):
             sc.decompose()
     soup.body.append(frag(NAV_MENU))
 
