@@ -4,7 +4,7 @@
     "index": {
       "intro": "This works out your exact age today from your date of birth, in years, months and days, and how long it is until your next birthday.",
       "howto": "What the result shows",
-      "faq": "Leap birthdays and other awkward dates",
+      "faq": "More on how it works",
       "label": {
         "dob": "Enter your date of birth"
       }

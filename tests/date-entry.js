@@ -402,7 +402,7 @@ async function run() {
 
 
   await check('Field area height stays stable at 360, 393, 412 and 1280', async () => {
-    const widths = [360, 393, 412, 1280];
+    const widths = [320, 360, 393, 412, 768, 1280];
     const paths = ['/', '/korean-age/', '/how-old-will-i-be/', '/birthday-countdown/'];
     const longError = 'abc';
     const longMessage = INVALID_ERRORS[longError];
@@ -428,6 +428,20 @@ async function run() {
       }
     }
     await page.setViewportSize({ width: 1280, height: 800 });
+    await page.evaluate(() => { document.documentElement.style.zoom = '2'; });
+    for (const path of paths) {
+      await page.goto(server.url + path, { waitUntil: 'domcontentloaded' });
+      const empty = await fieldAreaProbes(page);
+      await typeQuick(page, 'dob', longError);
+      await blurQuick(page, 'dob');
+      await page.waitForTimeout(80);
+      assertNoJump(empty, await fieldAreaProbes(page), 'long error on ' + path + ' at 1280px and 200% zoom');
+      await typeQuick(page, 'dob', valid);
+      await blurQuick(page, 'dob');
+      await page.waitForTimeout(80);
+      assertNoJump(empty, await fieldAreaProbes(page), 'readback on ' + path + ' at 1280px and 200% zoom');
+    }
+    await page.evaluate(() => { document.documentElement.style.zoom = ''; });
   });
 
   await check('Partial box input (18//1999) survives close and reopen', async () => {
@@ -619,9 +633,9 @@ async function run() {
 
   const TODAY_Q = '?today=16%20November%202026';
 
-  await check('Future date of birth: field error, no result, nothing announced', async () => {
+  await check('Future date of birth: field error, no result, error announced', async () => {
     const MSG = 'That date hasn’t happened yet. Check the year.';
-    for (const path of ['/', '/how-old-will-i-be/', '/past/']) {
+    for (const path of ['/', '/how-old-will-i-be/', '/past/', '/korean-age/', '/birthday-countdown/']) {
       await page.goto(server.url + path + TODAY_Q, { waitUntil: 'domcontentloaded' });
       await typeQuick(page, 'dob', '1 January 2030');
       await blurQuick(page, 'dob');
@@ -641,9 +655,11 @@ async function run() {
         };
       });
       assert(leaf.state !== 'result', 'a future DOB still produced a result on ' + path, leaf);
-      assert(!/\d+\s+years?\s+old/i.test(leaf.text) && !/\b\d+\s+years\b/i.test(leaf.text + ' ' + leaf.live),
+      assert(!/\d+\s+years?\s+old/i.test(leaf.text) && !/\b\d+\s+years\b/i.test(leaf.text),
         'a future DOB still showed an age on ' + path, leaf);
-      assert(!leaf.live, 'a future DOB was announced on ' + path + ': "' + leaf.live + '"', leaf);
+      assert(!/Type (your|a) date of birth/i.test(leaf.text), 'the empty prompt was still showing for a future DOB on ' + path, leaf);
+      assert(/hasn.t happened yet/i.test(leaf.live) && /Check the (date|year)/i.test(leaf.live),
+        'the future DOB error was not announced on ' + path + ': "' + leaf.live + '"', leaf);
     }
   });
 
@@ -718,8 +734,197 @@ async function run() {
     assert(/years?/i.test(leaf.text), 'expected an age result on /past/', leaf);
   });
 
+  await check('Typing a DOB on /past/1999/ does not announce a wrong Not born yet mid-way', async () => {
+    await page.goto(server.url + '/past/1999/' + TODAY_Q, { waitUntil: 'domcontentloaded' });
+    const loc = page.locator('[data-datefield="dob"] .quick');
+    await loc.click();
+    await loc.fill('');
+    const lives = [];
+    for (const ch of '18 May 19') {
+      await loc.type(ch, { delay: 0 });
+      await page.waitForTimeout(40);
+      lives.push(await page.evaluate(() => (document.getElementById('live') || {}).textContent || ''));
+    }
+    const wrong = lives.filter((s) => /Not born yet/i.test(s));
+    assert(wrong.length === 0, 'a mid-typing "Not born yet" was announced on /past/1999/', { lives, wrong });
+    await loc.type('90', { delay: 40 });
+    await blurQuick(page, 'dob');
+    await page.waitForTimeout(80);
+    const leaf = await page.evaluate(() => {
+      const el = document.getElementById('leaf');
+      return { state: el ? el.getAttribute('data-state') : null, live: (document.getElementById('live') || {}).textContent || '' };
+    });
+    assert(leaf.state === 'result', 'no age shown after finishing the DOB on /past/1999/', leaf);
+    assert(!/Not born yet/i.test(leaf.live), 'Not born yet stayed in the live region after a valid earlier DOB', leaf);
+  });
+
+  async function assertAnnouncedResult(page, label) {
+    await page.waitForTimeout(1000);
+    const info = await page.evaluate(() => {
+      const el = document.getElementById('leaf');
+      const live = document.getElementById('live');
+      return {
+        state: el ? el.getAttribute('data-state') : null,
+        live: live ? live.textContent.trim() : '',
+        text: el ? el.innerText.replace(/\s+/g, ' ').trim() : '',
+      };
+    });
+    assert(info.state === 'result', 'no result after a quick blur on ' + label, info);
+    assert(info.live.length > 0, 'the result was not announced after a quick blur on ' + label, info);
+    return info;
+  }
+
+  await check('A result is announced if the field is left within 100-300ms of typing', async () => {
+    const cases = [
+      { path: '/', name: 'dob', text: '18 May 1990', hint: /year|old|birthday/i },
+      { path: '/past/1999/', name: 'dob', text: '18 May 1990', hint: /year|old/i },
+      { path: '/korean-age/', name: 'dob', text: '18 May 1990', hint: /age/i },
+      { path: '/birthday-countdown/', name: 'dob', text: '18 May 1990', hint: /day|birthday/i },
+      { path: '/how-old-will-i-be/', name: 'dob', text: '18 May 1990', hint: /turn|year|old/i },
+    ];
+    for (const c of cases) {
+      await page.goto(server.url + c.path + TODAY_Q, { waitUntil: 'domcontentloaded' });
+      const loc = page.locator('[data-datefield="' + c.name + '"] .quick');
+      await loc.click();
+      await loc.fill('');
+      await loc.type(c.text, { delay: 15 });
+      await page.waitForTimeout(150);
+      await loc.evaluate((el) => el.blur());
+      const info = await assertAnnouncedResult(page, c.path);
+      assert(c.hint.test(info.live), 'unexpected announcement on ' + c.path + ': "' + info.live + '"', info);
+    }
+
+    // /difference: blur the second date promptly
+    await page.goto(server.url + '/difference/' + TODAY_Q, { waitUntil: 'domcontentloaded' });
+    await typeQuick(page, 'a', '15 March 1995');
+    await blurQuick(page, 'a');
+    const bLoc = page.locator('[data-datefield="b"] .quick');
+    await bLoc.click();
+    await bLoc.fill('');
+    await bLoc.type('20 September 1993', { delay: 15 });
+    await page.waitForTimeout(150);
+    await bLoc.evaluate((el) => el.blur());
+    let info = await assertAnnouncedResult(page, '/difference/');
+    assert(/year|elder|older|month|day/i.test(info.live), 'unexpected announcement on /difference/: "' + info.live + '"', info);
+
+    // /days-between-dates
+    await page.goto(server.url + '/days-between-dates/' + TODAY_Q, { waitUntil: 'domcontentloaded' });
+    await typeQuick(page, 'start', '1 January 2020');
+    await blurQuick(page, 'start');
+    const endLoc = page.locator('[data-datefield="end"] .quick');
+    await endLoc.click();
+    await endLoc.fill('');
+    await endLoc.type('25 December 2020', { delay: 15 });
+    await page.waitForTimeout(150);
+    await endLoc.evaluate((el) => el.blur());
+    info = await assertAnnouncedResult(page, '/days-between-dates/');
+    assert(/day/i.test(info.live), 'unexpected announcement on /days-between-dates/: "' + info.live + '"', info);
+
+    // /chronological-age
+    await page.goto(server.url + '/chronological-age/' + TODAY_Q, { waitUntil: 'domcontentloaded' });
+    await typeQuick(page, 'dob', '4 July 2018');
+    await blurQuick(page, 'dob');
+    const testLoc = page.locator('[data-datefield="test"] .quick');
+    await testLoc.click();
+    await testLoc.fill('');
+    await testLoc.type('16 November 2026', { delay: 15 });
+    await page.waitForTimeout(150);
+    await testLoc.evaluate((el) => el.blur());
+    info = await assertAnnouncedResult(page, '/chronological-age/');
+    assert(/age|year|month/i.test(info.live), 'unexpected announcement on /chronological-age/: "' + info.live + '"', info);
+
+    // Dog age: years box
+    await page.goto(server.url + '/dog-age/' + TODAY_Q, { waitUntil: 'domcontentloaded' });
+    const pet = page.locator('#pet-y');
+    await pet.click();
+    await pet.fill('');
+    await pet.type('7', { delay: 20 });
+    await page.waitForTimeout(150);
+    await pet.evaluate((el) => el.blur());
+    info = await assertAnnouncedResult(page, '/dog-age/');
+    assert(/human years/i.test(info.live), 'unexpected announcement on /dog-age/: "' + info.live + '"', info);
+
+    // How-old year box, with a DOB already in
+    await page.goto(server.url + '/how-old-will-i-be/' + TODAY_Q, { waitUntil: 'domcontentloaded' });
+    await typeQuick(page, 'dob', '18 May 1990');
+    await blurQuick(page, 'dob');
+    const year = page.locator('#in-year');
+    await year.click();
+    await year.fill('');
+    await year.type('2040', { delay: 20 });
+    await page.waitForTimeout(150);
+    await year.evaluate((el) => el.blur());
+    info = await assertAnnouncedResult(page, 'year box on /how-old-will-i-be/');
+    assert(/2040|turn|year|old/i.test(info.live), 'unexpected announcement from the year box: "' + info.live + '"', info);
+
+    // Time-zone menu: opening it blurs the date field promptly
+    await page.goto(server.url + '/' + TODAY_Q, { waitUntil: 'domcontentloaded' });
+    const dob = page.locator('[data-datefield="dob"] .quick');
+    await dob.click();
+    await dob.fill('');
+    await dob.type('18 May 1990', { delay: 15 });
+    await page.waitForTimeout(150);
+    const tog = page.locator('#on-toggle');
+    await tog.click();
+    const zone = page.locator('#zone');
+    await zone.waitFor({ state: 'visible' });
+    await zone.focus();
+    const opt = await zone.evaluate(() => {
+      const s = document.getElementById('zone');
+      const found = Array.from(s.options).find((o) => /Tokyo|New_York|Paris/.test(o.value || o.text));
+      return found ? found.value : (s.options[1] && s.options[1].value);
+    });
+    assert(opt, 'no other time zone to pick', { opt });
+    await zone.selectOption(opt);
+    await zone.evaluate((el) => el.blur());
+    info = await assertAnnouncedResult(page, 'time-zone menu');
+    assert(/year|old|birthday/i.test(info.live), 'unexpected announcement after changing the time zone: "' + info.live + '"', info);
+  });
+
   await ctx.close();
   await ctx.close();
+
+
+  async function tapIMeantWhileFocused(page, label) {
+    await page.goto(server.url + '/' + TODAY_Q, { waitUntil: 'domcontentloaded' });
+    const loc = page.locator('[data-datefield="dob"] .quick');
+    await loc.click();
+    await loc.fill('');
+    await loc.type('05/06/1999', { delay: 15 });
+    const swap = page.locator('.readback .swap');
+    await swap.waitFor({ state: 'visible' });
+    const before = await loc.inputValue();
+    const meant = (await swap.innerText()).replace(/^I meant\s+/i, '').trim();
+    assert(/May|June/i.test(meant), 'no swap offered for 05/06/1999 on ' + label + ': "' + meant + '"');
+    const focused = await loc.evaluate((el) => document.activeElement === el);
+    assert(focused, 'the date field was not focused before the I meant tap on ' + label);
+    await swap.tap();
+    await page.waitForTimeout(120);
+    const st = await fieldState(page, 'dob');
+    assert(st.quickValue !== before, 'a single tap on I meant did not change the date on ' + label + ': still "' + st.quickValue + '"', st);
+    const meantRe = new RegExp(meant.replace(/\s+/g, '\\s+'), 'i');
+    assert(meantRe.test(st.quickValue), 'a single tap on I meant did not switch to ' + meant + ' on ' + label + ': "' + st.quickValue + '"', st);
+    assert(!/I meant/i.test(st.readback), 'I meant was still offered after the tap on ' + label, st);
+  }
+
+  async function assertFieldAreaStableOn(page, label) {
+    const longError = 'abc';
+    const longMessage = INVALID_ERRORS[longError];
+    await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+    const empty = await fieldAreaProbes(page);
+    await typeQuick(page, 'dob', longError);
+    await blurQuick(page, 'dob');
+    await page.waitForTimeout(80);
+    let st = await fieldState(page, 'dob');
+    assert(st.readback === longMessage, 'wrong long error on ' + label + ': ' + st.readback, st);
+    assertNoJump(empty, await fieldAreaProbes(page), 'long error on ' + label);
+    await typeQuick(page, 'dob', '15 March 1995');
+    await blurQuick(page, 'dob');
+    await page.waitForTimeout(80);
+    st = await fieldState(page, 'dob');
+    assert(/Reading this as/.test(st.readback) && !st.readbackErr, 'expected a readback on ' + label + ': ' + st.readback, st);
+    assertNoJump(empty, await fieldAreaProbes(page), 'readback on ' + label);
+  }
 
   // High 2: real typing on WebKit (iPhone) and Chromium mobile (Pixel 7).
   const wk = await webkit.launch({ headless: true });
@@ -734,12 +939,19 @@ async function run() {
       await openInvalidBoxes(wpage, server.url + '/');
       await type30KeyByKey(wpage);
     });
+
     await check('Leave the field on WebKit: invalid date stays in text mode', async () => {
       await wpage.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
       await typeQuick(wpage, 'dob', '31 April 2000');
       await wpage.locator('[data-datefield="dob"] .quick').evaluate(el => el.blur());
       await wpage.waitForTimeout(80);
       await assertInvalidStaysInText(wpage, 'dob', '31 April 2000');
+    });
+    await check('Field area height stays stable on WebKit iPhone', async () => {
+      await assertFieldAreaStableOn(wpage, 'WebKit iPhone');
+    });
+    await check('A single tap on I meant while the field is focused (WebKit)', async () => {
+      await tapIMeantWhileFocused(wpage, 'WebKit iPhone');
     });
     await wctx.close();
   }
@@ -763,6 +975,12 @@ async function run() {
       await ppage.locator('[data-datefield="dob"] .quick').evaluate(el => el.blur());
       await ppage.waitForTimeout(80);
       await assertInvalidStaysInText(ppage, 'dob', '31 April 2000');
+    });
+    await check('Field area height stays stable on Pixel 7', async () => {
+      await assertFieldAreaStableOn(ppage, 'Pixel 7');
+    });
+    await check('A single tap on I meant while the field is focused (Pixel 7)', async () => {
+      await tapIMeantWhileFocused(ppage, 'Pixel 7');
     });
     await pctx.close();
   }

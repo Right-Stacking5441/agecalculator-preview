@@ -164,7 +164,7 @@
         parts.forEach(function (x) { x.setAttribute('aria-invalid', 'false'); });
         quick.value = r.text; quickFromParts = true; applyCompleteDate({ date: r.date, ambiguous: false, alt: null }, false);
       } else {
-        parts.forEach(function (x) { x.setAttribute('aria-invalid', 'false'); });
+        markPartValidity((r.message && (r.code !== 'incomplete' || asClose)) ? r : { ok: false });
         f.value = null; f.status = r.code; f.message = r.message;
         if (hasParts && r.text) { quick.value = r.text; quickFromParts = true; }
         if (asClose) {
@@ -220,11 +220,39 @@
     f.parts = parts;
     f.quick = quick;
     var dateOpts = function () { return { order: ORDER, pivotYear: today.y, today: today, yearMode: /^(on|start|end|test)$/.test(name) ? 'nearest' : 'past' }; };
+    var shownKey = '';
     function show(text, kind, swap) {
-      read.innerHTML = text + (swap ? ' <button type="button" class="textbtn swap">I meant ' + plain(swap) + '</button>' : '');
-      read.className = 'readback' + (kind ? ' ' + kind : '');
+      var html = text + (swap ? ' <button type="button" class="textbtn swap">I meant ' + plain(swap) + '</button>' : '');
+      var cls = 'readback' + (kind ? ' ' + kind : '');
+      var key = cls + '\n' + html;
+      if (key === shownKey) return;
+      shownKey = key;
+      read.innerHTML = html;
+      read.className = cls;
       var sb = read.querySelector('.swap');
-      if (sb) sb.addEventListener('click', function () { setDate(swap, true); quick.value = plain(swap); f.alt = null; show(rb(swap), 'ok'); go(); });
+      if (sb) {
+        var applied = false;
+        var run = function (e) {
+          if (e && e.type !== 'click') e.preventDefault();
+          if (applied) return;
+          applied = true;
+          setDate(swap, true);
+          quick.value = plain(swap);
+          f.alt = null;
+          show(rb(swap), 'ok');
+          go();
+        };
+        sb.addEventListener('touchstart', run, { passive: false });
+        sb.addEventListener('pointerdown', run);
+        sb.addEventListener('mousedown', run);
+        sb.addEventListener('click', run);
+      }
+    }
+    function markPartValidity(r) {
+      parts.forEach(function (x, j) {
+        var bad = !!(r && r.ok === false && r.field && ['day', 'month', 'year'][j] === r.field);
+        x.setAttribute('aria-invalid', String(bad));
+      });
     }
     function setDate(d, fillParts) {
       f.value = d; f.status = d ? 'ok' : f.status;
@@ -237,11 +265,13 @@
         f.status = 'future';
         f.message = MSG_FUTURE_DOB;
         invalid(true);
+        markPartValidity({ ok: false, field: 'year' });
         show(MSG_FUTURE_DOB, 'err');
         return;
       }
       setDate(r.date, fillParts);
       invalid(false);
+      markPartValidity({ ok: true });
       show(rb(r.date), 'ok', r.ambiguous ? r.alt : null);
     }
     quick.addEventListener('input', function () {
@@ -273,7 +303,10 @@
       if (!quick.value.trim()) { invalid(false); savedParts = null; clearParts(); return; }
       var r = A.parseDate(quick.value, dateOpts());
       if (r.ok) {
-        applyCompleteDate(r, true);
+        /* Blur must not rebuild unchanged UI. Filling hidden boxes here can
+           fire input on some engines and rewrite the text, which drops "I meant". */
+        var sameDate = f.value && A.cmp(f.value, r.date) === 0;
+        if (!sameDate) applyCompleteDate(r, !!(pbox && !pbox.hidden));
         go();
         return;
       }
@@ -319,7 +352,7 @@
         if (e.relatedTarget && parts.indexOf(e.relatedTarget) !== -1) return;
         var r = A.validate(parts[0].value, parts[1].value, parts[2].value);
         if (r.ok || !(parts[0].value || parts[1].value || parts[2].value)) return;
-        parts.forEach(function (x, j) { x.setAttribute('aria-invalid', String(!r.ok && !!r.message && ['day', 'month', 'year'][j] === r.field)); });
+        markPartValidity(r);
         if (r.message) { f.value = null; f.status = r.code; invalid(true); show(r.message, 'err'); go(); }
       });
       p.addEventListener('blur', function () {
@@ -492,16 +525,9 @@
   }
   function needs(f) { return !f || !f.value; }
   function errOf(f, label) { return f && f.el.querySelector('.readback.err') ? notice('Check the ' + label, f.el.querySelector('.readback.err').textContent.replace(/I meant.*/, '')) : null; }
-  function isFutureDob(f) { return f && f.status === 'future'; }
-  /* Empty leaf, nothing announced. Used when a future date of birth is the only thing wrong. */
-  function noResult(emptyOut) {
-    emptyOut = emptyOut || { state: 'empty', html: '' };
-    return { state: 'empty', say: '', html: emptyOut.html || '', cls: emptyOut.cls };
-  }
-  /* Error wins: future DOB is silent; any other field error blocks the result. */
+  /* Error wins, no result: any field error, including a future date of birth, blocks the result. */
   function blockOnErrors(pairs, emptyOut) {
     var i, err;
-    for (i = 0; i < pairs.length; i++) if (isFutureDob(pairs[i][0])) return noResult(emptyOut);
     for (i = 0; i < pairs.length; i++) {
       err = errOf(pairs[i][0], pairs[i][1]);
       if (err) return err;
@@ -521,14 +547,12 @@
     age: function () {
       var b = fields.dob;
       var empty = emptyToday(document.body.classList.contains('widget') ? 'Type a date of birth to see your age in years, months and days.' : 'Type a date of birth, like 15 March 1995.');
-      if (isFutureDob(b)) return noResult(empty);
       return errOf(b, 'date') || invalidOn() || (needs(b) ? empty : ageCore(b.value, onDate()));
     },
     /* An old leaf: aged paper, brown binding, the date rubber-stamped, that day ringed in its month. */
     past: function () {
       var b = fields.dob, at = onDate();
       var empty = withCls(emptyToday('Add both dates to see how old you were then.'), 'leaf-old');
-      if (isFutureDob(b)) return noResult(empty);
       var blocked = errOf(b, 'date') || invalidOn();
       if (blocked) return withCls(blocked, 'leaf-old');
       if (needs(b)) return empty;
@@ -556,7 +580,6 @@
     countdown: function () {
       var b = fields.dob;
       var empty = withCls(emptyToday('Whose birthday? Type the date of birth to start counting.'), 'leaf-stack');
-      if (isFutureDob(b)) return noResult(empty);
       if (errOf(b, 'date')) return errOf(b, 'date');
       if (needs(b)) return empty;
       var r = A.age(b.value, today);
@@ -579,7 +602,6 @@
     future: function () {
       var b = fields.dob, yr = +$v('in-year');
       var empty = { state: 'empty', cls: 'obj obj-planner', html: ph('', 'Type your date of birth to see your age in ' + ((yr && String(yr).length === 4) ? yr : 'that year') + '.') };
-      if (isFutureDob(b)) return noResult(empty);
       if (errOf(b, 'date')) return errOf(b, 'date');
       if (invalidOn()) return invalidOn();
       if (needs(b)) return empty;
@@ -652,7 +674,6 @@
       }
       var who = '<p class="slip-name"><span>Name</span> ' + (nm ? esc(nm) : '<i class="muted">not given</i>') + '</p>';
       var empty = { state: 'empty', cls: 'obj obj-slip', html: ph('', 'Add the date of birth and test date for the y;m;d.') };
-      if (isFutureDob(b)) return noResult(empty);
       if (errOf(b, 'date of birth')) return errOf(b, 'date of birth');
       if (errOf(t, 'test date')) return errOf(t, 'test date');
       if (needs(b) || needs(t)) return empty;
@@ -673,7 +694,6 @@
       var b = fields.dob, at = onDate(), onErr = invalidOn();
       if (onErr) return withCls(onErr, 'leaf-lunar');
       var empty = withCls(emptyToday('Type a date of birth to see all three ages.'), 'leaf-lunar');
-      if (isFutureDob(b)) return noResult(empty);
       if (errOf(b, 'date')) return withCls(errOf(b, 'date'), 'leaf-lunar');
       if (needs(b)) return empty;
       var k = A.koreanAges(b.value, at);
@@ -752,6 +772,26 @@
   }
 
   /* ---------- render loop ---------- */
+  function yearIsStable(f) {
+    if (!f) return true;
+    if (!f.el || !f.el.contains(document.activeElement)) return true;
+    if (f.isPartsOpen && f.isPartsOpen() && f.parts && f.parts[2]) {
+      return String(f.parts[2].value || '').replace(/\D/g, '').length >= 4;
+    }
+    var t = f.quick ? String(f.quick.value || '') : '';
+    var nums = t.replace(/(\d)(st|nd|rd|th)\b/gi, '$1').match(/\d+/g);
+    if (!nums || !nums.length) return true;
+    return nums[nums.length - 1].length >= 4;
+  }
+  function anyUnstableYear() {
+    var n, f;
+    for (n in fields) {
+      if (!Object.prototype.hasOwnProperty.call(fields, n)) continue;
+      f = fields[n];
+      if (f && f.el && f.el.contains(document.activeElement) && !yearIsStable(f)) return true;
+    }
+    return false;
+  }
   var lastHtml = '', liveTimer, moreOpen = false;
   leaf.addEventListener('toggle', function (e) { if (e.target.classList && e.target.classList.contains('more')) moreOpen = e.target.open;
     if (document.body.classList.contains('widget') && window.parent !== window) window.parent.postMessage({ agecalcHeight: document.documentElement.scrollHeight }, '*'); }, true);
@@ -760,10 +800,13 @@
     refreshOnLabel();
     var out = (TOOLS[tool] || TOOLS.age)();
     if (!out) return;
+    var holdNotice = out.state === 'notice' && anyUnstableYear();
+    var say = holdNotice ? '' : (out.say || '');
     if (out.html === lastHtml) {
-      clearTimeout(liveTimer);
-      if (!out.say) live.textContent = '';
-      else if (out.state === 'notice') live.textContent = out.say || '';
+      /* Same leaf: don't rebuild DOM, and don't cancel a pending result announcement. */
+      if (out.state === 'result' && out.say) return;
+      if (out.state === 'notice' && say) { if (!liveTimer) live.textContent = say; return; }
+      if (!say && !liveTimer) live.textContent = '';
       return;
     }
     var drew = out.state === 'result' && leaf.getAttribute('data-state') !== 'result';
@@ -778,9 +821,13 @@
     leaf.setAttribute('data-state', out.state);
     if (drew) { var ring = leaf.querySelector('.ring'); if (ring) ring.classList.add('draw'); }
     clearTimeout(liveTimer);
-    if (!out.say) live.textContent = '';
-    else if (out.state === 'notice') live.textContent = out.say || '';
-    else liveTimer = setTimeout(function () { live.textContent = out.say || ''; }, 700);
+    liveTimer = null;
+    if (!say) live.textContent = '';
+    else if (out.state === 'notice') live.textContent = say;
+    else {
+      if (live.textContent) live.textContent = '';
+      liveTimer = setTimeout(function () { live.textContent = out.say || ''; liveTimer = null; }, 700);
+    }
     tick();
     if (document.body.classList.contains('widget') && window.parent !== window) window.parent.postMessage({ agecalcHeight: document.documentElement.scrollHeight }, '*');
   }

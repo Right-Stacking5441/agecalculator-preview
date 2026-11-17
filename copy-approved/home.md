@@ -63,7 +63,7 @@ Schools, speech and language therapists and psychologists usually want a child's
 
 ---
 
-## Leap birthdays and other awkward dates
+## More on how it works
 ### How old am I if I was born on 15 March 1995?
 On 16 November 2026, someone born on 15 March 1995 was 31 years, 8 months and 1 day old, with their 32nd birthday still to come on Monday 15 March 2027. Type the date of birth above for today's figure, or press Change for any other day.
 
