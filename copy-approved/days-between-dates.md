@@ -11,7 +11,7 @@
 
 ## Start day in, end day out
 
-Enter a start date and an end date. The big number is the total. Underneath it you get the same span as years, months and days, then weeks, weekdays (Monday to Friday), weekend days and total months. Dates can be typed in words or numbers, so "25 Dec 2026" and "25/12/2026" both work.
+Enter a start date and an end date. The big number is the total. Underneath it you get the same span in weeks, then how many of the days are weekdays (Monday to Friday) and how many fall at the weekend. More gives the span again in years, months and days, and in total months. Dates can be typed in words or numbers, so "25 Dec 2026" and "25/12/2026" both work.
 
 By default the start day is counted and the end day isn't. That matches how most people count a gap: Monday to Friday is 4 days, the way you'd count nights in a hotel or days until a deadline. Tick "Count the end day too" when both the first and the last day should be included, such as days of annual leave, the days of a festival or a course that runs Monday to Friday. Then Monday to Friday is 5.
 

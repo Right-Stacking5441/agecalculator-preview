@@ -43,7 +43,7 @@ Type their date of birth instead of yours. The result shows the age they're turn
 
 **Weeks** splits the same wait into whole weeks and leftover days. Under More, **Weekend birthday?** tells you whether the date is a Saturday or Sunday, and **Birthdays so far** is the number of birthdays already had, which is the same as current age in completed years.
 
-To count down to something that isn't a birthday, such as a wedding, a due date or the end of term, put today and that date into [days between dates](/days-between-dates). It gives the same day count plus weekdays.
+The birthday countdown only counts to birthdays. For a wedding, a due date or the end of term, put today and that date into [days between dates](/days-between-dates). It gives the same day count plus weekdays.
 
 ---
 

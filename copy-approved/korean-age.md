@@ -11,7 +11,7 @@
 
 ## One birthday, three numbers
 
-One date of birth gives three numbers here. The big one is international age, the default in Korean law since 28 June 2023. Beside it are traditional Korean age (세는 나이), still heard in everyday life, and year age (연 나이), which a few rules, such as buying alcohol and tobacco and military service, used when the change came in. The date is today in your time zone, and you can change it to see any of the three on another day, such as a past New Year's Day.
+Put one date of birth into the Korean age calculator and you get three numbers. The big one is international age, the default in Korean law since 28 June 2023. Beside it are traditional Korean age (세는 나이), still heard in everyday life, and year age (연 나이), which a few rules, such as buying alcohol and tobacco and military service, used when the change came in. The date is today in your time zone, and you can change it to see any of the three on another day, such as a past New Year's Day.
 
 ## Three ways of counting
 

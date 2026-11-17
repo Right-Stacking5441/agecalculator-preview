@@ -13,7 +13,7 @@
 
 Cats only need an age, in years and months. The result is an estimate in human years, plus the life stage vets use for a cat of that age. Before you type an age, the result card has a short chart of common ages under "Cat age chart".
 
-These are estimates, not measurements. Cats age at different rates depending on genetics, health and how they live, and no conversion can tell you how a particular cat is doing. For questions about your cat's health, ask your vet.
+Like any cat age calculator, this one gives estimates, not measurements. Cats age at different rates depending on genetics, health and how they live, and no conversion can tell you how a particular cat is doing. For questions about your cat's health, ask your vet.
 
 ## How cat years are counted
 

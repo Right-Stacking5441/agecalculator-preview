@@ -11,7 +11,7 @@
 
 ## From an age to a year
 
-Give an age in whole years and say whether the birthday has happened yet this year, and you get the birth year. Choose "Not sure" and you get the two years it could be, with a line explaining which is which. The date it works from is today, but you can change it, which is useful when you know someone's age on an older document or photo and want their birth year.
+Give an age in whole years and say whether the birthday has happened yet this year, and you get the birth year. Choose "Not sure" and you get the two years it could be, with a line explaining which is which. It answers "what year was I born?" for anyone whose age you know, not just you. The date it works from is today, but you can change it, which is useful when you know someone's age on an older document or photo and want their birth year.
 
 This is the reverse of the main [age calculator](/). If you know the full date of birth, that page gives far more: exact age in years, months and days, and the next birthday.
 

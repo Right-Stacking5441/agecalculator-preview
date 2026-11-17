@@ -11,7 +11,7 @@
 
 ## Two dates, one gap
 
-The gap is shown the way you'd say an age: whole years first, then months, then days. It also says who is older and by how many days, and under More gives the same gap in weeks and months. Names are optional: open Add names to type them. They only label the result, so "Sam is older by 1,206 days" reads better than "Person A".
+This age difference calculator shows the gap the way you'd say an age: whole years first, then months, then days. It also says who is older and by how many days, and under More gives the same gap in weeks and months. Names are optional: open Add names to type them. They only label the result, so "Sam is older by 1,206 days" reads better than "Person A".
 
 The order you type the dates in doesn't matter. The calculator works out which birthday came first and counts forward from it.
 

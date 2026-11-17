@@ -13,7 +13,7 @@
 
 Put in the date of birth and the test date, and the child's age on that day comes out in the years;months;days form score sheets use, for example 8;4;12. It is meant for teachers, SENCOs, educational psychologists, and speech and language therapists filling in standardised test forms. The result also shows the age in total months, a months figure with 15 or more days rounded up, and buttons to copy the code or print a one-line slip for the file.
 
-It is a date-difference helper. It isn't an official tool from any test publisher. If your test manual has its own rule for days or rounding, the manual decides.
+This chronological age calculator is a date-difference helper. It isn't an official tool from any test publisher. If your test manual has its own rule for days or rounding, the manual decides.
 
 ## Reading a chronological age result
 
