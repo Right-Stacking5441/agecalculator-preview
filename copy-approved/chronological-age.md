@@ -10,6 +10,16 @@
 
 ## Body
 
+## Filling in the score sheet
+
+Put in the date of birth and the test date, and the child's age on that day comes out in the years;months;days form score sheets use, for example 8;4;12. It is meant for teachers, SENCOs, educational psychologists, and speech and language therapists filling in standardised test forms. The result also shows the age in total months, a months figure with 15 or more days rounded up, and buttons to copy the code or print a one-line slip for the file.
+
+It is a date-difference helper. It isn't an official tool from any test publisher. If your test manual has its own rule for days or rounding, the manual decides.
+
+## Reading a chronological age result
+
+8;4;12 means 8 years, 4 months and 12 days on the test date. Some forms write it 8:4 or 8-4 and drop the days; copy whatever your form asks for. The "months" line is the same age as one number (8;4;12 is 100 months and 12 days), which some norms tables use instead.
+
 ## A child born on 4 July 2018
 
 A child born on 4 July 2018 is tested on 16 November 2026. Set out the way test manuals do it, test date on top:
@@ -22,21 +32,7 @@ A child born on 4 July 2018 is tested on 16 November 2026. Set out the way test 
 
 No borrowing is needed here, so the answer is 8;4;12, or 100 months. With 12 days left over, a manual that rounds 15 or more days up would still say 100 months.
 
-## Testing a whole class
-
-The class sheet below the calculator takes one test date and a list of names and dates of birth, typed in words or numbers. Each row fills in y;m;d and months as you go, and “Print the sheet” gives one A4 page. Names stay in the browser tab and are gone when you close it.
-
-## Filling in the score sheet
-
-Put in the date of birth and the test date, and the child’s age on that day comes out in the years;months;days form score sheets use, for example 8;4;12. It is meant for teachers, SENCOs, educational psychologists, and speech and language therapists filling in standardised test forms. The result also shows the age in total months, a months figure with 15 or more days rounded up, and buttons to copy the code or print a one-line slip for the file.
-
-It is a date-difference helper. It isn’t an official tool from any test publisher. If your test manual has its own rule for days or rounding, the manual decides.
-
-## Reading a chronological age result
-
-8;4;12 means 8 years, 4 months and 12 days on the test date. Some forms write it 8:4 or 8-4 and drop the days; copy whatever your form asks for. The “months” line is the same age as one number (8;4;12 is 100 months and 12 days), which some norms tables use instead.
-
-## The “borrow 30 days” method, and why the days can differ
+## The "borrow 30 days" method, and why the days can differ
 
 When the test day is smaller than the birth day, paper methods borrow a month from the month column and add 30 days to the day column. When the test month is smaller than the birth month, they borrow a year and add 12 months.
 
@@ -48,6 +44,10 @@ This calculator counts on the real calendar instead. 15 January 2026 is the 7th 
 
 At young ages, norms tables move every few months. Two children born on 14 and 19 November 2020 and both tested on 16 November 2026 are 6;0;2 and 5;11;28, and they may well be scored on different rows. Subtracting the birth year from the test year makes them both 6. Months and days matter.
 
+## Testing a whole class
+
+The class sheet below the calculator takes one test date and a list of names and dates of birth, typed in words or numbers. Each row fills in y;m;d and months as you go, and "Print the sheet" gives one A4 page. Names stay in the browser tab and are gone when you close it.
+
 ## Leap days
 
 A child born on 29 February has their birthday counted on 1 March in common years ([why](/#born-on-29-february)). If the test manual gives its own instruction, follow the manual. On this rule, a child born on 29 February 2020 is 6;8;18 on 16 November 2026.
@@ -55,18 +55,17 @@ A child born on 29 February has their birthday counted on 1 March in common year
 ---
 
 ## If you’re scoring a test
-
 ### What is chronological age on a test?
-The child’s exact age on the day of testing, written as years, months and days, for example 8;4;12. Standardised tests use it to pick the right row in the norms tables.
+The child's exact age on the day of testing, written as years, months and days, for example 8;4;12. Standardised tests use it to pick the right row in the norms tables.
 
 ### How do you calculate chronological age by hand?
 Write the test date above the date of birth as year, month, day and subtract each column from the right. If the days are short, borrow a month and add 30 days; if the months are short, borrow a year and add 12 months.
 
 ### Does it match the 30-day method in test manuals?
-Years and months match. Days can differ by up to two whenever the test day is earlier in the month than the birth day, because this calculator uses real month lengths and the manual method assumes 30 days. [Pearson’s WIAT-III guidance](https://web.archive.org/web/20240915162537/https://pearsonassessmentsupport.com/support/index.php?View=entry&EntryID=3798), for example, says “all months are assumed to have 30 days.”
+Years and months match. Days can differ by up to two whenever the test day is earlier in the month than the birth day, because this calculator uses real month lengths and the manual method assumes 30 days. [Pearson's WIAT-III guidance](https://web.archive.org/web/20240915162537/https://pearsonassessmentsupport.com/support/index.php?View=entry&EntryID=3798), for example, says "all months are assumed to have 30 days."
 
 ### Should I round up the days?
-Only if your test manual says to. Pearson’s WIAT-III guidance says ages are not rounded up. Some other manuals round 15 or more days up to the next month; the result shows that figure separately so you can use it if needed.
+Only if your test manual says to. Pearson's WIAT-III guidance says ages are not rounded up. Some other manuals round 15 or more days up to the next month; the result shows that figure separately so you can use it if needed.
 
 ### Are the names I type stored?
 No. They stay in your browser tab and disappear when you close it.
