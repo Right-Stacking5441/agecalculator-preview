@@ -4,7 +4,7 @@ Called from scripts/build_copy.py after copy is injected into the pre-UX
 page shells, so a future markdown rebuild reproduces the same structure.
 """
 from __future__ import annotations
-import json, re, sys
+import json, re, sys, shutil
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -195,30 +195,19 @@ def settings_block(soup, slug):
         else:
             btn["data-label"] = UI["settings_button"]
             btn.string = UI["settings_button"]
-            # Date sits in .on-date so first paint reserves the settings-line
-            # width. A noscript rule hides it when JavaScript is off.
+            # String #22: settings line is "Time zone: Europe/London" and
+            # "Change date or time zone". The baked "Age today, <date>" is gone.
+            # Height stays one line, so dropping the date does not shift the card.
             lab.clear()
-            lab.append("Age today")
-            lab.append(frag(f'<span class="on-date">, <b>{today_short()}</b></span>'))
+            lab.string = UI["settings_zone"]
+            lab.append(" ")
+            lab.append(frag('<span id="zone-now">Europe/London</span>'))
         if btn.has_attr("aria-label"):
             del btn["aria-label"]
         p.append(frag(icon("clock")))
         p.append(lab)
         if not future:
-            p.append(frag("""<script>
-(function(){
-  var el=document.getElementById('on-label');
-  if(!el || el.hidden || el.getAttribute('data-idle')) return;
-  var M=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  var W=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  var n=new Date(), mon=M[n.getMonth()].slice(0,3);
-  var dspan=el.querySelector('.on-date');
-  if(!dspan){ dspan=document.createElement('span'); dspan.className='on-date'; el.appendChild(dspan); }
-  dspan.innerHTML=', <b>'+W[n.getDay()].slice(0,3)+' '+n.getDate()+' '+mon+' '+n.getFullYear()+'</b>';
-})();
-</script>"""))
-            if slug != "widget":
-                p.append(frag(f' <span class="tzline">{UI["settings_zone"]} <span id="zone-now">Europe/London</span></span>'))
+            pass
         if slug != "widget":
             p.append(" ")
             p.append(btn)
@@ -355,6 +344,7 @@ def nav_from_home(docs: Path):
 NAV_MENU = """<script>
 (function(){
   try {
+  if (document.documentElement.getAttribute('data-menu-fallback') === '1') return;
   var menu = document.querySelector('.nav-menu');
   if (!menu) return;
   var list = menu.querySelector('ul');
@@ -498,15 +488,23 @@ NAV_MENU = """<script>
 # No backslash escapes in this snippet, so the HTML pipeline cannot mangle it.
 JS_FLAG_SRC = "document.documentElement.classList.add('js')"
 # Fail-safe lives in the head, separate from the footer enhancer: if the
-# enhancer is blocked or throws, this still runs and shows the inline list.
+# enhancer is blocked or throws, this still runs and shows the list.
+# The 3s timer starts as soon as the head script runs, not at DOMContentLoaded.
+# Fallback keeps html.js so the compact header does not shift; the list is
+# taken out of flow. A late enhancer must bail if data-menu-fallback is set.
 # No backslash escapes, so the HTML pipeline cannot mangle it.
 JS_FLAG = """<script>document.documentElement.classList.add('js');
 (function () {
   function failsafe() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', failsafe);
+      return;
+    }
     var menu = document.querySelector('.nav-menu');
     if (!menu) return;
     if (menu.getAttribute('data-menu-ready') === '1') return;
-    document.documentElement.classList.remove('js');
+    if (document.documentElement.getAttribute('data-menu-fallback') === '1') return;
+    document.documentElement.setAttribute('data-menu-fallback', '1');
     menu.classList.remove('is-enhanced');
     var list = document.getElementById('nav-menu-list');
     if (list) list.removeAttribute('hidden');
@@ -515,10 +513,7 @@ JS_FLAG = """<script>document.documentElement.classList.add('js');
     var back = document.querySelector('.nav-menu-back');
     if (back && back.parentNode) back.parentNode.removeChild(back);
   }
-  function start() { setTimeout(failsafe, 3000); }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
-  else start();
-  window.addEventListener('load', start);
+  setTimeout(failsafe, 3000);
   window.agecalcMenuFailsafe = failsafe;
 })();
 </script>"""
@@ -579,6 +574,83 @@ def fix_skip(soup, slug):
         skip.string = "Skip to content"
 
 
+
+COPY_ACT = {
+    "difference": "Copy gap",
+    "days-between-dates": "Copy days",
+    "birthday-countdown": "Copy days",
+    "korean-age": "Copy ages",
+    "what-year-was-i-born": "Copy year",
+}
+
+
+def acts_block(soup, slug):
+    """Quiet copy/share/print row under the result card (27 UI strings)."""
+    leaf = soup.select_one(".result #leaf")
+    if not leaf or slug in ("widget", "embed", "privacy", "contact"):
+        return
+    if soup.select_one(".acts"):
+        return
+    label = COPY_ACT.get(slug, "Copy age")
+    html = (
+        '<div aria-label="Copy or share this result" class="acts" role="group">'
+        '<button class="act" data-act="age" type="button">' + icon("copy") + '<span class="act-l">' + label + "</span></button>"
+        '<button class="act" data-act="all" type="button">' + icon("copy") + '<span class="act-l">Copy details</span></button>'
+        '<button class="act" data-act="link" type="button">' + icon("copy") + '<span class="act-l">Copy link</span></button>'
+        '<button class="act act-print" data-act="print" type="button">' + icon("printer") + '<span class="act-l">Print</span></button></div>'
+        '<p aria-live="polite" class="sr-only" id="copy-live"></p>'
+    )
+    node = frag(html)
+    result = leaf.parent
+    live = soup.select_one(".result #live")
+    if result and not result.select_one(".print-meta.pm-top"):
+        leaf.insert_before(frag('<div class="print-meta pm-top"></div>'))
+    insert_at = leaf
+    children = list(node.contents) if getattr(node, "name", None) in (None, "[document]") else [node]
+    for child in children:
+        if getattr(child, "name", None) is None and not str(child).strip():
+            continue
+        insert_at.insert_after(child)
+        insert_at = child
+    if result and not result.select_one(".print-meta.pm-bottom"):
+        bottom = frag('<div class="print-meta pm-bottom"></div>')
+        if live:
+            live.insert_before(bottom)
+        else:
+            insert_at.insert_after(bottom)
+
+
+def ensure_viewport(soup):
+    vp = soup.find("meta", attrs={"name": "viewport"})
+    content = "width=device-width, initial-scale=1, viewport-fit=cover"
+    if vp:
+        vp["content"] = content
+    elif soup.head:
+        soup.head.append(frag('<meta name="viewport" content="' + content + '">'))
+
+
+def rewrite_dog_tiles(soup, slug):
+    if slug != "dog-age":
+        return
+    fieldset = soup.select_one("fieldset.opts")
+    if not fieldset or fieldset.select_one(".opt-t"):
+        return
+    tiles = frag(
+        '<fieldset class="opts"><legend>Adult size</legend>'
+        '<label class="opt"><input type="radio" name="size" value="small"/>'
+        '<span class="opt-t"><b>Small<span class="opt-c">:</span></b> <span class="opt-r"><span class="nw opt-kg">up to 9 kg</span> <span class="nw opt-lb">(20 lb)</span></span></span></label>'
+        '<label class="opt"><input checked="checked" type="radio" name="size" value="medium"/>'
+        '<span class="opt-t"><b>Medium<span class="opt-c">:</span></b> <span class="opt-r"><span class="nw opt-kg">9.5 to 22.7 kg</span> <span class="nw opt-lb">(21 to 50 lb)</span></span></span></label>'
+        '<label class="opt"><input type="radio" name="size" value="large"/>'
+        '<span class="opt-t"><b>Large<span class="opt-c">:</span></b> <span class="opt-r"><span class="nw opt-kg">23.1 to 40.8 kg</span> <span class="nw opt-lb">(51 to 90 lb)</span></span></span></label>'
+        '<label class="opt"><input type="radio" name="size" value="giant"/>'
+        '<span class="opt-t"><b>Giant<span class="opt-c">:</span></b> <span class="opt-r"><span class="nw opt-kg">over 40.8 kg</span> <span class="nw opt-lb">(90 lb)</span></span></span></label></fieldset>'
+    )
+    fs = tiles if getattr(tiles, "name", None) == "fieldset" else tiles.find("fieldset")
+    if fs:
+        fieldset.replace_with(fs)
+
+
 def apply_ux(docs: Path, launch: bool = False) -> int:
     typograph_loaded_copy()
     docs = Path(docs)
@@ -605,6 +677,9 @@ def apply_ux(docs: Path, launch: bool = False) -> int:
             settings_block(soup, slug)
             parts_toggles(soup)
             opt_names(soup, slug)
+            acts_block(soup, slug)
+            rewrite_dog_tiles(soup, slug)
+        ensure_viewport(soup)
         if cfg:
             rule_line(soup)
             intro_into_calc(soup, cfg["intro"])
@@ -624,6 +699,15 @@ def apply_ux(docs: Path, launch: bool = False) -> int:
                 l["href"] = "styles.css"
         if soup.head and not soup.select_one('link[href="ux.css"]'):
             soup.head.append(frag('<link rel="stylesheet" href="ux.css">'))
+        if soup.head and not soup.select_one('link[href="share.css"]'):
+            soup.head.append(frag('<link rel="stylesheet" href="share.css">'))
+        if soup.head and not soup.select_one('link[href="card.css"]'):
+            soup.head.append(frag('<link rel="stylesheet" href="card.css">'))
+        app = soup.select_one('script[src^="app.js"], script[src="app.js"]')
+        if app and not soup.select_one('script[src^="share.js"], script[src="share.js"]'):
+            app.insert_after(frag('<script src="share.js" defer></script>'))
+        elif soup.body and not soup.select_one('script[src^="share.js"], script[src="share.js"]') and soup.select_one("#leaf"):
+            soup.body.append(frag('<script src="share.js" defer></script>'))
         ensure_js_flag(soup)
         ensure_noscript(soup)
         ensure_nav_menu(soup)
@@ -634,6 +718,10 @@ def apply_ux(docs: Path, launch: bool = False) -> int:
     if leafh.exists():
         css += leafh.read_text()
     (docs / "ux.css").write_text(css)
+    for name in ("card.css", "share.css", "share.js"):
+        src = HERE / name
+        if src.is_file():
+            shutil.copyfile(src, docs / name)
     return n
 
 

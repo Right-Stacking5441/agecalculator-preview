@@ -9,18 +9,6 @@
 ---
 ## Body
 
-## Looking back
-
-Type your date of birth and the date you want to look back to. The big number is your age in completed years on that day, and under it are the months and days since the birthday before it. The result also shows the birthday that came next after that date, how many days you had lived by then, and how long ago the date was.
-
-It works for any date from 1000 to 2999, as long as it isn't before your date of birth. If the date you type is before you were born, the page tells you how many days early it is rather than showing a negative age.
-
-## When people need their age on a past date
-
-Usually it’s a form that asks, in words like “age at the date of the incident”, “age when employment began”, “age at diagnosis” or “age on the date of marriage”. They nearly always mean completed years on that day, which is the big number. If the form also wants months, they are on the line underneath.
-
-It also settles smaller questions: how old you were when you passed your driving test, when a grandparent died, or when a photo was taken.
-
 ## A worked example: the EU referendum
 
 Someone born on 8 August 1987 wants to know how old they were on 23 June 2016, the day of the EU referendum.
@@ -30,6 +18,18 @@ Someone born on 8 August 1987 wants to know how old they were on 23 June 2016, t
 - 8 June to 23 June is 15 days.
 
 So they were 28 years, 10 months and 15 days old, and they turned 29 about six weeks later, on 8 August 2016. The quick check is the first line: subtract the years, then take one off if the birthday hadn't come round yet.
+
+## When people need their age on a past date
+
+Usually it’s a form that asks, in words like “age at the date of the incident”, “age when employment began”, “age at diagnosis” or “age on the date of marriage”. They nearly always mean completed years on that day, which is the big number. If the form also wants months, they are on the line underneath.
+
+It also settles smaller questions: how old you were when you passed your driving test, when a grandparent died, or when a photo was taken.
+
+## Looking back
+
+Type your date of birth and the date you want to look back to. The big number is your age in completed years on that day, and under it are the months and days since the birthday before it. The result also shows the birthday that came next after that date, how many days you had lived by then, and how long ago the date was.
+
+It works for any date from 1000 to 2999, as long as it isn't before your date of birth. If the date you type is before you were born, the page tells you how many days early it is rather than showing a negative age.
 
 ## Coming from an old year link?
 

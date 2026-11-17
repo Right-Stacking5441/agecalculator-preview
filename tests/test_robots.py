@@ -86,10 +86,10 @@ def check_tree(docs: Path, launch: bool) -> list[str]:
         issues.append("launch build kept a preview banner")
     if not launch and not saw_banner:
         issues.append("preview build has no preview banner")
-    # Privacy placeholder must still be present so the LAUNCH gate can catch it.
+    # Privacy date is confirmed, not a placeholder.
     privacy = docs / "privacy" / "index.html"
-    if privacy.is_file() and "[PLACEHOLDER: date this policy is published]" not in privacy.read_text():
-        issues.append("privacy Last updated placeholder is missing; the LAUNCH gate would not catch it")
+    if privacy.is_file() and "Last updated 17 November 2026" not in privacy.read_text():
+        issues.append("privacy should say Last updated 17 November 2026")
 
     html_404 = (docs / "404.html").read_text(encoding="utf-8")
     if 'property="og:url"' in html_404 or "property='og:url'" in html_404:

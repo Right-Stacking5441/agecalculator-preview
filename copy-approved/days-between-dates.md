@@ -9,12 +9,6 @@
 ---
 ## Body
 
-## Start day in, end day out
-
-Enter a start date and an end date. The big number is the total. Underneath it you get the same span in weeks, then how many of the days are weekdays (Monday to Friday) and how many fall at the weekend. More gives the span again in years, months and days, and in total months. Dates can be typed in words or numbers, so "25 Dec 2026" and "25/12/2026" both work.
-
-By default the start day is counted and the end day isn't. That matches how most people count a gap: Monday to Friday is 4 days, the way you'd count nights in a hotel or days until a deadline. Tick "Count the end day too" when both the first and the last day should be included, such as days of annual leave, the days of a festival or a course that runs Monday to Friday. Then Monday to Friday is 5.
-
 ## From 16 November to Christmas Day
 
 For example, from Monday 16 November 2026 to Friday 25 December 2026:
@@ -28,6 +22,12 @@ Of those 39 days, 29 are weekdays and 10 fall on a Saturday or Sunday. As years,
 ## Weekdays are not working days
 
 The weekday figure counts every Monday to Friday in the span. It doesn't take out bank holidays, because those differ between England and Wales, Scotland, Northern Ireland and every other country, and some years move them. A span that runs through Christmas 2026 will count Friday 25 December and Monday 28 December (the substitute Boxing Day bank holiday) as weekdays. Take bank holidays off by hand if you need an exact number of working days.
+
+## Start day in, end day out
+
+Enter a start date and an end date. The big number is the total. Underneath, one line gives the same span in weeks and in years, months and days, and the next says how many of the days are weekdays (Monday to Friday) and how many fall at the weekend. Dates can be typed in words or numbers, so "25 Dec 2026" and "25/12/2026" both work.
+
+By default the start day is counted and the end day isn't. That matches how most people count a gap: Monday to Friday is 4 days, the way you'd count nights in a hotel or days until a deadline. Tick "Count the end day too" when both the first and the last day should be included, such as days of annual leave, the days of a festival or a course that runs Monday to Friday. Then Monday to Friday is 5.
 
 ## Leap years and month lengths
 

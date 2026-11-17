@@ -3,17 +3,22 @@
 <html lang="en-GB">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="noindex,nofollow" name="robots"/>
 <title>Chronological age calculator for tests (Y;M;D)</title>
 <meta content="Enter a date of birth and a test date to get chronological age as years;months;days, like 8;4;12. Copy it, print a slip, or do a whole class." name="description"/>
 <script>document.documentElement.classList.add('js');
 (function () {
   function failsafe() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', failsafe);
+      return;
+    }
     var menu = document.querySelector('.nav-menu');
     if (!menu) return;
     if (menu.getAttribute('data-menu-ready') === '1') return;
-    document.documentElement.classList.remove('js');
+    if (document.documentElement.getAttribute('data-menu-fallback') === '1') return;
+    document.documentElement.setAttribute('data-menu-fallback', '1');
     menu.classList.remove('is-enhanced');
     var list = document.getElementById('nav-menu-list');
     if (list) list.removeAttribute('hidden');
@@ -22,10 +27,7 @@
     var back = document.querySelector('.nav-menu-back');
     if (back && back.parentNode) back.parentNode.removeChild(back);
   }
-  function start() { setTimeout(failsafe, 3000); }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
-  else start();
-  window.addEventListener('load', start);
+  setTimeout(failsafe, 3000);
   window.agecalcMenuFailsafe = failsafe;
 })();
 </script><link href="https://agecalculator.com/chronological-age/" rel="canonical"/>
@@ -56,7 +58,7 @@
 }
 </script>
 <script>var q=location.search;if(/[?&](dob|a|b|start|end|test|on|year)=/.test(q))document.documentElement.classList.add('prefill');if(/[?&]year=/.test(q))document.documentElement.classList.add('prefill-year');if(/[?&](on|year)=/.test(q))document.documentElement.classList.add('prefill-on')</script>
-<link href="../ux.css?v=7b6608425e" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript></head>
+<link href="../ux.css?v=f0ee39e981" rel="stylesheet"/><link href="share.css?v=5b6a6866e2" rel="stylesheet"/><link href="card.css?v=0d1c4e9e9f" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript></head>
 <body data-page="chronological-age">
 <aside aria-label="Preview notice" class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</aside>
 <a class="skip" href="#tool">Skip to the calculator</a>
@@ -83,30 +85,15 @@
 </div>
 </div><div class="parts-shared"><button aria-controls="dob-parts test-parts" aria-expanded="false" class="textbtn parts-toggle shared" type="button"><svg aria-hidden="true" class="ic ic-boxes" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M3.4 8.9l4.7.1v6.1H3.5zM10 9h4.3l.1 6h-4.4zM16.4 8.9h4.2v6.2h-4.2z"></path></svg><span>Type day, month and year separately</span></button></div>
 <details class="opt-field"><summary><svg aria-hidden="true" class="ic ic-plus" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M12 5.3v13.5M5.2 12.1c4.5-.2 9-.2 13.6 0"></path></svg><span>Add a name</span></summary><div class="opt-body"><label class="name inline">Pupil or client, optional <input autocomplete="off" id="pupil" placeholder="Name stays on this screen" type="text"/></label></div></details></form></div>
-<div class="result"><div class="leaf obj obj-slip" data-state="empty" id="leaf"><p class="ph-msg">The age on the test date will appear here.</p><noscript><p class="hint">This calculator needs JavaScript to work the result out. The method is written out below the tool if you’d rather do it on paper.</p></noscript></div><p aria-live="polite" class="sr-only" id="live"></p><details class="note-d"><summary>How months are counted</summary><p class="rule-line">A completed month lands on the same date next month. If that date doesn’t exist (31 January to 1 March, or a 29 February birthday in a common year), it rolls to the 1st of the next month. Some software, including common date libraries, uses the last day of the month instead, so results can differ by a day around month ends.</p></details>
+<div class="result"><div class="print-meta pm-top"></div><div class="leaf obj obj-slip" data-state="empty" id="leaf"><p class="slip-name"><span>Name</span> <i class="muted">not given</i></p><div class="slip"><div class="slip-head"><b>Chronological age</b><span>Record slip</span></div><table class="slip-sum"><thead><tr><th scope="col"><span class="sr-only">Item</span></th><th scope="col">Year</th><th scope="col">Month</th><th scope="col">Day</th></tr></thead><tbody><tr><th scope="row">Test date</th><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr><tr><th scope="row">Date of birth</th><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr><tr class="ans"><th scope="row">Age</th><td class="blank"></td><td class="blank"></td><td class="blank"></td></tr></tbody></table></div><noscript><p class="hint">This calculator needs JavaScript to work the result out. The method is written out below the tool if you’d rather do it on paper.</p></noscript></div><div aria-label="Copy or share this result" class="acts" role="group"><button class="act" data-act="age" type="button"><svg aria-hidden="true" class="ic ic-copy" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M8.7 8.4l10.4.1-.1 12H8.6zM15.3 8.3V4.2L4.9 4.3l-.1 12.1h3.7"></path></svg><span class="act-l">Copy age</span></button><button class="act" data-act="all" type="button"><svg aria-hidden="true" class="ic ic-copy" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M8.7 8.4l10.4.1-.1 12H8.6zM15.3 8.3V4.2L4.9 4.3l-.1 12.1h3.7"></path></svg><span class="act-l">Copy details</span></button><button class="act" data-act="link" type="button"><svg aria-hidden="true" class="ic ic-copy" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M8.7 8.4l10.4.1-.1 12H8.6zM15.3 8.3V4.2L4.9 4.3l-.1 12.1h3.7"></path></svg><span class="act-l">Copy link</span></button><button class="act act-print" data-act="print" type="button"><svg aria-hidden="true" class="ic ic-printer" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M7.1 9V3.9h9.7V9M5.8 17.3H4.4c-.6 0-1.1-.4-1.1-1V10.1c0-.6.5-1.1 1.1-1.1h15.3c.6 0 1 .5 1 1.1v6.2c0 .6-.4 1-1 1h-1.5M7.1 14.1l9.9.1-.1 6.3H7.2z"></path></svg><span class="act-l">Print</span></button></div><p aria-live="polite" class="sr-only" id="copy-live"></p><div class="print-meta pm-bottom"></div><p aria-live="polite" class="sr-only" id="live"></p><details class="note-d"><summary>How months are counted</summary><p class="rule-line">A completed month lands on the same date next month. If that date doesn’t exist (31 January to 1 March, or a 29 February birthday in a common year), it rolls to the 1st of the next month. Some software, including common date libraries, uses the last day of the month instead, so results can differ by a day around month ends.</p></details>
 </div>
 </div>
 </div></div>
 <div class="wrap page"><div class="content"><nav aria-labelledby="rel-h" class="related"><h2 id="rel-h">More calculators</h2><ul><li><a href="../">Age calculator</a></li><li><a href="../difference/">Age difference</a></li><li><a href="../past/">How old was I?</a></li><li><a href="../how-old-will-i-be/">How old will I be?</a></li><li><a href="../days-between-dates/">Days between dates</a></li><li><a href="../birthday-countdown/">Birthday countdown</a></li><li><a href="../korean-age/">Korean age</a></li><li><a href="../what-year-was-i-born/">What year was I born?</a></li><li><a href="../dog-age/">Dog age</a></li><li><a href="../cat-age/">Cat age</a></li></ul></nav>
-<details class="topic"><summary><h2>Filling in the score sheet</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
-<p>Put in the date of birth and the test date, and the child’s age on that day comes out in the years;months;days form score sheets use, for example 8;4;12. It is meant for teachers, SENCOs, educational psychologists, and speech and language therapists filling in standardised test forms. The result also shows the age in total months, a months figure with 15 or more days rounded up, and buttons to copy the code or print a one-line slip for the file.</p>
-<p>This chronological age calculator counts the time between two dates. It isn’t an official tool from any test publisher. If your test manual has its own rule for days or rounding, the manual decides.</p>
-</div></details>
-<details class="topic"><summary><h2>Reading a chronological age result</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
-<p>8;4;12 means 8 years, 4 months and 12 days on the test date. Some forms write it 8:4 or 8-4 and drop the days; copy whatever your form asks for. The “months” line is the same age as one number (8;4;12 is 100 months and 12 days), which some norms tables use instead.</p>
-</div></details>
 <details class="topic"><summary><h2>A child born on 4 July 2018</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
-<p>On 16 November 2026, for example, a child born on 4 July 2018 is tested. Set out the way test manuals do it, test date on top:</p>
+<p>Take a child born on 4 July 2018 and tested on 16 November 2026, for example. Set out the way test manuals do it, test date on top:</p>
 <table class="working"><thead><tr><th></th><th>Year</th><th>Month</th><th>Day</th></tr></thead><tbody><tr><td>Test date</td><td>2026</td><td>11</td><td>16</td></tr><tr><td>Date of birth</td><td>2018</td><td>7</td><td>4</td></tr><tr><td>Chronological age</td><td>8</td><td>4</td><td>12</td></tr></tbody></table>
 <p>No borrowing is needed here, so the answer is 8;4;12, or 100 months. With 12 days left over, a manual that rounds 15 or more days up would still say 100 months.</p>
-</div></details>
-<details class="topic"><summary><h2>The “borrow 30 days” method, and why the days can differ</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
-<p>When the test day is smaller than the birth day, paper methods borrow a month from the month column and add 30 days to the day column. When the test month is smaller than the birth month, they borrow a year and add 12 months.</p>
-<p>Take a child born on 15 January 2019 and tested on 10 March 2026. On paper: 10 is less than 15, so borrow, giving 40 minus 15 = 25 days, and the test month drops from 3 to 2. Then 2 minus 1 = 1 month, and 2026 minus 2019 = 7 years. That gives 7;1;25.</p>
-<p>This calculator counts on the real calendar instead. 15 January 2026 is the 7th birthday, 15 February is one month on, and from 15 February to 10 March is 23 days, because February 2026 had 28 days, not 30. So the result here is 7;1;23. Borrowing 30 days treats every month as 30 days long, so whenever the test day is earlier in the month than the birth day, the days can differ by up to two: one after a 31-day month, two after a 28-day February. Years and months always match. If your manual tells you to borrow 30 days, use its answer for the form.</p>
-</div></details>
-<details class="topic"><summary><h2>Why not just subtract the years?</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
-<p>At young ages, norms tables move every few months. Two children born on 14 and 19 November 2020 and both tested on 16 November 2026 are 6;0;2 and 5;11;28, and they may well be scored on different rows. Subtracting the birth year from the test year makes them both 6, which would put them on the same row.</p>
 </div></details>
 <details class="topic sheet-section" id="class-sheet" open=""><summary><h2>Testing a whole class</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>The class sheet below the calculator takes one test date and a list of names and dates of birth, typed in words or numbers. Each row fills in y;m;d and months as you go, and “Print the sheet” gives one A4 page. Names stay in the browser tab and are gone when you close it.</p>
@@ -116,6 +103,21 @@
 <div class="sheet-actions"><button class="btn btn-quiet" id="sheet-add" type="button">Add a row</button><button class="btn" id="sheet-print" type="button">Print the sheet</button></div>
 <p class="sheet-foot">Ages worked out at agecalculator.com/chronological-age. A 29 February birthday counts on 1 March in common years. Check your test manual’s rounding rule.</p>
 </div>
+</div></details>
+<details class="topic"><summary><h2>Filling in the score sheet</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
+<p>Put in the date of birth and the test date, and the child’s age on that day comes out in the years;months;days form score sheets use, for example 8;4;12. It is meant for teachers, SENCOs, educational psychologists, and speech and language therapists filling in standardised test forms. The result also shows the age in total months, a months figure with 15 or more days rounded up, and buttons to copy the code or print a one-line slip for the file.</p>
+<p>This chronological age calculator counts the time between two dates. It isn’t an official tool from any test publisher. If your test manual has its own rule for days or rounding, the manual decides.</p>
+</div></details>
+<details class="topic"><summary><h2>Reading a chronological age result</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
+<p>8;4;12 means 8 years, 4 months and 12 days on the test date. Some forms write it 8:4 or 8-4 and drop the days; copy whatever your form asks for. The “months” line is the same age as one number (8;4;12 is 100 months and 12 days), which some norms tables use instead.</p>
+</div></details>
+<details class="topic"><summary><h2>The “borrow 30 days” method, and why the days can differ</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
+<p>When the test day is smaller than the birth day, paper methods borrow a month from the month column and add 30 days to the day column. When the test month is smaller than the birth month, they borrow a year and add 12 months.</p>
+<p>Take a child born on 15 January 2019 and tested on 10 March 2026. On paper: 10 is less than 15, so borrow, giving 40 minus 15 = 25 days, and the test month drops from 3 to 2. Then 2 minus 1 = 1 month, and 2026 minus 2019 = 7 years. That gives 7;1;25.</p>
+<p>This calculator counts on the real calendar instead. 15 January 2026 is the 7th birthday, 15 February is one month on, and from 15 February to 10 March is 23 days, because February 2026 had 28 days, not 30. So the result here is 7;1;23. Borrowing 30 days treats every month as 30 days long, so whenever the test day is earlier in the month than the birth day, the days can differ by up to two: one after a 31-day month, two after a 28-day February. Years and months always match. If your manual tells you to borrow 30 days, use its answer for the form.</p>
+</div></details>
+<details class="topic"><summary><h2>Why not just subtract the years?</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
+<p>At young ages, norms tables move every few months. Two children born on 14 and 19 November 2020 and both tested on 16 November 2026 are 6;0;2 and 5;11;28, and they may well be scored on different rows. Subtracting the birth year from the test year makes them both 6, which would put them on the same row.</p>
 </div></details>
 <details class="topic"><summary><h2>Leap days</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>A child born on 29 February has their birthday counted on 1 March in common years (<a href="../#born-on-29-february">why</a>). If the test manual gives its own instruction, follow the manual. On this rule, a child born on 29 February 2020 is 6;8;18 on 16 November 2026.</p>
@@ -127,11 +129,12 @@
 <div class="foot-index" id="all-tools"><h2>Every calculator on the site</h2><ul class="foot-tools"><li><a href="../">Age calculator</a></li><li><a href="../difference/">Age difference</a></li><li><a href="../past/">How old was I?</a></li><li><a href="../how-old-will-i-be/">How old will I be?</a></li><li><a href="../days-between-dates/">Days between dates</a></li><li><a href="../birthday-countdown/">Birthday countdown</a></li><li><a href="../korean-age/">Korean age</a></li><li><a href="../what-year-was-i-born/">What year was I born?</a></li><li><a href="../dog-age/">Dog age</a></li><li><a href="../cat-age/">Cat age</a></li></ul></div>
 <div class="foot-small"><p><b>agecalculator.com</b>. Dates you type are worked out in your browser and aren’t sent anywhere. Free to use.</p><p><a href="../embed/">Put this calculator on your own site</a> · <a href="../privacy/">Privacy</a> · <a href="../contact/">Contact</a></p></div>
 </div></footer>
-<script defer="" src="../dates.js?v=b4e78af13e"></script>
-<script defer="" src="../app.js?v=53f820a449"></script>
+<script defer="" src="../dates.js?v=505ce38777"></script>
+<script defer="" src="../app.js?v=a250c9dcfb"></script><script defer="" src="share.js?v=a1c246c7f7"></script>
 <script defer="" src="../sheet.js?v=543e4cc4ee"></script><script>
 (function(){
   try {
+  if (document.documentElement.getAttribute('data-menu-fallback') === '1') return;
   var menu = document.querySelector('.nav-menu');
   if (!menu) return;
   var list = menu.querySelector('ul');

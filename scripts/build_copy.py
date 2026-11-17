@@ -761,7 +761,7 @@ DIR_LINK_SLUGS = {
     "what-year-was-i-born", "dog-age", "cat-age", "embed", "privacy",
     "contact", "widget",
 }
-ASSET_NAMES = {"favicon.ico", "favicon.svg", "styles.css", "ux.css", "app.js", "dates.js", "sheet.js", "embed.js"}
+ASSET_NAMES = {"favicon.ico", "favicon.svg", "styles.css", "ux.css", "card.css", "share.css", "app.js", "dates.js", "sheet.js", "embed.js", "share.js"}
 _404_ATTR = re.compile(r"""\b((?:href|src)\s*=\s*)(["'])([^"']+)\2""", re.I)
 
 
@@ -1004,7 +1004,7 @@ def patch_app_js_copy():
 def cache_bust_assets(docs: Path) -> None:
     """Append ?v=<content hash> to every local JS/CSS reference so Safari cannot keep a stale file."""
     import hashlib
-    names = ("styles.css", "ux.css", "app.js", "dates.js", "sheet.js", "embed.js")
+    names = ("styles.css", "ux.css", "card.css", "share.css", "app.js", "dates.js", "sheet.js", "embed.js", "share.js")
     hashes = {}
     for name in names:
         fp = docs / name
@@ -1013,7 +1013,7 @@ def cache_bust_assets(docs: Path) -> None:
     if not hashes:
         return
     pat = re.compile(
-        r"""((?:href|src)=["'])([^"']*?)(styles\.css|ux\.css|app\.js|dates\.js|sheet\.js|embed\.js)(?:\?[^"']*)?(["'])"""
+        r"""((?:href|src)=["'])([^"']*?)(styles\.css|ux\.css|card\.css|share\.css|app\.js|dates\.js|sheet\.js|embed\.js|share\.js)(?:\?[^"']*)?(["'])"""
     )
 
     def repl(m, _hashes=hashes):

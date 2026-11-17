@@ -1,0 +1,71 @@
+/* ux-share: copy, share and print (proposal). Loaded after ux.css. */
+/* Figures in the card: look exactly as before; a dotted rule and a small pen copy mark on hover/focus only. */
+.fig { font: inherit; color: inherit; letter-spacing: inherit; background: none; border: 0; padding: 0; margin: 0; cursor: copy; position: relative; display: inline; text-align: inherit; line-height: inherit; -webkit-tap-highlight-color: transparent; }
+.big .fig { display: inline-block; }
+.fig > span:first-child, .fig > .num, .fig > .count, .fig > b { text-decoration: underline dotted transparent; text-underline-offset: .18em; text-decoration-thickness: 1px; transition: text-decoration-color 120ms ease-out; }
+.big .fig > .num { text-decoration-thickness: 3px; text-underline-offset: .08em; }
+.fig-ic { position: absolute; top: 50%; right: -19px; transform: translateY(-50%); opacity: 0; transition: opacity 120ms ease-out; color: var(--ink-3); pointer-events: none; line-height: 0; }
+.big .fig .fig-ic { top: 18%; right: -22px; }
+.fig-ic .ic { width: 14px; height: 14px; stroke-width: 1.9; }
+@media (hover: hover) {
+  .fig:hover > :first-child { text-decoration-color: var(--ink-3); }
+  .fig:hover .fig-ic { opacity: 1; }
+}
+.fig:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 1px; }
+.fig:focus-visible .fig-ic { opacity: 1; }
+/* The "Copied" note: a small stamp above the figure. Absolutely placed, so nothing moves. */
+.fig-tag { position: absolute; left: 0; bottom: 100%; margin-bottom: 4px; display: inline-flex; align-items: center; gap: 3px; white-space: nowrap;
+  font: 600 12px/1 var(--sans, inherit); letter-spacing: .02em; color: var(--ink); background: var(--paper); border: 1.5px solid var(--ink); padding: 3px 6px 3px 4px;
+  opacity: 0; transform: translateY(3px); transition: opacity 160ms ease-out, transform 160ms ease-out; pointer-events: none; z-index: 3; }
+.fig-tag.on { opacity: 1; transform: none; }
+.fig-tag .ic { width: 12px; height: 12px; stroke-width: 2.2; }
+.big .fig .fig-tag { bottom: auto; top: -4px; left: calc(100% + 8px); font-size: 13px; }
+
+/* The quiet row under the card. Space is reserved even when empty, so a result never pushes the page. */
+.acts { display: flex; align-items: center; flex-wrap: wrap; gap: var(--s1) var(--s5); margin: var(--s4) 0 0; min-height: 32px; font-size: 14px; color: var(--ink-2); visibility: hidden; }
+.leaf[data-state="result"] ~ .acts { visibility: visible; }
+.act { font: inherit; font-weight: 600; color: var(--ink); background: none; border: 0; padding: var(--s2) 0; display: inline-flex; align-items: center; gap: var(--s2); cursor: pointer; min-height: 32px; }
+.act .ic { width: 18px; height: 18px; color: var(--ink-2); flex: none; }
+.act .act-l { border-bottom: 1px solid var(--rule); padding-bottom: 1px; transition: border-color 120ms ease-out; white-space: nowrap; }
+.act:hover .act-l { border-bottom-color: var(--ink); }
+.act:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.act.done .act-l { border-bottom-color: transparent; color: var(--ink); }
+.act .ic-done { display: none; }
+.act.done .ic-main { display: none; }
+.act.done .ic-done { display: inline; color: var(--sunday); }
+.act-l { min-width: var(--w, 0); display: inline-block; }
+.acts-hint { color: var(--ink-3); font-size: 13px; margin-left: auto; }
+.print-meta { display: none; }
+@media (max-width: 760px) {
+  .acts { gap: 0 var(--s4); }
+  .act-print { display: none; }   /* phones print from the browser menu; the print view still applies */
+  .acts-hint { margin-left: 0; width: 100%; font-size: 12.5px; }
+}
+@media (max-width: 360px) { .acts { gap: 0 var(--s3); font-size: 13.5px; } }
+
+/* Print view: one clean page. What was entered, the card with More open, where it came from. */
+@media print {
+  .acts, .fig-ic, .fig-tag, .skip { display: none !important; }
+  .fig > :first-child { text-decoration: none !important; }
+  .print-meta { display: block; margin: 0 0 4mm; font-size: 11pt; color: #000; }
+  .print-meta p { margin: 0 0 1.5mm; }
+  .print-meta .pm-src { margin-top: 4mm; font-size: 9.5pt; color: #444; }
+  body[data-print="page"] .print-meta.pm-bottom { margin-top: 5mm; }
+  body[data-print="page"] .intro h1 { font-size: 15pt; margin: 0 0 3mm; }
+  body[data-print="page"] details.more > .more-body { display: block !important; }
+  body[data-print="page"] .leaf { min-height: 0 !important; }
+  body[data-print="page"] .month { break-inside: avoid; }
+}
+.act .ic-native { display: none; }
+.act.native .ic-link { display: none; }
+.act.native .ic-native { display: inline; }
+.act.done .ic-native, .act.done .ic-link { display: none !important; }
+@media print { dd small a { display: none; } }
+/* The row is part of the result block, so the prefill reservation grows by its height (14px gap + 32px row). */
+.prefill body[data-page] .result { min-height: calc(var(--leaf-h) + 46px); }
+/* Swapping "Copy all" for "Copied" must not change the button's width: both words share one grid cell. */
+.act .act-l { display: inline-grid; }
+.act .act-l > span { grid-area: 1 / 1; }
+.act .act-l .l-b { visibility: hidden; }
+.act.done .act-l .l-a { visibility: hidden; }
+.act.done .act-l .l-b { visibility: visible; }

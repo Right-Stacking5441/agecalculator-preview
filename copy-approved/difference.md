@@ -9,12 +9,6 @@
 ---
 ## Body
 
-## How the gap is shown
-
-This age difference calculator shows the gap the way you'd say an age: whole years first, then months, then days. It also says who is older and by how many days, and under More gives the same gap in weeks and months. Names are optional: open Add names to type them. They only label the result, so "Sam is older by 1,206 days" reads better than "Person A".
-
-The order you type the dates in doesn't matter. The calculator works out which birthday came first and counts forward from it.
-
 ## Sam and Alex: a worked example
 
 The gap is counted the same way an age is. Start at the earlier date of birth, count the whole years until you would pass the later one, then the whole months, then the days left over.
@@ -34,6 +28,12 @@ The gap in days stays at 1,206 all year, but the difference between their ages i
 Both answers are right, which is why the result has a line saying the ages differ by "3 or 4, depending on the time of year". If you only subtract one age from another, you get whichever of the two happens to apply today. The years, months and days figure is the one that stays put.
 
 If the two people share a birthday (same day and month, different years), the gap is a whole number of years and the line says it holds all year.
+
+## How the gap is shown
+
+This age difference calculator shows the gap the way you'd say an age: whole years first, then months, then days. Underneath, it says who is older and gives the same gap in weeks and in days. Names are optional: open Add names to type them. They only label the result, so it can say "Sam is older" instead of "Person A is older".
+
+The order you type the dates in doesn't matter. The calculator works out which birthday came first and counts forward from it.
 
 ## Leap days and month ends
 

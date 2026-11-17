@@ -1,0 +1,322 @@
+/* Result card, second pass. One plain card on every calculator: no binding strip, no zigzag, no pad of sheets under it.
+   The answer and its unit share a baseline, the sentence sits under it, the secondary figures share one rule and one size.
+   Warmth comes from the type, the spacing and one red: the next-birthday count or the ringed date. */
+
+/* ---- headline sizes (Human Checker: H1 was shouting at 1280) ---- */
+.intro h1 { font-size: 28px; line-height: 1.15; letter-spacing: -.01em; }
+@media (max-width: 760px) { .intro h1 { font-size: 24px; } }
+
+/* ---- no forced full-screen band on phones: the card ends, the page goes on ---- */
+@media (max-width: 760px) { body[data-page] .band { min-height: 0 !important; } }
+
+/* ---- the card ---- */
+#leaf.leaf, #leaf.leaf.obj, .leaf.obj-pair[data-state="result"], .leaf.obj-span[data-state="result"], .leaf.obj-record[data-state="result"] {
+  background: var(--paper); border: 1.5px solid var(--ink); border-radius: 2px; box-shadow: none !important;
+  padding: 24px 28px 20px; margin: 0 !important; min-height: 0; }
+#leaf.leaf::before, #leaf.leaf::after, .leaf.obj::before { display: none !important; content: none !important; }
+#leaf.leaf-stack { margin-bottom: 0 !important; }
+#leaf .record, #leaf .slip-answer, #leaf .pair-say, #leaf .span-say, #leaf .planner-say { background: none; border: 0; padding: 0; margin: 0; }
+#leaf.obj-record { background: var(--paper); }
+@media (max-width: 760px) {
+  #leaf.leaf, #leaf.leaf.obj, .leaf.obj-pair[data-state="result"], .leaf.obj-span[data-state="result"], .leaf.obj-record[data-state="result"] { padding: 16px 16px 12px; }
+}
+
+/* ---- the head line: what the figure is measured against ---- */
+#leaf .leaf-head { font-size: 14px; color: var(--ink-3); margin: 0 0 4px; }
+#leaf .leaf-head .stamp { font-size: 13px; letter-spacing: 0; color: var(--ink); font-weight: 700; }
+
+/* ---- answer: figure and unit on one baseline, sentence beneath ---- */
+#leaf .big { display: flex; flex-wrap: nowrap; align-items: baseline; gap: 12px; margin: 0; }
+#leaf .big .num { font-size: 88px; line-height: .9; letter-spacing: -.03em; }
+#leaf .big .num.long { font-size: 68px; }
+#leaf .big .num.code { font-size: 72px; }
+#leaf .big .unit { font-size: 22px; font-weight: 700; line-height: 1; white-space: nowrap; }
+#leaf .rest { font-size: 19px; font-weight: 500; line-height: 1.35; margin: 8px 0 0; max-width: 34ch; color: var(--ink); }
+#leaf .lead { padding-top: 4px; }
+@media (max-width: 760px) {
+  #leaf .big .num { font-size: 72px; }
+  #leaf .big .num.long { font-size: 56px; }
+  #leaf .big .num.code { font-size: 58px; }
+  #leaf .big .unit { font-size: 19px; }
+  #leaf .big { flex-wrap: wrap; row-gap: 2px; }
+  #leaf .rest { font-size: 17px; }
+}
+
+/* ---- next birthday: one line, one red ---- */
+#leaf .nextb { border-top: 1px solid var(--rule); margin-top: 16px; padding-top: 12px; gap: 8px; align-items: baseline; }
+#leaf .nextb .ic { width: 20px; height: 20px; align-self: center; margin: 0; }
+#leaf .nextb p { font-size: 16px; }
+
+/* ---- the secondary figures: one rule across the whole row, equal columns, one size ---- */
+#leaf .ledger.ess { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); grid-template-columns: none;
+  column-gap: 20px; border-top: 1.5px solid var(--ink); margin-top: 16px; padding-top: 12px; }
+#leaf .ledger.ess div { border: 0; padding: 0; }
+#leaf .ledger.ess dt { font-size: 13px; color: var(--ink-3); margin-bottom: 2px; }
+#leaf .ledger.ess dd { font-size: 19px; font-weight: 700; line-height: 1.25; }
+#leaf .ledger.ess dd small { display: block; font-size: 13px; line-height: 1.3; margin-top: 2px; color: var(--ink-3); font-weight: 400; }
+#leaf .ledger.ess dd small.rem { display: inline; font-size: inherit; font-weight: 500; color: var(--ink-2); margin: 0 0 0 .25em; }
+@media (max-width: 760px) {
+  #leaf .ledger.ess { column-gap: 12px; }
+  #leaf .ledger.ess dd { font-size: 17px; }
+}
+@media (max-width: 380px) { #leaf .ledger.ess { grid-auto-flow: row; grid-template-columns: 1fr 1fr; row-gap: 12px; } }
+
+/* ---- More: a tidy hairline list, label left, figure right ---- */
+#leaf details.more { margin-top: 12px; border-top: 1px solid var(--rule-soft); }
+#leaf details.more > summary { padding: 8px 0 4px; font-size: 15px; }
+#leaf .more-body { padding-top: 2px; gap: 16px 28px; }
+#leaf .more-body .ledger { border-top: 0; padding: 0; margin: 0; }
+#leaf .more-body .ledger div { padding: 8px 0; border-bottom: 1px solid var(--rule-soft); }
+#leaf .more-body .ledger dt::after { content: none; }
+#leaf .more-body .ledger dd small { display: block; font-size: 13px; }
+#leaf .more-body .ledger div:last-child { border-bottom: 0; }
+
+/* ---- the month grid sits beside the answer on wide screens ---- */
+#leaf .leaf-body { grid-template-columns: minmax(0, 1fr) auto; gap: 20px 32px; }
+#leaf .bday.card-side { padding-top: 4px; }
+#leaf .bday.card-side .month { width: 182px; }
+@media (max-width: 760px) { #leaf .leaf-body { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---- pair and span: two small date tiles and the measured gap ---- */
+#leaf .pair-leaves, #leaf .span-row { margin-top: 16px; }
+#leaf .mini-leaf { box-shadow: none; border: 1.5px solid var(--ink); border-radius: 2px; }
+#leaf .mini-leaf::before { display: none; }
+#leaf .mini-leaf.elder .ml-name { color: var(--ink); }
+
+/* ---- the chronological slip and the record: plain drawings inside the same card ---- */
+#leaf .slip { box-shadow: none; }
+#leaf .rec-result { margin: 0; }
+#leaf .rec-title { margin-top: 12px; }
+
+/* ---- Korean: the three columns get even weight; the international one leads ---- */
+#leaf .kcols { gap: 0; }
+
+/* ---- the readback never truncates: it wraps if the date is long ---- */
+.df-foot .readback, .df-foot .readback.ok { height: auto !important; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }
+.df-foot { height: auto !important; min-height: 22px; }
+
+/* ---- empty states: tool-specific, quiet, already the card's shape ---- */
+#leaf.leaf[data-state="empty"], #leaf.leaf.obj[data-state="empty"] { background: var(--paper); border: 1.5px solid var(--rule); color: var(--ink-2); padding: 20px 24px; }
+#leaf .es { display: block; }
+#leaf .es-say { font-size: 18px; font-weight: 600; color: var(--ink); margin: 12px 0 8px; max-width: 34ch; line-height: 1.35; }
+#leaf .es-eg { font-size: 15px; color: var(--ink-3); margin: 0; max-width: 46ch; line-height: 1.45; }
+#leaf .es-k { font-size: 13px; color: var(--ink-3); margin: 0; }
+#leaf .es-date { font-size: 26px; font-weight: 800; margin: 2px 0 0; color: var(--ink); letter-spacing: -.01em; }
+#leaf .es-day { font-size: 14px; color: var(--ink-3); margin: 2px 0 0; }
+#leaf .es-today { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px 32px; align-items: start; }
+#leaf .es-today .month { width: 182px; }
+#leaf .es-stamp { display: inline-block; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; border: 1.5px solid var(--rule); padding: 3px 8px; margin: 0; color: var(--ink-3); }
+#leaf .es-blank { display: block; height: 0; border-bottom: 1.5px dashed var(--rule); width: 64px; margin: 20px 0 8px; }
+#leaf .es-slots { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: end; }
+#leaf .es-slot { border: 1.5px dashed var(--rule); padding: 8px 12px 12px; }
+#leaf .es-slot .es-blank { width: 40px; margin: 16px 0 0; }
+#leaf .es-gm { display: block; width: 48px; border-top: 1.5px dashed var(--rule); margin-bottom: 24px; }
+#leaf .es-slip .slip-sum { margin: 0 0 4px; }
+#leaf .es-slip td.blank { border-bottom: 1.5px dashed var(--rule); height: 26px; }
+#leaf .es-k3 .k-n.es-blank { width: 34px; height: 0; margin: 16px 0 8px; }
+#leaf .es-year .pl-year { font-size: 26px; font-weight: 800; margin: 0 0 8px; color: var(--ink); }
+#leaf .es-year .pl-months { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2px; margin: 0; padding: 0; list-style: none; }
+#leaf .es-year .pl-months li { border-top: 1.5px solid var(--rule); padding-top: 3px; }
+#leaf .es-year .pl-m { font-size: 11px; color: var(--ink-3); }
+#leaf .es-tabs .ytabs { margin: 0 0 4px; }
+#leaf .es-tabs .ytab.blank { border-style: dashed; border-color: var(--rule); }
+@media (max-width: 760px) {
+  #leaf.leaf[data-state="empty"], #leaf.leaf.obj[data-state="empty"] { padding: 16px 16px; }
+  #leaf .es-today { grid-template-columns: minmax(0, 1fr); }
+  #leaf .es-today .month { display: none; }  /* trial result: on phones the grid pushed the input prompt below the fold; it lives under More instead */
+  #leaf .es-say { font-size: 17px; }
+  #leaf .es-year .pl-m { font-size: 9px; }
+}
+
+/* ---- print: the card prints as it looks ---- */
+@media print { #leaf.leaf { border: 1.5px solid #000; } }
+
+/* Birth-year tabs stay side by side inside the new card. */
+#leaf .ytabs { display:flex; flex-wrap:nowrap; gap:16px; }
+#leaf .ytab { min-width:0; flex:1 1 0; padding:12px 16px 12px; }
+#leaf .yt-year { font-size:68px; }
+#leaf .yt-or { font-size:15px; margin-bottom:32px; }
+@media(max-width:760px) { #leaf .yt-year { font-size:50px; } #leaf .yt-cap { font-size:14px; } }
+#leaf .nextb .ic { color: var(--ink-3); }  /* the red stays on the count */
+
+/* Prefilled links: room for the new card and its share row, measured per page (card/measure_rh.py), so nothing moves on load. */
+.prefill body[data-page] .result { min-height: var(--rh, 0px); }
+body[data-page="home"] { --rh: 559px; } body[data-page="past"] { --rh: 590px; } body[data-page="difference"] { --rh: 386px; } body[data-page="days-between-dates"] { --rh: 421px; } body[data-page="chronological-age"] { --rh: 774px; } body[data-page="dog-age"] { --rh: 328px; } body[data-page="cat-age"] { --rh: 354px; } body[data-page="korean-age"] { --rh: 544px; } body[data-page="birthday-countdown"] { --rh: 504px; } body[data-page="how-old-will-i-be"] { --rh: 741px; } body[data-page="what-year-was-i-born"] { --rh: 407px; } .prefill-on body[data-page="home"] { --rh: 816px; }
+@media (max-width: 1080px) { body[data-page="home"] { --rh: 559px; } body[data-page="past"] { --rh: 590px; } body[data-page="difference"] { --rh: 412px; } body[data-page="days-between-dates"] { --rh: 421px; } body[data-page="chronological-age"] { --rh: 774px; } body[data-page="dog-age"] { --rh: 328px; } body[data-page="cat-age"] { --rh: 354px; } body[data-page="korean-age"] { --rh: 544px; } body[data-page="birthday-countdown"] { --rh: 504px; } body[data-page="how-old-will-i-be"] { --rh: 741px; } body[data-page="what-year-was-i-born"] { --rh: 407px; } .prefill-on body[data-page="home"] { --rh: 816px; } }
+@media (max-width: 760px) { body[data-page="home"] { --rh: 584px; } body[data-page="past"] { --rh: 612px; } body[data-page="difference"] { --rh: 503px; } body[data-page="days-between-dates"] { --rh: 591px; } body[data-page="chronological-age"] { --rh: 806px; } body[data-page="dog-age"] { --rh: 292px; } body[data-page="cat-age"] { --rh: 315px; } body[data-page="korean-age"] { --rh: 549px; } body[data-page="birthday-countdown"] { --rh: 490px; } body[data-page="how-old-will-i-be"] { --rh: 708px; } body[data-page="what-year-was-i-born"] { --rh: 406px; } .prefill-on body[data-page="home"] { --rh: 804px; } }
+@media (max-width: 370px) { body[data-page="home"] { --rh: 584px; } body[data-page="past"] { --rh: 634px; } body[data-page="difference"] { --rh: 543px; } body[data-page="days-between-dates"] { --rh: 591px; } body[data-page="chronological-age"] { --rh: 826px; } body[data-page="dog-age"] { --rh: 315px; } body[data-page="cat-age"] { --rh: 315px; } body[data-page="korean-age"] { --rh: 555px; } body[data-page="birthday-countdown"] { --rh: 490px; } body[data-page="how-old-will-i-be"] { --rh: 731px; } body[data-page="what-year-was-i-born"] { --rh: 429px; } .prefill-on body[data-page="home"] { --rh: 827px; } }
+@media (max-width: 330px) { body[data-page="home"] { --rh: 633px; } body[data-page="past"] { --rh: 683px; } body[data-page="difference"] { --rh: 543px; } body[data-page="days-between-dates"] { --rh: 663px; } body[data-page="chronological-age"] { --rh: 865px; } body[data-page="dog-age"] { --rh: 315px; } body[data-page="cat-age"] { --rh: 338px; } body[data-page="korean-age"] { --rh: 621px; } body[data-page="birthday-countdown"] { --rh: 579px; } body[data-page="how-old-will-i-be"] { --rh: 757px; } body[data-page="what-year-was-i-born"] { --rh: 493px; } .prefill-on body[data-page="home"] { --rh: 875px; } }
+
+
+/* Days between dates, wide screens: the count and the ruler share a row, so the card has no empty half. */
+@media (min-width: 761px) {
+  #leaf.obj-span[data-state="result"] { display: grid; grid-template-columns: minmax(200px, auto) minmax(0, 1fr); column-gap: 40px; align-items: center; }
+  #leaf.obj-span[data-state="result"] > .span-row { margin-top: 0; }
+  #leaf.obj-span[data-state="result"] > :not(.span-say):not(.span-row) { grid-column: 1 / -1; }
+}
+
+/* Home and countdown, wide screens: the month grid joins the card after the first paint, so its row is held at the six-week height from the start */
+@media (min-width: 761px) { body[data-page="home"] #leaf[data-state="result"] .leaf-body, body[data-page="birthday-countdown"] #leaf[data-state="result"] .leaf-body { min-height: 199px; } }
+
+/* Resting view: today's date, day count and month grid hold their size before share.js fills them */
+#leaf .es-date { min-height: 1.25em; line-height: 1.25; }
+#leaf .es-day { min-height: 1.45em; line-height: 1.45; }
+@media (min-width: 761px) { #leaf .es-today .today-grid { min-height: 199px; } }
+/* Prefilled links: the "type day, month and year separately" link is hidden from the first paint, as it is once the date reads back */
+.prefill .df-foot .parts-toggle[aria-expanded="false"] { display: none; }
+
+/* One input mode at a time (preview fd4f2b2): with the day, month and year boxes open, the single box and its label are hidden; the toggle reads "Use one box" */
+.datefield.boxes-open > .df-label, .datefield.boxes-open > .quick { display: none; }
+.datefield.boxes-open .parts { margin-top: 0; }
+.datefield.boxes-open .parts-toggle { display: inline-flex !important; }
+.parts .parts-cap { grid-column: 1 / -1; margin: 0 0 4px; font-weight: 600; font-size: inherit; color: var(--ink, #1d1c1a); }
+
+/* ---- Five-second test polish (16 Nov, 23:25 GMT) ---- */
+/* Action row: hint sits right after the buttons; one line on phones */
+.acts { flex-wrap: nowrap; align-items: center; column-gap: 20px; }
+.acts .acts-hint { margin-left: 4px; white-space: nowrap; font-size: 14px; color: var(--ink-3); }
+@media (max-width: 760px) {
+  .acts { flex-wrap: wrap; column-gap: 12px; row-gap: 0; font-size: 14px; }
+  .acts .act .ic { display: none; }   /* phones: text-only, so all four fit on one line; the labels say what each does */
+  .acts .act { flex: 0 0 auto; white-space: nowrap; gap: 4px; }
+  .acts .act-print { display: inline-flex; }
+  .acts .acts-hint { flex: 1 0 100%; margin: -4px 0 0; font-size: 13px; }
+}
+@media (max-width: 370px) { .acts { column-gap: 8px; } }
+@media (max-width: 340px) { .mast .brand .wm { font-size: 16px; } .mast .brand { gap: 6px; } }
+
+/* The boxes toggle: a quiet text button at body-small size, not a glyph and 12px text */
+.parts-toggle, .entry.multi .df-foot .parts-toggle { font-size: 15px; color: var(--ink-2); gap: 0; padding: 0; min-height: 44px; text-decoration: underline; text-decoration-color: var(--rule); text-decoration-thickness: 1px; text-underline-offset: 4px; white-space: normal; text-align: left; }
+.parts-toggle span { text-decoration: none; }
+.parts-toggle:hover { color: var(--ink); text-decoration-color: var(--ink-2); }
+
+/* Days between dates: the gap reads as a timeline: a rule with end ticks and the day count above it */
+.obj-span .gap-measure { gap: 4px; }
+.obj-span .gm-label { font-size: 15px; color: var(--ink); font-weight: 600; }
+.obj-span .gm-line { height: 12px; border: 0; border-left: 1.5px solid var(--ink); border-right: 1.5px solid var(--ink); background: none; position: relative; box-shadow: none; }
+.obj-span .gm-line::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 1.5px solid var(--ink); transform: translateY(-50%); }
+.obj-span .gm-line::after { content: none; }
+/* …and the form is no taller than it needs to be: the boxes toggle sits under From, the end-day option under To, on one line */
+@media (min-width: 761px) { body[data-page="days-between-dates"] .entry.multi .parts-shared, body[data-page="days-between-dates"] .entry.multi label.check { margin-top: 8px; } }
+
+/* Dog size: a 2 x 2 choice of tiles, name then kg; 4 across on wide screens */
+.opts:has(input[name="size"]) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+.opts:has(input[name="size"]) legend { grid-column: 1 / -1; margin-bottom: 4px; }
+.opts:has(input[name="size"]) .opt { position: relative; border: 1px solid var(--rule) !important; border-radius: 2px; padding: 8px 12px !important; min-height: 56px; background: transparent; cursor: pointer; }
+.opts:has(input[name="size"]) .opt input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.opts:has(input[name="size"]) .opt:has(input:checked) { border-color: var(--ink) !important; box-shadow: inset 0 0 0 1px var(--ink); background: #fff; }
+.opts:has(input[name="size"]) .opt:has(input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
+.opts .opt-t { display: flex; flex-direction: column; gap: 0; line-height: 1.3; }
+.opts .opt-t b { margin: 0 !important; font-weight: 600; color: var(--ink); }
+.opts .opt-r { font-size: 13.5px; color: var(--ink-2); }
+@media (min-width: 761px) { .opts:has(input[name="size"]) { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.opts .opt-r .nw { white-space: nowrap; }
+
+/* Settings line: time zone and the change link only */
+.on.settings .tzline::before, .on.settings .zone::before { content: none; }
+.on.settings > p { column-gap: 12px; }
+/* Footer links: spaced, no dot to strand at a line end */
+.foot p:has(> a + a) { display: flex; flex-wrap: wrap; column-gap: 20px; }
+/* Countdown "Hours to go" in More: plain figure */
+#leaf [data-clock] { font-variant-numeric: tabular-nums; }
+@media (max-width: 340px) { .mast .brand svg { margin-right: 0; } .mast .brand .wm { margin-left: -2px; } .nav-menu > summary { padding-left: 4px; padding-right: 0; font-size: 14px; } .nav-menu { margin-right: 0; } }
+.on.settings #on-label[hidden] { display: none !important; }
+.opts:has(input[name="size"]) .opt { align-items: flex-start; }
+@media (min-width: 761px) { body[data-page="days-between-dates"] .entry.multi label.check { min-height: 44px; display: flex; align-items: center; } }
+@media (max-width: 300px) { .opts:has(input[name="size"]) { grid-template-columns: minmax(0, 1fr); } }
+/* (lb kept on phones too: the size labels are the Copywriter's strings) */
+
+/* Dog size tiles on phones: kg only, lb stays in the size chart (approved by HC CEO, copy file being updated) */
+@media (max-width: 760px) { .opts .opt-r .nw + .nw, .opts .opt-c { display: none; } .opts .opt-r .nw:first-child { display: inline-block; } .opts .opt-r .nw:first-child::first-letter { text-transform: uppercase; } }
+
+/* Date field error slot (17 Nov): the text field keeps its own line for the readback or the error, two lines high,
+   so an error of up to two lines never moves the page. The boxes toggle sits under it and only opens on a tap. */
+.df-foot, .df-foot:has(.readback.err), .df-foot:has(.swap) { display: flex; flex-direction: column; align-items: flex-start; flex-wrap: nowrap; height: auto !important; gap: 0; }
+.df-foot .readback, .df-foot .readback.ok, .df-foot .readback.err, .entry.multi .df-foot .readback, .prefill-on .entry.multi .df-foot .readback { flex: none; width: 100%; min-height: 44px !important; height: auto !important; line-height: 22px; margin: 0; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }
+.df-foot:has(.readback.ok) .parts-toggle[aria-expanded="false"] { display: inline-flex; visibility: hidden; }
+
+/* ---- Clarity pass (17 Nov): one answer, then quieter facts. No equal boxes. ---- */
+/* Totals: one label that says they are the same age, then the equivalents in a flowing line joined by "or" */
+#leaf .same { border-top: 1px solid var(--rule); margin-top: 16px; padding-top: 12px; }
+#leaf .same-h { font-size: 14px; line-height: 20px; color: var(--ink-2); margin: 0 0 4px; }
+#leaf .ledger.same-l { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0; margin: 0; padding: 0; border: 0; }
+#leaf .ledger.same-l div { display: block; border: 0; padding: 0; margin: 0; }
+#leaf .ledger.same-l dd { display: inline; text-align: left; max-width: none; margin: 0; font-size: 17px; line-height: 28px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+#leaf .ledger.same-l dd { white-space: nowrap; }
+#leaf .ledger.same-l div:not(:last-child) dd::after { content: "or"; font-size: 15px; font-weight: 400; color: var(--ink-3); margin: 0 10px; }
+#leaf .ledger.same-l dd small, #leaf .ledger.same-l dd small.rem { display: inline; font-size: inherit; font-weight: inherit; color: inherit; margin: 0; }
+#leaf .more-body .same { border-top: 0; margin: 0 0 8px; padding: 8px 0; border-bottom: 1px solid var(--rule-soft); }
+
+/* Other secondary facts: plain labelled rows, label then value, one size; not a row of equal columns */
+#leaf .ledger.ess { display: block; border-top: 1px solid var(--rule); margin-top: 16px; padding-top: 4px; column-gap: 0; }
+#leaf .ledger.ess div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 8px 0; border: 0; }
+#leaf .ledger.ess div + div { border-top: 1px solid var(--rule-soft); }
+#leaf .ledger.ess dt { font-size: 15px; color: var(--ink-2); margin: 0; flex: 0 1 auto; }
+#leaf .ledger.ess dd { font-size: 17px; font-weight: 600; text-align: right; line-height: 1.35; flex: 0 1 auto; }
+#leaf .ledger.ess dd small { display: block; font-size: 13px; font-weight: 400; color: var(--ink-3); margin-top: 0; }
+@media (max-width: 760px) { #leaf .ledger.ess dd { font-size: 17px; } }
+@media (max-width: 380px) { #leaf .ledger.ess { display: block; } }
+
+/* The next-birthday line is a fact, not a second answer: one weight, no red */
+#leaf .nextb .count { color: var(--ink); }
+
+/* Month grid: a caption that says what the ring marks; month name in sentence case; the grid uses the width so the ring has room */
+#leaf .month-cap { font-size: 14px; line-height: 20px; color: var(--ink-2); margin: 0 0 4px; }
+#leaf .month-name { text-transform: none; letter-spacing: 0; font-size: 15px; font-weight: 600; }
+#leaf .month-name span { letter-spacing: 0; }
+#leaf .more-body .month { width: 100%; max-width: 320px; }
+#leaf .more-body .month td { height: 32px; }
+/* in the narrow side grid the ring is drawn to the cell, so it never sits on the next date */
+#leaf .bday.card-side .month .ring, #leaf .es-today .month .ring { width: 30px; height: 26px; margin: -14px 0 0 -15px; }
+#leaf .same.join-and .ledger.same-l div:not(:last-child) dd::after { content: "and"; }
+#leaf .same-note { font-size: 13px; line-height: 20px; color: var(--ink-3); margin: 0; }
+#leaf .same + .ledger.ess:empty { display: none; }
+
+/* Clarity pass: links inside the card's sentences get a 44pt hit area without moving the text. */
+#leaf .rest a, #leaf .more-body p a { position: relative; }
+#leaf .rest a::after, #leaf .more-body p a::after { content: ""; position: absolute; left: -4px; right: -4px; top: -12px; bottom: -12px; }
+
+/* ---- Option C card (17 Nov): adaptive headline, one plain sentence, birth date on the card ---- */
+#leaf .leaf-head { display: flex; flex-wrap: wrap; justify-content: flex-start; column-gap: 14px; row-gap: 2px; }
+#leaf .leaf-head .born b { color: var(--ink-2); }
+#leaf .big .unit-and { white-space: nowrap; }
+#leaf .lead .rest.tight, #leaf .pair-say .rest.tight, #leaf .span-say .rest.tight, #leaf .planner-say .rest.tight { margin-top: 2px; }
+#leaf .say-line { margin: 12px 0 0; font-size: 17px; line-height: 26px; color: var(--ink-2); max-width: 34ch; }
+#leaf .say-line .cn, #leaf .say-line .fig { font-weight: 600; color: var(--ink); }
+#leaf .say-line .cw { white-space: nowrap; }
+#leaf .nextb { margin-top: 20px; }
+#leaf .nextb p .count, #leaf .nextb p .fig .count { font-weight: 400; }
+/* the copy hint lives in the card, under what it describes */
+.acts .acts-hint { display: none; }
+#leaf .copy-hint { margin: 14px 0 0; font-size: 13px; line-height: 18px; color: var(--ink-3); }
+/* figures look tappable: a dotted underline on hover and keyboard focus; on touch screens, faintly, on the small figures */
+#leaf .fig:hover > :first-child, #leaf .fig:focus-visible > :first-child { text-decoration: underline dotted 1.5px; text-underline-offset: 5px; text-decoration-color: var(--ink-3); }
+@media (hover: none) { #leaf .say-line .fig > :first-child, #leaf .ledger dd .fig > :first-child, #leaf .nextb .fig > :first-child { text-decoration: underline dotted 1px; text-underline-offset: 5px; text-decoration-color: var(--ink-3); } }
+#leaf .copy-hint + details.more { margin-top: 6px; }
+/* Cold-cache prefilled link: reserve the hidden 44pt date-box toggle before the readback becomes .ok. */
+.prefill .df-foot:has(.parts-toggle) { min-height: 88px; }
+/* 200% text: keep the remainder with its unit but allow the unit group to sit directly under the number. */
+@media (max-width: 300px) {
+  #leaf .big { white-space: normal; }
+  #leaf .big .unit { white-space: normal; font-size: 17px; line-height: 22px; }
+  #leaf .big .unit-and { display: block; }
+  #leaf .say-line .cw { white-space: normal; }
+  #leaf .ledger.same-l div, #leaf .ledger.same-l dd { max-width: 100%; white-space: normal; }
+}
+
+/* Preview date-field behaviour (signed off): the parts toggle stays
+   visible and tappable. Space for the message row is reserved, but
+   the toggle must not be hidden after a successful readback. The
+   mock hid it to reserve 44pt without showing a second control;
+   these tests and the iPhone sign-off keep the toggle in view. */
+.prefill .df-foot .parts-toggle[aria-expanded="false"] {
+  display: inline-flex !important;
+}
+.df-foot:has(.readback.ok) .parts-toggle[aria-expanded="false"] {
+  display: inline-flex !important;
+  visibility: visible !important;
+}
+/* Hold the foot at the empty-state height so a two-line error does not shrink it. */
+.entry:not(.multi) .df-foot {
+  min-height: 94px;
+}

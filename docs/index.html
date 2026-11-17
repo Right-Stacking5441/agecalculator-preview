@@ -3,17 +3,22 @@
 <html lang="en-GB">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="noindex,nofollow" name="robots"/>
 <title>Age calculator: How old am I?</title>
 <meta content="Type a date of birth, like 15 March 1995 or 15/03/1995, and get your exact age in years, months and days, today or on any date. Leap days included." name="description"/>
 <script>document.documentElement.classList.add('js');
 (function () {
   function failsafe() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', failsafe);
+      return;
+    }
     var menu = document.querySelector('.nav-menu');
     if (!menu) return;
     if (menu.getAttribute('data-menu-ready') === '1') return;
-    document.documentElement.classList.remove('js');
+    if (document.documentElement.getAttribute('data-menu-fallback') === '1') return;
+    document.documentElement.setAttribute('data-menu-fallback', '1');
     menu.classList.remove('is-enhanced');
     var list = document.getElementById('nav-menu-list');
     if (list) list.removeAttribute('hidden');
@@ -22,10 +27,7 @@
     var back = document.querySelector('.nav-menu-back');
     if (back && back.parentNode) back.parentNode.removeChild(back);
   }
-  function start() { setTimeout(failsafe, 3000); }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
-  else start();
-  window.addEventListener('load', start);
+  setTimeout(failsafe, 3000);
   window.agecalcMenuFailsafe = failsafe;
 })();
 </script><link href="https://agecalculator.com/" rel="canonical"/>
@@ -56,7 +58,7 @@
 }
 </script>
 <script>var q=location.search;if(/[?&](dob|a|b|start|end|test|on|year)=/.test(q))document.documentElement.classList.add('prefill');if(/[?&]year=/.test(q))document.documentElement.classList.add('prefill-year');if(/[?&](on|year)=/.test(q))document.documentElement.classList.add('prefill-on')</script>
-<link href="ux.css?v=7b6608425e" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript></head>
+<link href="ux.css?v=f0ee39e981" rel="stylesheet"/><link href="share.css?v=5b6a6866e2" rel="stylesheet"/><link href="card.css?v=0d1c4e9e9f" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript></head>
 <body data-page="home">
 <aside aria-label="Preview notice" class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</aside>
 <a class="skip" href="#tool">Skip to the calculator</a>
@@ -75,19 +77,8 @@
 </div>
 </div>
 </form></div>
-<div class="result"><div class="leaf" data-state="empty" id="leaf"><div class="leaf-body"><div class="lead"><p class="ph-msg">Your age will appear here.</p></div></div><noscript><p class="hint">This calculator needs JavaScript to work the result out. The method is written out below the tool if you’d rather do it on paper.</p></noscript></div><p aria-live="polite" class="sr-only" id="live"></p><div class="on settings">
-<p><svg aria-hidden="true" class="ic ic-clock" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M12 3.4c4.9-.1 8.6 3.7 8.6 8.5 0 4.8-3.8 8.7-8.7 8.6-4.7-.1-8.4-3.9-8.3-8.7.1-4.6 3.6-8.3 8.6-8.5.6 0 1.2.1 1.7.2M12 7.4v4.8l3.1 2.1"></path></svg><span id="on-label">Age today<span class="on-date">, <b>Tue 17 Nov 2026</b></span></span><script>
-(function(){
-  var el=document.getElementById('on-label');
-  if(!el || el.hidden || el.getAttribute('data-idle')) return;
-  var M=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  var W=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  var n=new Date(), mon=M[n.getMonth()].slice(0,3);
-  var dspan=el.querySelector('.on-date');
-  if(!dspan){ dspan=document.createElement('span'); dspan.className='on-date'; el.appendChild(dspan); }
-  dspan.innerHTML=', <b>'+W[n.getDay()].slice(0,3)+' '+n.getDate()+' '+mon+' '+n.getFullYear()+'</b>';
-})();
-</script> <span class="tzline">Time zone: <span id="zone-now">Europe/London</span></span> <button aria-controls="on-box" aria-expanded="false" class="textbtn" data-label="Change date or time zone" id="on-toggle" type="button">Change date or time zone</button></p>
+<div class="result"><div class="print-meta pm-top"></div><div class="leaf" data-state="empty" id="leaf"><div class="leaf-body"><div class="lead"><p class="ph-msg">Type a date of birth, like 15 March 1995.</p><div class="es es-today"><div class="es-main"><p class="es-k">Today</p><p class="es-date" data-today="long">Tuesday 17 November 2026</p><p class="es-day" data-today="dayof">Day 321 of 365</p></div><div class="month today-grid" data-today-grid=""><p class="month-name">November <span>2026</span></p><table><caption class="sr-only">This month. Today is 17 November.</caption><thead><tr><th abbr="Monday" scope="col">M</th><th abbr="Tuesday" scope="col">T</th><th abbr="Wednesday" scope="col">W</th><th abbr="Thursday" scope="col">T</th><th abbr="Friday" scope="col">F</th><th abbr="Saturday" scope="col">S</th><th abbr="Sunday" scope="col">S</th></tr></thead><tbody><tr><td></td><td></td><td></td><td></td><td></td><td></td><td>1</td></tr><tr><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr><tr><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td></tr><tr><td>16</td><td class="hit">17<svg aria-hidden="true" class="ring" viewbox="0 0 40 34"><path d="M23 3.5C31 3.6 37.6 9 37 17.2 36.4 25.6 28.4 31 19.6 30.6 10.6 30.2 3 24.6 3.4 16.4 3.8 8.6 11 3.2 19.8 3.2c3.4 0 6.2.8 8.6 2.2"></path></svg></td><td>18</td><td>19</td><td>20</td><td>21</td><td>22</td></tr><tr><td>23</td><td>24</td><td>25</td><td>26</td><td>27</td><td>28</td><td>29</td></tr><tr><td>30</td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table></div></div></div></div><noscript><p class="hint">This calculator needs JavaScript to work the result out. The method is written out below the tool if you’d rather do it on paper.</p></noscript></div><div aria-label="Copy or share this result" class="acts" role="group"><button class="act" data-act="age" type="button"><svg aria-hidden="true" class="ic ic-copy" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M8.7 8.4l10.4.1-.1 12H8.6zM15.3 8.3V4.2L4.9 4.3l-.1 12.1h3.7"></path></svg><span class="act-l">Copy age</span></button><button class="act" data-act="all" type="button"><svg aria-hidden="true" class="ic ic-copy" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M8.7 8.4l10.4.1-.1 12H8.6zM15.3 8.3V4.2L4.9 4.3l-.1 12.1h3.7"></path></svg><span class="act-l">Copy details</span></button><button class="act" data-act="link" type="button"><svg aria-hidden="true" class="ic ic-copy" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M8.7 8.4l10.4.1-.1 12H8.6zM15.3 8.3V4.2L4.9 4.3l-.1 12.1h3.7"></path></svg><span class="act-l">Copy link</span></button><button class="act act-print" data-act="print" type="button"><svg aria-hidden="true" class="ic ic-printer" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M7.1 9V3.9h9.7V9M5.8 17.3H4.4c-.6 0-1.1-.4-1.1-1V10.1c0-.6.5-1.1 1.1-1.1h15.3c.6 0 1 .5 1 1.1v6.2c0 .6-.4 1-1 1h-1.5M7.1 14.1l9.9.1-.1 6.3H7.2z"></path></svg><span class="act-l">Print</span></button></div><p aria-live="polite" class="sr-only" id="copy-live"></p><div class="print-meta pm-bottom"></div><p aria-live="polite" class="sr-only" id="live"></p><div class="on settings">
+<p><svg aria-hidden="true" class="ic ic-clock" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M12 3.4c4.9-.1 8.6 3.7 8.6 8.5 0 4.8-3.8 8.7-8.7 8.6-4.7-.1-8.4-3.9-8.3-8.7.1-4.6 3.6-8.3 8.6-8.5.6 0 1.2.1 1.7.2M12 7.4v4.8l3.1 2.1"></path></svg><span id="on-label">Time zone: <span id="zone-now">Europe/London</span></span> <button aria-controls="on-box" aria-expanded="false" class="textbtn" data-label="Change date or time zone" id="on-toggle" type="button">Change date or time zone</button></p>
 <div hidden="" id="on-box">
 <div class="datefield df-small" data-datefield="on">
 <label class="df-label" for="on-q">Age on this date</label>
@@ -105,18 +96,18 @@
 </div>
 </div></div>
 <div class="wrap page"><div class="content"><nav aria-labelledby="rel-h" class="related"><h2 id="rel-h">More calculators</h2><ul><li><a href="difference/">Age difference between two people</a></li><li><a href="past/">How old was I on a past date?</a></li><li><a href="days-between-dates/">Days between two dates</a></li><li><a href="birthday-countdown/">Birthday countdown</a></li><li><a href="dog-age/">Dog age in human years</a></li><li><a href="cat-age/">Cat age in human years</a></li></ul></nav>
+<details class="topic"><summary><h2>Working it out by hand: 15 March 1995</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
+<p>On 16 November 2026, for example, someone born on 15 March 1995 is 31 years, 8 months and 1 day old. On paper:</p>
+<ul><li>2026 minus 1995 is 31, and their birthday on 15 March 2026 has already passed, so 31 completed years.</li><li>15 March to 15 November is 8 whole months.</li><li>15 November to 16 November is 1 day.</li></ul>
+<p>That is 11,569 days in total. They were born on a Wednesday, and their 32nd birthday, on Monday 15 March 2027, is 119 days away. If the birthday in the year you’re checking hasn’t come yet, take one off the years and count the months from the birthday the year before.</p>
+</div></details>
 <details class="topic"><summary><h2>What the result shows</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
-<p>Your age comes out as completed years, then months, then days, worked out to today’s date in your time zone. The big number is your age as you’d write it on a form. The line under it is the months and days since your last birthday. Below that, the same stretch of time is given in single units: total months, weeks and days, with hours under More.</p>
+<p>Your age comes out as completed years, then months, then days, worked out to today’s date in your time zone. The big number is your age as you’d write it on a form. The line under it is the months and days since your last birthday. Below that, one line gives the same stretch of time in weeks and in days, with hours under More.</p>
 <p>The box reads dates the way people type them: 15 March 1995, 15/03/1995, 1995-03-15 or 15031995 all work, and the line underneath says how it has read your entry. If a date could go either way, like 1/2/2000, it follows your browser’s language setting and offers the other reading with one tap.</p>
 </div></details>
 <details class="topic"><summary><h2>How your age is counted</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>Your age goes up by one on your birthday, the same way it does on a passport or a school form. The age calculator counts whole years first, then the whole months left over, then the days left after that.</p>
 <p>The single-unit figures don’t add on to your age. 380 months and 1,652 weeks are two ways of measuring the same span, not extra time. Hours are the number of days times 24, counted from midnight on the day you were born, because a date of birth on its own doesn’t record what time you arrived. Clock changes aren’t counted.</p>
-</div></details>
-<details class="topic"><summary><h2>Working it out by hand: 15 March 1995</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
-<p>On 16 November 2026, for example, someone born on 15 March 1995 is 31 years, 8 months and 1 day old. On paper:</p>
-<ul><li>2026 minus 1995 is 31, and their birthday on 15 March 2026 has already passed, so 31 completed years.</li><li>15 March to 15 November is 8 whole months.</li><li>15 November to 16 November is 1 day.</li></ul>
-<p>That is 11,569 days in total. They were born on a Wednesday, and their 32nd birthday, on Monday 15 March 2027, is 119 days away. If the birthday in the year you’re checking hasn’t come yet, take one off the years and count the months from the birthday the year before.</p>
 </div></details>
 <details class="topic" id="born-on-29-february"><summary><h2>Born on 29 February</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>A 29 February birthday only exists in leap years, such as 2024, 2028 and 2032. In the other three years, this calculator counts a 29 February birthday as falling on 1 March, the day after 28 February, and every tool on this site uses that rule. It is the rule written into Scottish law by the <a href="https://www.legislation.gov.uk/ukpga/1991/50/section/6">Age of Legal Capacity (Scotland) Act 1991, section 6(2)</a>. The law in England, Wales and Northern Ireland does not name a date, so if a particular contract or document says something else, go by its wording.</p>
@@ -172,11 +163,12 @@
 <div class="foot-index" id="all-tools"><h2>Every calculator on the site</h2><ul class="foot-tools"><li><a href="difference/">Age difference</a></li><li><a href="past/">How old was I?</a></li><li><a href="how-old-will-i-be/">How old will I be?</a></li><li><a href="days-between-dates/">Days between dates</a></li><li><a href="chronological-age/">Chronological age</a></li><li><a href="birthday-countdown/">Birthday countdown</a></li><li><a href="korean-age/">Korean age</a></li><li><a href="what-year-was-i-born/">What year was I born?</a></li><li><a href="dog-age/">Dog age</a></li><li><a href="cat-age/">Cat age</a></li></ul></div>
 <div class="foot-small"><p><b>agecalculator.com</b>. Dates you type are worked out in your browser and aren’t sent anywhere. Free to use.</p><p><a href="embed/">Put this calculator on your own site</a> · <a href="privacy/">Privacy</a> · <a href="contact/">Contact</a></p></div>
 </div></footer>
-<script defer="" src="dates.js?v=b4e78af13e"></script>
-<script defer="" src="app.js?v=53f820a449"></script>
+<script defer="" src="dates.js?v=505ce38777"></script>
+<script defer="" src="app.js?v=a250c9dcfb"></script><script defer="" src="share.js?v=a1c246c7f7"></script>
 <script>
 (function(){
   try {
+  if (document.documentElement.getAttribute('data-menu-fallback') === '1') return;
   var menu = document.querySelector('.nav-menu');
   if (!menu) return;
   var list = menu.querySelector('ul');

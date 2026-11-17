@@ -358,10 +358,10 @@ def main() -> int:
                 issues.append(f"STALE: {stale!r}")
 
         if page_key(html_name) == "privacy.html":
-            if "[PLACEHOLDER: date this policy is published]" not in html:
-                issues.append("PRIVACY placeholder missing: [PLACEHOLDER: date this policy is published]")
-            if "[PLACEHOLDER: contact email address]" in html:
-                issues.append("PRIVACY contact email placeholder should be filled with hello@agecalculator.com")
+            if "Last updated 17 November 2026" not in html:
+                issues.append("PRIVACY should say Last updated 17 November 2026")
+            if "[PLACEHOLDER" in html or "PLACEHOLDER:" in html:
+                issues.append("PRIVACY still has a placeholder")
             if "hello@agecalculator.com" not in html:
                 issues.append("PRIVACY contact email hello@agecalculator.com missing")
             if "Hurrell Capital Limited, a company registered in England and Wales (company number 15158828)" not in html:
@@ -370,10 +370,8 @@ def main() -> int:
                 issues.append("PRIVACY GitHub Pages hosting sentence or docs link missing")
             if "docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" not in html:
                 issues.append("PRIVACY GitHub General Privacy Statement link missing")
-            if "www.netlify.com/pdf/netlify-dpa.pdf" not in html or "Netlify, Inc." not in html:
-                issues.append("PRIVACY Netlify app-redirect processor paragraph or DPA link missing")
-            if "30 days" not in html or "13 months" not in html:
-                issues.append("PRIVACY Netlify log retention periods missing")
+            if "Netlify" in html or "netlify.com" in html:
+                issues.append("PRIVACY must not mention Netlify unless Legal re-approves the wording")
             if "noindex" not in html:
                 issues.append("PRIVACY missing noindex")
 

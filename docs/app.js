@@ -44,6 +44,28 @@
   function more(inner, title) { if (document.body.classList.contains('widget')) return ''; return '<details class="more"><summary>' + (title || 'More') + IC.chev + '</summary><div class="more-body">' + inner + '</div></details>'; }
   function nextb(html) { return '<div class="nextb">' + IC.cake + '<p>' + html + '</p></div>'; }
   function ph(unit, msg) { return '<p class="ph-msg">' + msg + '</p>'; }
+  /* ---- Option C: adaptive headline and one plain sentence ---- */
+  function wk(n) { var w = Math.floor(n / 7), d = n % 7; return (w ? plural(w, 'week') : '') + (w && d ? ' and ' : '') + (d ? plural(d, 'day') : ''); }
+  function cn(s) { return '<span class="cn">' + s + '</span>'; }
+  function cw(s) { return '<span class="cw">' + cn(s) + ',</span>'; }
+  function sayLine(s) { return s ? '<p class="say-line">' + s + '</p>' : ''; }
+  function bornSpan(d) { return '<span class="born">Born <b>' + short(d) + '</b></span>'; }
+  /* Copywriter, 17 Nov: today "That's …", a past date "On that date it had been …", a future date "On that date it will be …" */
+  function tense(at, what) { var c = A.cmp(at, today); return c > 0 ? 'On that ' + (what || 'date') + ' it will be ' : c < 0 ? 'On that ' + (what || 'date') + ' it had been ' : 'That’s '; }
+  /* Age-1 rule: days under 1 month; months and days from 1 month until the first birthday; years from age 1. */
+  function adaptive(r, extra) {
+    var tail = extra ? '<p class="rest tight">' + extra + '</p>' : '';
+    if (r.years === 0 && r.months === 0) return { lead: big(fmt(r.totalDays), (r.totalDays === 1 ? 'day' : 'days')) + tail, unit: 'd' };
+    if (r.years === 0) return { lead: big(fmt(r.totalMonths), (r.totalMonths === 1 ? 'month' : 'months') + (r.days ? ' <span class="unit-and">and ' + plural(r.days, 'day') + '</span>' : '')) + tail, unit: 'm' };
+    var rest = A.partsWords(0, r.months, r.days);
+    rest = rest && extra ? rest + '. ' + extra : (rest || extra || '');
+    return { lead: big(r.years, r.years === 1 ? 'year' : 'years') + (rest ? '<p class="rest tight">' + rest + '</p>' : ''), unit: 'y' };
+  }
+  function ageLine(r, at, unit) {
+    var t = tense(at), tail = ' since you were born.';
+    if (unit === 'd') return r.totalDays >= 7 ? t + cn(wk(r.totalDays)) + tail : '';
+    return t + cw(wk(r.totalDays)) + ' or ' + cw(plural(r.totalDays, 'day')) + tail;
+  }
   function ess(rows) { return '<dl class="ledger ess">' + rows.filter(Boolean).map(function (x) { return '<div><dt>' + x[0] + '</dt><dd>' + x[1] + '</dd></div>'; }).join('') + '</dl>'; }
   function monthGrid(y, m, hitDay, label) {
     var first = A.weekday(y, m, 1), dim = A.daysInMonth(y, m);
@@ -535,20 +557,18 @@
     var bline, gridLabel = 'Next birthday';
     if (bounds.bornDay) {
       nx = bounds.next;
-      bline = 'The day you were born. Next birthday <b>' + short(nx) + '</b> <span class="dot">·</span> ' + plural(nx.daysUntil, 'day') + ' <span class="dot">·</span> turning 1';
+      bline = 'The day you were born. Next birthday: <b>' + short(nx) + '</b> <span class="dot">·</span> ' + plural(nx.daysUntil, 'day') + ' <span class="dot">·</span> turning 1';
     } else if (nx.isToday) {
       gridLabel = 'Birthday';
       bline = '<b>Birthday today.</b> Happy ' + ordinal(nx.turning) + ' birthday.';
     } else {
-      bline = 'Next birthday <b>' + short(nx) + '</b> <span class="dot">·</span> <span class="count">' + plural(nx.daysUntil, 'day') + '</span> <span class="dot">·</span> turning ' + nx.turning;
+      bline = 'Next birthday: <b>' + short(nx) + '</b> <span class="dot">·</span> <span class="count">' + plural(nx.daysUntil, 'day') + '</span> <span class="dot">·</span> turning ' + nx.turning;
     }
     var note = nx.shifted ? '<p class="bday-note">No 29 February in ' + nx.y + ', so the birthday counts on 1 March.</p>' : '';
-    var lead = big(r.years, r.years === 1 ? 'year' : 'years') + '<p class="rest">' + plural(r.months, 'month') + ' and ' + plural(r.days, 'day') + '</p>';
     var kor = opts.korean === false ? null : A.koreanAges(b, at);
-    var essentials = [['Months', fmt(r.totalMonths)], ['Weeks', fmt(r.weeks)], ['Days', fmt(r.totalDays)]];
     var extra = [
-      ['Hours', fmt(r.hours) + small('days × 24, from midnight')],
-      opts.chrono !== false ? ['Chronological age', r.years + ';' + r.months + ';' + r.days + small('<a href="chronological-age/">for test forms</a>')] : null,
+      ['Same age in hours', fmt(r.hours) + small('days × 24, from midnight')],
+      opts.chrono !== false ? ['Chronological age', r.years + ';' + r.months + ';' + r.days + small('<a href="chronological-age/">the form tests use</a>')] : null,
       ['Born on a', W[r.bornWeekday]],
       kor ? ['Korean age', kor.counting + small('year age ' + kor.yearAge + ', <a href="korean-age/">why</a>')] : null
     ];
@@ -556,11 +576,14 @@
     if (bounds.bornDay) say += ' The day you were born. Next birthday ' + long(nx) + ', turning 1, in ' + plural(nx.daysUntil, 'day') + '.';
     else if (nx.isToday) say += ' Today. Happy ' + ordinal(nx.turning) + ' birthday.';
     else say += ' Next birthday ' + long(nx) + ', in ' + plural(nx.daysUntil, 'day') + '.';
-    return { state: 'result', say: say, html: head('Age on <b>' + short(at) + '</b>') + body(lead) + nextb(bline) + note + ess(essentials) + more(ledger(extra) + monthGrid(nx.y, nx.m, nx.d, gridLabel)) };
+    var ad = adaptive(r);
+    return { state: 'result', say: say, html: '<div class="leaf-head">' + bornSpan(b) + ' <span>Age on <b>' + short(at) + '</b></span></div>' + body(ad.lead + sayLine(ageLine(r, at, ad.unit))) + nextb(bline) + note + more(ledger(extra) + monthGrid(nx.y, nx.m, nx.d, gridLabel)) };
   }
   /* Empty state: an invitation, never somebody's data. Same shape as a result so nothing jumps. */
   function emptyToday(msg, unit, title) {
-    return { state: 'empty', html: body(ph('', msg)) };
+    var page = document.body.getAttribute('data-page') || '';
+    var rest = (page === 'home') ? '<div class="es es-today"><div class="es-main"><p class="es-k">Today</p><p class="es-date" data-today="long"></p><p class="es-day" data-today="dayof"></p></div><div class="month today-grid" data-today-grid></div></div>' : '';
+    return { state: 'empty', html: body(ph('', msg) + rest) };
   }
   function needs(f) { return !f || !f.value; }
   function errOf(f, label) {
@@ -587,7 +610,7 @@
   function miniLeaf(d, label, cls) {
     return '<div class="mini-leaf' + (cls ? ' ' + cls : '') + '"><p class="ml-name">' + esc(label) + '</p><p class="ml-day">' + d.d + '</p><p class="ml-my">' + MON3[d.m - 1] + ' ' + d.y + '</p><p class="ml-wd">' + W[A.weekday(d.y, d.m, d.d)].slice(0, 3) + '</p></div>';
   }
-  function stamp(d) { return '<span class="stamp">' + d.d + ' ' + MON3[d.m - 1].toUpperCase() + ' ' + d.y + '</span>'; }
+  function stamp(d) { return '<span class="stamp">' + d.d + ' ' + MON3[d.m - 1] + ' ' + d.y + '</span>'; }
 
   var TOOLS = {
     age: function () {
@@ -605,7 +628,7 @@
       var r = A.age(b.value, at);
       if (!r.ok) return withCls(notice('Not born yet', long(b.value) + ' is after ' + long(at) + '.'), 'leaf-old');
       var bounds = A.birthdayBounds(b.value, at);
-      var lead = big(r.years, r.years === 1 ? 'year old' : 'years old') + '<p class="rest">' + plural(r.months, 'month') + ' and ' + plural(r.days, 'day') + (bounds.bornDay ? '. The day you were born.' : '') + '</p>';
+      var ad = adaptive(r, bounds.bornDay ? 'The day you were born.' : ''), lead = ad.lead + sayLine(ageLine(r, at, ad.unit));
       var prev = bounds.last, nx = bounds.next;
       var agoN = A.cmp(today, at), ago = 'that’s in the future';
       if (same(at, today)) ago = 'today';
@@ -617,8 +640,8 @@
       }
       var verb = same(at, today) ? 'are' : (A.cmp(at, today) > 0 ? 'will be' : 'were');
       var bl = bounds.nextLabel + ' <b>' + short(nx) + '</b> <span class="dot">·</span> turning ' + nx.turning;
-      var html = '<div class="leaf-head"><span>On</span> ' + stamp(at) + '</div>' + body(lead) + nextb(bl) +
-        ess([['Days lived by then', fmt(r.totalDays)], ['How long ago', ago]]) +
+      var html = '<div class="leaf-head">' + bornSpan(b.value) + ' <span class="on-at">On ' + stamp(at) + '</span></div>' + body(lead) + nextb(bl) +
+        ess([['How long ago', ago]]) +
         more(ledger([[bounds.lastLabel, plain(prev)], ['That day was a', W[A.weekday(at.y, at.m, at.d)]]]) + monthGrid(at.y, at.m, at.d, 'The date you chose'));
       return { state: 'result', cls: 'leaf-old', say: 'On ' + long(at) + ' you ' + verb + ' ' + ymdWords(r) + ' old.', html: html };
     },
@@ -636,14 +659,15 @@
         ? big(fmt(n), n === 1 ? 'day to go' : 'days to go') + '<p class="rest">You were born today. Next birthday is ' + long(nx) + ', when you turn 1.</p>'
         : nx.isToday ? big('Today', '') + '<p class="rest">Happy ' + ordinal(nx.turning) + ' birthday.</p>'
         : big(fmt(n), n === 1 ? 'day to go' : 'days to go') + '<p class="rest">until ' + long(nx) + ', when you turn ' + nx.turning + '.</p>';
-      var rows = [['Weeks', fmt(Math.floor(n / 7)) + (n % 7 ? small('and ' + plural(n % 7, 'day')) : '')], ['Until midnight tonight', '<span data-clock>&nbsp;</span>'], ['Weekend birthday?', (nx.weekday >= 5 ? 'Yes, a ' : 'No, a ') + W[nx.weekday]], ['Birthdays so far', fmt(r.years)]];
+      var rows = [['Weekend birthday?', (nx.weekday >= 5 ? 'Yes, a ' : 'No, a ') + W[nx.weekday]], n > 0 ? ['Hours to go', '<span data-clock data-days="' + n + '">' + fmt(n * 24) + ' hours</span>'] : null, ['Birthdays so far', fmt(r.years)]].filter(Boolean);
+      if (!nx.isToday && n >= 7) lead += sayLine('That’s ' + cn(wk(n)) + ' to go.');
       var note = nx.shifted ? '<p class="bday-note">No 29 February in ' + nx.y + ', so we count down to 1 March.</p>' : '';
       var depth = Math.max(1, Math.min(16, Math.ceil(n / 10)));
       var say = bounds.bornDay
         ? 'You were born today. Next birthday is ' + long(nx) + ', when you turn 1, in ' + plural(n, 'day') + '.'
         : nx.isToday ? 'Today. Happy ' + ordinal(nx.turning) + ' birthday.'
         : plural(n, 'day') + ' until ' + long(nx) + '.';
-      return { state: 'result', cls: 'leaf-stack', depth: depth, say: say, html: head('Counting from <b>' + short(today) + '</b>') + body(lead) + note + ess(rows.slice(0, 2)) + more(ledger(rows.slice(2)) + monthGrid(nx.y, nx.m, nx.d, 'Birthday')) };
+      return { state: 'result', cls: 'leaf-stack', depth: depth, say: say, html: '<div class="leaf-head">' + bornSpan(b.value) + ' <span>Counting from <b>' + short(today) + '</b></span></div>' + body(lead) + note + ess(rows.slice(0, 1)) + more(ledger(rows.slice(1)) + monthGrid(nx.y, nx.m, nx.d, 'Birthday')) };
     },
     future: function () {
       var b = fields.dob, yr = +$v('in-year');
@@ -662,12 +686,13 @@
       function janLabel(part) { return part && part.ok ? plural(part.years, 'year') : 'not born yet'; }
       if (plan.bornYear) {
         var first = plan.firstBirthday;
-        var html0 = '<div class="planner-say">' + big(0, 'years old') + '<p class="rest">' + yr + ' is the year they were born (' + long(b.value) + '). They turn 1 on ' + long(first) + '.</p></div>' + planner(yr, b.value, null) +
+        var html0 = '<div class="leaf-head">' + bornSpan(b.value) + '</div><div class="planner-say">' + big(0, 'years') + '<p class="rest">' + yr + ' is the year you were born (' + long(b.value) + '). You turn 1 on ' + long(first) + '.</p></div>' + planner(yr, b.value, null) +
           ess([['On 1 January ' + yr, janLabel(plan.jan1)], ['On 31 December ' + yr, janLabel(plan.dec31)]]) + more(ledger([['Days from today to the first birthday', daysTo(first)], ['First birthday is a', W[A.weekday(first.y, first.m, first.d)]]]));
-        return { state: 'result', cls: 'obj obj-planner', html: html0, say: yr + ' is the year they were born. They turn 1 on ' + long(first) + '.' };
+        return { state: 'result', cls: 'obj obj-planner', html: html0, say: yr + ' is the year you were born. You turn 1 on ' + long(first) + '.' };
       }
       var bd = plan.birthday, after = plan.after, before = plan.before;
-      var html = '<div class="planner-say">' + big(after, A.yearsOldUnit(after)) + '<p class="rest">from ' + short(bd) + '. Until then, ' + before + '.</p></div>' + planner(yr, bd, [before, after]) +
+      var bdN = A.between(b.value, bd).totalDays;
+      var html = '<div class="leaf-head">' + bornSpan(b.value) + '</div><div class="planner-say">' + big(after, after === 1 ? 'year' : 'years') + '<p class="rest tight">from ' + short(bd) + '. Until then, ' + before + '.</p>' + sayLine(tense(bd, 'birthday') + cw(wk(bdN)) + ' or ' + cw(plural(bdN, 'day')) + ' since you were born.') + '</div>' + planner(yr, bd, [before, after]) +
         ess([['On 1 January ' + yr, janLabel(plan.jan1)], ['On 31 December ' + yr, janLabel(plan.dec31)]]) + more(ledger([['Days from today to that birthday', daysTo(bd)], ['That birthday is a', W[A.weekday(bd.y, bd.m, bd.d)]]]));
       return { state: 'result', cls: 'obj obj-planner', html: html, say: 'In ' + yr + ' you turn ' + after + ' on ' + long(bd) + '.' };
     },
@@ -681,12 +706,13 @@
       var r = A.between(a.value, b.value);
       if (r.totalDays === 0) return notice('Same day', esc(na) + ' and ' + esc(nb) + ' were born on the same day.');
       var first = r.sign > 0 ? [a.value, na] : [b.value, nb], second = r.sign > 0 ? [b.value, nb] : [a.value, na];
-      var html = '<div class="pair-say">' + big(r.years, r.years === 1 ? 'year' : 'years') + '<p class="rest">' + plural(r.months, 'month') + ' and ' + plural(r.days, 'day') + '. ' + esc(first[1]) + ' is the elder.</p></div>' +
+      var ad = adaptive(r, esc(first[1]) + ' is older.');
+      var gapLine = ad.unit === 'd' ? (r.totalDays >= 7 ? 'That’s a gap of ' + cn(wk(r.totalDays)) + '.' : '') : 'That’s a gap of ' + cw(wk(r.totalDays)) + ' or ' + cn(plural(r.totalDays, 'day')) + '.';
+      var html = '<div class="pair-say">' + ad.lead + sayLine(gapLine) + '</div>' +
         '<div class="pair-leaves">' + miniLeaf(first[0], first[1], 'elder') +
         '<div class="gap-measure"><span class="gm-label">' + fmt(r.totalDays) + (r.totalDays === 1 ? ' day' : ' days') + '</span><span class="gm-line" aria-hidden="true"></span></div>' +
         miniLeaf(second[0], second[1]) + '</div>' +
-        ess([['Ages differ by', (r.months || r.days) ? r.years + ' or ' + (r.years + 1) + small('depending on the time of year') : r.years + small('all year')]]) +
-        more(ledger([['Days', fmt(r.totalDays)], ['Weeks', fmt(r.weeks) + (r.weekRemainder ? small('and ' + plural(r.weekRemainder, 'day')) : '')], ['Months', fmt(r.totalMonths) + (r.days ? small('and ' + plural(r.days, 'day')) : '')]]));
+        ess([['Ages differ by', (r.months || r.days) ? r.years + ' or ' + (r.years + 1) + small('depending on the time of year') : r.years + small('all year')]]);
       return { state: 'result', cls: 'obj obj-pair', say: first[1] + ' is older by ' + ymdWords(r) + '.', html: html };
     },
     /* Two leaves joined by a ruler, the span bracketed and labelled. */
@@ -699,12 +725,13 @@
       var r = A.between(a.value, b.value), days = r.totalDays + (inc ? 1 : 0);
       var lo = r.sign > 0 ? a.value : b.value, hi = r.sign > 0 ? b.value : a.value;
       var weeksMarked = Math.min(Math.floor(days / 7), 52);
-      var html = '<div class="span-say">' + big(fmt(days), days === 1 ? 'day' : 'days') + '<p class="rest">' + plural(Math.floor(days / 7), 'week') + (days % 7 ? ' and ' + plural(days % 7, 'day') : '') + (inc ? ', end day counted' : '') + '</p></div>' +
+      var spanW = days >= 7 ? wk(days) : '', spanYM = !inc && (r.years || r.months) ? A.partsWords(r.years, r.months, r.days) : '';
+      var spanLine = spanW && spanYM ? 'That’s ' + cw(spanW) + ' or ' + cn(spanYM) + '.' : spanW ? 'That’s ' + cn(spanW) + '.' : '';
+      var html = '<div class="span-say">' + big(fmt(days), days === 1 ? 'day' : 'days') + (inc ? '<p class="rest tight">End day counted.</p>' : '') + sayLine(spanLine) + '</div>' +
         '<div class="span-row">' + miniLeaf(lo, r.sign > 0 ? 'Start' : 'End') +
         '<div class="gap-measure"><span class="gm-label">' + plural(days, 'day') + '</span><span class="gm-line" aria-hidden="true"></span></div>' +
         miniLeaf(hi, r.sign > 0 ? 'End' : 'Start') + '</div>' +
-        ess([['Weekdays', fmt(r.weekdays + (inc && A.weekday(hi.y, hi.m, hi.d) < 5 ? 1 : 0)) + small("Mon to Fri, bank holidays still counted")], ['Weekend days', fmt(r.weekendDays + (inc && A.weekday(hi.y, hi.m, hi.d) >= 5 ? 1 : 0))], r.sign < 0 ? ['Order', 'End is before start; counted backwards'] : null]) +
-        more(ledger([['Years, months, days', r.years + ' y ' + r.months + ' m ' + r.days + ' d'], ['Months', fmt(r.totalMonths) + (r.days ? small('and ' + plural(r.days, 'day')) : '')]]));
+        ess([['Weekdays', fmt(r.weekdays + (inc && A.weekday(hi.y, hi.m, hi.d) < 5 ? 1 : 0)) + small('Weekdays are Monday to Friday. Bank holidays count as weekdays.')], ['Weekend days', fmt(r.weekendDays + (inc && A.weekday(hi.y, hi.m, hi.d) >= 5 ? 1 : 0))], r.sign < 0 ? ['Order', 'End is before start; counted backwards'] : null]);
       return { state: 'result', cls: 'obj obj-span', say: plural(days, 'day') + ' between ' + plain(lo) + ' and ' + plain(hi) + '.', html: html };
     },
     /* A school record slip: the subtraction written the way it is on score forms. */
@@ -722,7 +749,7 @@
       var empty = { state: 'empty', cls: 'obj obj-slip', html: ph('', 'Add the date of birth and test date for the y;m;d.') };
       if (errOf(b, 'date of birth')) return errOf(b, 'date of birth');
       if (errOf(t, 'test date')) return errOf(t, 'test date');
-      if (needs(b) || needs(t)) return empty;
+      if (needs(b) || needs(t)) return { state: 'empty', cls: 'obj obj-slip', html: who + '<div class="slip">' + slipHead + grid(t && t.value, b && b.value, null) + '</div>' };
       var r = A.age(b.value, t.value);
       if (!r.ok) return notice('Check the dates', 'The test date is before the date of birth.');
       var code = r.years + ';' + r.months + ';' + r.days, rounded = r.totalMonths + (r.days >= 15 ? 1 : 0);
@@ -746,7 +773,7 @@
       if (!k.ok) return withCls(notice('Not born yet', 'That date is after ' + long(at) + '.'), 'leaf-lunar');
       var jan = function (d) { return '<b>1 January ' + d.y + '</b>'; };
       var hows = [], col = function (n, en, ko, how, cls) { hows.push(['<span lang="ko">' + ko + '</span> ' + en, how]); return '<div class="kcol' + (cls ? ' ' + cls : '') + '"><p class="k-ko" lang="ko">' + ko + '</p><p class="k-n">' + n + '</p><p class="k-en">' + en + '</p></div>'; };
-      var html = head('On <b>' + short(at) + '</b>') + '<div class="kcols">' +
+      var html = '<div class="leaf-head">' + bornSpan(b.value) + ' <span>On <b>' + short(at) + '</b></span></div><div class="kcols">' +
         col(k.international, 'International age', '만 나이', 'Up on your birthday. The default in Korean law since 28 June 2023.', 'main') +
         col(k.counting, 'Korean age', '세는 나이', '1 at birth, plus one every 1 January.') +
         col(k.yearAge, 'Year age', '연 나이', at.y + ' minus ' + b.value.y + '.') + '</div>' +
@@ -794,7 +821,7 @@
   }
   function sizeLabel(z) {
     var s = A.DOG_SIZES[z] || A.DOG_SIZES.medium;
-    return s.label.charAt(0).toUpperCase() + s.label.slice(1) + ', ' + s.lbs + ' (' + s.kg + ')';
+    return s.label.charAt(0).toUpperCase() + s.label.slice(1) + ', ' + s.kg + ' (' + s.lbs + ')';
   }
   function pet(kind) {
     var parsed = A.parsePetAge($v('pet-y'), $v('pet-m')), size = checked('size') || 'medium';
@@ -813,7 +840,7 @@
     var rows = kind === 'dog'
       ? [['DNA-clock estimate', age >= 1 ? fmt(A.dogAgeEpigenetic(age)) + small('16 × ln(age) + 31, Wang et al. 2020') : '<span class="muted">not for under-ones</span>'], ['The old “× 7” rule', fmt(age * 7)]]
       : [['The old “× 7” rule', fmt(age * 7)]];
-    var html = '<div class="record"><div class="rec-result"><p class="big"><span class="num">' + fmt(r.human) + '</span><span class="unit">in human years</span></p><p class="rest">' + (r.interpolated ? 'Between chart ages ' + r.from + ' and ' + r.to + ' <span class="dot">·</span> ' : '') + (kind === 'cat' ? 'Life stage: ' + A.catStage(age) + ' <span class="dot">·</span> ' : '') + 'From the ' + src + '</p></div>' + more(ledger(rows)) + '</div>';
+    var html = '<div class="record"><div class="rec-result"><p class="big"><span class="num">' + fmt(r.human) + '</span><span class="unit">in human years</span></p><p class="rest">' + (r.interpolated ? 'Between the chart\'s figures for ages ' + r.from + ' and ' + r.to + ' <span class="dot">·</span> ' : '') + (kind === 'cat' ? 'Life stage: ' + A.catStage(age) + ' <span class="dot">·</span> ' : '') + 'From the ' + src + '</p></div>' + more(ledger(rows)) + '</div>';
     return { state: 'result', cls: 'obj obj-record', say: 'About ' + fmt(r.human) + ' in human years.', html: html };
   }
 

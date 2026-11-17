@@ -166,41 +166,59 @@ async function tapEveryLink(page, base, useTouch, label) {
   }
 }
 
-async function assertHeadingCentreDismisses(page, url, useTouch, label) {
+async function assertPanelTapAndTapToTheLeft(page, url, useTouch, label) {
+  // The 200px panel is accepted as it is (M2 layout fix was dropped).
+  // A tap on a visible link in the panel follows that link. A tap in the
+  // heading area to the left of the panel is outside the menu, so it
+  // closes the menu and must not navigate.
   await page.goto(url, { waitUntil: 'domcontentloaded' });
+  const start = page.url();
   const btn = page.locator('.nav-menu button');
   await tapLocator(page, btn, useTouch);
-  await expectOpen(page, true, label + ' open for heading dismiss');
-  const hit = await page.evaluate(() => {
+  await expectOpen(page, true, label + ' open for panel-tap check');
+
+  const left = await page.evaluate(() => {
+    const ul = document.getElementById('nav-menu-list');
     const h1 = document.querySelector('h1');
-    if (!h1) return { missing: true };
-    const r = h1.getBoundingClientRect();
-    const panel = document.getElementById('nav-menu-list');
-    const pr = panel ? panel.getBoundingClientRect() : { left: window.innerWidth };
-    const midX = r.left + r.width / 2;
-    const y = r.top + Math.min(r.height / 2, 24);
-    // A wider panel may cover the heading centre. Tap the heading (or the
-    // dimmed band) in the real outside area to the left of the panel.
-    let x = midX;
-    if (x >= pr.left - 2) {
-      if (r.left < pr.left - 16) x = Math.min(midX, pr.left - 12);
-      else x = Math.max(12, pr.left - 24);
-    }
-    const el = document.elementFromPoint(x, y);
-    return {
-      x, y,
-      tag: el && el.tagName,
-      cls: el && (el.className && el.className.toString ? el.className.toString() : String(el.className || '')),
-      isLink: !!(el && el.closest && el.closest('.nav-menu a, .nav-menu ul')),
-      isBack: !!(el && el.classList && el.classList.contains('nav-menu-back')),
-      panelLeft: pr.left,
-    };
+    if (!ul || !h1) return { missing: true };
+    const ur = ul.getBoundingClientRect();
+    const hr = h1.getBoundingClientRect();
+    const x = Math.max(8, ur.left - 24);
+    const y = hr.top + Math.min(hr.height / 2, 24);
+    return { x, y, spaceLeft: ur.left, missing: false };
   });
-  assert(!hit.missing, label + ': no h1 on the page', hit);
-  assert(hit.isBack && !hit.isLink, label + ': dismiss target left of the panel is still a menu link', hit);
-  if (useTouch) await page.touchscreen.tap(hit.x, hit.y);
-  else await page.mouse.click(hit.x, hit.y);
-  await expectOpen(page, false, label + ' heading dismiss tap should close the menu');
+  assert(!left.missing, label + ': missing heading or panel', left);
+  assert(left.spaceLeft >= 24, label + ': no room left of the panel to tap', left);
+  await page.evaluate(({ x, y, useTouch }) => {
+    const el = document.elementFromPoint(x, y);
+    const t = useTouch ? 'touchstart' : 'mousedown';
+    const ev = useTouch
+      ? new Event('pointerdown', { bubbles: true })
+      : new MouseEvent('mousedown', { bubbles: true, clientX: x, clientY: y });
+    if (el) el.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: x, clientY: y }));
+  }, { ...left, useTouch });
+  // Prefer a real tap at those coordinates.
+  if (useTouch) {
+    await page.touchscreen.tap(left.x, left.y);
+  } else {
+    await page.mouse.click(left.x, left.y);
+  }
+  await expectOpen(page, false, label + ': tap left of the panel should close the menu');
+  assert(page.url() === start, label + ': tap left of the panel must not navigate', { start, now: page.url() });
+
+  await tapLocator(page, btn, useTouch);
+  await expectOpen(page, true, label + ' reopen for in-panel tap');
+  const href = await page.evaluate(() => {
+    const a = document.querySelector('#nav-menu-list a');
+    return a ? a.getAttribute('href') : null;
+  });
+  assert(href, label + ': panel has no links');
+  const link = page.locator('#nav-menu-list a').first();
+  await Promise.all([
+    page.waitForURL((u) => u.href !== start, { timeout: 4000 }),
+    tapLocator(page, link, useTouch),
+  ]);
+  assert(page.url() !== start, label + ': a tap on a visible panel link should follow that link', { start, now: page.url(), href });
 }
 
 async function assertBackdropIsDimmed(page, useTouch, label) {
@@ -447,8 +465,8 @@ async function run() {
       await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
       await assertBackdropTapCloses(page, true, phone.name);
     });
-    await check('WebKit ' + phone.name + ' heading centre is a dismiss target, and the backdrop is dimmed', async () => {
-      await assertHeadingCentreDismisses(page, server.url + '/difference/', true, phone.name);
+    await check('WebKit ' + phone.name + ' tap on a visible panel link follows it, and a tap left of the panel closes with no navigation', async () => {
+      await assertPanelTapAndTapToTheLeft(page, server.url + '/difference/', true, phone.name);
       await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
       await assertBackdropIsDimmed(page, true, phone.name);
     });
@@ -552,7 +570,8 @@ async function run() {
     const page = await ctx.newPage();
     await check('WebKit JS-off at 320px: the inline list does not overflow', async () => {
       for (const path of MENU_PAGES) {
-        await page.goto(server.url + path, { waitUntil: 'domcontentloaded' });
+        await page.goto(server.url + path, { waitUntil: 'load' });
+        await page.waitForTimeout(200);
         const ov = await page.evaluate(() => ({
           sw: document.documentElement.scrollWidth,
           cw: document.documentElement.clientWidth,
@@ -703,6 +722,62 @@ async function run() {
     await ctx.close();
   });
 
+  await check('if the fail-safe has already run, a late enhancer bails out cleanly', async () => {
+    const ctx = await wk.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true });
+    const page = await ctx.newPage();
+    await page.addInitScript(() => {
+      window.__cls = 0;
+      try {
+        new PerformanceObserver((list) => {
+          for (const e of list.getEntries()) if (!e.hadRecentInput) window.__cls += e.value;
+        }).observe({ type: 'layout-shift', buffered: true });
+      } catch (err) {}
+    });
+    await page.route('**/*', async (route) => {
+      const req = route.request();
+      if (req.resourceType() !== 'document') return route.continue();
+      const res = await route.fetch();
+      let body = await res.text();
+      const start = "if (document.documentElement.getAttribute('data-menu-fallback') === '1') return;\n  var menu = document.querySelector('.nav-menu');";
+      const lateStart = "setTimeout(function () { if (document.documentElement.getAttribute('data-menu-fallback') === '1') return;\n  var menu = document.querySelector('.nav-menu');";
+      if (!body.includes(start)) throw new Error('late-enhancer test: could not find enhancer start');
+      body = body.replace(start, lateStart);
+      const end = "if (typeof window.agecalcMenuFailsafe === 'function') window.agecalcMenuFailsafe();\n  }\n})();";
+      const lateEnd = "if (typeof window.agecalcMenuFailsafe === 'function') window.agecalcMenuFailsafe();\n  }\n}, 4000);";
+      if (body.includes("window.agecalcMenuFailsafe();")) {
+        body = body.replace(
+          "if (typeof window.agecalcMenuFailsafe === 'function') window.agecalcMenuFailsafe();\n  }\n})();",
+          "if (typeof window.agecalcMenuFailsafe === 'function') window.agecalcMenuFailsafe();\n  }\n}, 4000);"
+        );
+      }
+      return route.fulfill({ response: res, body });
+    });
+    await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(4500);
+    const info = await page.evaluate(() => {
+      const list = document.getElementById('nav-menu-list');
+      const links = list ? [...list.querySelectorAll('a')].filter((a) => {
+        const r = a.getBoundingClientRect();
+        return r.width > 0 && r.height > 0;
+      }) : [];
+      const mast = document.querySelector('.mast');
+      return {
+        fallback: document.documentElement.getAttribute('data-menu-fallback'),
+        hasButton: !!document.querySelector('.nav-menu button[aria-controls]'),
+        hasJs: document.documentElement.classList.contains('js'),
+        visibleLinks: links.length,
+        mastH: mast ? Math.round(mast.getBoundingClientRect().height) : 0,
+        cls: window.__cls || 0,
+      };
+    });
+    assert(info.fallback === '1', 'fail-safe should have marked the fallback', info);
+    assert(!info.hasButton, 'late enhancer left a button on its own row', info);
+    assert(info.visibleLinks >= 10, 'fallback list should stay visible', info);
+    assert(info.mastH <= 72, 'header grew after the late enhancer (got ' + info.mastH + 'px)', info);
+    assert(info.cls < 0.1, 'late enhancer / fail-safe CLS was ' + info.cls, info);
+    await ctx.close();
+  });
+
   await wk.close();
   {
     const ctx = await chrome.newContext({ viewport: { width: 1280, height: 800 } });
@@ -797,8 +872,8 @@ async function run() {
       await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
       await assertBackdropTapCloses(page, true, 'Pixel 7');
     });
-    await check('Chromium Pixel 7 heading centre is a dismiss target, and the backdrop is dimmed', async () => {
-      await assertHeadingCentreDismisses(page, server.url + '/difference/', true, 'Pixel 7');
+    await check('Chromium Pixel 7 tap on a visible panel link follows it, and a tap left of the panel closes with no navigation', async () => {
+      await assertPanelTapAndTapToTheLeft(page, server.url + '/difference/', true, 'Pixel 7');
       await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
       await assertBackdropIsDimmed(page, true, 'Pixel 7');
     });

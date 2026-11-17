@@ -3,17 +3,22 @@
 <html lang="en-GB">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="noindex,nofollow" name="robots"/>
 <title>Age calculator widget</title>
 <meta content="Embeddable age calculator from agecalculator.com." name="description"/>
 <script>document.documentElement.classList.add('js');
 (function () {
   function failsafe() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', failsafe);
+      return;
+    }
     var menu = document.querySelector('.nav-menu');
     if (!menu) return;
     if (menu.getAttribute('data-menu-ready') === '1') return;
-    document.documentElement.classList.remove('js');
+    if (document.documentElement.getAttribute('data-menu-fallback') === '1') return;
+    document.documentElement.setAttribute('data-menu-fallback', '1');
     menu.classList.remove('is-enhanced');
     var list = document.getElementById('nav-menu-list');
     if (list) list.removeAttribute('hidden');
@@ -22,10 +27,7 @@
     var back = document.querySelector('.nav-menu-back');
     if (back && back.parentNode) back.parentNode.removeChild(back);
   }
-  function start() { setTimeout(failsafe, 3000); }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
-  else start();
-  window.addEventListener('load', start);
+  setTimeout(failsafe, 3000);
   window.agecalcMenuFailsafe = failsafe;
 })();
 </script><link href="https://agecalculator.com/widget/" rel="canonical"/>
@@ -40,7 +42,7 @@
 <link as="font" crossorigin="" href="../fonts/libre-franklin-var.woff2" rel="preload" type="font/woff2"/>
 <link href="../styles.css?v=f99126d883" rel="stylesheet"/>
 <script>var q=location.search;if(/[?&](dob|a|b|start|end|test|on|year)=/.test(q))document.documentElement.classList.add('prefill');if(/[?&]year=/.test(q))document.documentElement.classList.add('prefill-year');if(/[?&](on|year)=/.test(q))document.documentElement.classList.add('prefill-on')</script>
-<link href="../ux.css?v=7b6608425e" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript></head>
+<link href="../ux.css?v=f0ee39e981" rel="stylesheet"/><link href="share.css?v=5b6a6866e2" rel="stylesheet"/><link href="card.css?v=0d1c4e9e9f" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript></head>
 <body class="widget">
 <main>
 <h1 class="sr-only">Age calculator</h1>
@@ -57,19 +59,8 @@
 </div>
 </div>
 </form>
-<div class="result"><div class="leaf" data-state="empty" id="leaf"><div class="leaf-body"><div class="lead"><p class="ph-msg">Your age will appear here.</p></div></div><noscript><p class="hint">This calculator needs JavaScript to work out the result. You can use it at agecalculator.com.</p></noscript></div><p aria-live="polite" class="sr-only" id="live"></p><div class="on settings">
-<p><svg aria-hidden="true" class="ic ic-clock" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M12 3.4c4.9-.1 8.6 3.7 8.6 8.5 0 4.8-3.8 8.7-8.7 8.6-4.7-.1-8.4-3.9-8.3-8.7.1-4.6 3.6-8.3 8.6-8.5.6 0 1.2.1 1.7.2M12 7.4v4.8l3.1 2.1"></path></svg><span id="on-label">Age today<span class="on-date">, <b>Tue 17 Nov 2026</b></span></span><script>
-(function(){
-  var el=document.getElementById('on-label');
-  if(!el || el.hidden || el.getAttribute('data-idle')) return;
-  var M=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  var W=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  var n=new Date(), mon=M[n.getMonth()].slice(0,3);
-  var dspan=el.querySelector('.on-date');
-  if(!dspan){ dspan=document.createElement('span'); dspan.className='on-date'; el.appendChild(dspan); }
-  dspan.innerHTML=', <b>'+W[n.getDay()].slice(0,3)+' '+n.getDate()+' '+mon+' '+n.getFullYear()+'</b>';
-})();
-</script></p>
+<div class="result"><div class="leaf" data-state="empty" id="leaf"><div class="leaf-body"><div class="lead"><p class="ph-msg">Type a date of birth to see your age in years, months and days.</p></div></div><noscript><p class="hint">This calculator needs JavaScript to work out the result. You can use it at agecalculator.com.</p></noscript></div><p aria-live="polite" class="sr-only" id="live"></p><div class="on settings">
+<p><svg aria-hidden="true" class="ic ic-clock" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M12 3.4c4.9-.1 8.6 3.7 8.6 8.5 0 4.8-3.8 8.7-8.7 8.6-4.7-.1-8.4-3.9-8.3-8.7.1-4.6 3.6-8.3 8.6-8.5.6 0 1.2.1 1.7.2M12 7.4v4.8l3.1 2.1"></path></svg><span id="on-label">Time zone: <span id="zone-now">Europe/London</span></span></p>
 <div hidden="" id="on-box">
 <div class="datefield df-small" data-datefield="on">
 <label class="df-label" for="on-q">Age on this date</label>
@@ -86,10 +77,11 @@
 </div>
 <p class="credit"><a href="https://agecalculator.com/">Age calculator by agecalculator.com</a></p>
 </main>
-<script defer="" src="../dates.js?v=b4e78af13e"></script><script defer="" src="../app.js?v=53f820a449"></script>
+<script defer="" src="../dates.js?v=505ce38777"></script><script defer="" src="../app.js?v=a250c9dcfb"></script><script defer="" src="share.js?v=a1c246c7f7"></script>
 <script>
 (function(){
   try {
+  if (document.documentElement.getAttribute('data-menu-fallback') === '1') return;
   var menu = document.querySelector('.nav-menu');
   if (!menu) return;
   var list = menu.querySelector('ul');

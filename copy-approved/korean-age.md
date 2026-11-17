@@ -9,9 +9,15 @@
 ---
 ## Body
 
-## The three ages in the result
+## Born on 20 December 1995
 
-Put in one date of birth and this Korean age calculator gives three numbers. The big one is international age, the default in Korean law since 28 June 2023. Beside it are traditional Korean age (세는 나이), still heard in everyday life, and year age (연 나이), which a few rules, such as buying alcohol and tobacco and military service, used when the change came in. The date is today in your time zone, and you can change it to see any of the three on another day, such as a past New Year's Day.
+On 16 November 2026, for example, someone born on 20 December 1995 has three different ages:
+
+- International age: their 2026 birthday is still a month away, so they are 30.
+- Korean age: 2026 minus 1995 is 31, plus 1 for being counted as 1 at birth, so 32.
+- Year age: 2026 minus 1995, so 31.
+
+Their international age goes up to 31 on 20 December 2026, and the other two stay where they are. On 1 January 2027 Korean age goes up to 33 and year age to 32, while international age stays at 31 until 20 December 2027.
 
 ## Three ways of counting
 
@@ -23,15 +29,9 @@ Put in one date of birth and this Korean age calculator gives three numbers. The
 
 The simple rule of thumb: Korean age is international age plus one if your birthday has already passed this year, and plus two if it hasn't. Year age sits in between.
 
-## Born on 20 December 1995
+## The three ages in the result
 
-On 16 November 2026, for example, someone born on 20 December 1995 has three different ages:
-
-- International age: their 2026 birthday is still a month away, so they are 30.
-- Korean age: 2026 minus 1995 is 31, plus 1 for being counted as 1 at birth, so 32.
-- Year age: 2026 minus 1995, so 31.
-
-Their international age goes up to 31 on 20 December 2026, and the other two stay where they are. On 1 January 2027 Korean age goes up to 33 and year age to 32, while international age stays at 31 until 20 December 2027.
+Put in one date of birth and this Korean age calculator gives three numbers. The big one is international age, the default in Korean law since 28 June 2023. Beside it are traditional Korean age (세는 나이), still heard in everyday life, and year age (연 나이), which a few rules, such as buying alcohol and tobacco and military service, used when the change came in. The date is today in your time zone, and you can change it to see any of the three on another day, such as a past New Year's Day.
 
 ## What changed in June 2023
 

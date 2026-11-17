@@ -9,18 +9,6 @@
 ---
 ## Body
 
-## What the result shows
-
-Your age comes out as completed years, then months, then days, worked out to today's date in your time zone. The big number is your age as you'd write it on a form. The line under it is the months and days since your last birthday. Below that, the same stretch of time is given in single units: total months, weeks and days, with hours under More.
-
-The box reads dates the way people type them: 15 March 1995, 15/03/1995, 1995-03-15 or 15031995 all work, and the line underneath says how it has read your entry. If a date could go either way, like 1/2/2000, it follows your browser's language setting and offers the other reading with one tap.
-
-## How your age is counted
-
-Your age goes up by one on your birthday, the same way it does on a passport or a school form. The age calculator counts whole years first, then the whole months left over, then the days left after that.
-
-The single-unit figures don't add on to your age. 380 months and 1,652 weeks are two ways of measuring the same span, not extra time. Hours are the number of days times 24, counted from midnight on the day you were born, because a date of birth on its own doesn't record what time you arrived. Clock changes aren't counted.
-
 ## Working it out by hand: 15 March 1995
 
 On 16 November 2026, for example, someone born on 15 March 1995 is 31 years, 8 months and 1 day old. On paper:
@@ -30,6 +18,18 @@ On 16 November 2026, for example, someone born on 15 March 1995 is 31 years, 8 m
 - 15 November to 16 November is 1 day.
 
 That is 11,569 days in total. They were born on a Wednesday, and their 32nd birthday, on Monday 15 March 2027, is 119 days away. If the birthday in the year you're checking hasn't come yet, take one off the years and count the months from the birthday the year before.
+
+## What the result shows
+
+Your age comes out as completed years, then months, then days, worked out to today's date in your time zone. The big number is your age as you'd write it on a form. The line under it is the months and days since your last birthday. Below that, one line gives the same stretch of time in weeks and in days, with hours under More.
+
+The box reads dates the way people type them: 15 March 1995, 15/03/1995, 1995-03-15 or 15031995 all work, and the line underneath says how it has read your entry. If a date could go either way, like 1/2/2000, it follows your browser's language setting and offers the other reading with one tap.
+
+## How your age is counted
+
+Your age goes up by one on your birthday, the same way it does on a passport or a school form. The age calculator counts whole years first, then the whole months left over, then the days left after that.
+
+The single-unit figures don't add on to your age. 380 months and 1,652 weeks are two ways of measuring the same span, not extra time. Hours are the number of days times 24, counted from midnight on the day you were born, because a date of birth on its own doesn't record what time you arrived. Clock changes aren't counted.
 
 ## Born on 29 February
 

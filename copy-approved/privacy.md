@@ -3,7 +3,7 @@
 - **Title:** Privacy | agecalculator.com
 - **Meta description:** How agecalculator.com handles the dates you type: worked out in your browser, with no cookies, no analytics and no third-party scripts.
 - **H1:** Privacy
-- **Line under the H1:** Last updated [PLACEHOLDER: date this policy is published]
+- **Line under the H1:** Last updated 17 November 2026
 - **Indexing:** the current preview marks this page noindex; SEO Manager to decide for launch.
 
 ---
@@ -37,8 +37,6 @@ Bear in mind that anything in a web address is part of the request your browser 
 ## What our hosting provider receives
 
 These pages are hosted on GitHub Pages, a service of GitHub, Inc. in the United States. According to [GitHub's documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), when a GitHub Pages site is visited, the visitor's IP address is logged and stored for security purposes, whether or not the visitor is signed in to GitHub. We rely on our legitimate interest in keeping the site secure and available. GitHub handles this data under the [GitHub General Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement), which does not give a fixed retention period. Transfers to the United States are covered by GitHub's certification under the EU-U.S. Data Privacy Framework and its UK Extension (the UK-US data bridge).
-
-Old links on app.agecalculator.com are redirected to this site by Netlify, Inc., which acts as our processor. When you follow one of those links, Netlify logs your IP address and request details. According to [Netlify's Data Processing Agreement](https://www.netlify.com/pdf/netlify-dpa.pdf) (last updated 13 November 2026), its CDN traffic and access logs are kept online for 30 days and in archival storage for up to 13 months, and logs used to investigate security or abuse can be kept for up to 6 years. Transfers are covered by the EU-U.S. Data Privacy Framework or the European Commission's Standard Contractual Clauses and, for UK data, the UK International Data Transfer Addendum.
 
 ## Fonts, scripts and outside services
 

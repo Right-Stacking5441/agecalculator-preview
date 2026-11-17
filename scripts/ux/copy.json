@@ -116,7 +116,7 @@
     "pet_years_placeholder": "e.g. 5",
     "pet_months_placeholder": "optional",
     "weekdays": "Weekdays",
-    "weekdays_note": "Mon to Fri, bank holidays still counted",
+    "weekdays_note": "Weekdays are Monday to Friday. Bank holidays count as weekdays.",
     "span_label_suffix": "from start to end"
   },
   "copy_fixes": [

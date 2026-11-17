@@ -9,6 +9,20 @@
 ---
 ## Body
 
+## Someone who says they're 31
+
+For example, someone who said they were 31 on 16 November 2026 was born in 1995 or 1994:
+
+- 2026 minus 31 is 1995.
+- If they'd had their birthday that year, they were born in 1995.
+- If their birthday was still to come (some time between 17 November and 31 December), they were born in 1994.
+
+So saying "I'm 31" on 16 November 2026 meant 1995 for most people, and 1994 only for someone with a birthday in the last six weeks of the year. Choose "Not sure" and the page shows 1994 or 1995.
+
+## The age and birth year table
+
+Below the tool, a table lists ages from 1 to 100 with the two possible birth years for each, as of this year. The first year in each row is for people whose birthday is still to come this year; the second is for people who have already had it. In 2026, for example, a 40-year-old was born in 1985 or 1986, and a 65-year-old in 1960 or 1961.
+
 ## From an age to a year
 
 Give an age in whole years and say whether the birthday has happened yet this year, and you get the birth year. Choose "Not sure" and you get the two years it could be, with a line explaining which is which. It answers "what year was I born?" for anyone whose age you know, not just you. The date it works from is today, but you can change it, which is useful when you know someone's age on an older document or photo and want their birth year.
@@ -21,25 +35,11 @@ An age alone doesn't pin down a birth year. During any year, people who share an
 
 The sum is short. Take the current year and subtract the age. If the birthday has already happened this year, that is the birth year. If it hasn't, take one more off.
 
-## Someone who says they're 31
-
-For example, someone who said they were 31 on 16 November 2026 was born in 1995 or 1994:
-
-- 2026 minus 31 is 1995.
-- If they'd had their birthday that year, they were born in 1995.
-- If their birthday was still to come (some time between 17 November and 31 December), they were born in 1994.
-
-So saying "I'm 31" on 16 November 2026 meant 1995 for most people, and 1994 only for someone with a birthday in the last six weeks of the year. Choose "Not sure" and the page shows 1994 or 1995.
-
 ## Working from an age in a past year
 
 You don't have to use today. Press Change, enter the date the age applies to, and the page does the same sum for that year. Someone who was 18 on 1 June 2010 and had already had their birthday that year was born in 1992. If their birthday was later in the year, it was 1991.
 
 This is handy with old school reports, newspaper cuttings or forms that give an age without a date of birth. A news story from 1990 that calls someone "42" places their birth in 1947 or 1948.
-
-## The age and birth year table
-
-Below the tool, a table lists ages from 1 to 100 with the two possible birth years for each, as of this year. The first year in each row is for people whose birthday is still to come this year; the second is for people who have already had it. In 2026, for example, a 40-year-old was born in 1985 or 1986, and a 65-year-old in 1960 or 1961.
 
 ## Leap-day and New Year birthdays
 

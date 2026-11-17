@@ -9,6 +9,22 @@
 ---
 ## Body
 
+## A child born on 4 July 2018
+
+Take a child born on 4 July 2018 and tested on 16 November 2026, for example. Set out the way test manuals do it, test date on top:
+
+| | Year | Month | Day |
+|---|---:|---:|---:|
+| Test date | 2026 | 11 | 16 |
+| Date of birth | 2018 | 7 | 4 |
+| Chronological age | 8 | 4 | 12 |
+
+No borrowing is needed here, so the answer is 8;4;12, or 100 months. With 12 days left over, a manual that rounds 15 or more days up would still say 100 months.
+
+## Testing a whole class
+
+The class sheet below the calculator takes one test date and a list of names and dates of birth, typed in words or numbers. Each row fills in y;m;d and months as you go, and "Print the sheet" gives one A4 page. Names stay in the browser tab and are gone when you close it.
+
 ## Filling in the score sheet
 
 Put in the date of birth and the test date, and the child's age on that day comes out in the years;months;days form score sheets use, for example 8;4;12. It is meant for teachers, SENCOs, educational psychologists, and speech and language therapists filling in standardised test forms. The result also shows the age in total months, a months figure with 15 or more days rounded up, and buttons to copy the code or print a one-line slip for the file.
@@ -18,18 +34,6 @@ This chronological age calculator counts the time between two dates. It isn't an
 ## Reading a chronological age result
 
 8;4;12 means 8 years, 4 months and 12 days on the test date. Some forms write it 8:4 or 8-4 and drop the days; copy whatever your form asks for. The "months" line is the same age as one number (8;4;12 is 100 months and 12 days), which some norms tables use instead.
-
-## A child born on 4 July 2018
-
-On 16 November 2026, for example, a child born on 4 July 2018 is tested. Set out the way test manuals do it, test date on top:
-
-| | Year | Month | Day |
-|---|---:|---:|---:|
-| Test date | 2026 | 11 | 16 |
-| Date of birth | 2018 | 7 | 4 |
-| Chronological age | 8 | 4 | 12 |
-
-No borrowing is needed here, so the answer is 8;4;12, or 100 months. With 12 days left over, a manual that rounds 15 or more days up would still say 100 months.
 
 ## The "borrow 30 days" method, and why the days can differ
 
@@ -42,10 +46,6 @@ This calculator counts on the real calendar instead. 15 January 2026 is the 7th 
 ## Why not just subtract the years?
 
 At young ages, norms tables move every few months. Two children born on 14 and 19 November 2020 and both tested on 16 November 2026 are 6;0;2 and 5;11;28, and they may well be scored on different rows. Subtracting the birth year from the test year makes them both 6, which would put them on the same row.
-
-## Testing a whole class
-
-The class sheet below the calculator takes one test date and a list of names and dates of birth, typed in words or numbers. Each row fills in y;m;d and months as you go, and "Print the sheet" gives one A4 page. Names stay in the browser tab and are gone when you close it.
 
 ## Leap days
 

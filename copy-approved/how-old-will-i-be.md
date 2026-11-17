@@ -9,16 +9,6 @@
 ---
 ## Body
 
-## Picking a year
-
-Give your date of birth and a year. The result is the age you reach that year, the date you reach it, and the age you are until then. The year box starts at 2050, so the first answer you see is for 2050. Change it to any year from 1000 to 2999.
-
-The result also lists your age on 1 January and on 31 December of that year. Under More are the weekday your birthday falls on and how many days there are from today until it. If you'd rather know your age on one particular day, press Change and pick an exact date instead. The result then switches to years, months and days, the same as the main age calculator.
-
-## Two ages in one year
-
-Everyone is two ages during a year, one before their birthday and one after, unless they were born on 1 January. That's why a single number for "how old will I be in 2050" can be wrong for half the year.
-
 ## Born in 1995, looking at 2050
 
 Someone born on 15 March 1995 asks how old they will be in 2050.
@@ -30,6 +20,16 @@ Someone born on 15 March 1995 asks how old they will be in 2050.
 So they are 54 at the start of 2050 and 55 from 15 March onwards, and they finish the year at 55. Counted from 16 November 2026, for example, that birthday is 8,520 days away.
 
 For an exact date, the same person is 44 years, 9 months and 17 days old on 1 January 2040: 44 from their birthday in March 2039, then nine months to 15 December, then 17 days.
+
+## Two ages in one year
+
+Everyone is two ages during a year, one before their birthday and one after, unless they were born on 1 January. That's why a single number for "how old will I be in 2050" can be wrong for half the year.
+
+## Picking a year
+
+Give your date of birth and a year. The result is the age you reach that year, the date you reach it, and the age you are until then. The year box starts at 2050, so the first answer you see is for 2050. Change it to any year from 1000 to 2999.
+
+The result also lists your age on 1 January and on 31 December of that year. Under More are the weekday your birthday falls on and how many days there are from today until it. If you'd rather know your age on one particular day, press Change and pick an exact date instead. The result then switches to years, months and days, the same as the main age calculator.
 
 ## Born on 29 February
 

@@ -3,17 +3,22 @@
 <html lang="en-GB">
 <head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="noindex,nofollow" name="robots"/>
 <title>Age difference calculator: Years, months and days</title>
 <meta content="Enter two dates of birth to see exactly how much older one person is, in years, months and days, plus the gap in days and weeks." name="description"/>
 <script>document.documentElement.classList.add('js');
 (function () {
   function failsafe() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', failsafe);
+      return;
+    }
     var menu = document.querySelector('.nav-menu');
     if (!menu) return;
     if (menu.getAttribute('data-menu-ready') === '1') return;
-    document.documentElement.classList.remove('js');
+    if (document.documentElement.getAttribute('data-menu-fallback') === '1') return;
+    document.documentElement.setAttribute('data-menu-fallback', '1');
     menu.classList.remove('is-enhanced');
     var list = document.getElementById('nav-menu-list');
     if (list) list.removeAttribute('hidden');
@@ -22,10 +27,7 @@
     var back = document.querySelector('.nav-menu-back');
     if (back && back.parentNode) back.parentNode.removeChild(back);
   }
-  function start() { setTimeout(failsafe, 3000); }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
-  else start();
-  window.addEventListener('load', start);
+  setTimeout(failsafe, 3000);
   window.agecalcMenuFailsafe = failsafe;
 })();
 </script><link href="https://agecalculator.com/difference/" rel="canonical"/>
@@ -56,7 +58,7 @@
 }
 </script>
 <script>var q=location.search;if(/[?&](dob|a|b|start|end|test|on|year)=/.test(q))document.documentElement.classList.add('prefill');if(/[?&]year=/.test(q))document.documentElement.classList.add('prefill-year');if(/[?&](on|year)=/.test(q))document.documentElement.classList.add('prefill-on')</script>
-<link href="../ux.css?v=7b6608425e" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript></head>
+<link href="../ux.css?v=f0ee39e981" rel="stylesheet"/><link href="share.css?v=5b6a6866e2" rel="stylesheet"/><link href="card.css?v=0d1c4e9e9f" rel="stylesheet"/><noscript><style>.on-date, .on.settings button, .on.settings .tzline, .parts-toggle, .parts-shared, #leaf .ph-msg, #on-label[data-idle], .on.settings:has(#on-label[data-idle]) { display: none !important; }</style></noscript></head>
 <body data-page="difference">
 <aside aria-label="Preview notice" class="preview-banner">Preview, not live. This is a working mock-up of a new agecalculator.com. It is not the live site, and it should not be indexed.</aside>
 <a class="skip" href="#tool">Skip to the calculator</a>
@@ -83,14 +85,10 @@
 </div>
 </div><div class="parts-shared"><button aria-controls="a-parts b-parts" aria-expanded="false" class="textbtn parts-toggle shared" type="button"><svg aria-hidden="true" class="ic ic-boxes" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M3.4 8.9l4.7.1v6.1H3.5zM10 9h4.3l.1 6h-4.4zM16.4 8.9h4.2v6.2h-4.2z"></path></svg><span>Type day, month and year separately</span></button></div></div>
 <details class="opt-field"><summary><svg aria-hidden="true" class="ic ic-plus" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M12 5.3v13.5M5.2 12.1c4.5-.2 9-.2 13.6 0"></path></svg><span>Add names</span></summary><div class="opt-body"><label class="name inline">Name, optional <input autocomplete="off" id="name-a" placeholder="Person A" type="text"/></label><label class="name inline">Name, optional <input autocomplete="off" id="name-b" placeholder="Person B" type="text"/></label></div></details></form></div>
-<div class="result"><div class="leaf obj obj-pair" data-state="empty" id="leaf"><p class="ph-msg">The age gap will appear here.</p><noscript><p class="hint">This calculator needs JavaScript to work the result out. The method is written out below the tool if you’d rather do it on paper.</p></noscript></div><p aria-live="polite" class="sr-only" id="live"></p></div>
+<div class="result"><div class="print-meta pm-top"></div><div class="leaf obj obj-pair" data-state="empty" id="leaf"><p class="ph-msg">Two dates of birth, and the gap shows up here.</p><noscript><p class="hint">This calculator needs JavaScript to work the result out. The method is written out below the tool if you’d rather do it on paper.</p></noscript></div><div aria-label="Copy or share this result" class="acts" role="group"><button class="act" data-act="age" type="button"><svg aria-hidden="true" class="ic ic-copy" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M8.7 8.4l10.4.1-.1 12H8.6zM15.3 8.3V4.2L4.9 4.3l-.1 12.1h3.7"></path></svg><span class="act-l">Copy gap</span></button><button class="act" data-act="all" type="button"><svg aria-hidden="true" class="ic ic-copy" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M8.7 8.4l10.4.1-.1 12H8.6zM15.3 8.3V4.2L4.9 4.3l-.1 12.1h3.7"></path></svg><span class="act-l">Copy details</span></button><button class="act" data-act="link" type="button"><svg aria-hidden="true" class="ic ic-copy" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M8.7 8.4l10.4.1-.1 12H8.6zM15.3 8.3V4.2L4.9 4.3l-.1 12.1h3.7"></path></svg><span class="act-l">Copy link</span></button><button class="act act-print" data-act="print" type="button"><svg aria-hidden="true" class="ic ic-printer" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M7.1 9V3.9h9.7V9M5.8 17.3H4.4c-.6 0-1.1-.4-1.1-1V10.1c0-.6.5-1.1 1.1-1.1h15.3c.6 0 1 .5 1 1.1v6.2c0 .6-.4 1-1 1h-1.5M7.1 14.1l9.9.1-.1 6.3H7.2z"></path></svg><span class="act-l">Print</span></button></div><p aria-live="polite" class="sr-only" id="copy-live"></p><div class="print-meta pm-bottom"></div><p aria-live="polite" class="sr-only" id="live"></p></div>
 </div>
 </div></div>
 <div class="wrap page"><div class="content"><nav aria-labelledby="rel-h" class="related"><h2 id="rel-h">More calculators</h2><ul><li><a href="../">Age calculator</a></li><li><a href="../past/">How old was I?</a></li><li><a href="../how-old-will-i-be/">How old will I be?</a></li><li><a href="../days-between-dates/">Days between dates</a></li><li><a href="../chronological-age/">Chronological age</a></li><li><a href="../birthday-countdown/">Birthday countdown</a></li><li><a href="../korean-age/">Korean age</a></li><li><a href="../what-year-was-i-born/">What year was I born?</a></li><li><a href="../dog-age/">Dog age</a></li><li><a href="../cat-age/">Cat age</a></li></ul></nav>
-<details class="topic"><summary><h2>How the gap is shown</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
-<p>This age difference calculator shows the gap the way you’d say an age: whole years first, then months, then days. It also says who is older and by how many days, and under More gives the same gap in weeks and months. Names are optional: open Add names to type them. They only label the result, so “Sam is older by 1,206 days” reads better than “Person A”.</p>
-<p>The order you type the dates in doesn’t matter. The calculator works out which birthday came first and counts forward from it.</p>
-</div></details>
 <details class="topic"><summary><h2>Sam and Alex: a worked example</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>The gap is counted the same way an age is. Start at the earlier date of birth, count the whole years until you would pass the later one, then the whole months, then the days left over.</p>
 <p>Take Sam, born on 2 June 1990, and Alex, born on 20 September 1993:</p>
@@ -101,6 +99,10 @@
 <p>The gap in days stays at 1,206 all year, but the difference between their ages in whole years changes. Between 2 June and 19 September each year, the older person has had their birthday and the younger one hasn’t, so their ages are 4 apart. On 1 August 2026, for example, they are 36 and 32. On 16 November 2026 the younger one has turned 33, so they are 3 apart.</p>
 <p>Both answers are right, which is why the result has a line saying the ages differ by “3 or 4, depending on the time of year”. If you only subtract one age from another, you get whichever of the two happens to apply today. The years, months and days figure is the one that stays put.</p>
 <p>If the two people share a birthday (same day and month, different years), the gap is a whole number of years and the line says it holds all year.</p>
+</div></details>
+<details class="topic"><summary><h2>How the gap is shown</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
+<p>This age difference calculator shows the gap the way you’d say an age: whole years first, then months, then days. Underneath, it says who is older and gives the same gap in weeks and in days. Names are optional: open Add names to type them. They only label the result, so it can say “Sam is older” instead of “Person A is older”.</p>
+<p>The order you type the dates in doesn’t matter. The calculator works out which birthday came first and counts forward from it.</p>
 </div></details>
 <details class="topic"><summary><h2>Leap days and month ends</h2><svg aria-hidden="true" class="ic ic-chev chev" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M6.5 9.4c1.9 1.7 3.7 3.4 5.5 5.2 1.8-1.8 3.6-3.6 5.5-5.3"></path></svg></summary><div class="topic-body">
 <p>Comparing with someone born on 29 February? In years without one, their birthday counts on 1 March, as it does everywhere on this site (<a href="../#born-on-29-february">the reason is on the age calculator page</a>). A gap that starts on 31 January reaches its first whole month on 1 March too, because February has no 31st. Some other calculators stop that month at 28 February, so they can be a day out.</p>
@@ -118,11 +120,12 @@
 <div class="foot-index" id="all-tools"><h2>Every calculator on the site</h2><ul class="foot-tools"><li><a href="../">Age calculator</a></li><li><a href="../past/">How old was I?</a></li><li><a href="../how-old-will-i-be/">How old will I be?</a></li><li><a href="../days-between-dates/">Days between dates</a></li><li><a href="../chronological-age/">Chronological age</a></li><li><a href="../birthday-countdown/">Birthday countdown</a></li><li><a href="../korean-age/">Korean age</a></li><li><a href="../what-year-was-i-born/">What year was I born?</a></li><li><a href="../dog-age/">Dog age</a></li><li><a href="../cat-age/">Cat age</a></li></ul></div>
 <div class="foot-small"><p><b>agecalculator.com</b>. Dates you type are worked out in your browser and aren’t sent anywhere. Free to use.</p><p><a href="../embed/">Put this calculator on your own site</a> · <a href="../privacy/">Privacy</a> · <a href="../contact/">Contact</a></p></div>
 </div></footer>
-<script defer="" src="../dates.js?v=b4e78af13e"></script>
-<script defer="" src="../app.js?v=53f820a449"></script>
+<script defer="" src="../dates.js?v=505ce38777"></script>
+<script defer="" src="../app.js?v=a250c9dcfb"></script><script defer="" src="share.js?v=a1c246c7f7"></script>
 <script>
 (function(){
   try {
+  if (document.documentElement.getAttribute('data-menu-fallback') === '1') return;
   var menu = document.querySelector('.nav-menu');
   if (!menu) return;
   var list = menu.querySelector('ul');
