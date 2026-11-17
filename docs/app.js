@@ -970,7 +970,14 @@
     if (c) {
       var hh = Math.floor(s / 3600), mm = Math.floor((s % 3600) / 60), ss = s % 60;
       var dd = +c.getAttribute('data-days') || 0;
-      if (dd) { var hrs = Math.floor((s + (dd - 1) * 86400) / 3600); c.textContent = fmt(hrs) + (hrs === 1 ? ' hour' : ' hours'); clockTimer = setTimeout(tick, (s % 3600 || 3600) * 1000); }
+      if (dd) {
+        var now = new Date();
+        var left = A.msUntilLocalMidnight(zone, now, dd);
+        var hrs = Math.floor(left / 3600000);
+        c.textContent = fmt(hrs) + (hrs === 1 ? ' hour' : ' hours');
+        var toNextHour = left % 3600000 || 3600000;
+        clockTimer = setTimeout(tick, Math.min(Math.max(toNextHour, 1), 2147483647));
+      }
       else { c.textContent = hh + ' h ' + String(mm).padStart(2, '0') + ' m ' + String(ss).padStart(2, '0') + ' s'; clockTimer = setTimeout(tick, 1000); }
     } else {
       clockTimer = setTimeout(tick, Math.min(Math.max(s, 1) * 1000, 2147483647));

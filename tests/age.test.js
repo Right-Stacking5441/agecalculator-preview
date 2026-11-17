@@ -442,6 +442,25 @@ test('seconds until midnight uses the next midnight in the zone, including DST d
   assert.equal(sec('America/New_York', at('America/New_York', 2026, 11, 1, 12, 0, 0)), 12 * 3600);
 });
 
+test('hours until a local midnight count real elapsed hours across clock changes', () => {
+  const at = (tz, y, m, d, hh, mm, ss) => new Date(A.instantInZone(tz, y, m, d, hh, mm, ss));
+  const hrs = (tz, date, days) => A.hoursUntilLocalMidnight(tz, date, days);
+
+  // A common 24-hour day: 16 November 2026, Europe/London (GMT). 118 days at 12:00 is 2,820 hours.
+  assert.equal(hrs('Europe/London', at('Europe/London', 2026, 11, 16, 12, 0, 0), 118), 118 * 24 - 12);
+  assert.equal(hrs('Europe/London', at('Europe/London', 2026, 11, 16, 12, 0, 0), 1), 12);
+
+  // Spring forward at 01:00 on Sunday 29 March 2026: from noon on the 28th, two midnights is 12 + 23 hours.
+  assert.equal(hrs('Europe/London', at('Europe/London', 2026, 3, 28, 12, 0, 0), 2), 35);
+  // Fall back at 02:00 on Sunday 25 October 2026: from noon on the 24th, two midnights is 12 + 25 hours.
+  assert.equal(hrs('Europe/London', at('Europe/London', 2026, 10, 24, 12, 0, 0), 2), 37);
+
+  // America/New_York spring forward 8 March 2026 and fall back 1 November 2026.
+  assert.equal(hrs('America/New_York', at('America/New_York', 2026, 3, 7, 12, 0, 0), 2), 35);
+  assert.equal(hrs('America/New_York', at('America/New_York', 2026, 10, 31, 12, 0, 0), 2), 37);
+});
+
+
 test('validate: a 1–3 digit year box is incomplete, with a message once digits are typed', () => {
   const short = A.validate('15', '3', '0');
   assert.equal(short.ok, false);

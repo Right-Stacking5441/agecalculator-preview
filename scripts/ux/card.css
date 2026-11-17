@@ -318,7 +318,7 @@ body[data-page="home"] { --rh: 559px; } body[data-page="past"] { --rh: 590px; } 
 }
 /* Hold the foot at the empty-state height so a two-line error does not shrink it. */
 .entry:not(.multi) .df-foot {
-  min-height: 94px;
+  min-height: 96px;
 }
 
 /* At very narrow widths, the "I meant …" offer wraps to an extra line.
@@ -333,4 +333,41 @@ body[data-page="home"] { --rh: 559px; } body[data-page="past"] { --rh: 590px; } 
   .entry:not(.multi) .df-foot {
     min-height: 116px;
   }
+}
+
+/* Phone widths: 3- and 4-digit ages and long day counts must stay inside the card. */
+@media (max-width: 390px) {
+  #leaf, .result { max-width: 100%; min-width: 0; }
+  #leaf .kcols {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  #leaf .kcol {
+    padding: 0;
+    border-left: 0;
+    border-top: 1px solid var(--rule);
+    padding-top: 8px;
+    min-width: 0;
+  }
+  #leaf .kcol:first-child { border-top: 0; padding-top: 0; }
+  #leaf .k-n,
+  #leaf .kcol.main .k-n {
+    font-size: clamp(44px, 18vw, 76px);
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+  #leaf .big { max-width: 100%; min-width: 0; }
+  #leaf .big .num,
+  #leaf .big .num.long,
+  #leaf .yt-year,
+  #leaf .pl-year {
+    font-size: clamp(36px, 16vw, 76px);
+    overflow-wrap: anywhere;
+    min-width: 0;
+    max-width: 100%;
+  }
+  #leaf .ledger,
+  #leaf .ledger dd,
+  #leaf .say-line { min-width: 0; overflow-wrap: anywhere; }
 }

@@ -190,7 +190,7 @@
     var cnt = leaf.querySelector('.nextb .count'); if (cnt) figure(cnt, txt(cnt), 'days to next birthday, ' + txt(cnt));
     var nbd = leaf.querySelector('.nextb b'); if (nbd) figure(nbd, txt(nbd), 'birthday, ' + txt(nbd));
     leaf.querySelectorAll('.kcol .k-n, .yt-year, .gm-label').forEach(function (e) { figure(e, txt(e), txt(e)); });
-    var ab = acts.querySelector('[data-act="age"]'); if (ab) { var vis = (ab.querySelector('.act-l') || {}).textContent || 'Copy age'; ab.setAttribute('aria-label', vis + ': ' + headline()); }
+    var ab = acts.querySelector('[data-act="age"]'); if (ab) { var vis = ((ab.querySelector('.l-a') || {}).textContent || 'Copy age').trim(); ab.setAttribute('aria-label', vis + ': ' + headline()); }
   }
   new MutationObserver(decorate).observe(leaf, { childList: true });
   decorate();

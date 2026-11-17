@@ -120,8 +120,8 @@
      chart ages we interpolate linearly. Ages below the first chart point, above the
      last, or on a dash (giant dogs after 16) are refused, not invented. */
   var DOG_SIZES = {
-    small:  { label: 'small',  lbs: '20 lb',        kg: 'up to 9.5 kg',      band: 'up to 9.5 kg (20 lb)' },
-    medium: { label: 'medium', lbs: '21 to 50 lb',  kg: '9.5 to 23.1 kg',    band: '9.5 to 23.1 kg (21 to 50 lb)' },
+    small:  { label: 'small',  lbs: '21 lb',        kg: 'up to 9.5 kg',      band: 'up to 9.5 kg (21 lb)' },
+    medium: { label: 'medium', lbs: '21 to 51 lb',  kg: '9.5 to 23.1 kg',    band: '9.5 to 23.1 kg (21 to 51 lb)' },
     large:  { label: 'large',  lbs: '51 to 90 lb',  kg: '23.1 to 40.8 kg',   band: '23.1 to 40.8 kg (51 to 90 lb)' },
     giant:  { label: 'giant',  lbs: 'over 90 lb',   kg: 'over 40.8 kg',      band: 'over 40.8 kg (over 90 lb)' }
   };
@@ -293,6 +293,21 @@
     var s = Math.ceil(ms / 1000);
     return s < 0 ? 0 : s;
   }
+  /* Real elapsed milliseconds / whole hours to a local-time midnight
+     `daysAhead` calendar days from `now` in `tz` (handles 23- and 25-hour DST days). */
+  function msUntilLocalMidnight(tz, now, daysAhead) {
+    now = now instanceof Date ? now : new Date(now == null ? Date.now() : now);
+    daysAhead = +daysAhead || 0;
+    if (daysAhead <= 0) return 0;
+    var p = zoneParts(now, tz);
+    var day = new Date(Date.UTC(p.y, p.m - 1, p.d + daysAhead));
+    var target = instantInZone(tz, day.getUTCFullYear(), day.getUTCMonth() + 1, day.getUTCDate(), 0, 0, 0);
+    var ms = target - now.getTime();
+    return ms < 0 ? 0 : ms;
+  }
+  function hoursUntilLocalMidnight(tz, now, daysAhead) {
+    return Math.floor(msUntilLocalMidnight(tz, now, daysAhead) / 3600000);
+  }
 
 
   /* Last and next birthday around `at`. On a birthday the two would otherwise
@@ -447,6 +462,7 @@
     catAge: catAge, catStage: catStage, birthYear: birthYear, parseDate: parseDate, textFromParts: textFromParts,
     ageInCalendarYear: ageInCalendarYear, yearsOldUnit: yearsOldUnit, partsWords: partsWords, parsePetAge: parsePetAge,
     koreanIntlUpSentence: koreanIntlUpSentence, koreanCountingUpSentence: koreanCountingUpSentence,
-    secondsUntilMidnight: secondsUntilMidnight, nextMidnight: nextMidnight, instantInZone: instantInZone };
+    secondsUntilMidnight: secondsUntilMidnight, nextMidnight: nextMidnight, instantInZone: instantInZone,
+    msUntilLocalMidnight: msUntilLocalMidnight, hoursUntilLocalMidnight: hoursUntilLocalMidnight };
   if (typeof module === 'object' && module.exports) module.exports = api; else root.AgeMaths = api;
 })(this);

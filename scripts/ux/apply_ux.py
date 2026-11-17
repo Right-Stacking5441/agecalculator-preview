@@ -669,9 +669,9 @@ def rewrite_dog_tiles(soup, slug):
     tiles = frag(
         '<fieldset class="opts"><legend>Adult size</legend>'
         '<label class="opt"><input type="radio" name="size" value="small"/>'
-        '<span class="opt-t"><b>Small<span class="opt-c">:</span></b> <span class="opt-r"><span class="nw opt-kg">up to 9.5 kg</span> <span class="nw opt-lb">(20 lb)</span></span></span></label>'
+        '<span class="opt-t"><b>Small<span class="opt-c">:</span></b> <span class="opt-r"><span class="nw opt-kg">up to 9.5 kg</span> <span class="nw opt-lb">(21 lb)</span></span></span></label>'
         '<label class="opt"><input checked="checked" type="radio" name="size" value="medium"/>'
-        '<span class="opt-t"><b>Medium<span class="opt-c">:</span></b> <span class="opt-r"><span class="nw opt-kg">9.5 to 23.1 kg</span> <span class="nw opt-lb">(21 to 50 lb)</span></span></span></label>'
+        '<span class="opt-t"><b>Medium<span class="opt-c">:</span></b> <span class="opt-r"><span class="nw opt-kg">9.5 to 23.1 kg</span> <span class="nw opt-lb">(21 to 51 lb)</span></span></span></label>'
         '<label class="opt"><input type="radio" name="size" value="large"/>'
         '<span class="opt-t"><b>Large<span class="opt-c">:</span></b> <span class="opt-r"><span class="nw opt-kg">23.1 to 40.8 kg</span> <span class="nw opt-lb">(51 to 90 lb)</span></span></span></label>'
         '<label class="opt"><input type="radio" name="size" value="giant"/>'
@@ -774,7 +774,7 @@ WORKED_EXAMPLES = {
     "dog-age": "At 10, a small dog is 56 on the chart and a giant breed is 78.",
     "cat-age": "A 12-year-old cat is 64 in human years, and counts as a senior.",
     "korean-age": "A baby born on 31 December 2025 was Korean age 2 the next morning, and still 0 in international age.",
-    "birthday-countdown": "On Christmas Day 2026, a 14 February birthday was 51 days away. It fell on a Sunday.",
+    "birthday-countdown": "On Christmas Day 2025, a 14 February birthday was 51 days away. It fell on a Saturday.",
     "how-old-will-i-be": "Born on 9 October 1980? You're 69 at the start of 2050 and turn 70 on Sunday 9 October.",
     "what-year-was-i-born": "A newspaper in June 1990 calls someone 42. They were born in 1947 or 1948, depending on whether their birthday had come yet.",
 }

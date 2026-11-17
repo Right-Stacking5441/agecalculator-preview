@@ -48,7 +48,7 @@ Some pages link to outside sources, such as the American Animal Hospital Associa
 
 ## Copy and print buttons
 
-The Copy, Copy details, Copy link and Print buttons on the calculators put the result on your clipboard, or open your browser's own print dialog, only when you press them. Neither sends anything to us.
+The Copy, Copy details, Copy link (Share on phones) and Print buttons on the calculators put the result on your clipboard, open your phone's share sheet, or open your browser's own print dialog, only when you press them. None of them sends anything to us.
 
 ## The calculator on other websites
 

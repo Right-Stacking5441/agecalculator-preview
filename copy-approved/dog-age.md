@@ -19,7 +19,7 @@ A 7-year-old Labrador weighing 30 kg is a large dog on the chart, so the calcula
 
 The figures come from the [pet age chart published on the American Animal Hospital Association website](https://www.aaha.org/wp-content/uploads/globalassets/02-guidelines/canine-life-stage-2019/canine_and_feline_age_chart_poster.pdf). The chart is a Zoetis poster, and its dog figures are adapted from the Dog Owner's Home Veterinary Handbook. Every dog counts as 15 at one year old and 24 at two. After that the sizes split. The weight bands below follow the poster's pounds and kilograms, with the joins closed so every adult weight sits in a band:
 
-| Dog's age | Small, up to 9.5 kg (20 lb) | Medium, 9.5 to 23.1 kg (21 to 50 lb) | Large, 23.1 to 40.8 kg (51 to 90 lb) | Giant, over 40.8 kg (over 90 lb) |
+| Dog's age | Small, up to 9.5 kg (21 lb) | Medium, 9.5 to 23.1 kg (21 to 51 lb) | Large, 23.1 to 40.8 kg (51 to 90 lb) | Giant, over 40.8 kg (over 90 lb) |
 |---:|---:|---:|---:|---:|
 | 3 | 28 | 28 | 30 | 32 |
 | 5 | 36 | 37 | 40 | 42 |
