@@ -1,6 +1,6 @@
 # Rollback
 
-> **Superseded for the live root.** HC CEO chose option (c) on 16 November 2026: the apex is GitHub Pages, with Namecheap BasicDNS and Namecheap free Email Forwarding. On 17 November 2026, HC CEO (speaking for William on Hurrell Capital work) moved `app.` 301s from Netlify to a free Vercel Hobby project; Netlify is dropped. Follow `namecheap-plan.md` and `hosting.md`. This file is kept as earlier working notes and must not be applied as written.
+> **Superseded for the live root.** HC CEO chose option (c) on 16 November 2026: the apex is GitHub Pages, with Namecheap BasicDNS and Namecheap free Email Forwarding. On 17 November 2026, HC CEO (speaking for William on Hurrell Capital work) moved `app.` 301s from Netlify, then from a planned Vercel Hobby project, to a free Cloudflare Pages project; DNS stays at Namecheap (CNAME `app` to `<project>.pages.dev`), with no nameserver moves. Follow `namecheap-plan.md` and `hosting.md`. This file is kept as earlier working notes and must not be applied as written.
 
 Use this if the cutover misbehaves. It restores the situation observed on 16 November 2026, Europe/London: the tool on `app.agecalculator.com` (Replit / Google Frontend at `34.111.179.208`), the apex catch-all 301 to the app homepage, and no `www` record.
 

@@ -1,6 +1,6 @@
 # Cloudflare Redirect Rules and DNS changes (not applied)
 
-> **Superseded for the live root.** HC CEO chose option (c) on 16 November 2026: the apex is GitHub Pages, with Namecheap BasicDNS and Namecheap free Email Forwarding. On 17 November 2026, HC CEO (speaking for William on Hurrell Capital work) moved `app.` 301s from Netlify to a free Vercel Hobby project; Netlify is dropped. Follow `namecheap-plan.md` and `hosting.md`. This file is kept as earlier working notes and must not be applied as written.
+> **Superseded for the live root.** HC CEO chose option (c) on 16 November 2026: the apex is GitHub Pages, with Namecheap BasicDNS and Namecheap free Email Forwarding. On 17 November 2026, HC CEO (speaking for William on Hurrell Capital work) moved `app.` 301s from Netlify, then from a planned Vercel Hobby project, to a free Cloudflare Pages project; DNS stays at Namecheap (CNAME `app` to `<project>.pages.dev`), with no nameserver moves. Follow `namecheap-plan.md` and `hosting.md`. This file is kept as earlier working notes and must not be applied as written.
 
 Apply these only after William approves. Do them in this order. First match wins for Single Redirects, so the year rule must sit above the general path-preserving rule.
 

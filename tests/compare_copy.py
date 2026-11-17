@@ -376,20 +376,20 @@ def main() -> int:
                 issues.append("PRIVACY missing GitHub as independent controller")
             if "We chose GitHub Pages because of our legitimate interest in running a secure, reliable site (Article 6(1)(f))." not in html:
                 issues.append("PRIVACY missing GitHub legitimate-interest / Article 6(1)(f) sentence")
-            if "vercel.com/legal/privacy-policy" not in html:
-                issues.append("PRIVACY Vercel Privacy Notice link missing")
-            if "vercel.com/legal/dpa" not in html:
-                issues.append("PRIVACY Vercel DPA link missing")
-            if "Old links on app.agecalculator.com are redirected to this site through Vercel Inc., which may record visitors’ IP addresses in its server logs." not in html:
-                issues.append("PRIVACY missing the Vercel IP-log sentence")
-            if "under that notice it acts as a controller for the personal information it processes" not in html:
-                issues.append("PRIVACY missing Vercel controller wording")
-            if "applies to Pro and Enterprise plans and does not apply to the Hobby plan" not in html:
-                issues.append("PRIVACY missing DPA Hobby-plan scope")
-            if "We use Vercel because of our legitimate interest in keeping old links working (Article 6(1)(f))." not in html:
-                issues.append("PRIVACY missing Vercel legitimate-interest / Article 6(1)(f) sentence")
-            if "protected by its certification under the EU-U.S. Data Privacy Framework and the UK Extension to that framework." not in html:
-                issues.append("PRIVACY missing Vercel DPF / UK Extension sentence")
+            if "cloudflare.com/privacypolicy" not in html:
+                issues.append("PRIVACY Cloudflare Privacy Policy link missing")
+            if "cloudflare.com/cloudflare-customer-dpa" not in html:
+                issues.append("PRIVACY Cloudflare DPA link missing")
+            if "Old links on app.agecalculator.com are redirected to this site through Cloudflare, Inc., which may record visitors’ IP addresses in its logs." not in html:
+                issues.append("PRIVACY missing the Cloudflare IP-log sentence")
+            if "is a data processor of those customer logs" not in html:
+                issues.append("PRIVACY missing Cloudflare processor / customer-logs wording")
+            if "Cloudflare does this as our processor under its" not in html:
+                issues.append("PRIVACY missing Cloudflare processor-under-DPA wording")
+            if "on the basis of our legitimate interest in keeping old links working (Article 6(1)(f))" not in html:
+                issues.append("PRIVACY missing Cloudflare legitimate-interest / Article 6(1)(f) sentence")
+            if "protected by its certification under the EU-U.S. Data Privacy Framework and the UK Extension to that framework (the UK-US data bridge), and by the Standard Contractual Clauses and the UK Addendum in that addendum." not in html:
+                issues.append("PRIVACY missing Cloudflare DPF / SCCs / UK Addendum sentence")
             if "noindex" not in html:
                 issues.append("PRIVACY missing noindex")
 

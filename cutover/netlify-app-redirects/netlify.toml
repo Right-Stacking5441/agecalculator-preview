@@ -1,9 +1,7 @@
 # Kept with the original rule set. This is no longer the planned host:
-# app.agecalculator.com 301s move to the Vercel Hobby project
-# Right-Stacking5441/agecalculator-app-redirects. Do not create a Netlify
+# app.agecalculator.com 301s move to the Cloudflare Pages project in
+# /workspace/agecalculator-app-cloudflare/. Do not create a Netlify
 # site from this folder.
-# Do not attach agecalculator.com or www to this site.
-# Do not connect the agecalculator-preview repo to this site.
 
 [build]
   publish = "."

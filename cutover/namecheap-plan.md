@@ -1,8 +1,8 @@
 # Namecheap BasicDNS cutover plan for agecalculator.com
 
-**Documents only. Do not apply this plan until William approves the launch in the HC CEO chat.** Nothing here has been applied to live DNS, the Namecheap registrar, Cloudflare, GitHub Pages custom-domain settings, Vercel, Netlify sites, or any account.
+**Documents only. Do not apply this plan until William approves the launch in the HC CEO chat.** Nothing here has been applied to live DNS, the Namecheap registrar, Cloudflare, GitHub Pages custom-domain settings, Vercel, Netlify sites, or any account. DNS stays at Namecheap; do not move nameservers.
 
-Prepared 16 November 2026, Europe/London, and revised the same day after HC CEO chose **option (c)**: the live root is **GitHub Pages**. Namecheap BasicDNS and Namecheap free Email Forwarding replace Cloudflare DNS and Cloudflare Email Routing. Revised again on 17 November 2026: HC CEO (speaking for William on Hurrell Capital work) moved `app.agecalculator.com` path 301s from Netlify to a free Vercel Hobby project. Netlify is dropped.
+Prepared 16 November 2026, Europe/London, and revised the same day after HC CEO chose **option (c)**: the live root is **GitHub Pages**. Namecheap BasicDNS and Namecheap free Email Forwarding replace Cloudflare DNS and Cloudflare Email Routing. Revised again on 17 November 2026: HC CEO (speaking for William on Hurrell Capital work) moved `app.agecalculator.com` path 301s from Netlify, then from a planned Vercel Hobby project, to a free Cloudflare Pages project. DNS stays at Namecheap (CNAME `app` to `<project>.pages.dev`). No nameserver moves.
 
 This supersedes the earlier drafts that would have put the live root on Cloudflare Pages, or the whole site on Netlify, and the 16 November draft that would have put `app.` 301s on Netlify.
 
@@ -14,21 +14,21 @@ The noindex preview at `Right-Stacking5441/agecalculator-preview` stays a previe
 
 None of the following is approved by this document.
 
-- **His go-ahead**, in the chat with HC CEO, before any live DNS, nameserver, GitHub custom-domain, Vercel custom-domain, or indexing change.
+- **His go-ahead**, in the chat with HC CEO, before any live DNS, nameserver, GitHub custom-domain, Cloudflare Pages custom-domain, or indexing change. Do not move nameservers to Cloudflare.
 - **The Namecheap login saved in the vault.** Do not put passwords in chat.
-- **Approval to import the private repo `Right-Stacking5441/agecalculator-app-redirects` as a Vercel Hobby project** and, when he says so, to attach only `app.agecalculator.com`. The repo has been pushed; it has not been connected to Vercel. Flag the Hobby clause below before relying on that plan in production.
+- **Approval to upload the redirect-only Cloudflare Pages project** from `/workspace/share/agecalculator-app-cloudflare.zip` and, when he says so, to attach only `app.agecalculator.com` with a Namecheap CNAME of `app` to `<project>.pages.dev`. Do not move nameservers.
 - **Approval to create a new public GitHub repository** for the live site (recommended name: `agecalculator`), separate from the noindex preview. GitHub Pages is free for a public repository.
-- **Anything paid:** this plan uses free products only if Hobby is acceptable. Do not buy PremiumDNS, Private Email, a Cloudflare plan, a GitHub paid plan, or a Vercel Pro plan unless William later chooses to. See the Hobby restriction below.
+- **Anything paid:** this plan uses free products (GitHub Pages and Cloudflare Pages on the Free plan, which allows commercial use). Do not buy PremiumDNS, Private Email, a paid Cloudflare plan, or a GitHub paid plan unless William later chooses to.
 
 ---
 
 ## Recommended option, in short
 
-**GitHub Pages at `agecalculator.com` and `www`, plus one Vercel Hobby project whose only job is to 301 `app.agecalculator.com` to the new trailing-slash root URLs.** The rules are in `netlify-app-redirects/` and in `Right-Stacking5441/agecalculator-app-redirects`. They must stay in place for at least a year (SEO Manager: preferably for the life of the site).
+**GitHub Pages at `agecalculator.com` and `www`, plus one Cloudflare Pages project whose only job is to 301 `app.agecalculator.com` to the new trailing-slash root URLs.** The rules are in `netlify-app-redirects/` and in `/workspace/agecalculator-app-cloudflare/`. They must stay in place for at least a year (SEO Manager: preferably for the life of the site). DNS stays at Namecheap; no nameserver moves.
 
 The root build uses directory indexes (`docs/past/index.html` is `/past/`). GitHub Pages 301s `/past` to `/past/`. There is no `/past.html` (or other directory `slug.html`) stub, because that file would be served at slashless `/past` and would block the 301. The only stubs are `/how-old-am-i`, `/date-of-birth` and `/rodent-age-calculator.html` (canonical to `/`, meta refresh `content="0"`, no noindex). Those stubs are still not true 301s.
 
-**Flag (Hobby plan):** Vercel Terms of Service, Hobby Plan section, https://vercel.com/legal/terms (last updated 19 October 2026): "You shall only use the Services under a Hobby plan for your personal or non-commercial use." The same section says Vercel may disable or remove Hobby projects with or without notice. Agecalculator.com is a Hurrell Capital site; Hobby may be the wrong plan. A move to Pro would be a paid change and needs William. Vercel's Data Processing Addendum (https://vercel.com/legal/dpa) applies to Pro and Enterprise plans, not Hobby.
+Cloudflare Pages is used on the Free plan (commercial use is allowed). Cloudflare's Data Processing Addendum (https://www.cloudflare.com/cloudflare-customer-dpa/, version 6.4, effective 3 April 2026) forms part of the Self-Serve Subscription Agreement, which also covers Free Services (https://www.cloudflare.com/terms/, last updated 12 September 2025), and treats Cloudflare as a processor.
 
 ---
 
@@ -50,7 +50,7 @@ Looked up on Monday 16 November 2026, Europe/London, via Cloudflare and Google D
 | `cf2024-1._domainkey` | TXT | 300 | Cloudflare DKIM | Do not copy to Namecheap. |
 | `_dmarc` | — | — | **NXDOMAIN** | Do not add a restrictive policy in this cutover. |
 
-**HTTP, same day:** `https://agecalculator.com/` is still a Cloudflare 301 to `https://app.agecalculator.com/` (path discarded). `http://app` 301s to HTTPS on `app.` (port sometimes included in `Location`). After cutover, HTTPS on `app.` must go to the HTTPS root in one hop; HTTP on `app.` will typically be two hops on Vercel (same-host HTTP→HTTPS first).
+**HTTP, same day:** `https://agecalculator.com/` is still a Cloudflare 301 to `https://app.agecalculator.com/` (path discarded). `http://app` 301s to HTTPS on `app.` (port sometimes included in `Location`). After cutover, HTTPS on `app.` must go to the HTTPS root in one hop; HTTP on `app.` will typically be two hops on Cloudflare Pages (same-host HTTP→HTTPS first).
 
 ---
 
@@ -90,9 +90,9 @@ Do **not** add a wildcard (`*.agecalculator.com`).
 
 ---
 
-## (b) Path-preserving 301s from `app.`, on Vercel only
+## (b) Path-preserving 301s from `app.`, on Cloudflare Pages only
 
-A redirect-only Vercel Hobby project from the private repo `Right-Stacking5441/agecalculator-app-redirects` (the 303-rule set also remains in `cutover/netlify-app-redirects/` as the source). Attach only `app.agecalculator.com`. DNS: CNAME `app` to `cname.vercel-dns.com` (or the exact host Vercel shows after the domain is added). A certificate is provisioned automatically once DNS is correct. Import the project in the Vercel dashboard; do not connect it from this machine.
+A redirect-only Cloudflare Pages project from `/workspace/agecalculator-app-cloudflare/` (zip at `/workspace/share/agecalculator-app-cloudflare.zip`; the 303-rule set also remains in `cutover/netlify-app-redirects/` as the source). Attach only `app.agecalculator.com`. DNS stays at Namecheap: CNAME `app` to `<project>.pages.dev`. Do not move nameservers. A certificate is provisioned automatically once DNS is correct. Upload the project in the Cloudflare dashboard; do not deploy it from this machine.
 
 Rules (host-based, HTTPS and HTTP, forced 301s; first match wins):
 
@@ -103,7 +103,7 @@ Rules (host-based, HTTPS and HTTP, forced 301s; first match wins):
 - Known tool slugs (and their `.html` forms) → `https://agecalculator.com/{slug}/`
 - Catch-all: `https://agecalculator.com/:splat`
 
-A single hop on **HTTP** is typically not possible on Vercel either: the automatic same-host HTTP→HTTPS upgrade runs first. HTTPS `app.` rules should be one hop (`trailingSlash` is unset so Vercel does not add a 308 slash hop).
+A single hop on **HTTP** is typically not possible on Cloudflare Pages either: the automatic same-host HTTP→HTTPS upgrade runs first. HTTPS `app.` rules should be one hop.
 
 Namecheap URL Redirect records remain unusable for `app.` because of the two-year HSTS policy and the lack of a certificate on the Namecheap redirect host.
 
@@ -124,20 +124,20 @@ Available only when the domain is on BasicDNS, PremiumDNS or FreeDNS. Mail Setti
 ## (d) Launch-check items
 
 1. **Privacy “Last updated” date.** Fill the placeholder on launch day.
-2. **Hosting wording — already on the preview.** Legal Manager's GitHub Pages paragraph remains. The `app.` paragraph was rewritten on 17 November 2026 for Vercel Hobby (Vercel's DPA does not apply to Hobby, so it is not described as our processor under that agreement). The text is in `copy-approved/privacy.md` and `docs/privacy/index.html`. See `hosting.md` for the exact text and sources. Flag for Legal if they want a further pass. The year-link example in “Links with dates in them” was changed from `/past?year=1990` to `/past/1990/`.
+2. **Hosting wording — already on the preview.** Legal Manager's GitHub Pages paragraph remains. The `app.` paragraph was rewritten later on 17 November 2026 for Cloudflare Pages (Cloudflare's DPA applies to Self-Serve customers, including Free Services, and Cloudflare is a processor of customer logs). The text is in `copy-approved/privacy.md` and `docs/privacy/index.html`. See `hosting.md` for the exact text and sources. Flag for Legal if they want a further pass. The year-link example in “Links with dates in them” was changed from `/past?year=1990` to `/past/1990/`.
 3. **Test email**, as in (c).
 4. **Remove noindex, open `robots.txt`, take off the preview banner**, on the production repo only. `/widget/` and `/embed/` stay noindex (noindex only, not nofollow).
 5. **M6** is still a hard cutover gate for `docs/404.html` (root-relative asset and nav URLs, no `document.write` `<base>`). Point `verify-404-nojs.py` at a path that should 404, **not** `/past/1990/`.
 6. **`LAUNCH=1` tests** and `cutover/verify.sh` once DNS is live. The local preview check is `python3 cutover/verify_preview.py --docs docs` (already run: 180 passed, 0 failed) and, against the hosted preview, the same script with `--base https://right-stacking5441.github.io/agecalculator-preview`.
-7. **A week after launch:** confirm the Vercel Hobby project is still serving the `app.` 301s, and raise the Hobby commercial-use clause with William if the site should move to Pro.
+7. **A week after launch:** confirm the Cloudflare Pages project is still serving the `app.` 301s.
 
 ### `verify.sh` (already updated for this plan; still describes the *after* state)
 
-- Apex A/AAAA are the eight GitHub Pages addresses, not Cloudflare and not a Vercel or Netlify apex address.
+- Apex A/AAAA are the eight GitHub Pages addresses, not a Cloudflare or Netlify apex address. `app` is the only Cloudflare Pages name, via a Namecheap CNAME.
 - NS are `dns1.registrar-servers.com` and `dns2.registrar-servers.com`.
 - MX and SPF are the Namecheap values copied from the dashboard (the current function still has the Cloudflare assertions until those values are known).
 - `www` CNAME is `right-stacking5441.github.io`; HTTPS `www` 301s to the matching `https://agecalculator.com{path}`.
-- `app` CNAME is `cname.vercel-dns.com` (or the exact host Vercel shows); HTTPS `app` 301s in one hop, including `/past/1990` → `/past/1990/` and `/rodent-age-calculator.html` → `/`. HTTP `app` is typically two hops.
+- `app` CNAME is `<project>.pages.dev` (or the exact host Cloudflare Pages shows); HTTPS `app` 301s in one hop, including `/past/1990` → `/past/1990/` and `/rodent-age-calculator.html` → `/`. HTTP `app` is typically two hops. Nameservers stay at Namecheap.
 - Path sweep: no 404 on sitemap URLs, year URLs or stubs, with and without a trailing slash.
 - Stubs (`/past.html`, `/how-old-am-i/`, `/rodent-age-calculator.html`, …) are **200** with a canonical and meta refresh, not 301s.
 
@@ -158,7 +158,7 @@ Nameservers: `dns1.registrar-servers.com`, `dns2.registrar-servers.com`. Delete 
 | AAAA | `@` | `2606:50c0:8002::153` | 300 | GitHub Pages apex |
 | AAAA | `@` | `2606:50c0:8003::153` | 300 | GitHub Pages apex |
 | CNAME | `www` | `right-stacking5441.github.io` | 300 | www → Pages (GitHub then 301s to the apex) |
-| CNAME | `app` | `cname.vercel-dns.com` | 300 | app 301 site; copy the exact host from the Vercel domain UI if it differs |
+| CNAME | `app` | `<project>.pages.dev` | 300 | app 301 site; copy the exact host from the Cloudflare Pages UI. Do not move nameservers. |
 | TXT | `_github-pages-challenge-right-stacking5441` | `<token from GitHub UI>` | 300 | Domain verification; confirm the label if the repo is under an organization |
 | MX | `@` | *(set automatically by Email Forwarding)* | 300 or Automatic | Copy hosts and priorities from the dashboard |
 | TXT | `@` | *(SPF set automatically; do not delete)* | 300 or Automatic | Must be the only `v=spf1` record |
@@ -179,19 +179,19 @@ Switch at Namecheap: Domain List → Manage → Nameservers, Custom DNS → **Ba
 
 Do nothing in the live DNS steps without William's go-ahead.
 
-1. **Prepare, no live DNS.** Approvals above. Create the production GitHub repo and, once approved, import `Right-Stacking5441/agecalculator-app-redirects` in the Vercel dashboard (Hobby, unless William chooses Pro). Keep the preview noindex. Flag the Hobby personal-or-non-commercial clause.
+1. **Prepare, no live DNS.** Approvals above. Create the production GitHub repo and, once approved, upload `/workspace/share/agecalculator-app-cloudflare.zip` as a Cloudflare Pages project. Keep the preview noindex. DNS stays at Namecheap.
 2. **Launch commit on the production repo only:** fill the privacy date (keep the approved hosting paragraphs); remove noindex, open `robots.txt`, remove the banner; fix M6 on `docs/404.html`; add `docs/CNAME`; pin it so the build cannot delete it.
 3. **Verify the domain on GitHub** (TXT). If Namecheap cannot yet hold that TXT, put it on Cloudflare first and recreate it on Namecheap at the switch.
-4. **Add the custom domain** `agecalculator.com` on the **production** repo only. Add `app.agecalculator.com` as a domain on the Vercel redirect project only.
-5. **Checkpoint:** production Pages URL and the Vercel deployment host (with `Host: app.agecalculator.com`, or the `*.vercel.app` URL) already behave. Cloudflare is still live.
+4. **Add the custom domain** `agecalculator.com` on the **production** repo only. Add `app.agecalculator.com` as a custom domain on the Cloudflare Pages redirect project only. Do not move nameservers.
+5. **Checkpoint:** production Pages URL and the Cloudflare Pages `*.pages.dev` host already behave. The live DNS (still on Cloudflare today) is unchanged until the go-ahead.
 6. **William's go-ahead.** Namecheap login in the vault.
 7. **Enter the Namecheap table** (or in the same sitting as step 8). Set Email Forwarding and `hello` → `hurrellcapital@gmail.com` as soon as BasicDNS will accept it.
 8. **Switch nameservers** Custom DNS → BasicDNS. Delete parking records. Confirm the eight GitHub addresses, `www` and `app` CNAMEs, verification TXT, and no Cloudflare leftovers.
-9. **Checkpoint — DNS and HTTPS.** Wait for GitHub and Vercel certificates, then Enforce HTTPS on Pages.
+9. **Checkpoint — DNS and HTTPS.** Wait for GitHub and Cloudflare Pages certificates, then Enforce HTTPS on GitHub Pages.
 10. **Checkpoint — HTTP.** Run `verify.sh` from a network that is not intercepting plain HTTP. Confirm the old apex catch-all to `app` is gone, `app` year URLs are one HTTPS hop, stubs are 200, `/past/` is 200, `/past` 301s to `/past/`, and nested 404s still satisfy M6.
 11. **Checkpoint — mail.** Test `hello@` from a third-party account. Only then stop relying on Cloudflare Email Routing.
 12. **Search Console and aftercare.** Domain property for `agecalculator.com`; submit `https://agecalculator.com/sitemap.xml`; keep any `app.` property for a few months; leave `app` 301s for at least a year; do not delete Cloudflare or Replit on day one.
-13. **A week after launch:** confirm the Vercel Hobby project is still serving the `app.` 301s, and raise the Hobby commercial-use clause with William if the site should move to Pro.
+13. **A week after launch:** confirm the Cloudflare Pages project is still serving the `app.` 301s.
 
 ---
 
@@ -201,9 +201,9 @@ Until NS has fully left Cloudflare, switching Namecheap nameservers back to Cust
 
 If live content is wrong but DNS is right: revert the production GitHub repo. Do not delete `docs/CNAME` while the apex still points at GitHub.
 
-If `app` 301s are wrong: point `app` back to `A 34.111.179.208` (Replit), or fix the Vercel redirect project (`Right-Stacking5441/agecalculator-app-redirects`) and redeploy.
+If `app` 301s are wrong: point `app` back to `A 34.111.179.208` (Replit), or fix the Cloudflare Pages redirect project and upload it again.
 
-If the Vercel Hobby project is disabled or removed (Vercel may do that with or without notice), `app.` 301s stop. Rolling DNS back to Cloudflare restores the old agecalculator origin. Moving the project to a Pro plan is a paid change and needs William.
+If the Cloudflare Pages project is paused or the `app` CNAME is wrong, `app.` 301s stop. Rolling DNS back to the current Cloudflare zone restores the old agecalculator origin. That is a Namecheap record or nameserver change only if William approves it; this plan does not otherwise move nameservers.
 
 Do not delete `agecalculator-preview`. Do not change the Namecheap registration (only nameservers and records). Do not reconfigure the dino.game site as part of this rollback.
 
@@ -211,7 +211,7 @@ Do not delete `agecalculator-preview`. Do not change the Namecheap registration 
 
 ## SEO Manager rulings applied (16 November 2026)
 
-- **Trailing-slash URLs** everywhere: canonicals, internal links, the related-calculators row, og:url, JSON-LD urls and the sitemap. The homepage stays `https://agecalculator.com/`. There is no hreflang. App. 301s go in one hop to the slash URL (HTTPS; HTTP remains typically two hops on Vercel).
+- **Trailing-slash URLs** everywhere: canonicals, internal links, the related-calculators row, og:url, JSON-LD urls and the sitemap. The homepage stays `https://agecalculator.com/`. There is no hreflang. App. 301s go in one hop to the slash URL (HTTPS; HTTP remains typically two hops on Cloudflare Pages).
 - **Year pages 1960-2026** are kept. The original range was 1960-2024 because that is what the old app sitemap (lastmod 7 December 2025) and the redirect map listed; 2025 and 2026 were not in that sitemap. The range now includes 2025 and the current year, 2026 (67 pages). Titles are the plain form “Age in 1985”. Every year page canonicalises to `https://agecalculator.com/past/` (same og:url and JSON-LD url), stays out of the sitemap, and must not be noindexed at launch. App. `/past/YYYY` 301s to `/past/YYYY/` in one hop; years outside the range (e.g. 2027) go to `/past/?year=`.
 - **Legacy stubs only:** `/rodent-age-calculator.html`, `/how-old-am-i` and `/date-of-birth` (canonical to `/`, meta refresh 0, no noindex). Directory `slug.html` stubs were dropped so GitHub Pages can 301 `/slug` to `/slug/`. The redirect map has no apex `.html` rows. The 16 November Ahrefs export and GSC notes show one real apex `.html` backlink: `http://agecalculator.com/rodent-age-calculator.html` (Universitas Airlangga), which is kept. No conflict that would require republishing `difference.html` or similar.
 - **Launch checklist:** Enforce HTTPS on; `www` 301s to the apex; unknown apex paths return a real HTTP 404 from `404.html`.
@@ -224,7 +224,7 @@ Do not delete `agecalculator-preview`. Do not change the Namecheap registration 
 - GitHub Pages certificate / Enforce HTTPS can take up to 24 hours.
 - Nameserver TTL up to 24 hours, and a possible short mail gap for resolvers that have already switched.
 - Forwarded mail can land in Gmail's spam when the original sender's DMARC is strict.
-- Two-year HSTS on `app.` makes a mistaken or early removal of the Vercel CNAME break `https://app`.
+- Two-year HSTS on `app.` makes a mistaken or early removal of the Cloudflare Pages CNAME break `https://app`.
 - Confirm after the preview is hosted that GitHub Pages still 301s `/past` to `/past/` when `past.html` (the stub) also exists. Local Python's `http.server` does.
 - This environment's HTTP proxy can make plain-HTTP tests look like 500s. Run `verify.sh` from a normal network.
 - No CAA and no DNSSEC today; do not add a restrictive CAA or turn on DNSSEC mid-window.
