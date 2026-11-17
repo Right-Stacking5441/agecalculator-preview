@@ -370,8 +370,14 @@ def main() -> int:
                 issues.append("PRIVACY GitHub Pages hosting sentence or docs link missing")
             if "docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" not in html:
                 issues.append("PRIVACY GitHub General Privacy Statement link missing")
-            if "Old links on app.agecalculator.com are redirected to this site through Netlify, which may record IP addresses in its server logs." not in html:
-                issues.append("PRIVACY missing the Netlify app. redirect sentence")
+            if "We don’t receive or have access to these logs." not in html:
+                issues.append("PRIVACY missing the independent-controller / no-access logs sentence")
+            if "independent controller under the" not in html:
+                issues.append("PRIVACY missing GitHub as independent controller")
+            if "We chose GitHub Pages because of our legitimate interest in running a secure, reliable site (Article 6(1)(f))." not in html:
+                issues.append("PRIVACY missing GitHub legitimate-interest / Article 6(1)(f) sentence")
+            if "Old links on app.agecalculator.com are redirected to this site through Netlify, Inc., which may record visitors’ IP addresses in its server logs to run and secure its service. Netlify does this as our processor under its data processing agreement, on the basis of our legitimate interest in keeping old links working (Article 6(1)(f)). Netlify may process this data in the United States, protected by the safeguards in that agreement." not in html:
+                issues.append("PRIVACY missing the Netlify processor / transfers sentence")
             if "noindex" not in html:
                 issues.append("PRIVACY missing noindex")
 
