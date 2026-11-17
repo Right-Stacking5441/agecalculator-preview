@@ -3,18 +3,12 @@
 - **Title:** Age difference calculator: Years, months and days
 - **Meta description:** Enter two dates of birth to see exactly how much older one person is, in years, months and days, plus the gap in days and weeks.
 - **H1:** Age difference calculator
-- **Line under the H1:** Siblings arguing over who’s older, and by how much? Type in both dates of birth and it’s settled to the day.
+- **Line under the H1:** Two dates of birth are all it needs to show who’s older and by how much, in years, months and days.
 - **Target keywords:** age difference calculator; age calculator difference
 
 ---
 
 ## Body
-
-## Two dates, one gap
-
-The gap is shown the way you'd say an age: whole years first, then months, then days. It also says who is older and by how many days, and under More gives the same gap in weeks and months. Names are optional: open Add names to type them. They only label the result, so "Sam is older by 1,206 days" reads better than "Person A".
-
-The order you type the dates in doesn't matter. The calculator works out which birthday came first and counts forward from it.
 
 ## Sam and Alex: a worked example
 
@@ -28,13 +22,19 @@ Take Sam, born on 2 June 1990, and Alex, born on 20 September 1993:
 
 So Sam is 3 years, 3 months and 18 days older than Alex. Counted in days, that is 1,206, or 172 weeks and 2 days.
 
-## Why their ages don't always differ by the same number
+## Why their ages don’t always differ by the same number
 
-The 1,206 days never change. The difference you'd say out loud does. Between 2 June and 19 September each year, the older person has had their birthday and the younger one hasn't, so their ages are 4 apart. On 1 August 2026, for example, they were 36 and 32, which is 4 apart. By 16 November 2026 the younger one had turned 33, so they were 3 apart again.
+The 1,206 days never change. The difference you’d say out loud does. Between 2 June and 19 September each year, the older person has had their birthday and the younger one hasn’t, so their ages are 4 apart. On 1 August 2026, for example, they were 36 and 32, which is 4 apart. By 16 November 2026 the younger one had turned 33, so they were 3 apart again.
 
-Both answers are right, which is why the result has a line saying the ages differ by "3 or 4, depending on the time of year". If you only subtract one age from another, you get whichever of the two happens to apply today. The years, months and days figure is the one that stays put.
+Both answers are right, which is why the result has a line saying the ages differ by “3 or 4, depending on the time of year”. If you only subtract one age from another, you get whichever of the two happens to apply today. The years, months and days figure is the one that stays put.
 
 If the two people share a birthday (same day and month, different years), the gap is a whole number of years and the line says it holds all year.
+
+## Two dates, one gap
+
+The gap is shown the way you’d say an age: whole years first, then months, then days. It also says who is older and by how many days, and under More gives the same gap in weeks and months. Names are optional: open Add names to type them. They only label the result, so “Sam is older by 1,206 days” reads better than “Person A”.
+
+The order you type the dates in doesn’t matter. The calculator works out which birthday came first and counts forward from it.
 
 ## Leap days and month ends
 
@@ -46,13 +46,14 @@ Twins born either side of midnight have different dates of birth, and the calcul
 
 ## Other things people use it for
 
-Couples comparing ages, siblings settling an argument, and anyone filling in a form that asks for the age gap between a parent and a child. For the span between any two dates that aren't birthdays, such as the start and end of a tenancy, [days between dates](/days-between-dates) is the better tool, because it can count the end day and gives a weekday total. For one person's age on a given day, use the main [age calculator](/).
+Couples comparing ages, siblings settling an argument, and anyone filling in a form that asks for the age gap between a parent and a child. For the span between any two dates that aren’t birthdays, such as the start and end of a tenancy, [days between dates](/days-between-dates) is the better tool, because it can count the end day and gives a weekday total. For one person’s age on a given day, use the main [age calculator](/).
 
 ---
 
-## Age gaps by hand and in groups
+## Working out an age gap
+
 ### Is the age difference the same every year?
-In days, yes. In whole years it changes by one for part of each year, in the weeks between the older person's birthday and the younger person's.
+In days, yes. In whole years it changes by one for part of each year, in the weeks between the older person’s birthday and the younger person’s.
 
 ### How do I work out an age difference by hand?
 Subtract the earlier date of birth from the later one: count whole years, then whole months, then the remaining days. 2 June 1990 to 20 September 1993 is 3 years, 3 months and 18 days.

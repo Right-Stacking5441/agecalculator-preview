@@ -2,9 +2,9 @@
   "_note": "Copy hooks (UX pass). Intros, headings, FAQ headings and old-screen fixes are Copywriter's FINAL copy of 16 Nov (/workspace/marketing/seo/agecalculator-copy/2026-11-16-ux-pass-copy.md). 'ui' strings are interface labels. build_ux.py and patch_js.py read from here; edit and run ux/run.sh.",
   "pages": {
     "index": {
-      "intro": "How old am I, exactly? Put in your date of birth for your age today in years, months and days, and how long you have to wait for the next birthday.",
+      "intro": "This works out your exact age today from your date of birth, in years, months and days, and how long it is until your next birthday.",
       "howto": "What the result shows",
-      "faq": "Leap days, month ends and Korean age",
+      "faq": "Common questions",
       "label": {
         "dob": "Enter your date of birth"
       }
@@ -12,16 +12,16 @@
     "past": {
       "intro": "Exam results, a wedding photo, a form asking your age \"at the date of the incident\": give both dates and see how old you were then, down to the day.",
       "howto": "Looking back",
-      "faq": "Forms, whole years and doing it by hand",
+      "faq": "Ages on past dates",
       "label": {
         "dob": "Your date of birth",
         "on": "The date to look back to"
       }
     },
     "difference": {
-      "intro": "Siblings arguing over who’s older, and by how much? Type in both dates of birth and it’s settled to the day.",
+      "intro": "Two dates of birth are all it needs to show who’s older and by how much, in years, months and days.",
       "howto": "Two dates, one gap",
-      "faq": "Age gaps by hand and in groups",
+      "faq": "Working out an age gap",
       "label": {
         "a": "First date of birth",
         "b": "Second date of birth"
@@ -30,7 +30,7 @@
     "days-between-dates": {
       "intro": "From today to a deadline, or across a whole year: see how many days there are, how many are weekdays and how many fall at the weekend.",
       "howto": "Start day in, end day out",
-      "faq": "End dates, working days and Christmas",
+      "faq": "Questions",
       "label": {
         "start": "From",
         "end": "To"
@@ -39,7 +39,7 @@
     "chronological-age": {
       "intro": "8;4;12 is how score sheets want it, and that’s what you get here: a child’s age on the test date, ready to copy or print for the file.",
       "howto": "Filling in the score sheet",
-      "faq": "Test manuals, rounding and doing it by hand",
+      "faq": "If you’re scoring a test",
       "label": {
         "dob": "Date of birth",
         "test": "Test date"
@@ -48,7 +48,7 @@
     "dog-age": {
       "intro": "Big dogs age faster than small ones, so times seven gets it wrong. Pick your dog’s adult size and the human years come straight off the AAHA-published chart.",
       "howto": "Reading the result",
-      "faq": "Times seven, crossbreeds and big dogs",
+      "faq": "About dog years",
       "label": {}
     },
     "cat-age": {
@@ -58,7 +58,7 @@
       "label": {}
     },
     "korean-age": {
-      "intro": "Born late in the year? Your Korean age can be two more than your international age. You’ll see both here, with year age in between.",
+      "intro": "Korean age counts you as 1 at birth and adds a year every 1 January, so it can run two ahead of your international age. Here you get both, with year age in between.",
       "howto": "One birthday, three numbers",
       "faq": "Why Korean age runs ahead",
       "label": {
@@ -68,21 +68,21 @@
     "birthday-countdown": {
       "intro": "For cards, parties and plain impatience: the days left until the next birthday, and the day of the week it lands on.",
       "howto": "What the countdown shows",
-      "faq": "Weekdays, leap days and time zones",
+      "faq": "More about the countdown",
       "label": {
         "dob": "Enter the date of birth"
       }
     },
     "how-old-will-i-be": {
-      "intro": "Planning for 2050, or for the year the mortgage ends? Pick the year to see how old you will be in it, and the exact day you reach that age.",
+      "intro": "Pick a future year and give your date of birth to see the age you’ll turn that year, and the exact day it happens.",
       "howto": "Picking a year",
-      "faq": "Future years, exact days and leap birthdays",
+      "faq": "Planning years ahead",
       "label": {
         "dob": "Enter your date of birth"
       }
     },
     "what-year-was-i-born": {
-      "intro": "Someone says they're 42. What year were they born? Give the age and whether the birthday has been yet this year, and you'll get the year, or both if you're not sure.",
+      "intro": "An age on its own fits two birth years, depending on whether this year’s birthday has been yet. Say which and you’ll get one year; if you’re not sure, you’ll get both.",
       "howto": "From an age to a year",
       "faq": "Why you sometimes get two years",
       "label": {}

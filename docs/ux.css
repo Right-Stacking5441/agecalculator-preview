@@ -72,10 +72,10 @@
 @container datefield (max-width: 220px) {
   .quick, .df-small .quick { font-size: 15px; padding-left: 8px; padding-right: 8px; }
 }
-.df-foot { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s2) var(--s4); flex-wrap: wrap; margin-top: var(--s2); min-height: 24px; }
-.df-foot .readback { margin: 0; min-height: 0; flex: 1 1 auto; }
+.df-foot { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s2) var(--s4); flex-wrap: wrap; margin-top: var(--s2); min-height: 44px; }
+.df-foot .readback { margin: 0; min-height: 44px; flex: 1 1 auto; line-height: 22px; }
 .readback .ic-tick { width: 16px; height: 16px; margin-left: var(--s2); color: var(--ink-2); vertical-align: -2px; stroke-width: 2; }
-.readback.err { flex-basis: 100%; }
+/* Keep the toggle on the same row when an error appears, so the page does not jump. */
 .parts-toggle { display: inline-flex; align-items: center; gap: 5px; margin: 0; font-size: 14px; color: var(--ink-2); text-decoration: none; white-space: nowrap; }
 .parts-toggle span { text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 3px; }
 .parts-toggle .ic { width: 18px; height: 18px; }
@@ -271,8 +271,8 @@ details.qa > summary h3 { font-size: 17px; font-weight: 600; margin: 0; }
 .opt-field.tz .opt-body { display: block; }
 .opt-field.tz .ic { width: 18px; height: 18px; }
 /* Readback row can wrap, so a long date plus "Use one box" never clips. */
-.df-foot { min-height: 24px; height: auto; align-items: center; flex-wrap: wrap; }
-.df-foot .readback, .entry.multi .df-foot .readback, .prefill-on .entry.multi .df-foot .readback { min-height: 0 !important; margin: 0; line-height: 22px; height: auto; overflow: visible; white-space: normal; flex: 1 1 auto; }
+.df-foot { min-height: 44px; height: auto; align-items: flex-start; flex-wrap: wrap; }
+.df-foot .readback, .entry.multi .df-foot .readback, .prefill-on .entry.multi .df-foot .readback { min-height: 44px !important; margin: 0; line-height: 22px; height: auto; overflow: visible; white-space: normal; flex: 1 1 auto; }
 .df-foot .readback.ok { white-space: normal; overflow: visible; text-overflow: unset; }
 /* The countdown pad's stacked sheets: room for the deepest stack, always, so drawing it can't push the page */
 #leaf.leaf-stack { margin-bottom: 54px !important; }

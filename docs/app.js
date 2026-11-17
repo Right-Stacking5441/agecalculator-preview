@@ -77,6 +77,14 @@
 
   /* ---------- date fields: a quick box that reads plain English, plus day / month / year boxes ---------- */
   var fields = {};
+  var MSG_UNREADABLE = 'That doesn’t look like a date. Try something like 18 May 1995.';
+  var MSG_INCOMPLETE = 'That date isn’t finished. Try 15 March 1995.';
+  var MSG_FUTURE_DOB = 'That date hasn’t happened yet. Check the year.';
+  var MSG_BEFORE_DOB = 'That’s before the date of birth.';
+  function isDobField(n) { return n === 'dob' || n === 'a' || n === 'b'; }
+  function parseMessage(r) {
+    return r.message || (r.code === 'incomplete' ? MSG_INCOMPLETE : MSG_UNREADABLE);
+  }
   function sharedToggle() { return document.querySelector('.parts-toggle.shared'); }
   function groupOf(fld) {
     var sh = sharedToggle();
@@ -117,6 +125,7 @@
       }
     }
     var savedParts = null;
+    var quickFromParts = false;
     function clearParts() {
       parts[0].value = '';
       parts[1].value = '';
@@ -154,22 +163,28 @@
       if (r.ok) {
         savedParts = null;
         parts.forEach(function (x) { x.setAttribute('aria-invalid', 'false'); });
-        setDate(r.date); quick.value = r.text; invalid(false); show(rb(r.date), 'ok');
+        setDate(r.date); quick.value = r.text; quickFromParts = true; invalid(false); show(rb(r.date), 'ok');
       } else {
         parts.forEach(function (x) { x.setAttribute('aria-invalid', 'false'); });
         f.value = null; f.status = r.code; f.message = r.message;
-        if (hasParts && r.text) quick.value = r.text;
+        if (hasParts && r.text) { quick.value = r.text; quickFromParts = true; }
         if (asClose) {
           if (hasParts) rememberParts(quick.value);
           else savedParts = null;
         }
         if (!hasParts) {
-          /* Never wipe text the user typed in the one box. */
-          if (!quick.value.trim()) { invalid(false); show('', ''); }
+          /* If the text was written from the boxes, clearing them clears it too.
+             Never wipe text the user typed in the one box. */
+          if (quickFromParts) {
+            quick.value = '';
+            savedParts = null;
+            quickFromParts = false;
+            invalid(false); show('', '');
+          } else if (!quick.value.trim()) { invalid(false); show('', ''); }
           else {
             var q = A.parseDate(quick.value, dateOpts());
             if (q.ok) { setDate(q.date, true); invalid(false); show(rb(q.date), 'ok'); }
-            else { invalid(!!(q.message || q.code !== 'empty')); show(q.message || (q.code === 'incomplete' ? 'That date isn’t finished. Try 15 March 1995.' : 'Try a date like 15 March 1995 or 15/03/1995.'), q.message || q.code !== 'empty' ? 'err' : ''); }
+            else { invalid(!!(q.message || q.code !== 'empty')); show(q.message || parseMessage(q), q.message || q.code !== 'empty' ? 'err' : ''); }
           }
         } else if (r.message && (r.code !== 'incomplete' || asClose)) {
           /* Show a missing-field message as soon as the boxes close, not only on blur. */
@@ -226,6 +241,7 @@
         f.value = null; f.status = r.code; f.message = r.message;
         invalid(false);
         savedParts = null;
+        quickFromParts = false;
         if (r.code === 'empty' || !(r.parts && (r.parts.d || r.parts.m || r.parts.y))) clearParts();
         else {
           /* Keep the boxes in step with whatever we could extract, after a clear. */
@@ -239,18 +255,26 @@
       }
       go();
     });
-    quick.addEventListener('blur', function () {
+    quick.addEventListener('blur', function (e) {
+      /* Invalid text stays in the text field. Boxes open only from the toggle.
+         Use relatedTarget (during blur, activeElement is the body). */
+      var next = e.relatedTarget;
       if (!quick.value.trim()) { invalid(false); savedParts = null; clearParts(); return; }
       var r = A.parseDate(quick.value, dateOpts());
-      if (r.ok) return;
+      if (r.ok) {
+        if (isDobField(name) && A.cmp(r.date, today) > 0) {
+          setDate(r.date, true); f.status = 'future'; f.message = MSG_FUTURE_DOB;
+          invalid(true); show(MSG_FUTURE_DOB, 'err'); go();
+        } else if (tool === 'past' && name === 'on' && fields.dob && fields.dob.value && A.cmp(r.date, fields.dob.value) < 0) {
+          setDate(r.date, true); f.status = 'before'; f.message = MSG_BEFORE_DOB;
+          invalid(true); show(MSG_BEFORE_DOB, 'err'); go();
+        }
+        return;
+      }
       f.value = null; f.status = r.code; f.message = r.message;
       invalid(true);
-      show(r.message || (r.code === 'incomplete' ? 'That date isn’t finished. Try 15 March 1995.' : 'Try a date like 15 March 1995 or 15/03/1995.'), 'err');
+      show(parseMessage(r), 'err');
       go();
-      var next = document.activeElement;
-      /* Don't auto-open when the user is heading for the toggle; that fights open/close. */
-      if (next && next.closest && next.closest('.parts-toggle')) return;
-      if (pbox && pbox.hidden && !document.body.classList.contains('widget')) { setGroupOpen(groupOf(f), true); }
     });
     parts.forEach(function (p, i) {
       p.addEventListener('input', function () {
@@ -260,9 +284,33 @@
         writeQuickFromParts();
         go();
       });
-      p.addEventListener('keydown', function (e) { if (e.key === 'Backspace' && !p.value && i > 0) { e.preventDefault(); parts[i - 1].focus({ preventScroll: true }); } });
-      p.addEventListener('blur', function () {
-        if (document.activeElement && parts.indexOf(document.activeElement) !== -1) return;
+      p.addEventListener('keydown', function (e) {
+        if (e.key === 'Backspace' && !p.value && i > 0) {
+          e.preventDefault();
+          parts[i - 1].focus({ preventScroll: true });
+          return;
+        }
+        /* A digit typed into a already-full box should land in the next box
+           (WebKit otherwise drops it because of maxlength). */
+        var max = i === 2 ? 4 : 2;
+        var nxt = parts[i + 1];
+        if (nxt && /^\d$/.test(e.key) && !e.ctrlKey && !e.metaKey && !e.altKey) {
+          var start = p.selectionStart, end = p.selectionEnd;
+          var replacing = start !== end;
+          var atEnd = !replacing && (start == null || start >= p.value.length);
+          if (atEnd && p.value.length >= max) {
+            e.preventDefault();
+            nxt.focus({ preventScroll: true });
+            var nmax = i + 1 === 2 ? 4 : 2;
+            if (nxt.selectionStart !== nxt.selectionEnd || !nxt.value) nxt.value = e.key;
+            else if (nxt.value.length < nmax) nxt.value += e.key;
+            else return;
+            nxt.dispatchEvent(new Event('input'));
+          }
+        }
+      });
+      p.addEventListener('blur', function (e) {
+        if (e.relatedTarget && parts.indexOf(e.relatedTarget) !== -1) return;
         var r = A.validate(parts[0].value, parts[1].value, parts[2].value);
         if (r.ok || !(parts[0].value || parts[1].value || parts[2].value)) return;
         parts.forEach(function (x, j) { x.setAttribute('aria-invalid', String(!r.ok && !!r.message && ['day', 'month', 'year'][j] === r.field)); });
@@ -277,20 +325,27 @@
       });
     });
     /* Close the boxes only on an explicit toggle or when focus leaves the
-       field group. A valid mid-keystroke must not auto-close them.
-       Do not run this for the text field's own blur (it may have just
-       auto-opened the boxes), and never pull focus back into the text field. */
+       field group and the shared toggle. A valid mid-keystroke must not
+       auto-close them. Never pull focus back into the text field. */
     el.addEventListener('focusout', function (e) {
-      if (e.target === quick) return;
       setTimeout(function () {
         if (!pbox || pbox.hidden) return;
-        var a = document.activeElement;
         var group = groupOf(f);
+        var a = document.activeElement;
         if (focusInDateGroup(group, a)) return;
+        if (e.relatedTarget && focusInDateGroup(group, e.relatedTarget) && (!a || a === document.body)) return;
         setGroupOpen(group, false);
         go();
       }, 0);
     });
+    f.markError = function (msg) {
+      f.message = msg;
+      invalid(true);
+      show(msg, 'err');
+    };
+    f.clearSemanticError = function () {
+      if (f.value) { invalid(false); show(rb(f.value), 'ok'); f.message = ''; }
+    };
     f.set = function (d) { setDate(d, true); if (d) { quick.value = plain(d); show(rb(d), 'ok'); } };
     f.clearToToday = function () { f.set(today); };
     var pre = q.get(name);
@@ -319,31 +374,47 @@
     if (!on || !onBox || onBox.hidden) return null;
     return errOf(on, 'date');
   }
+  function groupFromToggle(b) {
+    var group = [];
+    (b.getAttribute('aria-controls') || '').split(/\s+/).forEach(function (id) {
+      if (!id) return;
+      var box = document.getElementById(id);
+      var df = box && box.closest('[data-datefield]');
+      var nm = df && df.getAttribute('data-datefield');
+      if (nm && fields[nm]) group.push(fields[nm]);
+    });
+    return group;
+  }
   document.querySelectorAll('.parts-toggle.shared').forEach(function (b) {
     /* Keep focus off the button so a tap can move it into the boxes. */
     b.addEventListener('mousedown', function (e) { e.preventDefault(); });
     b.addEventListener('click', function () {
-      var group = [];
-      (b.getAttribute('aria-controls') || '').split(/\s+/).forEach(function (id) {
-        if (!id) return;
-        var box = document.getElementById(id);
-        var df = box && box.closest('[data-datefield]');
-        var name = df && df.getAttribute('data-datefield');
-        if (name && fields[name]) group.push(fields[name]);
-      });
+      var group = groupFromToggle(b);
       var anyOpen = group.some(function (fld) { return fld.isPartsOpen && fld.isPartsOpen(); });
       var o = !anyOpen;
       setGroupOpen(group, o);
       var first = group[0];
-      /* Focus after the click so the button does not keep it. */
-      setTimeout(function () {
-        if (o) {
-          if (first && first.parts && first.parts[0]) first.parts[0].focus({ preventScroll: true });
-        } else if (first && first.quick) {
-          first.quick.focus({ preventScroll: true });
-        }
-      }, 0);
+      /* Focus now, not in a timeout, so a keystroke on the same tap is not lost. */
+      if (o) {
+        if (first && first.parts && first.parts[0]) first.parts[0].focus({ preventScroll: true });
+      } else if (first && first.quick) {
+        first.quick.focus({ preventScroll: true });
+      }
       go();
+    });
+    /* The toggle sits outside both date fields, so their focusout does not
+       run when Tab moves from the toggle to the next control. Close then. */
+    b.addEventListener('focusout', function (e) {
+      var group = groupFromToggle(b);
+      setTimeout(function () {
+        var anyOpen = group.some(function (fld) { return fld.isPartsOpen && fld.isPartsOpen(); });
+        if (!anyOpen) return;
+        var a = document.activeElement;
+        if (focusInDateGroup(group, a)) return;
+        if (e.relatedTarget && focusInDateGroup(group, e.relatedTarget) && (!a || a === document.body)) return;
+        setGroupOpen(group, false);
+        go();
+      }, 0);
     });
   });
   function refreshOnLabel() {
@@ -435,7 +506,11 @@
       if (onErr) return withCls(onErr, 'leaf-old');
       if (needs(b)) return errOf(b, 'date') || withCls(emptyToday('Add both dates to see how old you were then.'), 'leaf-old');
       var r = A.age(b.value, at);
-      if (!r.ok) return withCls(notice('Not born yet', long(b.value) + ' is after ' + long(at) + '.'), 'leaf-old');
+      if (!r.ok) {
+        if (fields.on && fields.on.markError) fields.on.markError(MSG_BEFORE_DOB);
+        return withCls(notice('Not born yet', MSG_BEFORE_DOB), 'leaf-old');
+      }
+      if (fields.on && fields.on.clearSemanticError && fields.on.message === MSG_BEFORE_DOB) fields.on.clearSemanticError();
       var bounds = A.birthdayBounds(b.value, at);
       var lead = big(r.years, r.years === 1 ? 'year old' : 'years old') + '<p class="rest">' + plural(r.months, 'month') + ' and ' + plural(r.days, 'day') + (bounds.bornDay ? '. The day you were born.' : '') + '</p>';
       var prev = bounds.last, nx = bounds.next;

@@ -46,12 +46,11 @@
     if (s[2].length < 4) return { ok: false, code: 'incomplete', field: 'year', message: s[2].length ? 'Year should be four digits, like 1988.' : '' };
     if (mn < 1 || mn > 12) return { ok: false, code: 'month', field: 'month', message: 'Month should be a number from 1 to 12.' };
     if (yn < MIN_YEAR || yn > MAX_YEAR) return { ok: false, code: 'year', field: 'year', message: 'Use a year between ' + MIN_YEAR + ' and ' + MAX_YEAR + '.' };
-    if (dn < 1) return { ok: false, code: 'day', field: 'day', message: 'Day should be a number from 1 to 31.' };
     var dim = daysInMonth(yn, mn);
-    if (dn > dim) {
+    if (dn < 1 || dn > dim) {
       var msg = (mn === 2 && dn === 29)
-        ? yn + ' wasn’t a leap year, so February had 28 days.'
-        : MONTHS[mn - 1] + (mn === 2 ? ' ' + yn : '') + ' has ' + dim + ' days.';
+        ? yn + ' wasn’t a leap year, so it had no 29 February.'
+        : MONTHS[mn - 1] + ' only has ' + dim + ' days.';
       return { ok: false, code: 'day', field: 'day', message: msg };
     }
     return { ok: true, date: { y: yn, m: mn, d: dn } };
@@ -208,17 +207,17 @@
         else words++;
       }
     });
-    if (words) return { ok: false, code: 'unreadable', message: 'Try a date like 15 March 1995 or 15/03/1995.' };
+    if (words) return { ok: false, code: 'unreadable', message: 'That doesn’t look like a date. Try something like 18 May 1995.' };
     if (monthPrefix && month === null) return { ok: false, code: 'incomplete', message: '' };
     var d, m, y, ambiguous = false, alt = null;
     if (month !== null) {
       m = month;
       if (nums.length < 2) return { ok: false, code: 'incomplete', message: nums.length ? 'Add the ' + (nums[0].length > 2 ? 'day' : 'year') + '.' : '' };
-      if (nums.length > 2) return { ok: false, code: 'unreadable', message: 'Try a date like 15 March 1995.' };
+      if (nums.length > 2) return { ok: false, code: 'unreadable', message: 'That doesn’t look like a date. Try something like 18 May 1995.' };
       if (nums[0].length > 2) { y = nums[0]; d = nums[1]; } else { d = nums[0]; y = nums[1]; }
     } else {
       if (nums.length < 3) return { ok: false, code: 'incomplete', message: nums.length === 2 ? (nums[1].length >= 3 ? 'Add the month.' : 'Add the year.') : '' };
-      if (nums.length > 3) return { ok: false, code: 'unreadable', message: 'Try a date like 15/03/1995.' };
+      if (nums.length > 3) return { ok: false, code: 'unreadable', message: 'That doesn’t look like a date. Try something like 18 May 1995.' };
       if (nums[0].length > 2) { y = nums[0]; m = nums[1]; d = nums[2]; }
       else {
         y = nums[2];

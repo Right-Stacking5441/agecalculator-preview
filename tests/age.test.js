@@ -143,11 +143,13 @@ test('validation', () => {
   assert.equal(A.validate('14', '', '').code, 'incomplete');
   assert.equal(A.validate('14', '3', '19').code, 'incomplete');
   assert.deepEqual(A.validate('14', '03', '1988').date, D(1988, 3, 14));
-  assert.equal(A.validate('31', '4', '1990').message, 'April has 30 days.');
-  assert.equal(A.validate('29', '2', '2001').message, '2001 wasn’t a leap year, so February had 28 days.');
-  assert.equal(A.validate('30', '2', '2000').message, 'February 2000 has 29 days.');
+  assert.equal(A.validate('31', '4', '1990').message, 'April only has 30 days.');
+  assert.equal(A.validate('29', '2', '2001').message, '2001 wasn’t a leap year, so it had no 29 February.');
+  assert.equal(A.validate('30', '2', '2000').message, 'February only has 29 days.');
   assert.equal(A.validate('29', '2', '2000').ok, true);
   assert.equal(A.validate('0', '5', '1990').field, 'day');
+  assert.equal(A.validate('0', '5', '1995').message, 'May only has 31 days.');
+  assert.equal(A.validate('35', '5', '1995').message, 'May only has 31 days.');
   assert.equal(A.validate('5', '13', '1990').field, 'month');
   assert.equal(A.validate('5', '0', '1990').field, 'month');
   assert.equal(A.validate('5', '5', '0999').code, 'year');
@@ -340,6 +342,9 @@ test('natural-language date parsing', () => {
   assert.equal(P('15 3'), 'incomplete');
   assert.equal(P(''), 'empty');
   assert.equal(P('next tuesday'), 'unreadable');
+  assert.equal(A.parseDate('next tuesday').message, 'That doesn’t look like a date. Try something like 18 May 1995.');
+  assert.equal(A.parseDate('31 April 1995').message, 'April only has 30 days.');
+  assert.equal(A.parseDate('29 Feb 1995').message, '1995 wasn’t a leap year, so it had no 29 February.');
   assert.equal(P('31 april 1990'), 'day');
   assert.equal(P('29 feb 2001'), 'day');
 });

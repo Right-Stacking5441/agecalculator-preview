@@ -458,7 +458,7 @@ body.widget { background: var(--paper); padding: var(--s4) var(--s4) 0; font-siz
 .name.inline input { height: 38px; font-size: 16px; }
 @media (max-width: 760px) {
   .entry.multi .parts { display: none; }
-  .entry.multi .readback { min-height: 0; margin-top: var(--s1); }
+  .entry.multi .readback { min-height: 44px; margin-top: var(--s1); }
   .prefill-on .entry.multi [data-datefield="on"] .readback { min-height: 36px; }
   .entry.multi .quick { height: 50px; }
   .entry.multi { gap: var(--s3); }

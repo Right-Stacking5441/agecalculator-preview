@@ -50,6 +50,8 @@ async function fieldState(page, name) {
         document.activeElement.classList.contains('p-m') ||
         document.activeElement.classList.contains('p-y')
       )),
+      live: (document.getElementById('live') || {}).textContent || '',
+      leafTop: (function () { const el = document.querySelector('#leaf, .result'); return el ? el.getBoundingClientRect().top : null; })(),
     };
   }, name);
 }
@@ -68,6 +70,85 @@ async function blurQuick(page, name) {
 async function clickToggle(page, name) {
   const loc = page.locator('[data-datefield="' + name + '"] .parts-toggle, .parts-toggle.shared').first();
   await loc.click();
+}
+
+async function layoutProbes(page) {
+  return page.evaluate(() => {
+    const pick = (sel) => {
+      const el = document.querySelector(sel);
+      return el ? el.getBoundingClientRect().top : null;
+    };
+    return {
+      leaf: pick('#leaf, .result'),
+      b: pick('[data-datefield="b"]'),
+      shared: pick('.parts-shared'),
+    };
+  });
+}
+
+async function clearByBackspace(page, loc) {
+  await loc.click();
+  await loc.press('End');
+  for (let i = 0; i < 6; i++) await loc.press('Backspace');
+}
+
+async function typePartsDMY(page, name, d, m, y) {
+  const day = page.locator('[data-datefield="' + name + '"] .p-d');
+  await clearByBackspace(page, day);
+  if (d) await day.type(d, { delay: 20 });
+  const month = page.locator('[data-datefield="' + name + '"] .p-m');
+  await month.click();
+  await clearByBackspace(page, month);
+  if (m) await month.type(m, { delay: 20 });
+  const year = page.locator('[data-datefield="' + name + '"] .p-y');
+  await year.click();
+  await clearByBackspace(page, year);
+  if (y) await year.type(y, { delay: 20 });
+}
+
+async function type18Blank1999(page, name) {
+  const day = page.locator('[data-datefield="' + name + '"] .p-d');
+  await clearByBackspace(page, day);
+  await day.type('18', { delay: 20 });
+  const year = page.locator('[data-datefield="' + name + '"] .p-y');
+  await year.click();
+  await clearByBackspace(page, year);
+  await year.type('1999', { delay: 20 });
+}
+
+const INVALID_ERRORS = {
+  '31 April 2000': 'April only has 30 days.',
+  '18 May': 'Add the year.',
+  'abc': 'That doesn’t look like a date. Try something like 18 May 1995.',
+};
+
+function assertNoJump(before, after, label) {
+  for (const key of Object.keys(before)) {
+    if (before[key] == null || after[key] == null) continue;
+    assert(Math.abs(after[key] - before[key]) <= 2,
+      'layout jumped ' + (after[key] - before[key]) + 'px on ' + key + ' for ' + label,
+      { before, after });
+  }
+}
+
+async function assertInvalidStaysInText(page, name, text, partner) {
+  const st = await fieldState(page, name);
+  assert(!st.partsOpen, 'boxes opened on invalid blur for "' + text + '"', st);
+  assert(!st.quickHidden, 'text field was hidden after invalid blur for "' + text + '"', st);
+  assert(st.quickValue === text, 'typed text changed after blur of "' + text + '"', st);
+  assert(st.ariaInvalid === 'true', 'aria-invalid was not set for "' + text + '"', st);
+  assert(st.readbackErr, 'readback was not marked as an error for "' + text + '"', st);
+  const expected = INVALID_ERRORS[text];
+  if (expected) assert(st.readback === expected, 'wrong error for "' + text + '": ' + st.readback, st);
+  assert(!st.focusIsQuick, 'focus was pulled back to the text field for "' + text + '"', st);
+  if (partner) {
+    const p = await fieldState(page, partner);
+    assert(!p.partsOpen, 'the other field opened after invalid blur of "' + text + '"', p);
+    assert(!p.quickHidden, 'the other field left text mode after "' + text + '"', p);
+  }
+  await page.waitForTimeout(80);
+  const live = await page.evaluate(() => (document.getElementById('live') || {}).textContent || '');
+  assert(live.length > 0, 'no aria-live announcement for "' + text + '"', { live, st });
 }
 
 async function openInvalidBoxes(page, url) {
@@ -168,9 +249,7 @@ async function run() {
     await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
     const st0 = await fieldState(page, 'dob');
     if (!st0.partsOpen) await clickToggle(page, 'dob');
-    await page.locator('[data-datefield="dob"] .p-d').fill('31');
-    await page.locator('[data-datefield="dob"] .p-m').fill('4');
-    await page.locator('[data-datefield="dob"] .p-y').fill('2000');
+    await typePartsDMY(page, 'dob', '31', '4', '2000');
     await clickToggle(page, 'dob');
     const st = await fieldState(page, 'dob');
     assert(!st.partsOpen, 'boxes should have closed', st);
@@ -227,9 +306,7 @@ async function run() {
     await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
     const st0 = await fieldState(page, 'dob');
     if (!st0.partsOpen) await clickToggle(page, 'dob');
-    await page.locator('[data-datefield="dob"] .p-d').fill('18');
-    await page.locator('[data-datefield="dob"] .p-m').fill('');
-    await page.locator('[data-datefield="dob"] .p-y').fill('1999');
+    await type18Blank1999(page, 'dob');
     await clickToggle(page, 'dob');
     const st = await fieldState(page, 'dob');
     assert(!st.partsOpen, 'boxes should have closed', st);
@@ -282,25 +359,21 @@ async function run() {
     await page.setViewportSize({ width: 1280, height: 800 });
   });
 
-  await check('Leave the field: invalid dates do not pull focus back', async () => {
+  await check('Leave the field: invalid dates stay in text mode with an error', async () => {
     for (const text of ['31 April 2000', '18 May', 'abc']) {
       await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
       await typeQuick(page, 'dob', text);
+      const before = await layoutProbes(page);
       await page.locator('[data-datefield="dob"] .quick').evaluate(el => el.blur());
       await page.waitForTimeout(80);
-      let st = await fieldState(page, 'dob');
-      assert(!st.focusIsQuick, 'focus was pulled back to the text field after leaving "' + text + '"', st);
-      // Click a non-field heading; a later timer must not steal focus back.
+      await assertInvalidStaysInText(page, 'dob', text);
+      assertNoJump(before, await layoutProbes(page), '"' + text + '" blur');
       await page.locator('h1').click({ force: true });
       await page.waitForTimeout(80);
-      st = await fieldState(page, 'dob');
-      assert(!st.focusIsQuick, 'a delayed close pulled focus back to the text field for "' + text + '"', st);
-      const stuck = await page.evaluate(() => {
-        const a = document.activeElement;
-        const field = document.querySelector('[data-datefield="dob"]');
-        return !!(a && field && (a.classList.contains('quick') || field.contains(a) && a.tagName === 'INPUT' && a.classList.contains('quick')));
-      });
-      assert(!stuck, 'could not leave the text field with "' + text + '"', st);
+      const st = await fieldState(page, 'dob');
+      assert(!st.focusIsQuick, 'a delayed close pulled focus back for "' + text + '"', st);
+      assert(!st.partsOpen, 'boxes opened after clicking away from "' + text + '"', st);
+      assert(st.quickValue === text, 'text was changed after leaving "' + text + '"', st);
     }
   });
 
@@ -308,9 +381,7 @@ async function run() {
     await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
     const st0 = await fieldState(page, 'dob');
     if (!st0.partsOpen) await clickToggle(page, 'dob');
-    await page.locator('[data-datefield="dob"] .p-d').fill('18');
-    await page.locator('[data-datefield="dob"] .p-m').fill('');
-    await page.locator('[data-datefield="dob"] .p-y').fill('1999');
+    await type18Blank1999(page, 'dob');
     await clickToggle(page, 'dob');
     let st = await fieldState(page, 'dob');
     assert(!st.partsOpen, 'boxes should have closed', st);
@@ -321,6 +392,23 @@ async function run() {
     assert(st.parts[0] === '18', 'day 18 was lost on reopen', st);
     assert(!st.parts[1], 'month should still be empty on reopen', st);
     assert(st.parts[2] === '1999', 'year 1999 was lost on reopen', st);
+  });
+
+  await check('Clearing all three boxes after a stash also clears the text', async () => {
+    await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+    const st0 = await fieldState(page, 'dob');
+    if (!st0.partsOpen) await clickToggle(page, 'dob');
+    await type18Blank1999(page, 'dob');
+    await clickToggle(page, 'dob');
+    await clickToggle(page, 'dob');
+    await typePartsDMY(page, 'dob', '', '', '');
+    let st = await fieldState(page, 'dob');
+    assert(!st.quickValue.trim(), 'clearing the boxes left "' + st.quickValue + '" in the text field', st);
+    await clickToggle(page, 'dob');
+    await clickToggle(page, 'dob');
+    st = await fieldState(page, 'dob');
+    assert(st.partsOpen, 'boxes should reopen after a clear', st);
+    assert(st.parts[0] === '' && st.parts[1] === '' && st.parts[2] === '', 'cleared boxes came back on reopen', st);
   });
 
   await check('Shared toggle on /difference opens and closes both fields together', async () => {
@@ -338,6 +426,8 @@ async function run() {
         label: t && t.querySelector('span') ? t.querySelector('span').textContent.trim() : '',
         focus: document.activeElement ? (document.activeElement.className || document.activeElement.tagName) : '',
         focusIsToggle: !!(document.activeElement && document.activeElement.classList.contains('parts-toggle')),
+        focusClass: document.activeElement ? document.activeElement.className : '',
+        focusIsBody: document.activeElement === document.body,
       };
     });
     await toggle.click();
@@ -347,7 +437,8 @@ async function run() {
     assert(st.fields.every(f => f.open), 'first toggle tap did not open both fields', st);
     assert(st.expanded === 'true', 'aria-expanded should be true when both are open', st);
     assert(/Use one box/i.test(st.label), 'toggle label should say Use one box', st);
-    await page.locator('[data-datefield="a"] .p-d').fill('30');
+    assert(!st.focusIsToggle, 'focus was left on the toggle after open', st);
+    await typePartsDMY(page, 'a', '30', '', '');
     await toggle.click();
     await page.waitForTimeout(80);
     st = await state();
@@ -360,7 +451,6 @@ async function run() {
     assert(st.expanded === 'true', 'aria-expanded should be true after reopen', st);
     assert(/Use one box/i.test(st.label), 'toggle label out of sync after reopen', st);
     assert(!st.focusIsToggle, 'focus was left on the toggle after reopen', st);
-    // Tab from the first field's year box into the second field; both must stay in box mode.
     await page.locator('[data-datefield="a"] .p-y').click();
     await page.keyboard.press('Tab');
     await page.waitForTimeout(80);
@@ -369,6 +459,112 @@ async function run() {
     assert(st.expanded === 'true', 'toggle aria-expanded went false after tabbing between fields', st);
   });
 
+  await check('Tab and Shift+Tab between invalid fields keep focus and the next key', async () => {
+    await page.goto(server.url + '/difference/', { waitUntil: 'domcontentloaded' });
+    await typeQuick(page, 'a', 'abc');
+    const before = await layoutProbes(page);
+    await page.keyboard.press('Tab');
+    await page.waitForTimeout(80);
+    let a = await fieldState(page, 'a');
+    let b = await fieldState(page, 'b');
+    assert(!a.partsOpen && !b.partsOpen, 'boxes opened when Tabbing from A to B', { a, b });
+    assert(a.quickValue === 'abc', 'A lost its text after Tab', a);
+    assert(a.readback === INVALID_ERRORS['abc'], 'A did not show the unreadable error after Tab', a);
+    assert(b.focusIsQuick, 'Tab from invalid A did not land in B’s text field', { a, b });
+    assert(!b.focusIsBody && !a.focusIsBody, 'Tab from A to B dropped focus to the body', { a, b });
+    await page.keyboard.type('3', { delay: 20 });
+    b = await fieldState(page, 'b');
+    assert(b.quickValue === '3', 'the keystroke after Tab was lost; B has "' + b.quickValue + '"', b);
+    assertNoJump(before, await layoutProbes(page), 'Tab A to B');
+
+    await typeQuick(page, 'b', '18 May');
+    await page.keyboard.press('Shift+Tab');
+    await page.waitForTimeout(80);
+    a = await fieldState(page, 'a');
+    b = await fieldState(page, 'b');
+    assert(!a.partsOpen && !b.partsOpen, 'boxes opened when Shift+Tabbing from B to A', { a, b });
+    assert(b.quickValue === '18 May', 'B lost its text after Shift+Tab', b);
+    assert(b.readback === INVALID_ERRORS['18 May'], 'B did not show “Add the year.” after leaving', b);
+    assert(a.focusIsQuick, 'Shift+Tab from invalid B did not land in A’s text field', { a, b });
+    await page.keyboard.type('x', { delay: 20 });
+    a = await fieldState(page, 'a');
+    assert(/x/.test(a.quickValue), 'the keystroke after Shift+Tab was lost; A has "' + a.quickValue + '"', a);
+  });
+
+  await check('Tab onto the shared toggle with invalid text leaves both fields in text mode', async () => {
+    await page.goto(server.url + '/difference/', { waitUntil: 'domcontentloaded' });
+    await typeQuick(page, 'a', '31 April 2000');
+    await page.keyboard.press('Tab'); // to B
+    await page.keyboard.press('Tab'); // to shared toggle
+    await page.waitForTimeout(80);
+    const info = await page.evaluate(() => {
+      const t = document.querySelector('.parts-toggle.shared');
+      const fields = Array.from(document.querySelectorAll('[data-datefield]')).map(el => ({
+        name: el.getAttribute('data-datefield'),
+        open: !!(el.querySelector('.parts') && !el.querySelector('.parts').hidden),
+        text: el.querySelector('.quick') ? el.querySelector('.quick').value : '',
+      }));
+      return {
+        fields,
+        expanded: t ? t.getAttribute('aria-expanded') : null,
+        label: t && t.querySelector('span') ? t.querySelector('span').textContent.trim() : '',
+        focusIsToggle: !!(document.activeElement && document.activeElement.classList.contains('parts-toggle')),
+      };
+    });
+    assert(info.fields.every(f => !f.open), 'Tab onto the toggle opened the boxes', info);
+    assert(info.expanded === 'false', 'toggle aria-expanded should stay false', info);
+    assert(/Type day, month and year separately/i.test(info.label), 'toggle label flipped on Tab', info);
+    assert(info.focusIsToggle, 'focus should be on the toggle', info);
+    assert(info.fields[0].text === '31 April 2000', 'A’s text was changed', info);
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(80);
+    const after = await page.evaluate(() => {
+      const t = document.querySelector('.parts-toggle.shared');
+      return {
+        open: Array.from(document.querySelectorAll('[data-datefield]')).map(el => !!(el.querySelector('.parts') && !el.querySelector('.parts').hidden)),
+        expanded: t ? t.getAttribute('aria-expanded') : null,
+        focusClass: document.activeElement ? document.activeElement.className : '',
+      };
+    });
+    assert(after.open.every(Boolean), 'Enter on the toggle did not open both fields', after);
+    assert(after.expanded === 'true', 'aria-expanded should be true after Enter', after);
+    assert(/p-d/.test(after.focusClass), 'Enter on the toggle should focus the first Day box', after);
+  });
+
+  await check('Tabbing past the shared toggle closes both fields’ boxes', async () => {
+    await page.goto(server.url + '/difference/', { waitUntil: 'domcontentloaded' });
+    const toggle = page.locator('.parts-toggle.shared').first();
+    await toggle.click();
+    await page.waitForTimeout(50);
+    await page.locator('[data-datefield="a"] .p-d').click();
+    for (let i = 0; i < 7; i++) await page.keyboard.press('Tab');
+    await page.waitForTimeout(80);
+    const info = await page.evaluate(() => {
+      const t = document.querySelector('.parts-toggle.shared');
+      const fields = Array.from(document.querySelectorAll('[data-datefield]')).map(el => ({
+        name: el.getAttribute('data-datefield'),
+        open: !!(el.querySelector('.parts') && !el.querySelector('.parts').hidden),
+      }));
+      const a = document.activeElement;
+      const inGroup = !!(a && (
+        (a.closest && a.closest('[data-datefield]')) ||
+        (a.closest && a.closest('.parts-toggle'))
+      ));
+      return {
+        fields,
+        expanded: t ? t.getAttribute('aria-expanded') : null,
+        label: t && t.querySelector('span') ? t.querySelector('span').textContent.trim() : '',
+        inGroup,
+        focus: a ? (a.className || a.tagName) : '',
+      };
+    });
+    assert(!info.inGroup, 'focus never left the group after tabbing past the toggle; last focus was ' + info.focus, info);
+    assert(info.fields.every(f => !f.open), 'boxes were still open after tabbing past the toggle', info);
+    assert(info.expanded === 'false', 'aria-expanded should be false after leaving the group', info);
+    assert(/Type day, month and year separately/i.test(info.label), 'toggle label still said the boxes were open', info);
+  });
+
+  await ctx.close();
   await ctx.close();
 
   // High 2: real typing on WebKit (iPhone) and Chromium mobile (Pixel 7).
@@ -384,13 +580,12 @@ async function run() {
       await openInvalidBoxes(wpage, server.url + '/');
       await type30KeyByKey(wpage);
     });
-    await check('Leave the field on WebKit: invalid date does not pull focus back', async () => {
+    await check('Leave the field on WebKit: invalid date stays in text mode', async () => {
       await wpage.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
       await typeQuick(wpage, 'dob', '31 April 2000');
       await wpage.locator('[data-datefield="dob"] .quick').evaluate(el => el.blur());
       await wpage.waitForTimeout(80);
-      const st = await fieldState(wpage, 'dob');
-      assert(!st.focusIsQuick, 'WebKit: focus was pulled back to the text field after leaving', st);
+      await assertInvalidStaysInText(wpage, 'dob', '31 April 2000');
     });
     await wctx.close();
   }
@@ -408,13 +603,12 @@ async function run() {
       await openInvalidBoxes(ppage, server.url + '/');
       await type30KeyByKey(ppage);
     });
-    await check('Leave the field on Chromium mobile: invalid date does not pull focus back', async () => {
+    await check('Leave the field on Chromium mobile: invalid date stays in text mode', async () => {
       await ppage.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
       await typeQuick(ppage, 'dob', '31 April 2000');
       await ppage.locator('[data-datefield="dob"] .quick').evaluate(el => el.blur());
       await ppage.waitForTimeout(80);
-      const st = await fieldState(ppage, 'dob');
-      assert(!st.focusIsQuick, 'Pixel 7: focus was pulled back to the text field after leaving', st);
+      await assertInvalidStaysInText(ppage, 'dob', '31 April 2000');
     });
     await pctx.close();
   }
