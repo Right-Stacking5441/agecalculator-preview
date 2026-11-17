@@ -13,30 +13,111 @@
 .brand { align-items: center; }
 .brand .wm { display: inline; white-space: nowrap; }
 .brand .wm span { color: inherit; font-weight: inherit; } /* 8da54a4: one wordmark, same weight and ink (approved) */
+/* Undo leftover .mast nav { display: none } rules in styles.css; this is the live menu. */
+.mast nav.nav-menu { display: block; margin-left: auto; }
 .nav-menu { position: relative; font-size: 15px; }
-.nav-menu summary { list-style: none; display: inline-flex; align-items: center; gap: var(--s2); padding: var(--s3) var(--s2); cursor: pointer; color: var(--ink); font-weight: 600; border-radius: 2px; box-sizing: border-box; min-height: 44px; position: relative; z-index: 5; }
-.nav-menu summary::-webkit-details-marker { display: none; }
-/* Taps must hit the summary itself. On iOS Safari, an SVG or label inside
-   <summary> can swallow the second tap, leaving the menu stuck open. */
-.nav-menu summary svg, .nav-menu summary span { pointer-events: none; }
-@media (hover: hover) {
-  .nav-menu summary:hover span { text-decoration: underline; text-underline-offset: 3px; }
+/* No-JS: the list stays visible, inline, so the links remain usable. */
+.nav-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+  justify-content: flex-end;
+  max-width: min(100%, 22rem);
 }
-.nav-menu ul { position: absolute; right: 0; top: calc(100% + 4px); z-index: 4; list-style: none; margin: 0; padding: var(--s2) 0; min-width: 236px; background: var(--paper); border: 1.5px solid var(--ink); box-shadow: 4px 4px 0 -1.5px var(--paper), 4px 4px 0 0 var(--ink); }
-.nav-menu li a { display: block; padding: 9px var(--s4); color: var(--ink); text-decoration: none; }
+.nav-menu li a { display: block; padding: 6px 0; color: var(--ink); text-decoration: none; }
 @media (hover: hover) {
-  .nav-menu li a:hover { background: var(--desk); }
+  .nav-menu li a:hover { text-decoration: underline; text-underline-offset: 3px; }
 }
-.nav-menu li a[aria-current] { font-weight: 700; box-shadow: inset 3px 0 0 var(--sunday); }
-/* Closed dropdown must not widen the page. */
-.nav-menu:not([open]) > ul { display: none; }
+.nav-menu li a[aria-current] { font-weight: 700; }
+
+/* JS-enhanced: a button plus a compact dropdown, with a full-screen backdrop. */
+.nav-menu.is-enhanced { z-index: 6; }
+.nav-menu.is-enhanced ul[hidden],
+.nav-menu-back[hidden] { display: none !important; }
+.nav-menu.is-enhanced ul {
+  display: block;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 5;
+  padding: var(--s2) 0;
+  width: 200px;
+  max-width: calc(100vw - 48px);
+  max-height: min(52vh, 360px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  box-shadow: 4px 4px 0 -1.5px var(--paper), 4px 4px 0 0 var(--ink);
+}
+.nav-menu.is-enhanced li a { padding: 8px 14px; }
+@media (hover: hover) {
+  .nav-menu.is-enhanced li a:hover { background: var(--desk); text-decoration: none; }
+}
+.nav-menu.is-enhanced li a[aria-current] { box-shadow: inset 3px 0 0 var(--sunday); }
+.nav-menu button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  padding: var(--s3) var(--s2);
+  margin: 0;
+  cursor: pointer;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 600;
+  line-height: 1;
+  border: 0;
+  border-radius: 2px;
+  box-sizing: border-box;
+  min-height: 44px;
+  background: none;
+  position: relative;
+  z-index: 6;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-menu button svg, .nav-menu button span { pointer-events: none; }
+@media (hover: hover) {
+  .nav-menu button:hover span { text-decoration: underline; text-underline-offset: 3px; }
+}
 @media (max-width: 359px) {
-  /* Wordmark plus the "Calculators" label overflows by 25px at 320. Keep the icon; the word stays for assistive tech. */
-  .nav-menu summary span {
+  /* Wordmark plus the Calculators label overflows by 25px at 320. Keep the icon; the word stays for assistive tech. */
+  .nav-menu button span {
     position: absolute; width: 1px; height: 1px; overflow: hidden;
     clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
   }
-  .nav-menu summary { padding-inline: 8px; gap: 0; min-width: 44px; min-height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; }
+  .nav-menu button { padding-inline: 8px; gap: 0; min-width: 44px; min-height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; }
+}
+.nav-menu-back {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+#nav-menu-debug {
+  position: fixed;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  z-index: 9999;
+  pointer-events: none;
+  background: rgba(28, 28, 26, 0.9);
+  color: #fff;
+  font: 11px/1.35 ui-monospace, Menlo, Consolas, monospace;
+  padding: 8px 10px;
+  max-height: 32vh;
+  overflow: hidden;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 /* ---------- Band: H1 and intro small; the input is the first big thing ---------- */
