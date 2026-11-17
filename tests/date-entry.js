@@ -282,6 +282,93 @@ async function run() {
     await page.setViewportSize({ width: 1280, height: 800 });
   });
 
+  await check('Leave the field: invalid dates do not pull focus back', async () => {
+    for (const text of ['31 April 2000', '18 May', 'abc']) {
+      await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+      await typeQuick(page, 'dob', text);
+      await page.locator('[data-datefield="dob"] .quick').evaluate(el => el.blur());
+      await page.waitForTimeout(80);
+      let st = await fieldState(page, 'dob');
+      assert(!st.focusIsQuick, 'focus was pulled back to the text field after leaving "' + text + '"', st);
+      // Click a non-field heading; a later timer must not steal focus back.
+      await page.locator('h1').click({ force: true });
+      await page.waitForTimeout(80);
+      st = await fieldState(page, 'dob');
+      assert(!st.focusIsQuick, 'a delayed close pulled focus back to the text field for "' + text + '"', st);
+      const stuck = await page.evaluate(() => {
+        const a = document.activeElement;
+        const field = document.querySelector('[data-datefield="dob"]');
+        return !!(a && field && (a.classList.contains('quick') || field.contains(a) && a.tagName === 'INPUT' && a.classList.contains('quick')));
+      });
+      assert(!stuck, 'could not leave the text field with "' + text + '"', st);
+    }
+  });
+
+  await check('Partial box input (18//1999) survives close and reopen', async () => {
+    await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+    const st0 = await fieldState(page, 'dob');
+    if (!st0.partsOpen) await clickToggle(page, 'dob');
+    await page.locator('[data-datefield="dob"] .p-d').fill('18');
+    await page.locator('[data-datefield="dob"] .p-m').fill('');
+    await page.locator('[data-datefield="dob"] .p-y').fill('1999');
+    await clickToggle(page, 'dob');
+    let st = await fieldState(page, 'dob');
+    assert(!st.partsOpen, 'boxes should have closed', st);
+    assert(/18/.test(st.quickValue) && /1999/.test(st.quickValue), 'closing wiped the partial date', st);
+    await clickToggle(page, 'dob');
+    st = await fieldState(page, 'dob');
+    assert(st.partsOpen, 'boxes should reopen', st);
+    assert(st.parts[0] === '18', 'day 18 was lost on reopen', st);
+    assert(!st.parts[1], 'month should still be empty on reopen', st);
+    assert(st.parts[2] === '1999', 'year 1999 was lost on reopen', st);
+  });
+
+  await check('Shared toggle on /difference opens and closes both fields together', async () => {
+    await page.goto(server.url + '/difference/', { waitUntil: 'domcontentloaded' });
+    const toggle = page.locator('.parts-toggle.shared').first();
+    const state = () => page.evaluate(() => {
+      const fields = Array.from(document.querySelectorAll('[data-datefield]')).map(el => ({
+        name: el.getAttribute('data-datefield'),
+        open: !!(el.querySelector('.parts') && !el.querySelector('.parts').hidden),
+      }));
+      const t = document.querySelector('.parts-toggle.shared');
+      return {
+        fields,
+        expanded: t ? t.getAttribute('aria-expanded') : null,
+        label: t && t.querySelector('span') ? t.querySelector('span').textContent.trim() : '',
+        focus: document.activeElement ? (document.activeElement.className || document.activeElement.tagName) : '',
+        focusIsToggle: !!(document.activeElement && document.activeElement.classList.contains('parts-toggle')),
+      };
+    });
+    await toggle.click();
+    await page.waitForTimeout(50);
+    let st = await state();
+    assert(st.fields.length >= 2, 'expected two date fields', st);
+    assert(st.fields.every(f => f.open), 'first toggle tap did not open both fields', st);
+    assert(st.expanded === 'true', 'aria-expanded should be true when both are open', st);
+    assert(/Use one box/i.test(st.label), 'toggle label should say Use one box', st);
+    await page.locator('[data-datefield="a"] .p-d').fill('30');
+    await toggle.click();
+    await page.waitForTimeout(80);
+    st = await state();
+    assert(st.fields.every(f => !f.open), 'toggle did not close both fields', st);
+    assert(st.expanded === 'false', 'aria-expanded should be false when both are closed', st);
+    await toggle.click();
+    await page.waitForTimeout(80);
+    st = await state();
+    assert(st.fields.every(f => f.open), 'second toggle tap did not reopen both fields', st);
+    assert(st.expanded === 'true', 'aria-expanded should be true after reopen', st);
+    assert(/Use one box/i.test(st.label), 'toggle label out of sync after reopen', st);
+    assert(!st.focusIsToggle, 'focus was left on the toggle after reopen', st);
+    // Tab from the first field's year box into the second field; both must stay in box mode.
+    await page.locator('[data-datefield="a"] .p-y').click();
+    await page.keyboard.press('Tab');
+    await page.waitForTimeout(80);
+    st = await state();
+    assert(st.fields.every(f => f.open), 'tabbing between fields left mixed modes', st);
+    assert(st.expanded === 'true', 'toggle aria-expanded went false after tabbing between fields', st);
+  });
+
   await ctx.close();
 
   // High 2: real typing on WebKit (iPhone) and Chromium mobile (Pixel 7).
@@ -296,6 +383,14 @@ async function run() {
     await check('High 2 WebKit: typing 3 then 0 one key at a time keeps the boxes open', async () => {
       await openInvalidBoxes(wpage, server.url + '/');
       await type30KeyByKey(wpage);
+    });
+    await check('Leave the field on WebKit: invalid date does not pull focus back', async () => {
+      await wpage.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+      await typeQuick(wpage, 'dob', '31 April 2000');
+      await wpage.locator('[data-datefield="dob"] .quick').evaluate(el => el.blur());
+      await wpage.waitForTimeout(80);
+      const st = await fieldState(wpage, 'dob');
+      assert(!st.focusIsQuick, 'WebKit: focus was pulled back to the text field after leaving', st);
     });
     await wctx.close();
   }
@@ -312,6 +407,14 @@ async function run() {
     await check('High 2 Chromium mobile: typing 3 then 0 one key at a time keeps the boxes open', async () => {
       await openInvalidBoxes(ppage, server.url + '/');
       await type30KeyByKey(ppage);
+    });
+    await check('Leave the field on Chromium mobile: invalid date does not pull focus back', async () => {
+      await ppage.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+      await typeQuick(ppage, 'dob', '31 April 2000');
+      await ppage.locator('[data-datefield="dob"] .quick').evaluate(el => el.blur());
+      await ppage.waitForTimeout(80);
+      const st = await fieldState(ppage, 'dob');
+      assert(!st.focusIsQuick, 'Pixel 7: focus was pulled back to the text field after leaving', st);
     });
     await pctx.close();
   }

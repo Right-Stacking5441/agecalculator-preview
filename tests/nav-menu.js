@@ -192,8 +192,9 @@ async function run() {
 
   async function check(name, fn) {
     try {
-      await fn();
-      say('PASS  ' + name);
+      const result = await fn();
+      if (result === 'skip') say('SKIP  ' + name + ' (not asserted)');
+      else say('PASS  ' + name);
     } catch (e) {
       failures.push(name + ': ' + e.message);
       say('FAIL  ' + name + '\n  ' + e.message);
@@ -383,14 +384,13 @@ async function run() {
         try { reasons = n && n.notRestoredReasons ? n.notRestoredReasons : null; } catch (e) { reasons = String(e); }
         return { persisted: window.__ps, navType: n && n.type, reasons: reasons && (reasons.toJSON ? reasons.toJSON() : reasons) };
       });
-      if (info.persisted === true) {
-        await expectOpen(page, false, 'bfcache menu after real restore (persisted=true)');
-      } else {
-        // Playwright's Chromium still blocks a genuine restore here (often
-        // notRestoredReasons: masked). The pageshow handler is covered above.
-        console.log('  note  no genuine bfcache restore in this environment', JSON.stringify(info));
-        await expectOpen(page, false, 'menu after back/forward (persisted=' + info.persisted + ')');
+      if (info.persisted !== true) {
+        // Playwright's Chromium usually blocks a genuine restore
+        // (notRestoredReasons: masked). Do not treat that as a pass.
+        say('  not asserted: no genuine bfcache restore (persisted=' + info.persisted + ', navType=' + info.navType + ')');
+        return 'skip';
       }
+      await expectOpen(page, false, 'bfcache menu after real restore (persisted=true)');
       await tapLocator(page, page.locator('details.nav-menu summary'), false);
       await expectOpen(page, true, 'bfcache can reopen');
       await tapLocator(page, page.locator('details.nav-menu summary'), false);

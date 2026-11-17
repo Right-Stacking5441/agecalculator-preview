@@ -48,7 +48,7 @@ a { color: var(--link); text-underline-offset: 2px; text-decoration-thickness: 1
   a:hover { text-decoration-thickness: 2px; }
 }
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
-.embed-preview iframe:focus, .embed-preview iframe:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.embed-preview:focus-within { outline: 3px solid var(--focus); outline-offset: 2px; }
 h1, h2, h3 { font-weight: 700; line-height: 1.2; margin: 0; text-wrap: balance; }
 p { margin: 0 0 var(--s4); text-wrap: pretty; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

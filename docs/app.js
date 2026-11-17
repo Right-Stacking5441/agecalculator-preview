@@ -77,6 +77,28 @@
 
   /* ---------- date fields: a quick box that reads plain English, plus day / month / year boxes ---------- */
   var fields = {};
+  function sharedToggle() { return document.querySelector('.parts-toggle.shared'); }
+  function groupOf(fld) {
+    var sh = sharedToggle();
+    if (!sh || !fld) return fld ? [fld] : [];
+    var out = [];
+    (sh.getAttribute('aria-controls') || '').split(/\s+/).forEach(function (id) {
+      if (!id) return;
+      var box = document.getElementById(id);
+      var df = box && box.closest('[data-datefield]');
+      var name = df && df.getAttribute('data-datefield');
+      if (name && fields[name]) out.push(fields[name]);
+    });
+    return out.length ? out : [fld];
+  }
+  function focusInDateGroup(group, a) {
+    if (!a) return false;
+    if (a.closest && a.closest('.parts-toggle')) return true;
+    return group.some(function (fld) { return fld.el && fld.el.contains(a); });
+  }
+  function setGroupOpen(group, o) {
+    group.forEach(function (fld) { if (fld.partsOpen) fld.partsOpen(o); });
+  }
   document.querySelectorAll('[data-datefield]').forEach(function (el) {
     var name = el.getAttribute('data-datefield');
     var quick = el.querySelector('.quick'), parts = [el.querySelector('.p-d'), el.querySelector('.p-m'), el.querySelector('.p-y')];
@@ -94,33 +116,53 @@
         if (shLab) shLab.textContent = o ? 'Use one box' : 'Type day, month and year separately';
       }
     }
+    var savedParts = null;
     function clearParts() {
       parts[0].value = '';
       parts[1].value = '';
       parts[2].value = '';
     }
+    function rememberParts(text) {
+      savedParts = { d: parts[0].value, m: parts[1].value, y: parts[2].value, text: text };
+    }
     function fillPartsFromQuick() {
-      /* Always start from a blank slate so leftover values cannot linger
-         when the text is empty or unparseable (High 1, stale boxes). */
-      clearParts();
+      /* Clear leftover values when the text is empty or unparseable, but keep
+         day/month/year the user typed in the boxes (e.g. 18//1999) across close/reopen. */
       var r = A.parseDate(quick.value, dateOpts());
-      if (r.ok) setDate(r.date, true);
-      else if (r.parts && (r.parts.d || r.parts.m || r.parts.y)) {
+      if (r.ok) {
+        savedParts = null;
+        clearParts();
+        setDate(r.date, true);
+      } else if (r.parts && (r.parts.d || r.parts.m || r.parts.y)) {
+        savedParts = null;
+        clearParts();
         if (r.parts.d != null && String(r.parts.d) !== '') parts[0].value = String(r.parts.d);
         if (r.parts.m != null && String(r.parts.m) !== '') parts[1].value = String(r.parts.m);
         if (r.parts.y != null && String(r.parts.y) !== '') parts[2].value = String(r.parts.y);
+      } else if (savedParts && savedParts.text === quick.value) {
+        parts[0].value = savedParts.d;
+        parts[1].value = savedParts.m;
+        parts[2].value = savedParts.y;
+      } else {
+        savedParts = null;
+        clearParts();
       }
     }
     function writeQuickFromParts(asClose) {
       var r = A.textFromParts(parts[0].value, parts[1].value, parts[2].value);
       var hasParts = !!(parts[0].value || parts[1].value || parts[2].value);
       if (r.ok) {
+        savedParts = null;
         parts.forEach(function (x) { x.setAttribute('aria-invalid', 'false'); });
         setDate(r.date); quick.value = r.text; invalid(false); show(rb(r.date), 'ok');
       } else {
         parts.forEach(function (x) { x.setAttribute('aria-invalid', 'false'); });
         f.value = null; f.status = r.code; f.message = r.message;
         if (hasParts && r.text) quick.value = r.text;
+        if (asClose) {
+          if (hasParts) rememberParts(quick.value);
+          else savedParts = null;
+        }
         if (!hasParts) {
           /* Never wipe text the user typed in the one box. */
           if (!quick.value.trim()) { invalid(false); show('', ''); }
@@ -148,15 +190,19 @@
       else el.classList.remove('boxes-open');
       labelToggles(o);
     }
-    if (pt) pt.addEventListener('click', function () {
-      var o = pbox.hidden;
-      partsOpen(o);
-      if (o) parts[0].focus({ preventScroll: true });
-      else quick.focus({ preventScroll: true });
-      go();
-    });
+    if (pt) {
+      pt.addEventListener('mousedown', function (e) { e.preventDefault(); });
+      pt.addEventListener('click', function () {
+        var o = pbox.hidden;
+        partsOpen(o);
+        if (o) parts[0].focus({ preventScroll: true });
+        else quick.focus({ preventScroll: true });
+        go();
+      });
+    }
     fields[name] = f;
     f.partsOpen = partsOpen;
+    f.isPartsOpen = function () { return !!(pbox && !pbox.hidden); };
     f.parts = parts;
     f.quick = quick;
     var dateOpts = function () { return { order: ORDER, pivotYear: today.y, today: today, yearMode: /^(on|start|end|test)$/.test(name) ? 'nearest' : 'past' }; };
@@ -179,6 +225,7 @@
       } else {
         f.value = null; f.status = r.code; f.message = r.message;
         invalid(false);
+        savedParts = null;
         if (r.code === 'empty' || !(r.parts && (r.parts.d || r.parts.m || r.parts.y))) clearParts();
         else {
           /* Keep the boxes in step with whatever we could extract, after a clear. */
@@ -193,14 +240,17 @@
       go();
     });
     quick.addEventListener('blur', function () {
-      if (!quick.value.trim()) { invalid(false); clearParts(); return; }
+      if (!quick.value.trim()) { invalid(false); savedParts = null; clearParts(); return; }
       var r = A.parseDate(quick.value, dateOpts());
       if (r.ok) return;
       f.value = null; f.status = r.code; f.message = r.message;
       invalid(true);
       show(r.message || (r.code === 'incomplete' ? 'That date isn’t finished. Try 15 March 1995.' : 'Try a date like 15 March 1995 or 15/03/1995.'), 'err');
       go();
-      if (pbox && pbox.hidden && !document.body.classList.contains('widget')) { partsOpen(true); }
+      var next = document.activeElement;
+      /* Don't auto-open when the user is heading for the toggle; that fights open/close. */
+      if (next && next.closest && next.closest('.parts-toggle')) return;
+      if (pbox && pbox.hidden && !document.body.classList.contains('widget')) { setGroupOpen(groupOf(f), true); }
     });
     parts.forEach(function (p, i) {
       p.addEventListener('input', function () {
@@ -227,16 +277,17 @@
       });
     });
     /* Close the boxes only on an explicit toggle or when focus leaves the
-       field group. A valid mid-keystroke must not auto-close them. */
-    el.addEventListener('focusout', function () {
+       field group. A valid mid-keystroke must not auto-close them.
+       Do not run this for the text field's own blur (it may have just
+       auto-opened the boxes), and never pull focus back into the text field. */
+    el.addEventListener('focusout', function (e) {
+      if (e.target === quick) return;
       setTimeout(function () {
         if (!pbox || pbox.hidden) return;
         var a = document.activeElement;
-        if (a && (el.contains(a) || (a.closest && a.closest('.parts-toggle')))) return;
-        partsOpen(false);
-        if (!a || a === document.body) {
-          if (quick && typeof quick.focus === 'function') quick.focus({ preventScroll: true });
-        }
+        var group = groupOf(f);
+        if (focusInDateGroup(group, a)) return;
+        setGroupOpen(group, false);
         go();
       }, 0);
     });
@@ -269,25 +320,29 @@
     return errOf(on, 'date');
   }
   document.querySelectorAll('.parts-toggle.shared').forEach(function (b) {
-    var ids = b.getAttribute('aria-controls').split(' ');
+    /* Keep focus off the button so a tap can move it into the boxes. */
+    b.addEventListener('mousedown', function (e) { e.preventDefault(); });
     b.addEventListener('click', function () {
-      var o = b.getAttribute('aria-expanded') !== 'true';
-      var first = null;
-      ids.forEach(function (id) {
+      var group = [];
+      (b.getAttribute('aria-controls') || '').split(/\s+/).forEach(function (id) {
+        if (!id) return;
         var box = document.getElementById(id);
         var df = box && box.closest('[data-datefield]');
         var name = df && df.getAttribute('data-datefield');
-        var fld = name && fields[name];
-        if (fld && fld.partsOpen) {
-          fld.partsOpen(o);
-          if (!first) first = fld;
-        } else if (box) box.hidden = !o;
+        if (name && fields[name]) group.push(fields[name]);
       });
-      if (o) {
-        if (first && first.parts && first.parts[0]) first.parts[0].focus({ preventScroll: true });
-      } else if (first && first.quick) {
-        first.quick.focus({ preventScroll: true });
-      }
+      var anyOpen = group.some(function (fld) { return fld.isPartsOpen && fld.isPartsOpen(); });
+      var o = !anyOpen;
+      setGroupOpen(group, o);
+      var first = group[0];
+      /* Focus after the click so the button does not keep it. */
+      setTimeout(function () {
+        if (o) {
+          if (first && first.parts && first.parts[0]) first.parts[0].focus({ preventScroll: true });
+        } else if (first && first.quick) {
+          first.quick.focus({ preventScroll: true });
+        }
+      }, 0);
       go();
     });
   });
