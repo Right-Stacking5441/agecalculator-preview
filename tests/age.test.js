@@ -545,17 +545,30 @@ test('partsWords shows every non-zero part with correct plurals', () => {
   assert.equal(A.partsWords(r.years, r.months, r.days), '1 month and 2 days');
 });
 
-test('textFromParts writes a valid date back, and clears incomplete or invalid boxes', () => {
+test('textFromParts writes a valid date back, and keeps a raw string for invalid boxes', () => {
   const ok = A.textFromParts('18', '5', '1999');
   assert.equal(ok.ok, true);
   assert.equal(ok.text, '18 May 1999');
   const clearedMonth = A.textFromParts('18', '', '1999');
   assert.equal(clearedMonth.ok, false);
-  assert.equal(clearedMonth.text, '');
+  assert.equal(clearedMonth.text, '18/1999');
   const invalid = A.textFromParts('31', '4', '1999');
   assert.equal(invalid.ok, false);
-  assert.equal(invalid.text, '');
+  assert.equal(invalid.text, '31/4/1999');
+  assert.equal(invalid.field, 'day');
   const empty = A.textFromParts('', '', '');
   assert.equal(empty.ok, false);
   assert.equal(empty.text, '');
+});
+
+test('parseDate keeps day/month/year on an invalid calendar date', () => {
+  const r = A.parseDate('31 April 2000');
+  assert.equal(r.ok, false);
+  assert.equal(r.field, 'day');
+  assert.deepEqual(r.parts, { d: '31', m: 4, y: '2000' });
+  const n = A.parseDate('31/4/2000');
+  assert.equal(n.ok, false);
+  assert.equal(String(n.parts.d), '31');
+  assert.equal(String(n.parts.m), '4');
+  assert.equal(String(n.parts.y), '2000');
 });

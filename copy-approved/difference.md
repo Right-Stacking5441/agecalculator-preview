@@ -2,31 +2,31 @@
 
 - **Title:** Age Difference Calculator: Years, Months and Days
 - **Meta description:** Enter two dates of birth to see exactly how much older one person is, in years, months and days, plus the gap in days and weeks.
-- **H1:** Age Difference Calculator
-- **Line under the H1:** Put in two dates of birth and the age difference calculator tells you who is older and by how much, down to the day.
+- **H1:** Age difference calculator
+- **Line under the H1:** Siblings arguing over who's older, and by how much? Put both dates of birth into this age difference calculator and it's settled to the day.
 - **Target keywords:** age difference calculator; age calculator difference
 
 ---
 
 ## Body
 
-## How to use the age difference calculator
+## Two dates, one gap
 
-Put in two dates of birth and the age difference calculator shows the gap between them: whole years first, then months, then days. It also says who is older and by how many days, and under More gives the same gap in weeks and months. Names are optional: open Add names to type them. They only label the result, so "Sam is older by 1,206 days" reads better than "Person A".
+The gap is shown the way you'd say an age: whole years first, then months, then days. It also says who is older and by how many days, and under More gives the same gap in weeks and months. Names are optional: open Add names to type them. They only label the result, so "Sam is older by 1,206 days" reads better than "Person A".
 
 The order you type the dates in doesn't matter. The calculator works out which birthday came first and counts forward from it.
 
-## How the age difference calculator works out the gap
+## Sam and Alex: a worked example
 
 The gap is counted the same way an age is. Start at the earlier date of birth, count the whole years until you would pass the later one, then the whole months, then the days left over.
 
-Take two people born on 2 June 1990 and 20 September 1993:
+Take Sam, born on 2 June 1990, and Alex, born on 20 September 1993:
 
 - 2 June 1990 to 2 June 1993 is 3 years.
 - 2 June 1993 to 2 September 1993 is 3 months.
 - 2 September to 20 September is 18 days.
 
-So the older one is 3 years, 3 months and 18 days older. Counted in days, that is 1,206, or 172 weeks and 2 days.
+So Sam is 3 years, 3 months and 18 days older than Alex. Counted in days, that is 1,206, or 172 weeks and 2 days.
 
 ## Why their ages don't always differ by the same number
 
@@ -38,7 +38,7 @@ If the two people share a birthday (same day and month, different years), the ga
 
 ## Leap days and month ends
 
-This calculator counts a 29 February birthday as falling on 1 March in common years, the same rule as the rest of the site. Months are counted on the real calendar too, so a gap that starts on 31 January reaches its first whole month on 1 March, because February has no 31st. Common date libraries clamp to the last day of the month instead, so other tools can differ by a day around month ends.
+Comparing with someone born on 29 February? In years without one, their birthday counts on 1 March, as it does everywhere on this site ([the reason is on the age calculator page](/#born-on-29-february)). A gap that starts on 31 January reaches its first whole month on 1 March too, because February has no 31st. Some other calculators stop that month at 28 February, so they can be a day out.
 
 ## Twins and same-day births
 
@@ -50,7 +50,7 @@ Couples comparing ages, siblings settling an argument, and anyone filling in a f
 
 ---
 
-## Age difference FAQs
+## Questions people ask
 
 ### Is the age difference the same every year?
 In days, yes. In whole years it changes by one for part of each year, in the weeks between the older person's birthday and the younger person's.

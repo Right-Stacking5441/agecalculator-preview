@@ -7,6 +7,7 @@ No /tmp inputs, no outside Python environment, and no server on port 8777.
 from __future__ import annotations
 import html as htmllib
 import json
+import os
 import re
 import sys
 import shutil
@@ -16,7 +17,9 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(Path(__file__).resolve().parent) not in sys.path:
     sys.path.insert(0, str(Path(__file__).resolve().parent))
 COPY = ROOT / "copy-approved"
-DOCS = ROOT / "docs"
+LAUNCH = os.environ.get("LAUNCH") == "1"
+DOCS = Path(os.environ["AGECALC_DOCS"]).resolve() if os.environ.get("AGECALC_DOCS") else ROOT / "docs"
+PREVIEW_PREFIX = "/agecalculator-preview"
 FRAG = Path(__file__).resolve().parent / "fragments"
 DIAGRAM = (FRAG / "home-diagram.html").read_text()
 SHEET_INNER = (FRAG / "class-sheet-inner.html").read_text()
@@ -140,12 +143,42 @@ def href_for(url: str) -> str:
     url = url.strip()
     if url in ("/", "https://agecalculator.com/", "https://agecalculator.com"):
         return "./"
+    if url.startswith("https://agecalculator.com/#"):
+        return "./" + url[len("https://agecalculator.com/"):]
     m = re.match(r"^https://agecalculator\.com/(.+)$", url)
     if m:
         return m.group(1).rstrip("/")
+    if url.startswith("/#"):
+        return "./" + url[1:]
     if url.startswith("/") and not url.startswith("//"):
         return url[1:].rstrip("/") or "./"
     return url
+
+def abs_prod_url(url: str) -> str:
+    """Absolute production URL for FAQPage JSON-LD (and similar)."""
+    url = (url or "").strip()
+    if url.startswith("https://") or url.startswith("http://"):
+        return url
+    if url.startswith("/#"):
+        return "https://agecalculator.com" + url
+    if url.startswith("#"):
+        return "https://agecalculator.com/" + url
+    if url.startswith("/"):
+        path = url
+    else:
+        path = "/" + url
+    if "?" in path:
+        path, q = path.split("?", 1)
+        q = "?" + q
+    else:
+        q = ""
+    frag = ""
+    if "#" in path:
+        path, frag = path.split("#", 1)
+        frag = "#" + frag
+    if path != "/" and not path.endswith("/") and "." not in path.rsplit("/", 1)[-1]:
+        path = path + "/"
+    return "https://agecalculator.com" + path + q + frag
 
 def inline(s: str) -> str:
     s = typograph(s)
@@ -160,6 +193,15 @@ def inline(s: str) -> str:
 def plain_text(s: str) -> str:
     s = typograph(s)
     s = apply_md_links(s, lambda text, url: text)
+    s = re.sub(r"`([^`]+)`", r"\1", s)
+    s = s.replace("**", "")
+    s = re.sub(r"(?<!\*)\*([^*]+)\*(?!\*)", r"\1", s)
+    return s
+
+def plain_text_with_urls(s: str) -> str:
+    """Plain text that keeps link URLs, so FAQPage JSON-LD matches the page."""
+    s = typograph(s)
+    s = apply_md_links(s, lambda text, url: f"{text} ({abs_prod_url(url)})")
     s = re.sub(r"`([^`]+)`", r"\1", s)
     s = s.replace("**", "")
     s = re.sub(r"(?<!\*)\*([^*]+)\*(?!\*)", r"\1", s)
@@ -189,6 +231,7 @@ def parse_md(text: str):
     body, faq_from_body = _split_faq(body)
     _rest, faq_from_chunk = _split_faq(faq_chunk)
     faq_raw = faq_from_chunk or faq_from_body
+    body = re.sub(r"<!--.*?-->", "", body, flags=re.S)
     body = re.sub(r"^## Body\s*\n+", "", body.strip() + "\n")
     faqs = []
     blob = faq_raw.strip() + "\n"
@@ -270,6 +313,8 @@ def render_body(md: str, page: str) -> str:
             low = re.sub(r"<[^>]+>", "", data).lower()
             if page == "chronological-age.html" and "testing a whole class" in low:
                 extra = ' id="class-sheet" class="sheet-section"'
+            if page == "index.html" and "born on 29 february" in low:
+                extra = ' id="born-on-29-february"'
             if page == "what-year-was-i-born.html" and "age and birth year table" in low:
                 extra = ""
                 open_section()
@@ -354,7 +399,7 @@ def faq_jsonld(faqs) -> str:
         ents.append({
             "@type": "Question",
             "name": plain_text(q),
-            "acceptedAnswer": {"@type": "Answer", "text": plain_text(a)},
+            "acceptedAnswer": {"@type": "Answer", "text": plain_text_with_urls(a)},
         })
     obj = {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": ents}
     return '<script type="application/ld+json">\n' + json.dumps(obj, ensure_ascii=False, indent=1) + "\n</script>\n"
@@ -596,8 +641,8 @@ def patch_app_widget_hint():
 CHRONO_RULE_LINE = (
     '<p class="rule-line">A completed month lands on the same date next month. '
     "If that date doesn’t exist (31 January to 1 March, or a 29 February birthday in a common year), "
-    "it rolls to the 1st of the next month. Some software, including common date libraries, uses the last day of the month instead, "
-    "so results can differ by a day around month ends.</p>"
+    "it rolls to the 1st of the next month. Some other calculators stop at the last day of the month instead, "
+    "so they can be a day out around month ends.</p>"
 )
 
 def ensure_chrono_rule_line(html: str) -> str:
@@ -647,7 +692,7 @@ def apply_ux_pass():
         sys.path.insert(0, str(ux))
     from apply_ux import apply_ux
     from prerender import prerender
-    n = apply_ux(DOCS)
+    n = apply_ux(DOCS, launch=LAUNCH)
     print(f"applied UX structure to {n} pages")
     prerender(DOCS)
     print("prerendered calculator pages")
@@ -714,6 +759,144 @@ def finish_pages():
         raise SystemExit("share/canonical mismatch:\n  " + "\n  ".join(issues))
     print("canonical and og:url match on every page; 404 has neither")
 
+
+DIR_LINK_SLUGS = {
+    "difference", "past", "how-old-will-i-be", "days-between-dates",
+    "chronological-age", "birthday-countdown", "korean-age",
+    "what-year-was-i-born", "dog-age", "cat-age", "embed", "privacy",
+    "contact", "widget",
+}
+ASSET_NAMES = {"favicon.ico", "favicon.svg", "styles.css", "ux.css", "app.js", "dates.js", "sheet.js", "embed.js"}
+_404_ATTR = re.compile(r"""\b((?:href|src)\s*=\s*)(["'])([^"']+)\2""", re.I)
+
+
+def _site_path(url: str) -> str | None:
+    """Turn a relative or root-absolute URL into a site path starting with /."""
+    url = (url or "").strip()
+    if not url or url.startswith(("#", "mailto:", "tel:", "data:", "javascript:", "http://", "https://", "//")):
+        return None
+    if url.startswith(PREVIEW_PREFIX + "/"):
+        url = url[len(PREVIEW_PREFIX):]
+    elif url == PREVIEW_PREFIX:
+        url = "/"
+    raw, frag = (url.split("#", 1) + [""])[:2]
+    q = ""
+    if "?" in raw:
+        raw, q = raw.split("?", 1)
+        q = "?" + q
+    path = raw
+    while path.startswith("../"):
+        path = path[3:]
+    if path.startswith("./"):
+        path = path[2:]
+    if path.startswith("/"):
+        path = path[1:]
+    if path == "" or path == ".":
+        out = "/"
+    else:
+        out = "/" + path
+    slug = out.strip("/")
+    name = path.split("/")[-1] if path else ""
+    if slug in DIR_LINK_SLUGS or (out.endswith("/") and slug):
+        if not out.endswith("/"):
+            out = out + "/"
+    elif name in ASSET_NAMES or path.startswith("fonts/") or path.startswith("past/"):
+        pass
+    elif out != "/" and not out.endswith("/") and "." not in name:
+        out = out + "/"
+    suffix = q + (("#" + frag) if frag else "")
+    return out + suffix
+
+
+def finalize_404(docs: Path, launch: bool) -> None:
+    """Nested 404s must work with JS off: no <base>, no document.write, absolute root paths."""
+    pth = docs / "404.html"
+    html = pth.read_text()
+    html = re.sub(r"<script>\s*\(function\(\)\s*\{[^<]*document\.write\([^<]*<base[^<]*</script>\s*", "", html, flags=re.I)
+    html = re.sub(r"<base\b[^>]*>\s*", "", html, flags=re.I)
+    if "document.write" in html or re.search(r"<base\b", html, re.I):
+        raise SystemExit("404.html still has document.write or a <base>")
+    prefix = "" if launch else PREVIEW_PREFIX
+
+    def repl(m):
+        attr, quote, url = m.group(1), m.group(2), m.group(3)
+        if url.startswith(("#", "mailto:", "tel:", "data:", "javascript:", "http://", "https://", "//")):
+            return m.group(0)
+        path = _site_path(url)
+        if path is None:
+            return m.group(0)
+        return f"{attr}{quote}{prefix}{path}{quote}"
+
+    html = _404_ATTR.sub(repl, html)
+    if launch:
+        html = re.sub(r'\n?<div class="preview-banner">.*?</div>\n?', "\n", html, flags=re.S)
+    pth.write_text(html)
+    print(f"finalized 404.html ({'launch' if launch else 'preview'} root paths)")
+
+
+def _insert_robots(html: str, content: str) -> str:
+    html = re.sub(r'\n?<meta[^>]*name=["\']robots["\'][^>]*>\n?', "\n", html, flags=re.I)
+    if re.search(r'<meta[^>]*name=["\']viewport["\']', html, re.I):
+        return re.sub(
+            r'(<meta[^>]*name=["\']viewport["\'][^>]*>)',
+            r'\1\n<meta name="robots" content="' + content + '">',
+            html,
+            count=1,
+            flags=re.I,
+        )
+    return html.replace("</title>", '</title>\n<meta name="robots" content="' + content + '">', 1)
+
+
+def _strip_robots(html: str) -> str:
+    return re.sub(r'\n?<meta[^>]*name=["\']robots["\'][^>]*>\n?', "\n", html, flags=re.I)
+
+
+def _strip_banner(html: str) -> str:
+    return re.sub(r'\n?<div class="preview-banner">.*?</div>\n?', "\n", html, flags=re.S)
+
+
+STUB_RELS = {
+    "how-old-am-i.html",
+    "date-of-birth.html",
+    "rodent-age-calculator.html",
+    "how-old-am-i/index.html",
+    "date-of-birth/index.html",
+}
+
+
+def apply_robots(docs: Path, launch: bool) -> None:
+    if launch:
+        (docs / "robots.txt").write_text(
+            "User-agent: *\nAllow: /\nSitemap: https://agecalculator.com/sitemap.xml\n"
+        )
+    else:
+        (docs / "robots.txt").write_text("User-agent: *\nDisallow: /\n")
+    for pth in sorted(docs.rglob("*.html")):
+        rel = pth.relative_to(docs).as_posix()
+        html = pth.read_text()
+        is_stub = rel in STUB_RELS
+        is_embed = rel in ("embed/index.html", "embed.html")
+        is_widget = rel in ("widget/index.html", "widget.html")
+        if launch:
+            html = _strip_banner(html)
+            if is_stub:
+                html = _strip_robots(html)
+            elif is_embed or is_widget:
+                html = _insert_robots(html, "noindex")
+            else:
+                html = _strip_robots(html)
+            if "preview-banner" in html:
+                raise SystemExit(f"launch build still has the preview banner on {rel}")
+        else:
+            if is_stub:
+                html = _strip_robots(html)
+            else:
+                html = _insert_robots(html, "noindex,nofollow")
+        pth.write_text(html)
+    mode = "launch" if launch else "preview"
+    print(f"applied {mode} robots.txt and robots meta")
+
+
 def main():
     clean_promoted()
     restore_shells()
@@ -758,6 +941,8 @@ def main():
     apply_ux_pass()
     from promote_dirs import run as promote_run
     promote_run(DOCS)
+    finalize_404(DOCS, launch=LAUNCH)
+    apply_robots(DOCS, launch=LAUNCH)
 
     # confirm embed.js URL untouched in snippets
     emb = (DOCS / "embed" / "index.html").read_text()

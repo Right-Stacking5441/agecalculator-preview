@@ -4,10 +4,10 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta name="robots" content="noindex,nofollow">
 <title>Age calculator widget</title>
 <meta content="Embeddable age calculator from agecalculator.com." name="description"/>
 <link href="https://agecalculator.com/widget/" rel="canonical"/>
-<meta content="noindex,nofollow" name="robots"/>
 <meta content="Age calculator widget" property="og:title"/>
 <meta content="Embeddable age calculator from agecalculator.com." property="og:description"/>
 <meta content="https://agecalculator.com/widget/" property="og:url"/>
@@ -37,7 +37,7 @@
 </div>
 </form>
 <div class="result"><div class="leaf" data-state="empty" id="leaf"><div class="leaf-body"><div class="lead"><p class="ph-msg">Your age will appear here.</p></div></div><noscript><p class="hint">This calculator needs JavaScript to work out the result. You can use it at agecalculator.com.</p></noscript></div><p aria-live="polite" class="sr-only" id="live"></p><div class="on settings">
-<p><svg aria-hidden="true" class="ic ic-clock" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M12 3.4c4.9-.1 8.6 3.7 8.6 8.5 0 4.8-3.8 8.7-8.7 8.6-4.7-.1-8.4-3.9-8.3-8.7.1-4.6 3.6-8.3 8.6-8.5.6 0 1.2.1 1.7.2M12 7.4v4.8l3.1 2.1"></path></svg><span id="on-label">Age today<span class="on-date">, <b>Mon 16 Nov 2026</b></span></span><script>
+<p><svg aria-hidden="true" class="ic ic-clock" focusable="false" height="20" viewbox="0 0 24 24" width="20"><path d="M12 3.4c4.9-.1 8.6 3.7 8.6 8.5 0 4.8-3.8 8.7-8.7 8.6-4.7-.1-8.4-3.9-8.3-8.7.1-4.6 3.6-8.3 8.6-8.5.6 0 1.2.1 1.7.2M12 7.4v4.8l3.1 2.1"></path></svg><span id="on-label">Age today<span class="on-date">, <b>Tue 17 Nov 2026</b></span></span><script>
 (function(){
   var el=document.getElementById('on-label');
   if(!el || el.hidden || el.getAttribute('data-idle')) return;
@@ -117,6 +117,24 @@
     setOpen(false);
     summary.focus({ preventScroll: true });
   });
+
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted) setOpen(false);
+  });
+})();
+
+(function(){
+  function openHash() {
+    var id = (location.hash || '').replace(/^#/, '');
+    if (!id) return;
+    var el = document.getElementById(id);
+    if (!el) return;
+    var d = (el.matches && el.matches('details')) ? el : (el.closest ? el.closest('details') : null);
+    if (d) d.open = true;
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', openHash);
+  else openHash();
+  window.addEventListener('hashchange', openHash);
 })();
 </script></body>
 </html>

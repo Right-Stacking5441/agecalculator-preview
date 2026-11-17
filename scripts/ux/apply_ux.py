@@ -37,7 +37,7 @@ def mast(soup, slug, nav):
     logo_html = logo.decode() if logo else ""
     new = frag(
         f'<header class="mast"><div class="wrap"><a class="brand" href="./">{logo_html}<span class="wm">agecalculator<span>.com</span></span></a>'
-        f'<details class="nav-menu"><summary aria-expanded="false" aria-controls="nav-menu-list">{icon("menu")}<span>Calculators</span></summary><ul id="nav-menu-list">{items}</ul></details></div></header>'
+        f'<details class="nav-menu"><summary aria-controls="nav-menu-list">{icon("menu")}<span>Calculators</span></summary><ul id="nav-menu-list">{items}</ul></details></div></header>'
     )
     old.replace_with(new)
 
@@ -51,8 +51,11 @@ def foot(soup):
                 c.extract()
 
 
-def strip_noise(soup):
-    for sel in [".preview-banner", ".ad", "aside.side", ".dateline", ".tools-link", ".crumbs", ".after-leaf", "script[data-ux-drop]"]:
+def strip_noise(soup, launch=False):
+    sels = [".ad", "aside.side", ".dateline", ".tools-link", ".crumbs", ".after-leaf", "script[data-ux-drop]"]
+    if launch:
+        sels = [".preview-banner"] + sels
+    for sel in sels:
         for e in soup.select(sel):
             e.decompose()
     # Drop the d7d71b5 inline mast-date fill script if a shell still has it.
@@ -370,6 +373,24 @@ NAV_MENU = """<script>
     setOpen(false);
     summary.focus({ preventScroll: true });
   });
+
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted) setOpen(false);
+  });
+})();
+
+(function(){
+  function openHash() {
+    var id = (location.hash || '').replace(/^#/, '');
+    if (!id) return;
+    var el = document.getElementById(id);
+    if (!el) return;
+    var d = (el.matches && el.matches('details')) ? el : (el.closest ? el.closest('details') : null);
+    if (d) d.open = true;
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', openHash);
+  else openHash();
+  window.addEventListener('hashchange', openHash);
 })();
 </script>"""
 
@@ -391,16 +412,12 @@ def fix_skip(soup, slug):
         return
     has_calc = soup.select_one("[data-calc], .calc")
     if slug == "404" or not has_calc:
-        if slug == "404":
-            # The preview 404's document.write <base> would send href="#main" to the homepage.
-            skip.decompose()
-            return
         skip["href"] = "#main"
         skip.clear()
         skip.string = "Skip to content"
 
 
-def apply_ux(docs: Path) -> int:
+def apply_ux(docs: Path, launch: bool = False) -> int:
     docs = Path(docs)
     nav = nav_from_home(docs)
     n = 0
@@ -414,7 +431,7 @@ def apply_ux(docs: Path) -> int:
                 raw = raw.replace(before, after)
         raw = re.sub(r"Ages (\d+)–(\d+)", r"Ages \1 to \2", raw)
         soup = BeautifulSoup(raw, "html.parser")
-        strip_noise(soup)
+        strip_noise(soup, launch=launch)
         mast(soup, slug, nav)
         fix_skip(soup, slug)
         foot(soup)

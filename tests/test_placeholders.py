@@ -22,7 +22,8 @@ NEEDLE = re.compile(r"\[PLACEHOLDER|PLACEHOLDER:", re.I)
 
 
 def iter_files():
-    for p in sorted(DOCS.glob("*.html")):
+    # After promote, pages live in docs/<slug>/index.html, not only docs/*.html.
+    for p in sorted(DOCS.rglob("*.html")):
         yield p
     if COPY.is_dir():
         for p in sorted(COPY.glob("*.md")):

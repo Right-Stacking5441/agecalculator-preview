@@ -56,6 +56,63 @@ def fold(s: str) -> str:
     return re.sub(r"\s+", " ", s).strip()
 
 
+PROD = "https://agecalculator.com"
+
+def abs_prod_url(url: str) -> str:
+    url = (url or "").strip()
+    if url.startswith("http://") or url.startswith("https://"):
+        return url
+    if url.startswith("/agecalculator-preview/"):
+        url = url[len("/agecalculator-preview"):]
+    while url.startswith("../"):
+        url = url[3:]
+    if url.startswith("./"):
+        url = url[2:]
+    if url.startswith("#"):
+        return PROD + "/" + url
+    if url.startswith("/#"):
+        return PROD + url
+    if not url.startswith("/"):
+        url = "/" + url
+    path, q, frag = url, "", ""
+    if "?" in path:
+        path, q = path.split("?", 1)
+        q = "?" + q
+    if "#" in path:
+        path, frag = path.split("#", 1)
+        frag = "#" + frag
+    if path != "/" and not path.endswith("/") and "." not in path.rsplit("/", 1)[-1]:
+        path = path + "/"
+    return PROD + path + q + frag
+
+def expand_md_links(s: str) -> str:
+    out, i = [], 0
+    while i < len(s):
+        if s[i] == "[":
+            close = s.find("](", i)
+            if close != -1:
+                j, depth = close + 2, 1
+                while j < len(s) and depth:
+                    if s[j] == "(":
+                        depth += 1
+                    elif s[j] == ")":
+                        depth -= 1
+                    j += 1
+                if depth == 0:
+                    text, url = s[i + 1:close], s[close + 2:j - 1]
+                    out.append(f"{text} ({abs_prod_url(url)})")
+                    i = j
+                    continue
+        out.append(s[i])
+        i += 1
+    return "".join(out)
+
+def expand_html_links(s: str) -> str:
+    def repl(m):
+        text = re.sub(r"<[^>]+>", "", m.group(2))
+        return f"{text} ({abs_prod_url(m.group(1))})"
+    return re.sub(r'<a\s[^>]*href="([^"]+)"[^>]*>(.*?)</a>', repl, s, flags=re.I | re.S)
+
 def strip_md_links(s: str) -> str:
     out, i = [], 0
     while i < len(s):
@@ -110,6 +167,7 @@ def parse_md(text: str):
     body, faq_from_body = _split_faq(body)
     _rest, faq_from_chunk = _split_faq(faq_chunk)
     faq_raw = faq_from_chunk or faq_from_body
+    body = re.sub(r"<!--.*?-->", "", body, flags=re.S)
     body = re.sub(r"^## Body\s*\n+", "", body.strip() + "\n")
     faqs = []
     for m in re.finditer(r"###\s+(.+?)\n(.*?)(?=\n### |\Z)", faq_raw.strip() + "\n", re.S):
@@ -169,6 +227,11 @@ def visible_text(html: str) -> str:
     return fold(html)
 
 
+def _faq_bits(q_html: str, a_html: str):
+    q = fold(re.sub(r"<[^>]+>", "", q_html))
+    a = fold(re.sub(r"<[^>]+>", "", expand_html_links(a_html)))
+    return q, a
+
 def visible_faqs(html: str):
     out = []
     # UX-pass FAQ: <details class="qa"><summary><h3>Q</h3>…</summary><div class="qa-a">A</div>
@@ -177,9 +240,7 @@ def visible_faqs(html: str):
         html,
         re.S,
     ):
-        q = fold(re.sub(r"<[^>]+>", "", m.group(1)))
-        a = fold(re.sub(r"<[^>]+>", "", m.group(2)))
-        out.append((q, a))
+        out.append(_faq_bits(m.group(1), m.group(2)))
     if out:
         return out
     for m in re.finditer(
@@ -272,7 +333,13 @@ def main() -> int:
                     issues.append(f"{kind.upper()} missing: {text[:240]!r}")
 
         vis = visible_faqs(html)
-        md_faqs = [(fold(q), md_plain(a)) for q, a in faqs]
+        def faq_plain(s: str) -> str:
+            s = expand_md_links(s)
+            s = re.sub(r"`([^`]+)`", r"\1", s)
+            s = s.replace("**", "")
+            s = re.sub(r"(?<!\*)\*([^*]+)\*(?!\*)", r"\1", s)
+            return fold(s)
+        md_faqs = [(fold(q), faq_plain(a)) for q, a in faqs]
         if vis != md_faqs:
             if len(vis) != len(md_faqs):
                 issues.append(f"FAQ count md={len(md_faqs)} visible={len(vis)}")

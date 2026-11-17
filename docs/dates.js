@@ -245,7 +245,10 @@
       }
     }
     var v = validate(d, m, y);
-    if (!v.ok) return v;
+    if (!v.ok) {
+      v.parts = { d: d, m: m, y: y };
+      return v;
+    }
     var today = opts.today;
     if (twoDigitLast != null && today && cmp(v.date, today) > 0) {
       var vLast = validate(d, m, twoDigitLast);
@@ -426,10 +429,13 @@
 
 
   /* Plain text for the one-box field, given the day/month/year box values.
-     Incomplete or invalid boxes yield an empty string so the two modes stay in sync. */
+     Invalid or incomplete boxes still return a raw d/m/y string so typed values are not wiped. */
   function textFromParts(d, m, y) {
     var r = validate(d, m, y);
-    if (!r.ok) return { ok: false, text: '', code: r.code, message: r.message || '', field: r.field || null };
+    if (!r.ok) {
+      var raw = [d, m, y].map(function (v) { return String(v == null ? '' : v).trim(); }).filter(Boolean).join('/');
+      return { ok: false, text: raw, code: r.code, message: r.message || '', field: r.field || null };
+    }
     return { ok: true, text: r.date.d + ' ' + MONTHS[r.date.m - 1] + ' ' + r.date.y, date: r.date };
   }
 

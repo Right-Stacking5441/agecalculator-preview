@@ -97,19 +97,35 @@
     function fillPartsFromQuick() {
       var r = A.parseDate(quick.value, dateOpts());
       if (r.ok) setDate(r.date, true);
-      else { parts[0].value = ''; parts[1].value = ''; parts[2].value = ''; }
+      else if (r.parts && (r.parts.d || r.parts.m || r.parts.y)) {
+        if (r.parts.d != null && String(r.parts.d) !== '') parts[0].value = String(r.parts.d);
+        if (r.parts.m != null && String(r.parts.m) !== '') parts[1].value = String(r.parts.m);
+        if (r.parts.y != null && String(r.parts.y) !== '') parts[2].value = String(r.parts.y);
+      }
     }
     function writeQuickFromParts() {
       var r = A.textFromParts(parts[0].value, parts[1].value, parts[2].value);
+      var hasParts = !!(parts[0].value || parts[1].value || parts[2].value);
       if (r.ok) {
         parts.forEach(function (x) { x.setAttribute('aria-invalid', 'false'); });
         setDate(r.date); quick.value = r.text; invalid(false); show(rb(r.date), 'ok');
       } else {
         parts.forEach(function (x) { x.setAttribute('aria-invalid', 'false'); });
         f.value = null; f.status = r.code; f.message = r.message;
-        quick.value = '';
-        if (!parts[0].value && !parts[1].value && !parts[2].value) { invalid(false); show('', ''); }
-        else show(r.message && r.code === 'incomplete' ? r.message : '', '');
+        if (hasParts && r.text) quick.value = r.text;
+        if (!hasParts) {
+          /* Never wipe text the user typed in the one box. */
+          if (!quick.value.trim()) { invalid(false); show('', ''); }
+          else {
+            var q = A.parseDate(quick.value, dateOpts());
+            if (q.ok) { setDate(q.date, true); invalid(false); show(rb(q.date), 'ok'); }
+            else { invalid(!!(q.message || q.code !== 'empty')); show(q.message || (q.code === 'incomplete' ? 'That date isn’t finished. Try 15 March 1995.' : 'Try a date like 15 March 1995 or 15/03/1995.'), q.message || q.code !== 'empty' ? 'err' : ''); }
+          }
+        } else if (r.message && r.code !== 'incomplete') {
+          invalid(true); show(r.message, 'err');
+        } else {
+          invalid(false); show(r.message && r.code === 'incomplete' ? r.message : '', '');
+        }
       }
     }
     function partsOpen(o) {
@@ -136,7 +152,11 @@
     function show(text, kind, swap) {
       read.innerHTML = text + (swap ? ' <button type="button" class="textbtn swap">I meant ' + plain(swap) + '</button>' : '');
       read.className = 'readback' + (kind ? ' ' + kind : '');
-      if (kind === 'ok' && autoOpen) { autoOpen = false; partsOpen(false); }
+      if (kind === 'ok' && autoOpen) {
+        autoOpen = false;
+        partsOpen(false);
+        if (quick && typeof quick.focus === 'function') quick.focus({ preventScroll: true });
+      }
       var sb = read.querySelector('.swap');
       if (sb) sb.addEventListener('click', function () { setDate(swap, true); quick.value = plain(swap); f.alt = null; show(rb(swap), 'ok'); go(); });
     }
@@ -297,9 +317,9 @@
     var essentials = [['Months', fmt(r.totalMonths)], ['Weeks', fmt(r.weeks)], ['Days', fmt(r.totalDays)]];
     var extra = [
       ['Hours', fmt(r.hours) + small('days × 24, from midnight')],
-      opts.chrono !== false ? ['Chronological age', r.years + ';' + r.months + ';' + r.days + small('<a href="chronological-age">for test forms</a>')] : null,
+      opts.chrono !== false ? ['Chronological age', r.years + ';' + r.months + ';' + r.days + small('<a href="chronological-age/">for test forms</a>')] : null,
       ['Born on a', W[r.bornWeekday]],
-      kor ? ['Korean age', kor.counting + small('year age ' + kor.yearAge + ', <a href="korean-age">why</a>')] : null
+      kor ? ['Korean age', kor.counting + small('year age ' + kor.yearAge + ', <a href="korean-age/">why</a>')] : null
     ];
     var say = 'On ' + long(at) + ' you ' + verb + ' ' + ymdWords(r) + ' old.';
     if (bounds.bornDay) say += ' The day you were born. Next birthday ' + long(nx) + ', turning 1, in ' + plural(nx.daysUntil, 'day') + '.';
@@ -324,14 +344,14 @@
   var TOOLS = {
     age: function () {
       var b = fields.dob;
-      if (needs(b)) return errOf(b, 'date') || invalidOn() || emptyToday("Your age will appear here.");
+      if (needs(b)) return errOf(b, 'date') || invalidOn() || emptyToday(document.body.classList.contains('widget') ? 'Type a date of birth to see your age in years, months and days.' : 'Type a date of birth, like 15 March 1995.');
       return invalidOn() || ageCore(b.value, onDate());
     },
     /* An old leaf: aged paper, brown binding, the date rubber-stamped, that day ringed in its month. */
     past: function () {
       var b = fields.dob, at = onDate(), onErr = invalidOn();
       if (onErr) return withCls(onErr, 'leaf-old');
-      if (needs(b)) return errOf(b, 'date') || withCls(emptyToday("Your age on that date will appear here."), 'leaf-old');
+      if (needs(b)) return errOf(b, 'date') || withCls(emptyToday('Add both dates to see how old you were then.'), 'leaf-old');
       var r = A.age(b.value, at);
       if (!r.ok) return withCls(notice('Not born yet', long(b.value) + ' is after ' + long(at) + '.'), 'leaf-old');
       var bounds = A.birthdayBounds(b.value, at);
@@ -355,7 +375,7 @@
     /* A countdown is a tear-off pad: one sheet per day still to go (drawn up to a point). */
     countdown: function () {
       var b = fields.dob;
-      if (needs(b)) return errOf(b, 'date') || withCls(emptyToday("The days to the next birthday will appear here."), 'leaf-stack');
+      if (needs(b)) return errOf(b, 'date') || withCls(emptyToday('Whose birthday? Type the date of birth to start counting.'), 'leaf-stack');
       var r = A.age(b.value, today);
       if (!r.ok) return notice('Not born yet', 'That date is after today.');
       var bounds = A.birthdayBounds(b.value, today);
@@ -375,7 +395,7 @@
     },
     future: function () {
       var b = fields.dob, yr = +$v('in-year');
-      if (needs(b)) return errOf(b, 'date') || invalidOn() || { state: 'empty', cls: 'obj obj-planner', html: ph('', "Your age in that year will appear here.") };
+      if (needs(b)) return errOf(b, 'date') || invalidOn() || { state: 'empty', cls: 'obj obj-planner', html: ph('', 'Type your date of birth to see your age in ' + ((yr && String(yr).length === 4) ? yr : 'that year') + '.') };
       if (invalidOn()) return invalidOn();
       if (on && on.value) return ageCore(b.value, on.value);
       if (!yr || String(yr).length !== 4 || yr < A.MIN_YEAR || yr > A.MAX_YEAR) return notice('Which year?', 'Type a year between ' + A.MIN_YEAR + ' and ' + A.MAX_YEAR + ', like 2050, or pick an exact date.');
@@ -400,7 +420,7 @@
     /* Two leaves side by side, the gap between them measured like a drawing dimension. */
     difference: function () {
       var a = fields.a, b = fields.b, na = $v('name-a') || 'Person A', nb = $v('name-b') || 'Person B';
-      if (needs(a) || needs(b)) return errOf(a, 'first date') || errOf(b, 'second date') || { state: 'empty', cls: 'obj obj-pair', html: ph('', "The age gap will appear here.") };
+      if (needs(a) || needs(b)) return errOf(a, 'first date') || errOf(b, 'second date') || { state: 'empty', cls: 'obj obj-pair', html: ph('', 'Two dates of birth, and the gap shows up here.') };
       var r = A.between(a.value, b.value);
       if (r.totalDays === 0) return notice('Same day', esc(na) + ' and ' + esc(nb) + ' were born on the same day.');
       var first = r.sign > 0 ? [a.value, na] : [b.value, nb], second = r.sign > 0 ? [b.value, nb] : [a.value, na];
@@ -415,7 +435,7 @@
     /* Two leaves joined by a ruler, the span bracketed and labelled. */
     between: function () {
       var a = fields.start, b = fields.end, inc = document.getElementById('inc-end').checked;
-      if (needs(a) || needs(b)) return errOf(a, 'start date') || errOf(b, 'end date') || { state: 'empty', cls: 'obj obj-span', html: ph('', "The number of days will appear here.") };
+      if (needs(a) || needs(b)) return errOf(a, 'start date') || errOf(b, 'end date') || { state: 'empty', cls: 'obj obj-span', html: ph('', 'Pick a start and an end date to count the days.') };
       var r = A.between(a.value, b.value), days = r.totalDays + (inc ? 1 : 0);
       var lo = r.sign > 0 ? a.value : b.value, hi = r.sign > 0 ? b.value : a.value;
       var weeksMarked = Math.min(Math.floor(days / 7), 52);
@@ -439,7 +459,7 @@
           '<tr class="ans"><th scope="row">Age</th>' + (r ? '<td>' + r.years + '</td><td>' + r.months + '</td><td>' + r.days + '</td>' : '<td class="blank"></td><td class="blank"></td><td class="blank"></td>') + '</tr></tbody></table>';
       }
       var who = '<p class="slip-name"><span>Name</span> ' + (nm ? esc(nm) : '<i class="muted">not given</i>') + '</p>';
-      if (needs(b) || needs(t)) return errOf(b, 'date of birth') || errOf(t, 'test date') || { state: 'empty', cls: 'obj obj-slip', html: ph('', "The age on the test date will appear here.") };
+      if (needs(b) || needs(t)) return errOf(b, 'date of birth') || errOf(t, 'test date') || { state: 'empty', cls: 'obj obj-slip', html: ph('', 'Add the date of birth and test date for the y;m;d.') };
       var r = A.age(b.value, t.value);
       if (!r.ok) return notice('Check the dates', 'The test date is before the date of birth.');
       var code = r.years + ';' + r.months + ';' + r.days, rounded = r.totalMonths + (r.days >= 15 ? 1 : 0);
@@ -456,7 +476,7 @@
     korean: function () {
       var b = fields.dob, at = onDate(), onErr = invalidOn();
       if (onErr) return withCls(onErr, 'leaf-lunar');
-      if (needs(b)) return errOf(b, 'date') || withCls(emptyToday("All three ages will appear here."), 'leaf-lunar');
+      if (needs(b)) return errOf(b, 'date') || withCls(emptyToday('Type a date of birth to see all three ages.'), 'leaf-lunar');
       var k = A.koreanAges(b.value, at);
       if (!k.ok) return withCls(notice('Not born yet', 'That date is after ' + long(at) + '.'), 'leaf-lunar');
       var jan = function (d) { return '<b>1 January ' + d.y + '</b>'; };
@@ -474,7 +494,7 @@
     birthyear: function () {
       var a = $v('age-now'), had = checked('had'), at = onDate(), onErr = invalidOn();
       if (onErr) return onErr;
-      if (!a) return { state: 'empty', cls: 'obj obj-tabs', html: ph('', "Your birth year will appear here.") };
+      if (!a) return { state: 'empty', cls: 'obj obj-tabs', html: ph('', 'Type an age, then say if the birthday\'s been yet.') };
       if (!/^\d{1,3}$/.test(a) || +a > 130) return notice('Check the age', 'Type an age in whole years, from 0 to 130.');
       var r = A.birthYear(+a, at, had === 'yes' ? true : had === 'no' ? false : null);
       var caps = r.years.length > 1 ? ['if your birthday is still to come in ' + at.y, 'if you’ve had it already'] : [had === 'yes' ? 'you’ve had your birthday this year' : 'your birthday is still to come'];
@@ -517,7 +537,7 @@
       var ages = [1, 2, 3, 5, 7, 10, 12, 15], t;
       if (kind === 'dog') t = '<tr><th scope="col">Age</th><th scope="col">Small</th><th scope="col">Medium</th><th scope="col">Large</th><th scope="col">Giant</th></tr>' + ages.map(function (x) { return '<tr><td>' + x + '</td>' + ['small', 'medium', 'large', 'giant'].map(function (z) { var r = A.dogAge(x, z); return '<td>' + (r.ok ? fmt(r.human) : 'n/a') + '</td>'; }).join('') + '</tr>'; }).join('');
       else t = '<tr><th scope="col">Age</th><th scope="col">Human</th><th scope="col">Stage</th></tr>' + ages.map(function (x) { var r = A.catAge(x); return '<tr><td>' + x + '</td><td>' + (r.ok ? fmt(r.human) : 'n/a') + '</td><td>' + A.catStage(x) + '</td></tr>'; }).join('');
-      return { state: 'empty', cls: 'obj obj-record', html: '<div class="record">' + ph('', kind === 'dog' ? "Your dog’s age in human years will appear here." : "Your cat’s age in human years will appear here.") + more('<table class="chart"><caption class="sr-only">Human years by age, from the AAHA-published chart</caption>' + t + '</table><p class="rest">From the <a href="' + CHART_SRC + '">AAHA-published pet age chart</a>.</p>', (kind === 'dog' ? 'Dog' : 'Cat') + ' age chart') + '</div>' };
+      return { state: 'empty', cls: 'obj obj-record', html: '<div class="record">' + ph('', kind === 'dog' ? 'Type your dog\'s age and pick their adult size.' : 'Your cat\'s age in years and months, please.') + more('<table class="chart"><caption class="sr-only">Human years by age, from the AAHA-published chart</caption>' + t + '</table><p class="rest">From the <a href="' + CHART_SRC + '">AAHA-published pet age chart</a>.</p>', (kind === 'dog' ? 'Dog' : 'Cat') + ' age chart') + '</div>' };
     }
     if (!parsed.ok) return notice('Check the age', parsed.message);
     var y = parsed.years, mo = parsed.months, age = parsed.age;

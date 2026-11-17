@@ -1,28 +1,28 @@
 # Page copy: / (homepage)
 
 - **Title:** Age Calculator: How Old Am I?
-- **Meta description:** Type a date of birth, like 15 March 1995 or 3/15/95, and get your exact age in years, months and days, today or on any date. Leap days included.
-- **H1:** Age Calculator
-- **Line under the H1:** How old am I today? Type your date of birth and this age calculator gives your exact age in years, months and days, with the date of your next birthday.
+- **Meta description:** Type a date of birth, like 15 March 1995 or 15/03/1995, and get your exact age in years, months and days, today or on any date. Leap days included.
+- **H1:** Age calculator
+- **Line under the H1:** How old am I, exactly? Put in your date of birth for your age today in years, months and days, and how long you have to wait for the next birthday.
 - **Target keywords:** age calculator; how old am i; date of birth calculator
 
 ---
 
 ## Body
 
-## How to use the age calculator
+## What the result shows
 
-Type a date of birth in the box and this age calculator gives your age as completed years, then months, then days, worked out to today's date in your time zone. The big number is your age as you'd write it on a form. The line under it is the months and days since your last birthday. Below that, the same stretch of time is given in single units: total months, weeks and days, with hours under More.
+Your age comes out as completed years, then months, then days, worked out to today's date in your time zone. The big number is your age as you'd write it on a form. The line under it is the months and days since your last birthday. Below that, the same stretch of time is given in single units: total months, weeks and days, with hours under More.
 
 The box reads dates the way people type them: 15 March 1995, 15/03/1995, 1995-03-15 or 15031995 all work, and the line underneath says how it has read your entry. If a date could go either way, like 1/2/2000, it follows your browser's language setting and offers the other reading with one tap.
 
-## How this age calculator counts
+## How your age is counted
 
 Your age goes up by one on your birthday, the same way it does on a passport or a school form. The calculator counts whole years first, then the whole months left over, then the days left after that.
 
 The single-unit figures don't add on to your age. 380 months and 1,652 weeks are two ways of measuring the same span, not extra time. Hours are the number of days times 24, counted from midnight on the day you were born, because a date of birth on its own doesn't record what time you arrived. Clock changes aren't counted.
 
-## A worked example: 15 March 1995
+## Working it out by hand: 15 March 1995
 
 On 16 November 2026, someone born on 15 March 1995 was 31 years, 8 months and 1 day old. On paper:
 
@@ -33,6 +33,8 @@ On 16 November 2026, someone born on 15 March 1995 was 31 years, 8 months and 1 
 That was 11,569 days in total. They were born on a Wednesday, and their 32nd birthday, on Monday 15 March 2027, was 119 days away. If the birthday in the year you're checking hasn't come yet, take one off the years and count the months from the birthday the year before.
 
 ## Born on 29 February
+
+<!-- Designer: give this section id="born-on-29-february"; the other pages link to /#born-on-29-february, and it should open if it is a closed details. -->
 
 A 29 February birthday only exists in leap years, such as 2024, 2028 and 2032. In the other three years, this calculator counts a 29 February birthday as falling on 1 March, the day after 28 February, and every tool on this site uses that rule. It is the rule written into Scottish law by the [Age of Legal Capacity (Scotland) Act 1991, section 6(2)](https://www.legislation.gov.uk/ukpga/1991/50/section/6). The law in England, Wales and Northern Ireland does not name a date, so if a particular contract or document says something else, go by its wording.
 
@@ -61,10 +63,10 @@ Schools, speech and language therapists and psychologists usually want a child's
 
 ---
 
-## Age calculator FAQs
+## Questions people ask
 
 ### How old am I if I was born on 15 March 1995?
-On 16 November 2026 you were 31 years, 8 months and 1 day old, and your 32nd birthday is on Monday 15 March 2027. Type your date of birth above to see your age today, or press Change for any other day.
+On 16 November 2026, someone born on 15 March 1995 was 31 years, 8 months and 1 day old, with their 32nd birthday still to come on Monday 15 March 2027. Type the date of birth above for today's figure, or press Change for any other day.
 
 ### If I was born on 29 February, when do I turn a year older?
 This calculator counts it as 1 March in years with no 29 February, and the 29th itself in leap years. That matches Scottish law; the law in England, Wales and Northern Ireland does not name a date.
@@ -76,4 +78,4 @@ International age: you start at 0 and add a year on each birthday. Open More und
 Yes. Press Change and type any date. There are also separate pages for how old you were on a past date and [how old you will be](/how-old-will-i-be) in a future year.
 
 ### Why is my age in months and days sometimes surprising at the end of a month?
-Months aren't all the same length. If you were born on 31 January, there is no 31 February, so your first whole month is counted on 1 March, the same rule used for 29 February. On 28 February the result shows 0 months and 28 days; on 1 March it shows exactly 1 month. Common date libraries clamp to the last day of the month instead (31 January plus a month becomes 28 February), so other tools can differ by a day around month ends.
+Months aren't all the same length. If you were born on 31 January, there is no 31 February, so your first whole month is counted on 1 March, the same rule used for 29 February. On 28 February the result shows 0 months and 28 days; on 1 March it shows exactly 1 month. Some other calculators treat that month as ending on 28 February instead, so they can be a day out around month ends.

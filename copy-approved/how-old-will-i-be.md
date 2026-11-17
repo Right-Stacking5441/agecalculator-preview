@@ -3,16 +3,16 @@
 - **Title:** How Old Will I Be? Your Age in Any Future Year
 - **Meta description:** Find out how old you'll be in 2030, 2050 or any year, and the date you turn that age. Or choose an exact future date for years, months and days.
 - **H1:** How old will I be?
-- **Line under the H1:** How old will I be in 2050, or in any other year? Put in your date of birth and a year to see the age you reach and the day you reach it.
+- **Line under the H1:** Planning for 2050, or for the year the mortgage ends? Pick the year to see how old you will be in it, and the exact day you reach that age.
 - **Target keyword:** how old will i be
 
 ---
 
 ## Body
 
-## How to work out a future age
+## Picking a year
 
-Type your date of birth and a year, and the page answers "how old will I be" in that year: the age you reach, the date you reach it, and the age you are before that date. The year box starts at 2050, so the first answer you see is for 2050. Change it to any year from 1000 to 2999.
+Give your date of birth and a year. The result is the age you reach that year, the date you reach it, and the age you are until then. The year box starts at 2050, so the first answer you see is for 2050. Change it to any year from 1000 to 2999.
 
 The result also lists your age on 1 January and on 31 December of that year. Under More are the weekday your birthday falls on and how many days there are from today until it. If you'd rather know your age on one particular day, press Change and pick an exact date instead. The result then switches to years, months and days, the same as the main age calculator.
 
@@ -20,7 +20,7 @@ The result also lists your age on 1 January and on 31 December of that year. Und
 
 Everyone is two ages during a year, one before their birthday and one after, unless they were born on 1 January. That's why a single number for "how old will I be in 2050" can be wrong for half the year.
 
-## A worked example
+## Born in 1995, looking at 2050
 
 Someone born on 15 March 1995 asks how old they will be in 2050.
 
@@ -34,9 +34,9 @@ For an exact date, the same person is 44 years, 9 months and 17 days old on 1 Ja
 
 ## Born on 29 February
 
-This calculator counts a 29 February birthday as falling on 1 March in common years. That is the rule in Scottish law under the [Age of Legal Capacity (Scotland) Act 1991, section 6(2)](https://www.legislation.gov.uk/ukpga/1991/50/section/6); the law in England, Wales and Northern Ireland does not name a date. 2050 isn't a leap year, so someone born on 29 February 2000 turns 50 on Tuesday 1 March 2050, and the page says the birthday falls on 1 March. In a leap year such as 2048, it falls on the 29th. All the tools on this site use the same rule, including the [age calculator](/).
+Leap-day birthdays count on 1 March in years without a 29 February ([the rule, and where it comes from](/#born-on-29-february)). 2050 isn't a leap year, so someone born on 29 February 2000 turns 50 on Tuesday 1 March 2050, and the page says the birthday falls on 1 March. In a leap year such as 2048, it falls on the 29th. All the tools on this site use the same rule, including the [age calculator](/).
 
-## Why people ask "how old will I be?"
+## Mortgages, school leavers and milestone years
 
 Mostly for planning. How old will I be when the mortgage is paid off, when the children leave school, when a pension can be drawn, or when a passport or driving licence next needs renewing. If the plan hangs on a specific day, use the exact date option, because "the year I turn 60" covers two different ages.
 
@@ -46,7 +46,7 @@ If the year you type is before you were born, the page says so instead of giving
 
 ---
 
-## Future age FAQs
+## Questions people ask
 
 ### How old will I be in 2050?
 Subtract your birth year from 2050. That's the age you reach on your birthday in 2050; before that day you'll be one younger. Born in 1995, you turn 55 in 2050 and are 54 until your birthday.

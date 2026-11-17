@@ -3,16 +3,16 @@
 - **Title:** Chronological Age Calculator for Tests (Y;M;D)
 - **Meta description:** Enter a date of birth and a test date to get chronological age as years;months;days, like 8;4;12. Copy it, print a slip, or do a whole class.
 - **H1:** Chronological age calculator
-- **Line under the H1:** For test forms and reports, the chronological age calculator gives a child's age on the test date as years;months;days, such as 8;4;12, ready to copy or print.
+- **Line under the H1:** 8;4;12 is how score sheets want it, and that's what the chronological age calculator gives: a child's age on the test date, ready to copy or print for the file.
 - **Target keyword:** chronological age calculator
 
 ---
 
 ## Body
 
-## How to use the chronological age calculator
+## Filling in the score sheet
 
-This chronological age calculator takes a date of birth and a test date and gives the child's age on that day in the years;months;days form used on score sheets, for example 8;4;12. It is meant for teachers, SENCOs, educational psychologists, and speech and language therapists filling in standardised test forms. The result also shows the age in total months, a months figure with 15 or more days rounded up, and buttons to copy the code or print a one-line slip for the file.
+Put in the date of birth and the test date, and the child's age on that day comes out in the years;months;days form score sheets use, for example 8;4;12. It is meant for teachers, SENCOs, educational psychologists, and speech and language therapists filling in standardised test forms. The result also shows the age in total months, a months figure with 15 or more days rounded up, and buttons to copy the code or print a one-line slip for the file.
 
 It is a date-difference helper. It isn't an official tool from any test publisher. If your test manual has its own rule for days or rounding, the manual decides.
 
@@ -20,7 +20,7 @@ It is a date-difference helper. It isn't an official tool from any test publishe
 
 8;4;12 means 8 years, 4 months and 12 days on the test date. Some forms write it 8:4 or 8-4 and drop the days; copy whatever your form asks for. The "months" line is the same age as one number (8;4;12 is 100 months and 12 days), which some norms tables use instead.
 
-## A worked example
+## A child born on 4 July 2018
 
 A child born on 4 July 2018 is tested on 16 November 2026. Set out the way test manuals do it, test date on top:
 
@@ -50,11 +50,11 @@ The class sheet below the calculator takes one test date and a list of names and
 
 ## Leap days
 
-This calculator counts a 29 February birthday as falling on 1 March in common years. That is the rule in Scottish law under the [Age of Legal Capacity (Scotland) Act 1991, section 6(2)](https://www.legislation.gov.uk/ukpga/1991/50/section/6); the law in England, Wales and Northern Ireland does not name a date, and a test manual may have its own instruction. So a child born on 29 February 2020 is 6;8;18 on 16 November 2026. For everyday ages and birthdays, the main [age calculator](/) uses the same rule.
+A child born on 29 February has their birthday counted on 1 March in common years ([why](/#born-on-29-february)). If the test manual gives its own instruction, follow the manual. On this rule, a child born on 29 February 2020 is 6;8;18 on 16 November 2026.
 
 ---
 
-## Chronological age FAQs
+## Questions people ask
 
 ### What is chronological age on a test?
 The child's exact age on the day of testing, written as years, months and days, for example 8;4;12. Standardised tests use it to pick the right row in the norms tables.

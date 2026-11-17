@@ -3,26 +3,26 @@
 - **Title:** Birthday Countdown: Days Until Your Next Birthday
 - **Meta description:** Type a date of birth to see how many days until the next birthday, the weekday it falls on, the age it brings, and a clock to midnight tonight.
 - **H1:** Birthday countdown
-- **Line under the H1:** Our birthday countdown tells you how many days are left until the next birthday and what day of the week it falls on, with a clock ticking down to midnight tonight.
+- **Line under the H1:** A birthday countdown for cards, parties and plain impatience: the days left until the next one, and the day of the week it lands on.
 - **Target keyword:** birthday countdown
 
 ---
 
 ## Body
 
-## How to use the birthday countdown
+## What the countdown shows
 
-Type a date of birth and the birthday countdown shows how many days are left until the next birthday, the date and weekday it falls on, and the age it brings. Under that you'll find the same wait in weeks and a clock counting down to midnight tonight. Open More to see whether the birthday lands on a weekend and how many birthdays have gone by so far. The clock is the only part of the page that moves.
+The big number is the days left until the next birthday, with the date, the weekday and the age it brings underneath. Under that you'll find the same wait in weeks and a clock counting down to midnight tonight. Open More to see whether the birthday lands on a weekend and how many birthdays have gone by so far. The clock is the only part of the page that moves.
 
 If the birthday is today, the page says so and wishes a happy birthday, instead of counting to next year.
 
-## How the birthday countdown counts
+## Which day it counts to
 
 The big number is whole calendar days from today to the birthday. On the day before, it says 1. Today's date comes from your time zone, so if you're in London and the birthday person is in Sydney, their birthday will start nine to eleven hours before yours does, depending on the time of year, and this page won't show it until it's the day where you are.
 
 The "until midnight tonight" line ticks down the rest of today in your time zone. On the day before a birthday, the big number says 1 and the clock shows exactly how long is left.
 
-## A worked example
+## From 16 November to 15 March
 
 On Monday 16 November 2026, someone born on 15 March 1995 had 119 days to go until their next birthday. Counted out:
 
@@ -34,7 +34,7 @@ On Monday 16 November 2026, someone born on 15 March 1995 had 119 days to go unt
 
 ## Born on 29 February
 
-This calculator counts a 29 February birthday as falling on 1 March in common years, so in a year without 29 February the countdown runs to 1 March, and a note on the result says so. That is the rule in Scotland under the [Age of Legal Capacity (Scotland) Act 1991, section 6(2)](https://www.legislation.gov.uk/ukpga/1991/50/section/6); the law in England, Wales and Northern Ireland does not name a date. On 16 November 2026, someone born on 29 February 2008 had 105 days to go, to Monday 1 March 2027, when they turn 19. In 2028 the countdown runs to 29 February itself. This is the same rule the main [age calculator](/) uses, so the two pages always agree on the date.
+Born on 29 February? In years without one, the countdown runs to 1 March, and a note on the result says so ([here's why](/#born-on-29-february)). On 16 November 2026, someone born on 29 February 2008 had 105 days to go, to Monday 1 March 2027, when they turn 19. In 2028 the countdown runs to 29 February itself. This is the same rule the main [age calculator](/) uses, so the two pages always agree on the date.
 
 ## Counting down for someone else
 
@@ -48,7 +48,7 @@ To count down to something that isn't a birthday, such as a wedding, a due date 
 
 ---
 
-## Birthday countdown FAQs
+## Questions people ask
 
 ### How many days until my birthday?
 Type your date of birth above and the big number is the answer, counted from today in your time zone. On the day before your birthday it shows 1.

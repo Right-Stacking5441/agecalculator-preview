@@ -3,18 +3,18 @@
 - **Title:** Korean Age Calculator: International, Korean and Year Age
 - **Meta description:** See your international age, traditional Korean age and year age side by side, with what changed when South Korea made international age the default in law in June 2023.
 - **H1:** Korean age calculator
-- **Line under the H1:** The Korean age calculator puts international age, Korean age and year age side by side for one date of birth, so you can see why a Korean age runs one or two years higher.
+- **Line under the H1:** Born late in the year? Your Korean age can be two more than your international age. The Korean age calculator shows both, with year age in between.
 - **Target keyword:** korean age calculator
 
 ---
 
 ## Body
 
-## How to use the Korean age calculator
+## One birthday, three numbers
 
-Type a date of birth and the Korean age calculator shows three numbers. The big one is international age, the default in Korean law since 28 June 2023. Beside it are traditional Korean age (세는 나이), still heard in everyday life, and year age (연 나이), which a few rules, such as buying alcohol and tobacco and military service, used when the change came in. The date is today in your time zone, and you can change it to see any of the three on another day, such as a past New Year's Day.
+One date of birth gives three numbers here. The big one is international age, the default in Korean law since 28 June 2023. Beside it are traditional Korean age (세는 나이), still heard in everyday life, and year age (연 나이), which a few rules, such as buying alcohol and tobacco and military service, used when the change came in. The date is today in your time zone, and you can change it to see any of the three on another day, such as a past New Year's Day.
 
-## What the Korean age calculator counts
+## Three ways of counting
 
 **International age (만 나이, man nai)** starts at 0 when you're born and goes up by one on each birthday. It's the age used in most of the world and everywhere else on this site, including the main [age calculator](/).
 
@@ -24,7 +24,7 @@ Type a date of birth and the Korean age calculator shows three numbers. The big 
 
 The simple rule of thumb: Korean age is international age plus one if your birthday has already passed this year, and plus two if it hasn't. Year age sits in between.
 
-## A worked example
+## Born on 20 December 1995
 
 On 16 November 2026, someone born on 20 December 1995 had three different ages:
 
@@ -50,7 +50,7 @@ With three ages in use, a number on its own was ambiguous. The Law Library of Co
 
 ---
 
-## Korean age FAQs
+## Questions people ask
 
 ### How do I calculate my Korean age?
 Take the current year, subtract your birth year, and add 1. Your birthday makes no difference. Someone born in 1995 is 32 in Korean age throughout 2026.

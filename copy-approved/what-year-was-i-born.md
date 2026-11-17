@@ -3,26 +3,26 @@
 - **Title:** What Year Was I Born? Birth Year From Your Age
 - **Meta description:** Type your age and whether you've had your birthday this year to get your birth year. Not sure? You get the two possible years. Works for past years too.
 - **H1:** What year was I born?
-- **Line under the H1:** What year was I born, if I'm 31? Type your age and whether you've had your birthday yet this year, and you'll get the year, or both years if you're not sure.
+- **Line under the H1:** Someone says they're 42. What year were they born? Give the age and whether the birthday has been yet this year, and you'll get the year, or both if you're not sure.
 - **Target keyword:** what year was i born
 
 ---
 
 ## Body
 
-## How to find your birth year
+## From an age to a year
 
-Type an age in whole years, say whether the birthday has happened yet this year, and the page answers "what year was I born" with the birth year. Choose "Not sure" and you get the two years it could be, with a line explaining which is which. The date it works from is today, but you can change it, which is useful when you know someone's age on an older document or photo and want their birth year.
+Give an age in whole years and say whether the birthday has happened yet this year, and you get the birth year. Choose "Not sure" and you get the two years it could be, with a line explaining which is which. The date it works from is today, but you can change it, which is useful when you know someone's age on an older document or photo and want their birth year.
 
 This is the reverse of the main [age calculator](/). If you know the full date of birth, that page gives far more: exact age in years, months and days, and the next birthday.
 
-## What year was I born? Why there can be two answers
+## Why an age gives two possible years
 
 An age alone doesn't pin down a birth year. During any year, people who share an age were born in one of two years, depending on whether their birthday has come round yet.
 
 The sum is short. Take the current year and subtract the age. If the birthday has already happened this year, that is the birth year. If it hasn't, take one more off.
 
-## A worked example
+## Someone who says they're 31
 
 On 16 November 2026, someone who said they were 31 was born in 1995 or 1994:
 
@@ -44,13 +44,13 @@ Below the tool, a table lists ages from 1 to 100 with the two possible birth yea
 
 ## Leap-day and New Year birthdays
 
-This calculator counts a 29 February birthday as falling on 1 March in common years, so in a common year such as 2026 or 2027 the answer to "birthday been yet?" turns to Yes on 1 March. Someone born on 1 January has always had their birthday by the time anyone asks, so for them there is only one answer: the current year minus their age.
+For someone born on 29 February, the birthday counts on 1 March in a common year such as 2026 or 2027 ([why](/#born-on-29-february)), so that is when "birthday been yet?" turns to Yes. Someone born on 1 January has always had their birthday by the time anyone asks, so for them there is only one answer: the current year minus their age.
 
 The tool deals in whole years only. For exact months and days between two dates, [days between dates](/days-between-dates) will count them.
 
 ---
 
-## Birth year FAQs
+## Questions people ask
 
 ### What year was I born if I'm 31?
 Take 31 from the current year, then take one more off if your birthday is still to come this year. On 16 November 2026, for example, a 31-year-old was born in 1995 if they'd had their birthday that year, or 1994 if not.

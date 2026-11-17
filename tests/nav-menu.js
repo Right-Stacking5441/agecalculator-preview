@@ -1,51 +1,14 @@
-/* Calculators nav: iPhone-style touch (WebKit) and desktop click/keyboard (Chromium).
+/* Calculators nav: iPhone-style touch (WebKit), Android touch, desktop
+   click/keyboard (Chromium), and a bfcache restore.
    Run: PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=1 node tests/nav-menu.js
    Serves docs/ unless BASE_URL is set. */
 'use strict';
 
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
-const { pathToFileURL } = require('url');
+const { startServer } = require('./static_server');
 
-const DOCS = path.join(__dirname, '..', 'docs');
-const MIME = {
-  '.html': 'text/html; charset=utf-8',
-  '.js': 'text/javascript; charset=utf-8',
-  '.css': 'text/css; charset=utf-8',
-  '.svg': 'image/svg+xml',
-  '.ico': 'image/x-icon',
-  '.xml': 'application/xml',
-  '.txt': 'text/plain',
-  '.woff2': 'font/woff2',
-  '.woff': 'font/woff',
-};
-
-function startServer() {
+function bootServer() {
   if (process.env.BASE_URL) return Promise.resolve({ url: process.env.BASE_URL, close() {} });
-  return new Promise((resolve, reject) => {
-    const server = http.createServer((req, res) => {
-      let urlPath = decodeURIComponent((req.url || '/').split('?')[0]);
-      if (urlPath === '/') urlPath = '/index.html';
-      if (!path.extname(urlPath)) {
-        const asHtml = path.join(DOCS, urlPath.replace(/^\//, '') + '.html');
-        if (fs.existsSync(asHtml)) urlPath += '.html';
-      }
-      const file = path.normalize(path.join(DOCS, urlPath.replace(/^\//, '')));
-      if (!file.startsWith(DOCS) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
-        res.writeHead(404);
-        res.end('not found');
-        return;
-      }
-      res.writeHead(200, { 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream' });
-      fs.createReadStream(file).pipe(res);
-    });
-    server.listen(0, '127.0.0.1', () => {
-      const { port } = server.address();
-      resolve({ url: 'http://127.0.0.1:' + port, close() { server.close(); } });
-    });
-    server.on('error', reject);
-  });
+  return startServer();
 }
 
 function loadPlaywright() {
@@ -222,7 +185,7 @@ async function desktopKeyboard(page, base) {
 
 async function run() {
   const { webkit, chromium, devices } = loadPlaywright();
-  const server = await startServer();
+  const server = await bootServer();
   const failures = [];
   const log = [];
   const say = (m) => { log.push(m); console.log(m); };
@@ -283,7 +246,6 @@ async function run() {
     });
     await ctx.close();
   }
-  await wk.close();
 
   const chrome = await chromium.launch({ headless: true });
   {
@@ -303,6 +265,100 @@ async function run() {
     });
     await ctx.close();
   }
+
+  const MENU_PAGES = [
+    '/', '/difference/', '/past/', '/days-between-dates/', '/chronological-age/',
+    '/dog-age/', '/cat-age/', '/korean-age/', '/birthday-countdown/',
+    '/how-old-will-i-be/', '/what-year-was-i-born/', '/privacy/', '/contact/', '/embed/',
+  ];
+
+  // One open/close/outside/Esc cycle on every page (WebKit touch + Chromium desktop).
+  {
+    const ctx = await wk.newContext({ ...devices['iPhone 13'], hasTouch: true });
+    const page = await ctx.newPage();
+    await check('WebKit iPhone 13 every page toggle', async () => {
+      for (const path of MENU_PAGES) {
+        await page.goto(server.url + path, { waitUntil: 'domcontentloaded' });
+        await cycleOpenClose(page, true, 'iPhone 13 ' + path);
+      }
+    });
+    await ctx.close();
+  }
+  await wk.close();
+  {
+    const ctx = await chrome.newContext({ viewport: { width: 1280, height: 800 } });
+    const page = await ctx.newPage();
+    await check('Chromium desktop every page toggle', async () => {
+      for (const path of MENU_PAGES) {
+        await page.goto(server.url + path, { waitUntil: 'domcontentloaded' });
+        await cycleOpenClose(page, false, 'desktop ' + path);
+      }
+    });
+    await ctx.close();
+  }
+
+  // Android / Chrome touch (Pixel 7).
+  {
+    const pixel = { ...devices['Pixel 7'], hasTouch: true, isMobile: true };
+    const ctx = await chrome.newContext(pixel);
+    const page = await ctx.newPage();
+    await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+    await check('Chromium Pixel 7 touch 3 open/close cycles', async () => {
+      for (let i = 1; i <= 3; i++) {
+        await cycleOpenClose(page, true, 'Pixel 7 cycle ' + i);
+      }
+    });
+    await check('Chromium Pixel 7 genuine outside tap', async () => {
+      const summary = page.locator('details.nav-menu summary');
+      await tapLocator(page, summary, true);
+      await expectOpen(page, true, 'Pixel 7 before outside');
+      await tapOutside(page, true);
+      await expectOpen(page, false, 'Pixel 7 after outside');
+      const url = page.url();
+      assert(url.replace(/\/+$/, '') === (server.url + '/').replace(/\/+$/, '') || url.endsWith('/'), 'outside tap navigated', { url });
+    });
+    await check('Chromium Pixel 7 every menu link', async () => {
+      await tapEveryLink(page, server.url, true, 'Pixel 7');
+    });
+    await ctx.close();
+  }
+
+  // Back/forward bfcache: leave the menu open, go Back, then Forward.
+  const chromeBf = await chromium.launch({
+    headless: true,
+    ignoreDefaultArgs: ['--disable-back-forward-cache'],
+  });
+  {
+    const ctx = await chromeBf.newContext({
+      viewport: { width: 1280, height: 800 },
+    });
+    const page = await ctx.newPage();
+    await check('Chromium bfcache closes the menu on pageshow', async () => {
+      await page.goto(server.url + '/difference/', { waitUntil: 'domcontentloaded' });
+      await page.goto(server.url + '/', { waitUntil: 'domcontentloaded' });
+      await page.evaluate(() => {
+        window.__ps = null;
+        window.addEventListener('pageshow', function (e) { window.__ps = e.persisted; });
+      });
+      const summary = page.locator('details.nav-menu summary');
+      await tapLocator(page, summary, false);
+      await expectOpen(page, true, 'bfcache menu open before leaving');
+      await page.goBack();
+      await page.waitForTimeout(50);
+      await page.goForward();
+      await page.waitForTimeout(50);
+      const persisted = await page.evaluate(() => window.__ps);
+      // If the browser actually used bfcache, the menu must be closed.
+      // If it did a full reload, the menu starts closed anyway.
+      await expectOpen(page, false, 'bfcache menu after back/forward (persisted=' + persisted + ')');
+      await tapLocator(page, page.locator('details.nav-menu summary'), false);
+      await expectOpen(page, true, 'bfcache can reopen');
+      await tapLocator(page, page.locator('details.nav-menu summary'), false);
+      await expectOpen(page, false, 'bfcache can reclose');
+    });
+    await ctx.close();
+  }
+  await chromeBf.close();
   await chrome.close();
   server.close();
 

@@ -3,20 +3,20 @@
 - **Title:** Cat Age Calculator: Cat Years and Life Stage
 - **Meta description:** Convert your cat's age to human years and see their life stage (kitten, young adult, mature or senior) under the AAHA/AAFP feline guidelines.
 - **H1:** Cat age calculator
-- **Line under the H1:** Turn your cat's age into human years with this cat age calculator. It reads the figure from the AAHA-published chart and tells you which life stage your cat has reached.
+- **Line under the H1:** Your cat's age in human years, and the life stage vets use for it. There's no size to pick, because a cat age calculator only needs years and months.
 - **Target keyword:** cat age calculator
 
 ---
 
 ## Body
 
-## How to use the cat age calculator
+## What you get
 
-Enter your cat's age in years and months and the cat age calculator gives an estimate in human years, plus the life stage vets use for a cat of that age. Before you type an age, the result card has a short chart of common ages under "Cat age chart".
+Cats only need an age, in years and months. The result is an estimate in human years, plus the life stage vets use for a cat of that age. Before you type an age, the result card has a short chart of common ages under "Cat age chart".
 
 These are estimates, not measurements. Cats age at different rates depending on genetics, health and how they live, and no conversion can tell you how a particular cat is doing. For questions about your cat's health, ask your vet.
 
-## How the cat age calculator counts cat years
+## How cat years are counted
 
 The calculator looks your cat's age up on the [pet age chart published on the American Animal Hospital Association website](https://www.aaha.org/wp-content/uploads/globalassets/02-guidelines/canine-life-stage-2019/canine_and_feline_age_chart_poster.pdf), a Zoetis poster whose cat column is adapted from the 2010 AAFP-AAHA Feline Life Stage Guidelines. On that chart a cat is 10 at six months, 15 at one year and 24 at two, and every year after that adds 4.
 
@@ -54,7 +54,7 @@ The [guidelines](https://pmc.ncbi.nlm.nih.gov/articles/PMC10812130/) add a fifth
 
 The result shows which stage your cat is in. The guidelines link each stage to different care. Mature cats start being screened for age-related problems such as kidney disease, and seniors are watched more closely, with more frequent check-ups. The AVMA suggests senior pets see a vet twice a year or more.
 
-## A worked example
+## A cat of exactly 10
 
 A cat that is exactly 10 years old:
 
@@ -70,7 +70,7 @@ Where your cat lives and what they eat may change how long they live, but the ch
 
 ---
 
-## Cat age FAQs
+## Questions people ask
 
 ### How old is a 15-year-old cat in human years?
 About 76: 24 for the first two years, then 4 for each of the next 13.
