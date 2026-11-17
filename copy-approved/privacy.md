@@ -10,7 +10,7 @@
 
 ## Body
 
-This page explains what happens to the information you put into agecalculator.com. The short version: the calculators run in your browser, the dates you type stay on your device, and the site doesn't use cookies, analytics or anything from other companies.
+This page explains what happens to the information you put into agecalculator.com. The short version: the calculators run in your browser, the dates you type stay on your device, and the site doesn't use cookies, analytics or tracking from other companies.
 
 ## Who runs this site
 
