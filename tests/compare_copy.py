@@ -376,20 +376,27 @@ def main() -> int:
                 issues.append("PRIVACY missing GitHub as independent controller")
             if "We chose GitHub Pages because of our legitimate interest in running a secure, reliable site (Article 6(1)(f))." not in html:
                 issues.append("PRIVACY missing GitHub legitimate-interest / Article 6(1)(f) sentence")
-            if "cloudflare.com/privacypolicy" not in html:
-                issues.append("PRIVACY Cloudflare Privacy Policy link missing")
+            approved_cf = (
+                "Old links on app.agecalculator.com are redirected to this site through Cloudflare, Inc., "
+                "which may record visitors\u2019 IP addresses and other details of their requests in its logs. "
+                "Cloudflare does this as our processor under its "
+                '<a href="https://www.cloudflare.com/cloudflare-customer-dpa/">Data Processing Addendum</a>, '
+                "on the basis of our legitimate interest in keeping old links working (Article 6(1)(f)). "
+                "Cloudflare may process this data in the United States and other countries, protected by its "
+                "certification under the EU-U.S. Data Privacy Framework and its UK Extension, and by the "
+                "standard contractual clauses in that addendum."
+            )
+            if approved_cf not in html:
+                issues.append("PRIVACY missing the approved Cloudflare processor paragraph")
             if "cloudflare.com/cloudflare-customer-dpa" not in html:
                 issues.append("PRIVACY Cloudflare DPA link missing")
-            if "Old links on app.agecalculator.com are redirected to this site through Cloudflare, Inc., which may record visitors’ IP addresses in its logs." not in html:
-                issues.append("PRIVACY missing the Cloudflare IP-log sentence")
-            if "is a data processor of those customer logs" not in html:
-                issues.append("PRIVACY missing Cloudflare processor / customer-logs wording")
-            if "Cloudflare does this as our processor under its" not in html:
-                issues.append("PRIVACY missing Cloudflare processor-under-DPA wording")
-            if "on the basis of our legitimate interest in keeping old links working (Article 6(1)(f))" not in html:
-                issues.append("PRIVACY missing Cloudflare legitimate-interest / Article 6(1)(f) sentence")
-            if "protected by its certification under the EU-U.S. Data Privacy Framework and the UK Extension to that framework (the UK-US data bridge), and by the Standard Contractual Clauses and the UK Addendum in that addendum." not in html:
-                issues.append("PRIVACY missing Cloudflare DPF / SCCs / UK Addendum sentence")
+            # Legal's approved paragraph has no other links.
+            para_start = html.find("Old links on app.agecalculator.com")
+            para = html[para_start:html.find("</p>", para_start)] if para_start != -1 else ""
+            if "privacypolicy" in para:
+                issues.append("PRIVACY Cloudflare paragraph should not link the Privacy Policy")
+            if para.count("<a ") != 1:
+                issues.append("PRIVACY Cloudflare paragraph should contain exactly one link")
             if "noindex" not in html:
                 issues.append("PRIVACY missing noindex")
 
