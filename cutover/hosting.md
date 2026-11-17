@@ -1,12 +1,12 @@
 # Hosting for the root
 
-**Recommendation (HC CEO, 16 November 2026): GitHub Pages for the live root, and a redirect-only Netlify site for `app.agecalculator.com` 301s, on the existing dino.game Netlify account.**
+**Recommendation (revised 17 November 2026): GitHub Pages for the live root, and a redirect-only Vercel Hobby project for `app.agecalculator.com` 301s.** HC CEO chose GitHub Pages for the apex on 16 November 2026. On 17 November 2026, HC CEO (speaking for William on Hurrell Capital work) moved the `app.` 301s from Netlify to a free Vercel Hobby project. Netlify is dropped.
 
 This is option (c). The preview stays on GitHub Pages (`Right-Stacking5441/agecalculator-preview`, `main` `/docs`) and stays noindex. The live root should be a **new public production repo**, also published from `/docs`, with the custom domain attached only there. Do not attach `agecalculator.com` to this preview repo.
 
-Netlify is **not** the live root. Putting the whole site on the dino.game Free team would share a 300-credit monthly cap with dino.game; when that cap is hit, **every** site on the team pauses. Using Netlify only for `app.` 301s keeps credit use small. Check credit use a week after launch. If `app.` traffic is heavy, move that redirect site to its own free Netlify account, with William's OK.
+The redirect rules live in `netlify-app-redirects/` (the original 303-rule set) and in the private GitHub repo `Right-Stacking5441/agecalculator-app-redirects`, which has been pushed but **not** connected to Vercel. Import that repo in the Vercel dashboard when William is ready; do not attach `app.agecalculator.com` or change DNS until he approves.
 
-The redirect-only site lives in `netlify-app-redirects/` in this folder. Do not create the Netlify site or change DNS until William approves.
+**Flag:** Vercel's Terms of Service, Hobby Plan section (https://vercel.com/legal/terms, last updated 19 October 2026) say: "You shall only use the Services under a Hobby plan for your personal or non-commercial use." The same section says Vercel may disable or remove Hobby projects with or without notice. Agecalculator.com is a Hurrell Capital site; Hobby may be the wrong plan. Vercel's Data Processing Addendum (https://vercel.com/legal/dpa) applies to Pro and Enterprise plans, not Hobby.
 
 ## Why directory indexes (trailing slashes)
 
@@ -31,23 +31,23 @@ At launch, in a reviewed commit on the **production** repo:
 
 ## Privacy hosting wording (approved; already on the preview)
 
-Legal Manager supplied the live wording on 16 November 2026. It is already in `copy-approved/privacy.md` and the built `docs/privacy/index.html`. There is no later “swap the hosting sentence” step for Cloudflare Pages or for Netlify-as-root. At launch, fill only `[PLACEHOLDER: date this policy is published]`.
+Legal Manager supplied the GitHub Pages wording on 16 November 2026. The `app.` paragraph was rewritten on 17 November 2026 after the host for those redirects moved from Netlify to a Vercel Hobby project, and only from Vercel's published terms: the DPA applies to Pro and Enterprise, not Hobby, so the earlier "processor under its data processing agreement" sentence is not used. The text is in `copy-approved/privacy.md` and the built `docs/privacy/index.html`. There is no later "swap the hosting sentence" step for Cloudflare Pages or for Netlify-as-root. At launch, fill only `[PLACEHOLDER: date this policy is published]`. Flag the Hobby paragraph for Legal if they want a further pass.
 
 The approved paragraphs are:
 
 ```
 These pages are hosted on GitHub Pages, a service of GitHub, Inc. in the United States. According to [GitHub's documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), when a GitHub Pages site is visited, the visitor's IP address is logged and stored for security purposes, whether or not the visitor is signed in to GitHub. We rely on our legitimate interest in keeping the site secure and available. GitHub handles this data under the [GitHub General Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement), which does not give a fixed retention period. Transfers to the United States are covered by GitHub's certification under the EU-U.S. Data Privacy Framework and its UK Extension (the UK-US data bridge).
 
-Old links on app.agecalculator.com are redirected to this site by Netlify, Inc., which acts as our processor. When you follow one of those links, Netlify logs your IP address and request details. According to [Netlify's Data Processing Agreement](https://www.netlify.com/pdf/netlify-dpa.pdf) (last updated 13 November 2026), its CDN traffic and access logs are kept online for 30 days and in archival storage for up to 13 months, and logs used to investigate security or abuse can be kept for up to 6 years. Transfers are covered by the EU-U.S. Data Privacy Framework or the European Commission's Standard Contractual Clauses and, for UK data, the UK International Data Transfer Addendum.
+Old links on app.agecalculator.com are redirected to this site through Vercel Inc., which may record visitors' IP addresses in its server logs. According to [Vercel's Privacy Notice](https://vercel.com/legal/privacy-policy), Vercel collects end-user IP addresses, location derived from those addresses, and service-generated log files from traffic to and from customers' websites, and under that notice it acts as a controller for the personal information it processes. [Vercel's Data Processing Addendum](https://vercel.com/legal/dpa), under which Vercel acts as a processor, applies to Pro and Enterprise plans and does not apply to the Hobby plan. We use Vercel because of our legitimate interest in keeping old links working (Article 6(1)(f)). Vercel may process this data in the United States, protected by its certification under the EU-U.S. Data Privacy Framework and the UK Extension to that framework.
 ```
 
-The preview itself remains on GitHub Pages until cutover; the Netlify paragraph describes the planned `app.` redirect host. Flag for Legal only if they want a further pass. The example of a year link in “Links with dates in them” was updated from `/past?year=1990` to `/past/1990/` to match the new URLs. There was no separate recipients or retention section; GitHub and Netlify are described in these two paragraphs only.
+The preview itself remains on GitHub Pages until cutover; the Vercel paragraph describes the planned `app.` redirect host. Flag for Legal if they want a further pass, especially because the DPA does not apply to Hobby. The example of a year link in “Links with dates in them” was updated from `/past?year=1990` to `/past/1990/` to match the new URLs. There is no separate recipients or retention section; GitHub and Vercel are described in these two paragraphs only.
 
 ## After approval (not now)
 
 1. Keep this repo noindex until the go-ahead to index.
 2. Create a new public production GitHub repo, publish from `/docs`, add `docs/CNAME` with `agecalculator.com`, and attach the custom domain only there (verify the domain first).
-3. Create the redirect-only Netlify site from `cutover/netlify-app-redirects/`, on the dino.game account, and attach only `app.agecalculator.com`.
-4. When William says go: switch Namecheap to BasicDNS, enter the record table in `namecheap-plan.md`, wait for Let's Encrypt on GitHub Pages and on the Netlify `app.` alias, turn **Enforce HTTPS** on, confirm `www` 301s to the apex, test mail, then remove noindex / open `robots.txt` in a reviewed production commit (year pages included: no noindex, still off the sitemap), and fill the privacy date. Unknown apex paths must return a real HTTP 404 from `404.html`.
-5. A week after launch: check Netlify credit use on the shared team. If the pool is running low, ask William before moving `app.` to its own free account.
+3. Import `Right-Stacking5441/agecalculator-app-redirects` as a Vercel Hobby project in the dashboard (do not connect it from this machine), and attach only `app.agecalculator.com` when William says to. Flag the Hobby personal-or-non-commercial clause first.
+4. When William says go: switch Namecheap to BasicDNS, enter the record table in `namecheap-plan.md`, wait for certificates on GitHub Pages and on the Vercel `app.` domain, turn **Enforce HTTPS** on for Pages, confirm `www` 301s to the apex, test mail, then remove noindex / open `robots.txt` in a reviewed production commit (year pages included: no noindex, still off the sitemap), and fill the privacy date. Unknown apex paths must return a real HTTP 404 from `404.html`.
+5. A week after launch: confirm the Vercel Hobby project is still serving the `app.` 301s, and raise the Hobby commercial-use clause with William if the site should move to Pro.
 6. Leave this GitHub Pages preview up as a fallback until you are sure.

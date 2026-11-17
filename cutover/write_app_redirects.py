@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Write cutover/netlify-app-redirects/_redirects from the year range and slugs."""
+"""Write cutover/netlify-app-redirects/_redirects from the year range and slugs.
+
+This file is the source rule set. The planned host is the Vercel project in
+Right-Stacking5441/agecalculator-app-redirects, not a Netlify site.
+"""
 from __future__ import annotations
 
 import sys

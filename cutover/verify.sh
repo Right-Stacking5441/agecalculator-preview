@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Post-cutover checks for the agecalculator.com redirect map.
 # Uses curl -sSI (HEAD, no follow). Most HTTPS rules are a single 301 to the
-# expected target. HTTP is often two hops on Netlify (same-host HTTP→HTTPS first).
+# expected target. HTTP is often two hops on Vercel (same-host HTTP→HTTPS first).
 # Do not treat a run against today's live zone as a reason to change DNS:
 # these assertions describe the *after* state and will fail until cutover is applied.
 set -u
@@ -105,7 +105,7 @@ check_301() {
 }
 
 # Two hops, each asserted without -L, then the final URL must be 200.
-# Used where Netlify's automatic same-host HTTP→HTTPS upgrade runs first.
+# Used where the host's automatic same-host HTTP→HTTPS upgrade runs first.
 check_301_two_hops() {
   local url="$1"
   local hop1="$2"
@@ -243,7 +243,7 @@ check_asset_200() {
   passed=$((passed + 1))
 }
 
-echo "agecalculator.com cutover verify (GitHub Pages root, Netlify app. 301s)"
+echo "agecalculator.com cutover verify (GitHub Pages root, Vercel app. 301s)"
 echo "-----------------------------------------------------------"
 
 # Path sweep on the apex. Slashless /slug and /past/YYYY must 301 to the slash form
@@ -259,7 +259,7 @@ check_301 "https://www.agecalculator.com/past/1990/" "$ROOT/past/1990/" "https:/
 check_301 "https://www.agecalculator.com/difference/" "$ROOT/difference/" "https://www.../difference/"
 check_301_two_hops "http://www.agecalculator.com/" "https://www.agecalculator.com/" "$ROOT/" "http://www.agecalculator.com/"
 
-# app. 301s (Netlify). HTTPS is one hop to the trailing-slash root URL.
+# app. 301s (Vercel). HTTPS is one hop to the trailing-slash root URL.
 check_301 "https://app.agecalculator.com/" "$ROOT/" "https://app.../"
 check_301 "https://app.agecalculator.com/past" "$ROOT/past/" "https://app.../past"
 check_301 "https://app.agecalculator.com/past/1990" "$ROOT/past/1990/" "https://app.../past/1990"
