@@ -3,7 +3,7 @@
 - **Title:** Privacy | agecalculator.com
 - **Meta description:** How agecalculator.com handles the dates you type: worked out in your browser, with no cookies, no analytics and no third-party scripts.
 - **H1:** Privacy
-- **Line under the H1:** Last updated 17 November 2026
+- **Line under the H1:** Last updated 18 November 2026
 - **Indexing:** the current preview marks this page noindex; SEO Manager to decide for launch.
 
 ---
@@ -38,7 +38,7 @@ Bear in mind that anything in a web address is part of the request your browser 
 
 These pages are hosted on GitHub Pages, a service of GitHub, Inc. in the United States. According to [GitHub's documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), when a GitHub Pages site is visited, the visitor's IP address is logged and stored for security purposes, whether or not the visitor is signed in to GitHub. We don't receive or have access to these logs. GitHub handles this data as an independent controller under the [GitHub General Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement), which explains its legal basis and does not give a fixed retention period. We chose GitHub Pages because of our legitimate interest in running a secure, reliable site (Article 6(1)(f)). Transfers to the United States are covered by GitHub's certification under the EU-U.S. Data Privacy Framework and its UK Extension (the UK-US data bridge).
 
-Old links on app.agecalculator.com are redirected to this site through Cloudflare, Inc., which may record visitors’ IP addresses and other details of their requests in its logs. Cloudflare does this as our processor under its [Data Processing Addendum](https://www.cloudflare.com/cloudflare-customer-dpa/), on the basis of our legitimate interest in keeping old links working (Article 6(1)(f)). Cloudflare may process this data in the United States and other countries, protected by its certification under the EU-U.S. Data Privacy Framework and its UK Extension, and by the standard contractual clauses in that addendum.
+Old links on app.agecalculator.com are redirected to this site through Cloudflare, Inc., which may record visitors’ IP addresses and other details of their requests in its logs. Cloudflare handles some of this as our processor under its [Data Processing Addendum](https://www.cloudflare.com/cloudflare-customer-dpa/), and some as an independent controller to run and secure its network, as explained in the [Cloudflare Privacy Policy](https://www.cloudflare.com/privacypolicy/). We use Cloudflare for this because of our legitimate interest in keeping old links working (Article 6(1)(f)). Cloudflare may process this data in the United States and other countries, protected by its certification under the EU-U.S. Data Privacy Framework and its UK Extension, and by the standard contractual clauses in that addendum.
 
 ## Fonts, scripts and outside services
 
