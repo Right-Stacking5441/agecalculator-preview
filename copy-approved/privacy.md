@@ -3,7 +3,7 @@
 - **Title:** Privacy | agecalculator.com
 - **Meta description:** How agecalculator.com handles the dates you type, cookies and Google Analytics.
 - **H1:** Privacy
-- **Line under the H1:** Last updated 22 November 2026
+- **Line under the H1:** Last updated 23 November 2026
 - **Indexing:** the current preview marks this page noindex; SEO Manager to decide for launch.
 
 ---
@@ -39,7 +39,7 @@ Until you accept, these cookies aren’t set and the Google Analytics script isn
 
 ## What Google Analytics measures
 
-If you accept, we measure which pages you visit and Google Analytics’ standard automatic measurements, such as scrolling, clicks on links to other sites and time on the page. Google Analytics also receives technical details: your browser and its version, your operating system and its version, your device type, brand and model, your screen resolution, the page that sent you here, and your approximate location down to town or city level, worked out from your IP address. Google says Google Analytics 4 does not log or store IP addresses.
+If you accept, we measure which pages you visit and Google Analytics’ standard automatic measurements, such as scrolling, clicks on links to other sites and time on the page. Google Analytics also receives technical details: your browser and operating system and their main versions, your device type (such as phone or computer), your language setting, the page that sent you here, and your approximate location down to country and region, worked out from your IP address. We’ve switched off Google Analytics’ collection of city-level location and detailed device information, such as your device’s brand and model and your screen resolution. Google says Google Analytics 4 does not log or store IP addresses.
 
 We never send Google the dates or names you type or the results you get. Where a date is in the web address, such as /?dob=15 March 1995 or /past/1990/, we remove it before the page address is sent. We can’t see who you are. We look at the results only as totals, to understand how the site is used and make it better.
 
@@ -61,7 +61,7 @@ Bear in mind that anything in a web address is part of the request your browser 
 
 ## Who receives your data
 
-Google Ireland Limited (Google’s contracting entity for customers in the UK and EU) and Google LLC in the US provide Google Analytics, if you accept it. It acts as our processor under Google’s data processing terms. Google may process this data in the United States and other countries, protected by Google LLC’s certification under the EU-U.S. Data Privacy Framework and its UK Extension (the UK-US data bridge), and by the European Commission’s Standard Contractual Clauses and the UK International Data Transfer Addendum included in Google’s data processing terms.
+Google Ireland Limited (Google’s contracting entity for customers in the UK and EU) and Google LLC in the US provide Google Analytics, if you accept it. Google acts as our processor under its data processing terms. Google may process this data in the United States and other countries, protected by Google LLC’s certification under the EU-U.S. Data Privacy Framework and its UK Extension (the UK-US data bridge), and by the European Commission’s Standard Contractual Clauses and the UK International Data Transfer Addendum included in Google’s data processing terms.
 
 These pages are hosted on GitHub Pages, a service of GitHub, Inc. in the United States. According to [GitHub’s documentation](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages), when a GitHub Pages site is visited, the visitor’s IP address is logged and stored for security purposes, whether or not the visitor is signed in to GitHub. We don’t receive or have access to these logs. GitHub handles this data as an independent controller under the [GitHub General Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement), which explains its legal basis and does not give a fixed retention period. We chose GitHub Pages because of our legitimate interest in running a secure, reliable site (Article 6(1)(f)). Transfers to the United States are covered by GitHub’s certification under the EU-U.S. Data Privacy Framework and its UK Extension (the UK-US data bridge).
 
@@ -69,7 +69,7 @@ Old links on app.agecalculator.com are redirected to this site through Cloudflar
 
 We don’t sell your data or use it to show you personalised ads.
 
-Email sent to [hello@agecalculator.com](mailto:hello@agecalculator.com) is passed on by our domain registrar, Namecheap, to our mailbox, which Namecheap also provides. We do this because of our legitimate interest in receiving messages people send us (Article 6(1)(f)). Namecheap, Inc. is based in the United States, and your email may be handled and stored on its servers there. Namecheap isn’t certified under the EU-US Data Privacy Framework; its terms rely on standard contractual clauses instead, which you can read in [Namecheap’s Data Processing Addendum](https://www.namecheap.com/legal/universal/data-processing-addendum/). We may also forward messages from our Namecheap mailbox to our iCloud Mail account, which Apple Distribution International Limited in Ireland provides. Apple may transfer them to Apple Inc. in the United States; Apple says these transfers are covered by standard contractual clauses, as explained in [Apple’s Privacy Policy](https://www.apple.com/legal/privacy/en-ww/).
+Email sent to [hello@agecalculator.com](mailto:hello@agecalculator.com) is passed on by our domain registrar, Namecheap, to our mailbox, which Namecheap also provides. We do this because of our legitimate interest in receiving messages people send us (Article 6(1)(f)). Namecheap, Inc. is based in the United States, and your email may be handled and stored on its servers there. Namecheap isn’t certified under the EU-U.S. Data Privacy Framework; its terms rely on standard contractual clauses instead, which you can read in [Namecheap’s Data Processing Addendum](https://www.namecheap.com/legal/universal/data-processing-addendum/). We may also forward messages from our Namecheap mailbox to our iCloud Mail account, which Apple Distribution International Limited in Ireland provides. Apple may transfer them to Apple Inc. in the United States; Apple says these transfers are covered by standard contractual clauses, as explained in [Apple’s Privacy Policy](https://www.apple.com/legal/privacy/en-ww/).
 
 ## Fonts, scripts and outside services
 
@@ -87,7 +87,7 @@ Other sites can put our age calculator on their pages. It works the same way the
 
 ## How long we keep it
 
-Google Analytics keeps event-level data for 2 months, then deletes it automatically in its next monthly clean-up. The totals and reports we’ve already produced may be kept longer, but they don’t identify anyone. The cookies above last up to 2 years (some browsers delete them sooner) unless you delete them or withdraw consent.
+Google Analytics keeps event-level and user-level data for 2 months, then deletes it automatically in its next monthly clean-up. The totals and reports we’ve already produced may be kept longer, but they don’t identify anyone. The cookies above last up to 2 years (some browsers delete them sooner) unless you delete them or withdraw consent.
 
 ## Children
 
