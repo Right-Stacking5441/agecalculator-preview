@@ -644,6 +644,26 @@ def ensure_viewport(soup):
         soup.head.append(frag('<meta name="viewport" content="' + content + '">'))
 
 
+def ensure_pinterest_verify(soup):
+    """Keep the Pinterest domain-verify tag after the viewport meta."""
+    if not soup.head:
+        return
+    if soup.find("meta", attrs={"name": "p:domain_verify"}):
+        return
+    meta = frag(
+        '<meta name="p:domain_verify" content="734c20818ac93122c641880abc78b9aa"/>'
+    ).find("meta")
+    vp = soup.find("meta", attrs={"name": "viewport"})
+    if vp:
+        vp.insert_after(meta)
+        return
+    charset = soup.find("meta", attrs={"charset": True})
+    if charset:
+        charset.insert_after(meta)
+        return
+    soup.head.insert(0, meta)
+
+
 def ensure_share_head(soup):
     """color-scheme, twitter:card, og:image and the apple-touch-icon, on every page."""
     if not soup.head:
@@ -711,6 +731,7 @@ def apply_ux(docs: Path, launch: bool = False) -> int:
             acts_block(soup, slug)
             rewrite_dog_tiles(soup, slug)
         ensure_viewport(soup)
+        ensure_pinterest_verify(soup)
         ensure_share_head(soup)
         if cfg:
             rule_line(soup)

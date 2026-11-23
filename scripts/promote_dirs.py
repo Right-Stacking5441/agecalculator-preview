@@ -418,6 +418,7 @@ def stub_html(dest_path: str, depth: int) -> str:
         "<head>\n"
         '<meta charset="utf-8">\n'
         '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+        '<meta name="p:domain_verify" content="734c20818ac93122c641880abc78b9aa"/>\n'
         f"<title>This page has moved</title>\n"
         f'<link rel="canonical" href="{target}">\n'
         f'<meta property="og:url" content="{target}">\n'

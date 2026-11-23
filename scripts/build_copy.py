@@ -831,11 +831,45 @@ def finalize_404(docs: Path, launch: bool) -> None:
     print(f"finalized 404.html ({'launch' if launch else 'preview'} root paths)")
 
 
+PINTEREST_VERIFY_TAG = (
+    '<meta name="p:domain_verify" content="734c20818ac93122c641880abc78b9aa"/>'
+)
+_PINTEREST_VERIFY_RE = re.compile(
+    r'<meta[^>]*name=["\']p:domain_verify["\'][^>]*>', re.I
+)
+_VIEWPORT_RE = re.compile(
+    r'<meta[^>]*name=["\']viewport["\'][^>]*>', re.I
+)
+
+
+def _ensure_pinterest_verify(html: str) -> str:
+    """Keep the Pinterest domain-verify tag in <head> across rebuilds."""
+    if _PINTEREST_VERIFY_RE.search(html):
+        return html
+    if _VIEWPORT_RE.search(html):
+        return _VIEWPORT_RE.sub(r'\g<0>\n' + PINTEREST_VERIFY_TAG, html, count=1)
+    if re.search(r'<meta[^>]*charset=', html, re.I):
+        return re.sub(
+            r'(<meta[^>]*charset=[^>]*>)',
+            r'\1\n' + PINTEREST_VERIFY_TAG,
+            html,
+            count=1,
+            flags=re.I,
+        )
+    return re.sub(
+        r'(<head[^>]*>)',
+        r'\1\n' + PINTEREST_VERIFY_TAG,
+        html,
+        count=1,
+        flags=re.I,
+    )
+
+
 def _insert_robots(html: str, content: str) -> str:
     html = re.sub(r'\n?<meta[^>]*name=["\']robots["\'][^>]*>\n?', "\n", html, flags=re.I)
     if re.search(r'<meta[^>]*name=["\']viewport["\']', html, re.I):
         return re.sub(
-            r'(<meta[^>]*name=["\']viewport["\'][^>]*>)',
+            r'(<meta[^>]*name=["\']viewport["\'][^>]*>(?:\n<meta[^>]*name=["\']p:domain_verify["\'][^>]*>)?)',
             r'\1\n<meta name="robots" content="' + content + '">',
             html,
             count=1,
@@ -889,7 +923,7 @@ def apply_robots(docs: Path, launch: bool) -> None:
                 html = _strip_robots(html)
             else:
                 html = _insert_robots(html, "noindex,nofollow")
-        pth.write_text(html)
+        pth.write_text(_ensure_pinterest_verify(html))
     mode = "launch" if launch else "preview"
     print(f"applied {mode} robots.txt and robots meta")
 
