@@ -31,11 +31,9 @@ Type your date of birth and the date you want to look back to. The big number is
 
 It works for any date from 1000 to 2999, as long as it isn't before your date of birth. If the date you type is before you were born, the page tells you how many days early it is rather than showing a negative age.
 
-## Coming from an old year link?
+## If you only know the year
 
-Older versions of this site had a separate page for each year, such as “how old was I in 1990”. Those links still work, and they fill in 1 January of that year for you. A year isn’t a single day, though, and your age changes partway through it, so change the date to the day you actually mean.
-
-If you only know the year, the answer is one of two ages. Before your birthday in that year you were the year minus your birth year, minus one. From your birthday onwards you were one older.
+Your age changes partway through a year, on your birthday. Before your birthday that year, you were the year minus your birth year, minus one. From your birthday onwards, you were one year older. Someone born in 1980 was 9 in 1990 until their birthday, then 10. Pick the exact day to get a single answer.
 
 ## Leap days and month ends
 

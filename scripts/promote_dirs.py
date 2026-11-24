@@ -362,7 +362,7 @@ def _year_unique_body(html: str, year: int) -> str:
             + (", and it was a leap year. " if leap else ". ")
         )
         link = soup.new_tag("a", href="../")
-        link.string = "Your age on a past date"
+        link.string = "your age on a past date"
         note.append("For any other date, including other years, use the main tool, ")
         note.append(link)
         note.append(".")

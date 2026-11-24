@@ -29,8 +29,7 @@ Titles and metas are applied only when:
         past-year-meta.approved or past-year-meta.ok
 
 A "hub" row applies title and meta to /past/. The H1 is set to
-"Your age on a past date" (addendum 24 Nov). Year-page closing links to
-the hub use that same phrase in place of "How old was I on a certain date?".
+"Your age on a past date" (addendum 24 Nov). Year-page closing links to the hub use the lowercase phrase "your age on a past date".
 """
 from __future__ import annotations
 
@@ -50,6 +49,7 @@ FACT_CHECK_SIDECARS = (
     "past-year-meta.ok",
 )
 HUB_H1 = "Your age on a past date"
+HUB_LINK_TEXT = "your age on a past date"
 OLD_HUB_LINK = "How old was I on a certain date?"
 # Also accept a Fact Checker report in the neighbouring factcheck/ folder.
 FACT_CHECK_REPORTS = (
@@ -232,7 +232,9 @@ def patch_year_page(html: str, year: int, csv_row: dict[str, str] | None) -> str
 
 def replace_hub_link_text(html: str) -> str:
     """Year-page closing link to the hub: new plain-statement wording."""
-    return html.replace(f">{OLD_HUB_LINK}</a>", f">{HUB_H1}</a>")
+    return html.replace(f">{OLD_HUB_LINK}</a>", f">{HUB_LINK_TEXT}</a>").replace(
+        f">{HUB_H1}</a>", f">{HUB_LINK_TEXT}</a>"
+    )
 
 
 def patch_hub(html: str, row: dict[str, str]) -> str:
@@ -465,8 +467,10 @@ def verify_root(root: Path) -> list[str]:
         else:
             if OLD_HUB_LINK in html:
                 issues.append(f"{label} still has old hub link text")
-            if f">{HUB_H1}</a>" not in html:
-                issues.append(f"{label} missing new hub link text")
+            if f">{HUB_LINK_TEXT}</a>" not in html:
+                issues.append(f"{label} missing lowercase hub link text")
+            if f">{HUB_H1}</a>" in html:
+                issues.append(f"{label} hub link text is still capitalised")
     return issues
 
 
