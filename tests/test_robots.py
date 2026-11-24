@@ -38,6 +38,16 @@ def classify(rel: str) -> str:
         return "embed"
     if rel in ("widget/index.html", "widget.html"):
         return "widget"
+    parts = rel.split("/")
+    if (
+        len(parts) == 3
+        and parts[0] == "past"
+        and parts[1].isdigit()
+        and parts[2] == "index.html"
+    ):
+        return "year"
+    if rel == "past/index.html":
+        return "hub"
     return "page"
 
 
@@ -80,7 +90,10 @@ def check_tree(docs: Path, launch: bool) -> list[str]:
                 if content is not None:
                     issues.append(f"{rel} should have no robots meta in a launch build, got {content!r}")
         else:
-            if content != "noindex,nofollow":
+            if kind in ("year", "hub"):
+                if content is not None and "noindex" in content:
+                    issues.append(f"{rel} year/hub preview must not have noindex ({content})")
+            elif content != "noindex,nofollow":
                 issues.append(f"{rel} preview should be noindex,nofollow, got {content!r}")
     if launch and saw_banner:
         issues.append("launch build kept a preview banner")
@@ -88,8 +101,8 @@ def check_tree(docs: Path, launch: bool) -> list[str]:
         issues.append("preview build has no preview banner")
     # Privacy date is confirmed, not a placeholder.
     privacy = docs / "privacy" / "index.html"
-    if privacy.is_file() and "Last updated 17 November 2026" not in privacy.read_text():
-        issues.append("privacy should say Last updated 17 November 2026")
+    if privacy.is_file() and "Last updated 23 November 2026" not in privacy.read_text():
+        issues.append("privacy should say Last updated 23 November 2026")
 
     html_404 = (docs / "404.html").read_text(encoding="utf-8")
     if 'property="og:url"' in html_404 or "property='og:url'" in html_404:

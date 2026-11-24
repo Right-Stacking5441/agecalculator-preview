@@ -960,3 +960,225 @@ body.widget { --leaf-h: 470px; }
      leaves only ~40px for the result and the page scrolls sideways. */
   .obj-pair { grid-template-columns: minmax(0, 1fr) min-content; }
 }
+
+/* Cookie consent banner and the cookie table on /privacy/.
+   Font sizes are rem so 200% text / page zoom scales the banner.
+   The text column scrolls; Accept and Reject stay in view. */
+#consent-banner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: var(--s3) var(--s5);
+  background: var(--paper);
+  border-top: 1.5px solid var(--ink);
+  color: var(--ink);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  padding-top: var(--s4);
+  padding-bottom: calc(var(--s4) + env(safe-area-inset-bottom, 0px));
+  padding-inline: max(var(--s5), env(safe-area-inset-left, 0px)) max(var(--s5), env(safe-area-inset-right, 0px));
+  max-height: var(--consent-banner-max, min(50dvh, calc(100dvh - 4.5rem)));
+  box-sizing: border-box;
+  overflow: hidden;
+}
+#consent-banner.is-compact {
+  padding-top: 10px;
+  padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+}
+#consent-banner[hidden],
+html.consent-chosen #consent-banner {
+  display: none !important;
+}
+#consent-banner:focus {
+  outline: 3px solid var(--focus);
+  outline-offset: -3px;
+}
+.consent-text {
+  flex: 1 1 auto;
+  max-width: 46rem;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+}
+#consent-banner .consent-copy {
+  flex: 1 1 auto;
+  min-height: var(--consent-copy-min, 0px);
+  margin: 0;
+  padding: 0 0.15em;
+  overflow-y: auto;
+}
+#consent-banner .consent-copy:focus {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+#consent-banner .consent-copy.is-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+}
+#consent-banner .consent-status {
+  margin: var(--s2) 0 0;
+}
+#consent-banner .consent-status[hidden] {
+  display: none !important;
+}
+.consent-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s3);
+  flex: 0 0 auto;
+  align-self: flex-end;
+}
+#consent-banner button {
+  appearance: none;
+  font: 600 1rem/1 "Libre Franklin", "LF Fallback", Arial, sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 2px;
+  /* Fixed horizontal padding so 200% text does not inflate the
+     padding, stack the buttons, and clip the last line of copy. */
+  padding: 0 12px;
+  height: 44px;
+  min-height: 44px;
+  max-height: 44px;
+  min-width: 44px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+@media (max-width: 40rem) {
+  #consent-banner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .consent-actions {
+    align-self: stretch;
+    flex-wrap: nowrap;
+    width: 100%;
+  }
+  #consent-banner .consent-actions button {
+    flex: 1 1 0;
+    min-width: 44px;
+  }
+}
+#consent-banner .consent-actions.is-stacked {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
+#consent-banner .consent-actions.is-stacked button {
+  flex: 0 0 auto;
+  width: 100%;
+  min-width: 0;
+}
+/* Keep the open Calculators menu above the cookie banner. The header
+   must be a stacking context, or the menu's own z-index stays trapped
+   under the fixed banner. */
+html.has-consent-banner .mast {
+  position: relative;
+  z-index: 1100;
+}
+html.has-consent-banner .nav-menu.is-enhanced { z-index: 1100; }
+html.has-consent-banner .nav-menu.is-enhanced ul {
+  z-index: 1101;
+  /* Stay above the banner, including the wide two-column menu. */
+  max-height: min(52vh, 360px, calc(100dvh - var(--consent-h, 7.5rem) - 4.5rem));
+  overflow-y: auto;
+}
+html.has-consent-banner .nav-menu-back { z-index: 1090; }
+#consent-banner button.is-selected,
+#consent-banner button[aria-pressed="true"] {
+  background: var(--desk);
+}
+@media (hover: hover) {
+  #consent-banner button:hover { background: var(--desk); }
+}
+html.has-consent-banner body,
+body.has-consent-banner {
+  padding-bottom: var(--consent-h, 7.5rem);
+}
+.cookie-table-wrap {
+  margin: 0 0 var(--s4);
+  overflow-x: auto;
+}
+.cookie-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+.cookie-table caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 700;
+  padding: 0 0 var(--s3);
+}
+.cookie-table th {
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--ink);
+  padding: var(--s2) var(--s4) var(--s2) 0;
+  vertical-align: bottom;
+}
+.cookie-table td {
+  padding: var(--s3) var(--s4) var(--s3) 0;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+.cookie-table code {
+  font: 14px/1.4 ui-monospace, Menlo, Consolas, monospace;
+}
+@media (max-width: 40rem) {
+  .cookie-table-wrap { overflow: visible; }
+  .cookie-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .cookie-table,
+  .cookie-table caption,
+  .cookie-table tbody,
+  .cookie-table tr,
+  .cookie-table td {
+    display: block;
+    width: 100%;
+  }
+  .cookie-table tr {
+    border-bottom: 1.5px solid var(--ink);
+    padding: var(--s3) 0 var(--s4);
+    margin: 0;
+  }
+  .cookie-table td {
+    border: 0;
+    padding: var(--s2) 0;
+  }
+  .cookie-table td::before {
+    content: attr(data-label);
+    display: block;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+}
+@media print {
+  #consent-banner { display: none !important; }
+  html.has-consent-banner body,
+  body.has-consent-banner { padding-bottom: 0 !important; }
+}

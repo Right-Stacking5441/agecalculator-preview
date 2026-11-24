@@ -919,7 +919,18 @@ def apply_robots(docs: Path, launch: bool) -> None:
             if "preview-banner" in html:
                 raise SystemExit(f"launch build still has the preview banner on {rel}")
         else:
+            parts = rel.split("/")
+            is_year = (
+                len(parts) == 3
+                and parts[0] == "past"
+                and parts[1].isdigit()
+                and parts[2] == "index.html"
+            )
+            is_hub = rel == "past/index.html"
             if is_stub:
+                html = _strip_robots(html)
+            elif is_year or is_hub:
+                # Year pages and the /past/ hub stay indexable (self-canonical spec).
                 html = _strip_robots(html)
             else:
                 html = _insert_robots(html, "noindex,nofollow")

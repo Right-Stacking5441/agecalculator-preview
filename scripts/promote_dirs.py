@@ -6,13 +6,13 @@ builds flat files. This step:
 - moves each page (except index.html and 404.html) to <slug>/index.html
 - rewrites relative asset and internal links for the new depth
 - sets trailing-slash canonicals, og:url and JSON-LD URLs
-- writes a static /past/<year>/ page for 1960-2026, each canonicalised to
-  https://agecalculator.com/past/ (not listed in the sitemap; no extra noindex)
+- writes a static /past/<year>/ page for 1960-2026, each self-canonical to
+  https://agecalculator.com/past/YYYY/ (listed in the sitemap; no noindex)
 - writes stub pages only for true legacy URLs GitHub Pages cannot 301
   (/rodent-age-calculator.html, /how-old-am-i, /date-of-birth). Directory
   pages are not also written as slug.html, because that file steals the
   slashless /slug → /slug/ 301 on GitHub Pages.
-- rewrites sitemap.xml to trailing-slash loc values (no year URLs)
+- rewrites sitemap.xml to trailing-slash loc values, including the 67 year URLs
 """
 from __future__ import annotations
 
@@ -287,26 +287,26 @@ def year_intro(year: int) -> tuple[str, str, str, str]:
     return title, desc, h1, lede
 
 
+def _meta_tag(ident_attr: str, ident_val: str) -> re.Pattern[str]:
+    """Match a <meta> tag that has ident_attr=ident_val, any attribute order."""
+    return re.compile(
+        rf"""<meta\b(?=[^>]*\b{ident_attr}\s*=\s*["']{re.escape(ident_val)}["'])[^>]*>""",
+        re.I,
+    )
+
+
+def _set_meta_content(html: str, ident_attr: str, ident_val: str, content: str) -> str:
+    pat = _meta_tag(ident_attr, ident_val)
+    if not pat.search(html):
+        return html
+    return pat.sub(lambda m: _set_attr(m.group(0), "content", content), html, count=1)
+
+
 def _replace_head_text(html: str, title: str, desc: str, h1: str, lede: str, *, jsonld: bool = True) -> str:
     html = re.sub(r"<title>[^<]*</title>", f"<title>{title}</title>", html, count=1)
-    html = re.sub(
-        r'<meta property="og:title" content="[^"]*">',
-        f'<meta property="og:title" content="{title}">',
-        html,
-        count=1,
-    )
-    html = re.sub(
-        r'<meta name="description" content="[^"]*">',
-        f'<meta name="description" content="{desc}">',
-        html,
-        count=1,
-    )
-    html = re.sub(
-        r'<meta property="og:description" content="[^"]*">',
-        f'<meta property="og:description" content="{desc}">',
-        html,
-        count=1,
-    )
+    html = _set_meta_content(html, "property", "og:title", title)
+    html = _set_meta_content(html, "name", "description", desc)
+    html = _set_meta_content(html, "property", "og:description", desc)
     # intro h1 + lede (UX may have wrapped these)
     html, n = re.subn(
         r"(<div class=\"intro\">\s*<h1>)(.*?)(</h1>\s*<p(?: class=\"lede\")?>)(.*?)(</p>)",
@@ -362,12 +362,22 @@ def _year_unique_body(html: str, year: int) -> str:
             + (", and it was a leap year. " if leap else ". ")
         )
         link = soup.new_tag("a", href="../")
-        link.string = "How old was I on a certain date?"
+        link.string = "Your age on a past date"
         note.append("For any other date, including other years, use the main tool, ")
         note.append(link)
         note.append(".")
         content.append(note)
     return str(soup)
+
+
+
+def _current_meta_description(html: str) -> str | None:
+    pat = _meta_tag("name", "description")
+    m = pat.search(html)
+    if not m:
+        return None
+    c = re.search(r"""content\s*=\s*(["'])(.*?)\1""", m.group(0), re.I | re.S)
+    return c.group(2) if c else None
 
 
 def write_year_pages(docs: Path = DOCS) -> list[Path]:
@@ -377,11 +387,15 @@ def write_year_pages(docs: Path = DOCS) -> list[Path]:
     base = src.read_text()
     written = []
     for year in range(YEAR_MIN, YEAR_MAX + 1):
-        title, desc, h1, lede = year_intro(year)
+        title, generated_desc, h1, lede = year_intro(year)
+        # Keep the shared (or CSV-applied) meta description already on the hub
+        # page. Do not invent a per-year description here; unique titles and
+        # metas come from past-year-meta.csv via apply_past_year_meta.py.
+        desc = _current_meta_description(base) or generated_desc
         # Depth 2 for assets and internal links. Canonical, og:url and JSON-LD
-        # url all point at the /past/ hub (SEO Manager, 16 Nov 2026).
-        html = rewrite_html(base, 2, "/past/")
-        html = _replace_head_text(html, title, desc, h1, lede, jsonld=False)
+        # url all point at this year page (self-canonical, 24 Nov 2026 spec).
+        html = rewrite_html(base, 2, f"/past/{year}/")
+        html = _replace_head_text(html, title, desc, h1, lede, jsonld=True)
         # Mark the year so app.js can prefill even if the path is rewritten.
         html = html.replace("<html", f'<html data-past-year="{year}"', 1)
         # Prefill class, matching the hub's ?year= behaviour.
@@ -464,19 +478,60 @@ SITEMAP_PAGES = [
 ]
 
 
-def write_sitemap(docs: Path = DOCS, lastmod: str = "2026-11-16") -> None:
-    # Year URLs are omitted (SEO Manager, 16 Nov 2026): keep the pages, canonical
-    # to /past/, and do not noindex them at launch. The preview still carries the
-    # site-wide noindex until the launch commit.
+# Lastmods for the existing 13 locs, as on the live sitemap at 2c9e511.
+SITEMAP_LASTMODS = {
+    "/": "2026-11-16",
+    "/difference/": "2026-11-16",
+    "/past/": "2026-11-16",
+    "/days-between-dates/": "2026-11-16",
+    "/chronological-age/": "2026-11-16",
+    "/dog-age/": "2026-11-16",
+    "/cat-age/": "2026-11-16",
+    "/korean-age/": "2026-11-16",
+    "/birthday-countdown/": "2026-11-16",
+    "/how-old-will-i-be/": "2026-11-16",
+    "/what-year-was-i-born/": "2026-11-16",
+    "/privacy/": "2026-11-19",
+    "/contact/": "2026-11-16",
+}
+
+
+def write_sitemap(
+    docs: Path = DOCS,
+    lastmod: str = "2026-11-16",
+    year_lastmod: str = "2026-11-24",
+) -> None:
+    """Write the 13 existing locs (preserving lastmods) plus 67 year URLs."""
+    # Prefer lastmods already in the file so a rebuild does not roll privacy
+    # (or any later bump) back to the default.
+    existing: dict[str, str] = {}
+    current = docs / "sitemap.xml"
+    if current.is_file():
+        text = current.read_text(encoding="utf-8")
+        for m in re.finditer(
+            r"<url>\s*<loc>([^<]+)</loc>\s*(?:<lastmod>([^<]*)</lastmod>)?",
+            text,
+        ):
+            loc, lm = m.group(1), m.group(2)
+            path = loc[len(CANON):] if loc.startswith(CANON) else loc
+            if not path.startswith("/"):
+                path = "/" + path
+            if lm:
+                existing[path] = lm
     lines = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
     ]
     for path in SITEMAP_PAGES:
-        lines.append(f"  <url><loc>{prod_url(path)}</loc><lastmod>{lastmod}</lastmod></url>")
+        lm = existing.get(path) or SITEMAP_LASTMODS.get(path) or lastmod
+        lines.append(f"  <url><loc>{prod_url(path)}</loc><lastmod>{lm}</lastmod></url>")
+    for year in range(YEAR_MIN, YEAR_MAX + 1):
+        path = f"/past/{year}/"
+        lines.append(f"  <url><loc>{prod_url(path)}</loc><lastmod>{year_lastmod}</lastmod></url>")
     lines.append("</urlset>\n")
     (docs / "sitemap.xml").write_text("\n".join(lines))
-    print(f"wrote sitemap.xml ({len(SITEMAP_PAGES)} URLs, trailing slashes, no year pages)")
+    total = len(SITEMAP_PAGES) + (YEAR_MAX - YEAR_MIN + 1)
+    print(f"wrote sitemap.xml ({total} URLs: 13 existing + {YEAR_MAX - YEAR_MIN + 1} year pages)")
 
 
 def finish_promoted(docs: Path = DOCS) -> None:
@@ -506,11 +561,12 @@ def finish_promoted(docs: Path = DOCS) -> None:
             issues.append(f"{rel} canonical is not the production host: {can}")
         elif can != CANON + "/" and not can.endswith("/") and not Path(can).suffix:
             issues.append(f"{rel} canonical is missing a trailing slash: {can}")
-        # Year pages must canonicalise to the hub, not to /past/{year}/.
+        # Year pages must be self-canonical at /past/{year}/.
         parts = rel.parts
         if len(parts) == 3 and parts[0] == "past" and parts[1].isdigit() and parts[2] == "index.html":
-            if can != CANON + "/past/":
-                issues.append(f"{rel} year page canonical should be {CANON}/past/, got {can}")
+            want = f"{CANON}/past/{parts[1]}/"
+            if can != want:
+                issues.append(f"{rel} year page canonical should be {want}, got {can}")
         # Legacy stubs: canonical to the target, meta refresh 0, no noindex.
         if rel.as_posix() in {s[0] for s in STUBS}:
             if "noindex" in text:
